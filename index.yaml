@@ -1,0 +1,58 @@
+domains:
+  architecture:
+    description: "SaaS architecture patterns: auth flows, multi-tenant, rate limiting, webhooks."
+    status: placeholder
+    file_count: 4
+
+  code-conventions:
+    description: "Language-agnostic and per-language coding standards. Loaded automatically by claude/rules/code.md dispatcher."
+    status: complete
+    file_count: 9
+
+  copywriting:
+    description: "SaaS copywriting templates: landing pages, email sequences, taglines."
+    status: placeholder
+    file_count: 3
+
+  design:
+    description: "Cross-platform design reference: tokens (spacing, typography, colors), platform systems (HIG, Material, Web), UI components, visual QA rules."
+    status: complete
+    file_count: 11
+    subdirectories:
+      - components
+      - quality
+      - systems
+      - tokens
+
+  legal:
+    description: "French/EU legal templates for SaaS: CGU, RGPD, mentions legales, merchant of record."
+    status: placeholder
+    file_count: 4
+
+  pricing-models:
+    description: "SaaS pricing model references: freemium, flat-rate, per-seat, usage-based."
+    status: placeholder
+    file_count: 4
+
+  seo:
+    description: "SEO knowledge base: Core Web Vitals, programmatic SEO, Next.js technical SEO."
+    status: placeholder
+    file_count: 3
+
+  stack-ref:
+    description: "Vendor comparison sheets with decision matrices, cost comparisons, and recommended stack combos. Covers 12 categories: AI, auth, CMS, databases, email, frontend, jobs, ops, payments, platforms, search, storage."
+    status: complete
+    file_count: 50
+    subdirectories:
+      - ai
+      - auth
+      - cms
+      - databases
+      - email
+      - frontend
+      - jobs
+      - ops
+      - payments
+      - platforms
+      - search
+      - storage

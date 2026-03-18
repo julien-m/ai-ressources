@@ -1,0 +1,16 @@
+files:
+  - file: cgu-saas-type.md
+    description: "SaaS terms of service template (French law, CGU type)"
+    status: placeholder
+
+  - file: rgpd-obligations.md
+    description: "RGPD/GDPR obligations checklist for SaaS: DPA, consent, data retention, rights"
+    status: placeholder
+
+  - file: mentions-legales.md
+    description: "French legal notices template (mentions legales obligatoires)"
+    status: placeholder
+
+  - file: merchant-of-record.md
+    description: "Merchant of Record model: legal implications, VAT delegation, provider comparison"
+    status: placeholder

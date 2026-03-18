@@ -1,0 +1,12 @@
+files:
+  - file: landing-page.md
+    description: "SaaS landing page structure, copy formulas, hero/CTA patterns"
+    status: placeholder
+
+  - file: email-sequences.md
+    description: "Onboarding, activation, and retention email sequence templates"
+    status: placeholder
+
+  - file: taglines.md
+    description: "Tagline and value proposition formulas, positioning frameworks"
+    status: placeholder

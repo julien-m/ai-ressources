@@ -1,0 +1,27 @@
+files:
+  - file: general.md
+    description: "Shared rules for all languages: types, naming, testing, errors, imports, security"
+
+  - file: architecture.md
+    description: "Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events"
+
+  - file: logging.md
+    description: "Structured logging, sensitive data redaction, compliance rules"
+
+  - file: javascript.md
+    description: "TypeScript/Node.js/React conventions (delta on general.md)"
+
+  - file: go.md
+    description: "Go-specific patterns and tooling (delta on general.md)"
+
+  - file: rust.md
+    description: "Rust idioms, ownership, error handling (delta on general.md)"
+
+  - file: delphi.md
+    description: "Delphi/Pascal memory management and style (delta on general.md)"
+
+  - file: swift-kotlin.md
+    description: "iOS/Android native conventions for Swift and Kotlin (delta on general.md)"
+
+  - file: database.md
+    description: "SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)"

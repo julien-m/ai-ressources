@@ -45,4 +45,20 @@ Vendor comparison sheets with a consistent template: pricing, DX, limits, best-f
 
 ## Usage
 
+### `/ai-res` skill
+
+The `/ai-res` skill provides structured, on-demand access to any domain:
+
+```
+/ai-res              → list all domains
+/ai-res design       → load design domain index, pick relevant files
+/ai-res stack        → alias for stack-ref
+/ai-res code         → alias for code-conventions
+/ai-res pricing      → alias for pricing-models
+```
+
+Each domain contains an `index.yaml` that describes its files and structure. The root `index.yaml` lists all domains with their status (complete, placeholder, partial).
+
+### Direct browsing
+
 Browse files directly or point an AI coding assistant at the relevant section for context-aware recommendations.

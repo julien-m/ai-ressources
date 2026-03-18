@@ -1,0 +1,12 @@
+files:
+  - file: core-web-vitals.md
+    description: "Core Web Vitals: LCP, FID/INP, CLS optimization strategies"
+    status: placeholder
+
+  - file: programmatic.md
+    description: "Programmatic SEO: template pages, dynamic content, internal linking at scale"
+    status: placeholder
+
+  - file: technical-nextjs.md
+    description: "Next.js technical SEO: metadata, sitemap, robots, ISR, structured data"
+    status: placeholder

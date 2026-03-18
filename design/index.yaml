@@ -1,0 +1,38 @@
+sections:
+  tokens:
+    description: "Design token scales for spacing, typography, colors, and cross-platform unit mapping"
+    files:
+      - file: tokens/spacing.md
+        description: "8px grid, semantic spacing scale, platform unit mapping"
+      - file: tokens/typography.md
+        description: "Type scale, font stacks, line-height/tracking per platform"
+      - file: tokens/colors.md
+        description: "Color tokens: semantic palette, dark mode, contrast rules"
+      - file: tokens/cross-platform.md
+        description: "Cross-platform design: unit mapping (px/pt/dp/sp), shared patterns"
+
+  systems:
+    description: "Platform-specific design system quick references"
+    files:
+      - file: systems/apple-hig.md
+        description: "Apple Human Interface Guidelines: iOS/macOS patterns, SF Symbols, navigation"
+      - file: systems/material-design.md
+        description: "Material Design 3: Android patterns, dynamic color, components"
+      - file: systems/web-standards.md
+        description: "Web standards: responsive patterns, accessibility, CSS best practices"
+
+  components:
+    description: "Cross-platform component specs with per-platform guidelines"
+    files:
+      - file: components/forms.md
+        description: "Form patterns: validation, layout, input types, error states"
+      - file: components/lists.md
+        description: "List patterns: virtualization, pull-to-refresh, swipe actions"
+      - file: components/modals.md
+        description: "Modals and dialogs: sheets, alerts, confirmation patterns"
+
+  quality:
+    description: "Visual QA and non-regression rules"
+    files:
+      - file: quality/ui-rules.md
+        description: "UI visual non-regression rules: alignment, spacing, overflow checks"

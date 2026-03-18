@@ -1,0 +1,168 @@
+sections:
+  overview:
+    description: "Decision matrices, cost comparisons, and recommended stack combos by profile"
+    files:
+      - file: decision-matrix.md
+        description: "Decision matrix, cost comparisons, recommended stack combos, quick decision keys"
+
+  ai:
+    description: "AI/LLM providers and SDKs"
+    files:
+      - file: ai/openrouter.md
+        description: "OpenRouter: multi-model routing, unified API, pricing"
+      - file: ai/pyo.md
+        description: "Pyo: image and video generation API"
+      - file: ai/vercel-ai-sdk.md
+        description: "Vercel AI SDK: unified TypeScript SDK for streaming, tool use, multi-provider"
+
+  auth:
+    description: "Authentication providers"
+    files:
+      - file: auth/authjs.md
+        description: "Auth.js (NextAuth v5): Next.js multi-provider OAuth"
+      - file: auth/better-auth.md
+        description: "Better Auth: open-source, self-hosted, TypeScript-first auth"
+      - file: auth/clerk.md
+        description: "Clerk: managed auth with prebuilt UI components"
+      - file: auth/supabase-auth.md
+        description: "Supabase Auth: auth integrated with Supabase platform"
+      - file: auth/workos.md
+        description: "WorkOS: enterprise SSO (SAML, SCIM), directory sync"
+
+  cms:
+    description: "Content management systems"
+    files:
+      - file: cms/notion-cms.md
+        description: "Notion as CMS: editorial content via ISR, blog/changelog/FAQ"
+
+  databases:
+    description: "Database providers and engines"
+    files:
+      - file: databases/cloudflare-d1.md
+        description: "Cloudflare D1: edge SQL database for Workers"
+      - file: databases/cloudflare-kv.md
+        description: "Cloudflare KV: edge key-value store with TTL"
+      - file: databases/cockroachdb.md
+        description: "CockroachDB: distributed SQL, multi-region strong consistency"
+      - file: databases/convex.md
+        description: "Convex: realtime TypeScript-first database with auto subscriptions"
+      - file: databases/mysql.md
+        description: "MySQL: legacy/migration scenarios"
+      - file: databases/neon.md
+        description: "Neon: serverless Postgres with branching and scale-to-zero"
+      - file: databases/planetscale.md
+        description: "PlanetScale: MySQL-compatible with branching, high throughput"
+      - file: databases/postgres.md
+        description: "Postgres: self-hosted, full control"
+      - file: databases/redis-self-hosted.md
+        description: "Redis self-hosted: ultra-low latency cache"
+      - file: databases/sqlite.md
+        description: "SQLite: local/embedded, CLI tools, bun:sqlite"
+      - file: databases/supabase-db.md
+        description: "Supabase DB: managed Postgres with auth, storage, realtime"
+      - file: databases/turso.md
+        description: "Turso: edge SQLite with embedded replicas"
+      - file: databases/upstash-redis.md
+        description: "Upstash Redis: serverless Redis with REST API"
+
+  email:
+    description: "Transactional and marketing email providers"
+    files:
+      - file: email/ahasend.md
+        description: "Ahasend: EU-based alternative to Resend"
+      - file: email/amazon-ses.md
+        description: "Amazon SES: lowest cost at scale, AWS-native"
+      - file: email/brevo.md
+        description: "Brevo: all-in-one email + marketing + CRM, EU-based"
+      - file: email/mailgun.md
+        description: "Mailgun: high volume, advanced routing"
+      - file: email/postmark.md
+        description: "Postmark: best deliverability for transactional email"
+      - file: email/resend.md
+        description: "Resend: modern DX, React Email, best for MVPs"
+      - file: email/sendgrid.md
+        description: "SendGrid: volume transactional + marketing suite"
+
+  frontend:
+    description: "Frontend frameworks and platforms by target (web, mobile, desktop, CLI)"
+    files:
+      - file: frontend/web.md
+        description: "Web frameworks: Next.js, Astro, shadcn/ui, DaisyUI"
+      - file: frontend/mobile.md
+        description: "Mobile: React Native/Expo, Swift/SwiftUI, Kotlin"
+      - file: frontend/desktop.md
+        description: "Desktop: Tauri (Rust + React), SwiftUI native"
+      - file: frontend/cli.md
+        description: "CLI frameworks: Go (cobra + bubbletea), Bun/TS, Rust"
+
+  jobs:
+    description: "Background jobs and queue systems"
+    files:
+      - file: jobs/bullmq.md
+        description: "BullMQ: Redis-based queue for Node.js"
+      - file: jobs/cloudflare-queues.md
+        description: "Cloudflare Queues: native queue for CF Workers"
+      - file: jobs/inngest.md
+        description: "Inngest: serverless TypeScript jobs with retry and scheduling"
+      - file: jobs/triggerdotdev.md
+        description: "Trigger.dev: long-running multi-step workflows"
+
+  ops:
+    description: "Operational tools"
+    files:
+      - file: ops/notion-crm.md
+        description: "Notion as CRM: early-stage lead management with n8n automation"
+
+  payments:
+    description: "Payment providers and merchant of record"
+    files:
+      - file: payments/lemon-squeezy.md
+        description: "Lemon Squeezy: MoR for indie/solo, VAT delegation"
+      - file: payments/mollie.md
+        description: "Mollie: EU-native payments, SEPA/iDEAL/Bancontact"
+      - file: payments/paddle.md
+        description: "Paddle: MoR for growing SaaS, international sales"
+      - file: payments/stripe.md
+        description: "Stripe: full control, flexible API, B2B focus"
+
+  platforms:
+    description: "Hosting and cloud platforms"
+    files:
+      - file: platforms/aws.md
+        description: "AWS: full cloud suite for large teams"
+      - file: platforms/cloudflare.md
+        description: "Cloudflare: 100% edge stack (Workers, D1, KV, R2, DO)"
+      - file: platforms/firebase.md
+        description: "Firebase: mobile-first platform (offline sync, FCM, auth)"
+      - file: platforms/flyio.md
+        description: "Fly.io: Docker containers, multi-region"
+      - file: platforms/gcp.md
+        description: "GCP: Cloud Run, EU data residency"
+      - file: platforms/infomaniak.md
+        description: "Infomaniak: sovereign EU hosting (FR/CH), ISO 27001"
+      - file: platforms/supabase.md
+        description: "Supabase: full-stack platform (Postgres, auth, storage, realtime)"
+      - file: platforms/vercel.md
+        description: "Vercel: frontend deployment, Next.js/Astro, edge functions"
+
+  search:
+    description: "Search engines and services"
+    files:
+      - file: search/algolia.md
+        description: "Algolia: managed search, enterprise, merchandising"
+      - file: search/meilisearch.md
+        description: "Meilisearch: self-hosted search, open-source, FR-based"
+      - file: search/orama.md
+        description: "Orama: embedded search for edge/browser, zero infra"
+      - file: search/typesense.md
+        description: "Typesense: cloud managed search with geo-search"
+
+  storage:
+    description: "Object/blob storage providers"
+    files:
+      - file: storage/backblaze-b2.md
+        description: "Backblaze B2: cheapest active storage, free egress via CF"
+      - file: storage/cloudflare-r2.md
+        description: "Cloudflare R2: native CF blob storage, zero egress fees"
+      - file: storage/google-cloud-storage.md
+        description: "Google Cloud Storage: Archive/Coldline tiers for cold storage"

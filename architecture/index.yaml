@@ -1,0 +1,16 @@
+files:
+  - file: auth-flows.md
+    description: "OAuth2/OIDC flows, JWT strategies, token refresh patterns"
+    status: placeholder
+
+  - file: multi-tenant.md
+    description: "Multi-tenant architecture: DB-per-tenant, schema-per-tenant, row-level security"
+    status: placeholder
+
+  - file: rate-limiting.md
+    description: "Rate limiting strategies: token bucket, sliding window, distributed rate limiting"
+    status: placeholder
+
+  - file: webhook-patterns.md
+    description: "Webhook design: delivery guarantees, retry logic, signature verification, idempotency"
+    status: placeholder
