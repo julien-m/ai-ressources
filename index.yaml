@@ -4,6 +4,11 @@ domains:
     status: placeholder
     file_count: 4
 
+  conventions:
+    description: "Transversal conventions (not code-specific): diagram formats, shared standards. Loaded by dedicated global rules."
+    status: active
+    file_count: 1
+
   code-conventions:
     description: "Language-agnostic and per-language coding standards. Loaded automatically by claude/rules/code.md dispatcher."
     status: complete

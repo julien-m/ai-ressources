@@ -25,3 +25,6 @@ files:
 
   - file: database.md
     description: "SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)"
+
+  - file: ../conventions/diagrams.md
+    description: "Diagram conventions (transversal — also loaded outside code context). See conventions/"

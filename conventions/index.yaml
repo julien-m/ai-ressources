@@ -1,0 +1,3 @@
+files:
+  - file: diagrams.md
+    description: "Diagram conventions: Gherkin for business flows, Mermaid for technical flows. Applies to all contexts (code, specs, rules, skills, docs)"
