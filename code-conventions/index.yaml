@@ -8,6 +8,9 @@ files:
   - file: logging.md
     description: "Structured logging, sensitive data redaction, compliance rules"
 
+  - file: testing.md
+    description: "Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage"
+
   - file: javascript.md
     description: "TypeScript/Node.js/React conventions (delta on general.md)"
 
