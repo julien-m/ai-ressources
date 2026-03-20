@@ -30,7 +30,10 @@ The format choice depends on the audience:
 | Technical pipeline, request lifecycle | **Mermaid** | `flowchart` | CI/CD, data pipeline, request handling |
 | Interaction between services/components | **Mermaid** | `sequenceDiagram` | API calls, webhook flows, auth handshakes |
 | State machine, lifecycle | **Mermaid** | `stateDiagram-v2` | Order status, FSM, connection states |
-| Decision tree, conditional routing | **Mermaid** | `flowchart` | Error handling, feature flags, routing logic |
+| Decision tree, conditional routing | **Mermaid** | `flowchart` (diamond `{condition?}` nodes) | Error handling, feature flags, routing logic |
+| Hybrid flow (user action triggers technical sequence) | **Gherkin + Mermaid** | Gherkin for behavioral view, Mermaid for structural view | Checkout → payment processing, signup → provisioning |
+
+**Distinguishing pipelines from decision trees in Mermaid:** Both use `flowchart`, but pipelines use rectangular nodes in series (`A --> B --> C`), while decision trees use diamond nodes for branching (`A{condition?} -->|yes| B`).
 
 ### When to use Gherkin
 
@@ -83,6 +86,15 @@ stateDiagram-v2
 - If a business flow is expressed in Gherkin AND the document benefits from a visual overview, add a Mermaid flowchart after the Gherkin block — same flow, visual representation
 - Do NOT duplicate Mermaid diagrams in text form
 
+### Redundancy vs. complementarity
+
+Using **Gherkin + Mermaid together** for the same flow is NOT redundancy — it is complementarity. Each format captures a different view:
+
+- **Gherkin** = behavioral view (preconditions, actions, outcomes — source of truth for tests)
+- **Mermaid** = structural view (branching, parallelism, multi-actor interactions — visual aide)
+
+What IS redundancy (and forbidden): a prose paragraph that restates what an adjacent diagram already expresses.
+
 ## File Structure
 
 ```
@@ -92,9 +104,10 @@ ai-ressources/
 │   └── diagrams.md              ← single source of truth for diagram conventions
 ├── code-conventions/
 │   └── index.yaml               ← add cross-reference to ../conventions/diagrams.md
+├── index.yaml                   ← add conventions domain entry
 ├── claude/
 │   └── rules/
-│       ├── code.md              ← add diagrams.md to load order
+│       ├── code.md              ← unchanged (diagrams.md loaded globally, not here)
 │       └── diagrams.md          ← global rule (symlinked via cc-hub)
 ```
 
@@ -119,36 +132,28 @@ Add a cross-reference entry pointing to the shared conventions:
 
 ### `claude/rules/diagrams.md` — Global loading rule
 
-- No guard clause (applies to all contexts, not just code)
-- Triggers: whenever the task involves describing, documenting, or specifying a flow, process, sequence, state machine, or decision tree
-- Action: **Read** `conventions/diagrams.md` before producing any diagram
-- Applies to: code comments, specs, rules, skills, README, runbooks, onboarding docs
+Always-active rule (no guard clause). Loaded at session start as passive guidance — does not need an explicit trigger to activate. The convention text itself serves as the constraint.
 
-### `claude/rules/code.md` modification
+When the task involves producing a diagram, **Read** `conventions/diagrams.md` before writing it.
 
-Add diagrams to the load order after logging:
+Trigger signals (non-exhaustive):
 
-```
-1. general.md
-2. architecture.md
-3. logging.md
-4. diagrams.md        ← new
-5. language delta
-6. database.md (if applicable)
-```
+| Signal in task | Action |
+|---|---|
+| Describing a user journey, scenario, acceptance criteria | Load conventions, use Gherkin |
+| Describing a pipeline, request lifecycle, CI/CD | Load conventions, use Mermaid `flowchart` |
+| Describing service interactions, API calls | Load conventions, use Mermaid `sequenceDiagram` |
+| Describing states, lifecycle, FSM | Load conventions, use Mermaid `stateDiagram-v2` |
+| Describing decision logic, routing, error handling | Load conventions, use Mermaid `flowchart` (diamonds) |
+| Writing a spec with behavioral + structural flow | Load conventions, use Gherkin + Mermaid pair |
 
-Update the display rule confirmation block:
+Applies to: code comments, specs, rules, skills, README, runbooks, onboarding docs.
 
-```
-⚙ Code Conventions Loaded
-  ✓ general
-  ✓ architecture
-  ✓ logging
-  ✓ diagrams              ← new
-  ✓ <language delta>
-  ✓ database (if loaded)
-  ✓ design/<system> (if loaded)
-```
+### `claude/rules/code.md` — No modification needed
+
+Since `diagrams.md` is a global rule (always active), it does NOT need to be added to the `code.md` load order. It is already loaded independently. Adding it to `code.md` would cause double-loading during coding tasks.
+
+The `code.md` display block remains unchanged.
 
 ## Scope of Application
 
@@ -158,10 +163,21 @@ This convention applies beyond code — wherever a flow needs to be expressed:
 |---|---|
 | Code comments | Complex algorithm flow in Mermaid |
 | Specs & design docs | User journeys in Gherkin, architecture flows in Mermaid |
-| Claude rules & skills | Process flows in Mermaid (replaces current `dot` notation) |
+| Claude rules & skills | Process flows in Mermaid |
 | API documentation | Sequence diagrams for auth, webhooks |
 | Runbooks & onboarding | Decision trees for troubleshooting |
 | Acceptance criteria | Gherkin scenarios attached to stories |
+
+### Root `index.yaml` update
+
+Add a `conventions` domain entry:
+
+```yaml
+  conventions:
+    description: "Transversal conventions (not code-specific): diagram formats, shared standards. Loaded by dedicated global rules."
+    status: active
+    file_count: 1
+```
 
 ## Anti-patterns
 
@@ -170,3 +186,20 @@ This convention applies beyond code — wherever a flow needs to be expressed:
 - Using Mermaid flowcharts for user scenarios with preconditions/outcomes (use Gherkin)
 - Duplicating the same flow in both text AND diagram in AI-only documents
 - Using `dot` / Graphviz when Mermaid covers the same diagram type
+
+### Negative example
+
+Instead of this prose description:
+
+> First the user submits the form. Then the server validates the input. If validation fails, an error is returned. If it passes, the data is saved to the database. Then a confirmation email is sent. Finally the user sees a success page.
+
+Use a Mermaid flowchart:
+
+```mermaid
+flowchart TD
+    A[User submits form] --> B[Server validates input]
+    B -->|fails| C[Return error]
+    B -->|passes| D[Save to database]
+    D --> E[Send confirmation email]
+    E --> F[Show success page]
+```
