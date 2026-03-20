@@ -86,3 +86,17 @@ What we rarely code but always happens:
 - Layouts must hold when text expands 30–50% in translation (German is unforgiving)
 - RTL support if applicable
 - Localized date and number formats
+
+## Mockup Fidelity
+
+When a visual mockup or reference image exists (AI-generated or user-provided), treat it as an implementation spec — not inspiration.
+
+- **Save mockups** in the repo (`docs/mockups/` or equivalent) as source of truth
+- **Extract exact values** before coding: colors (hex), spacing (px), font sizes, font weights, line-heights, border radii, shadow values. Don't approximate — measure from the mockup
+- **Describe layout precisely** when delegating CSS work: positions in px, sizes, colors, effects — not vague terms like "timeline with photos"
+- **Include the mockup** (file path or pixel-precise description) in any subagent/teammate context that touches layout or CSS
+- **Specify all viewports**: mobile layout AND desktop behavior (centering, max-width, breakpoints)
+- **Define interaction states**: mockups are static — explicitly specify hover, active, focus, and disabled states for every interactive element. If the mockup doesn't show them, decide and document before implementing
+- **Sanity-check AI-generated mockups**: AI mockups may show impossible layouts (overlapping elements, inconsistent spacing, text that doesn't fit). Identify and resolve conflicts before implementing — don't blindly reproduce a broken layout
+- **Screenshot after implementation** (Playwright or equivalent) and compare visually to the mockup before marking a task complete
+- **Match intensity of effects**: if the mockup shows a strong glow, implement a strong glow — don't default to subtle

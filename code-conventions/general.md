@@ -138,3 +138,18 @@ Side effects, ownership transfer, and cleanup responsibilities must always be do
 
 ### 30. Concise Documentation
 Short description + parameters + return value. Avoid long explanations that repeat the code.
+
+## External Data & Assets
+
+### 31. Source-First Assets
+
+When the user provides source URLs (ticketing pages, product pages, official event pages), **always scrape those pages first** to extract assets and data. Never search for generic images on Wikipedia/Wikimedia/Google when official sources are available.
+
+- Source URLs are the single source of truth for assets **and data**
+- Extract `og:image`, hero images, or event artwork from the provided pages
+- Also extract metadata: titles, descriptions, dates, prices, venue names — don't rely solely on user-provided text, which may contain voice-transcription errors
+- **Cross-validate user-provided data** against source pages: if a name or title doesn't match the source, flag it before using it
+- **Download and store assets locally** (in repo or project assets folder) — don't hotlink external URLs, which break over time
+- Fall back to generic sources (Wikipedia, press photos) only if no source URL exists
+- Verify every image URL loads (HTTP 200) before using it
+- Wikimedia Commons URLs are fragile (hash paths, rate-limiting, hotlink blocking) — avoid them
