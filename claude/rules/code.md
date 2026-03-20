@@ -7,7 +7,8 @@ Before coding, always load the shared rules first, then cross-cutting rules, the
 1. **Always load** [`general.md`](../../code-conventions/general.md) first (shared rules for all languages)
 2. **Always load** [`architecture.md`](../../code-conventions/architecture.md) (cross-cutting architectural rules)
 3. **Always load** [`logging.md`](../../code-conventions/logging.md) (cross-cutting logging and sensitive data rules)
-4. Then load the language-specific file:
+4. **Always load** [`testing.md`](../../code-conventions/testing.md) (cross-cutting testing conventions)
+5. Then load the language-specific file:
 
 - **JavaScript / TypeScript** → **Read** [`javascript.md`](../../code-conventions/javascript.md)
 - **Delphi / Pascal** → **Read** [`delphi.md`](../../code-conventions/delphi.md)
@@ -21,7 +22,7 @@ All paths are relative to this file's location (`claude/rules/`).
 
 Always load files **before** starting to code. If the task spans multiple domains (e.g. TypeScript + SQL), load all relevant files.
 
-Load order: [`general.md`](../../code-conventions/general.md) → [`architecture.md`](../../code-conventions/architecture.md) → [`logging.md`](../../code-conventions/logging.md) → language delta → [`database.md`](../../code-conventions/database.md) (if applicable).
+Load order: [`general.md`](../../code-conventions/general.md) → [`architecture.md`](../../code-conventions/architecture.md) → [`logging.md`](../../code-conventions/logging.md) → [`testing.md`](../../code-conventions/testing.md) → language delta → [`database.md`](../../code-conventions/database.md) (if applicable).
 
 ## Design conventions
 
@@ -45,6 +46,7 @@ After loading the convention files, **always** display the following confirmatio
   ✓ general
   ✓ architecture
   ✓ logging
+  ✓ testing
   ✓ <language delta>
   ✓ database (if loaded)
   ✓ design/<system> (if loaded)
