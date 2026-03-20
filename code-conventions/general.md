@@ -58,10 +58,7 @@
 - Never fire-and-forget without explicit intent
 
 ### 9. Testing
-- Tests must be deterministic
-- Test business logic and edge cases
-- Mock only external dependencies (database, network, filesystem, time)
-- Name tests clearly: describe scenario and expected outcome
+See [`testing.md`](testing.md) for all cross-cutting testing conventions (UI test identifiers, naming, mocking boundaries, test data, async, integration vs unit, coverage).
 
 ### 10. Tooling
 Every project must enforce: formatter, linter, type checker (if applicable), test runner. All must pass in CI.
