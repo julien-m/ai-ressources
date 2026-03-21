@@ -20,12 +20,13 @@ domains:
     file_count: 3
 
   design:
-    description: "Cross-platform design reference: tokens (spacing, typography, colors), platform systems (HIG, Material, Web), UI components, visual QA rules."
+    description: "Cross-platform design reference: tokens (spacing, typography, colors, motion), platform systems (HIG, Material, Web), UI components (forms, lists, modals, payments), visual QA rules, market design references (landing pages, app UI, app views, per-company systems)."
     status: complete
-    file_count: 11
+    file_count: 17
     subdirectories:
       - components
       - quality
+      - references
       - systems
       - tokens
 

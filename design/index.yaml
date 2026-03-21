@@ -1,6 +1,6 @@
 sections:
   tokens:
-    description: "Design token scales for spacing, typography, colors, and cross-platform unit mapping"
+    description: "Design token scales for spacing, typography, colors, motion, and cross-platform unit mapping"
     files:
       - file: tokens/spacing.md
         description: "8px grid, semantic spacing scale, platform unit mapping"
@@ -8,6 +8,8 @@ sections:
         description: "Type scale, font stacks, line-height/tracking per platform"
       - file: tokens/colors.md
         description: "Color tokens: semantic palette, dark mode, contrast rules"
+      - file: tokens/motion.md
+        description: "Motion tokens: duration scale, easing functions, transition types, reduced motion, cross-platform"
       - file: tokens/cross-platform.md
         description: "Cross-platform design: unit mapping (px/pt/dp/sp), shared patterns"
 
@@ -30,6 +32,20 @@ sections:
         description: "List patterns: virtualization, pull-to-refresh, swipe actions"
       - file: components/modals.md
         description: "Modals and dialogs: sheets, alerts, confirmation patterns"
+      - file: components/payment-flows.md
+        description: "Payment UX patterns: tip/donation, subscription, one-time, express checkout, error handling"
+
+  references:
+    description: "Market design references: per-company design systems, landing page conventions, app UI patterns (based on 2026 market analysis)"
+    files:
+      - file: references/landing-pages.md
+        description: "Landing page conventions by product type: devtools, B2B SaaS, fintech, consumer, creators, health, AI, e-commerce"
+      - file: references/app-ui.md
+        description: "App UI conventions: universal SaaS patterns, layout, components, views by category (PM, dashboard, editor, library, fintech, health, AI, e-commerce)"
+      - file: references/design-references.md
+        description: "Per-company design system references: Vercel, Resend, Linear, Stripe, Clerk, Raycast, Supabase, Ko-fi, BMC, Patreon, Gumroad, beehiiv, Contra, Revolut, Wise, Monzo, Doctolib, Alan, Withings, Duolingo, Arc, Craft, Superhuman, Framer, Pitch, Claude, ChatGPT, Perplexity, Shopify, Etsy, Vinted"
+      - file: references/app-views.md
+        description: "Standard SaaS views catalog: dashboard, settings (general/profile/security/tokens/billing/team/notifications), user management, auth, activity log, search, error pages"
 
   quality:
     description: "Visual QA and non-regression rules"
