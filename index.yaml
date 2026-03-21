@@ -1,7 +1,7 @@
 domains:
   architecture:
-    description: "SaaS architecture patterns: auth flows, multi-tenant, rate limiting, webhooks."
-    status: placeholder
+    description: "SaaS architecture patterns: auth flows (OAuth2/OIDC/JWT/MFA), multi-tenant isolation, rate limiting algorithms, webhook delivery and consumption."
+    status: complete
     file_count: 4
 
   conventions:
@@ -20,9 +20,9 @@ domains:
     file_count: 3
 
   design:
-    description: "Cross-platform design reference: tokens (spacing, typography, colors, motion), platform systems (HIG, Material, Web), UI components (forms, lists, modals, payments), visual QA rules, market design references (landing pages, app UI, app views, per-company systems)."
+    description: "Cross-platform design reference: tokens (spacing, typography, colors, motion), platform systems (HIG, Material, Web, CLI/TUI), UI components (forms, lists, modals, payments, log viewer, data viz, real-time streams), visual QA rules, market design references (landing pages, app UI, app views, per-company systems)."
     status: complete
-    file_count: 17
+    file_count: 22
     subdirectories:
       - components
       - quality

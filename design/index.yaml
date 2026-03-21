@@ -22,6 +22,8 @@ sections:
         description: "Material Design 3: Android patterns, dynamic color, components"
       - file: systems/web-standards.md
         description: "Web standards: responsive patterns, accessibility, CSS best practices"
+      - file: systems/cli-patterns.md
+        description: "CLI design system: colors ANSI, typographie terminal, composants (spinner, progress, prompts, tables), TUI frameworks, layout, error handling"
 
   components:
     description: "Cross-platform component specs with per-platform guidelines"
@@ -34,6 +36,12 @@ sections:
         description: "Modals and dialogs: sheets, alerts, confirmation patterns"
       - file: components/payment-flows.md
         description: "Payment UX patterns: tip/donation, subscription, one-time, express checkout, error handling"
+      - file: components/log-viewer.md
+        description: "Log viewer patterns: terminal streaming, web table layout, filtering, JSON expand, multi-service"
+      - file: components/data-visualization.md
+        description: "Data visualization patterns: metric cards, sparklines, charts (line/bar/area/pie), dashboard layout, number formatting"
+      - file: components/realtime-streams.md
+        description: "Real-time streaming UI: WebSocket/SSE, reconnection, buffering, auto-scroll, optimistic updates, token streaming"
 
   references:
     description: "Market design references: per-company design systems, landing page conventions, app UI patterns (based on 2026 market analysis)"
@@ -46,6 +54,8 @@ sections:
         description: "Per-company design system references: Vercel, Resend, Linear, Stripe, Clerk, Raycast, Supabase, Ko-fi, BMC, Patreon, Gumroad, beehiiv, Contra, Revolut, Wise, Monzo, Doctolib, Alan, Withings, Duolingo, Arc, Craft, Superhuman, Framer, Pitch, Claude, ChatGPT, Perplexity, Shopify, Etsy, Vinted"
       - file: references/app-views.md
         description: "Standard SaaS views catalog: dashboard, settings (general/profile/security/tokens/billing/team/notifications), user management, auth, activity log, search, error pages"
+      - file: references/devtools.md
+        description: "DevTools UI conventions: monitoring dashboards, log viewers, deployment pipelines, container management. References: Axiom, Grafana, Datadog, Portainer, Coolify, Railway, Cloudflare, Uptime Kuma"
 
   quality:
     description: "Visual QA and non-regression rules"
