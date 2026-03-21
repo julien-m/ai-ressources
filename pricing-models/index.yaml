@@ -1,16 +1,16 @@
 files:
   - file: freemium.md
     description: "Freemium model: free tier design, conversion triggers, feature gating strategies"
-    status: placeholder
+    status: complete
 
   - file: flat-rate.md
     description: "Flat-rate pricing: single plan design, when to use, pros/cons vs tiered"
-    status: placeholder
+    status: complete
 
   - file: per-seat.md
     description: "Per-seat pricing: billing mechanics, discounts, hybrid models"
-    status: placeholder
+    status: complete
 
   - file: usage-based.md
     description: "Usage-based pricing: metering, billing cycles, cost predictability, hybrid approaches"
-    status: placeholder
+    status: complete

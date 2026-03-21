@@ -16,7 +16,7 @@ domains:
 
   copywriting:
     description: "SaaS copywriting templates: landing pages, email sequences, taglines."
-    status: placeholder
+    status: complete
     file_count: 3
 
   design:
@@ -31,17 +31,17 @@ domains:
 
   legal:
     description: "French/EU legal templates for SaaS: CGU, RGPD, mentions legales, merchant of record."
-    status: placeholder
+    status: complete
     file_count: 4
 
   pricing-models:
     description: "SaaS pricing model references: freemium, flat-rate, per-seat, usage-based."
-    status: placeholder
+    status: complete
     file_count: 4
 
   seo:
     description: "SEO knowledge base: Core Web Vitals, programmatic SEO, Next.js technical SEO."
-    status: placeholder
+    status: complete
     file_count: 3
 
   stack-ref:
