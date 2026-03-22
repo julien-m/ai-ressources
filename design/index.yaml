@@ -42,6 +42,8 @@ sections:
         description: "Data visualization patterns: metric cards, sparklines, charts (line/bar/area/pie), dashboard layout, number formatting"
       - file: components/realtime-streams.md
         description: "Real-time streaming UI: WebSocket/SSE, reconnection, buffering, auto-scroll, optimistic updates, token streaming"
+      - file: components/email-templates.md
+        description: "Email template patterns: responsive layout, dark mode, client quirks, components"
 
   references:
     description: "Market design references: per-company design systems, landing page conventions, app UI patterns (based on 2026 market analysis)"
@@ -62,3 +64,5 @@ sections:
     files:
       - file: quality/ui-rules.md
         description: "UI visual non-regression rules: alignment, spacing, overflow checks"
+      - file: quality/accessibility.md
+        description: "Accessibility patterns: WCAG 2.2 AA, ARIA, keyboard nav, focus management, screen readers"
