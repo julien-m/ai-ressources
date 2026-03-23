@@ -125,3 +125,243 @@ Every list needs four empty states designed:
 - [ ] Large lists use virtualization/recycling
 - [ ] Skeleton screens for initial load, inline loader for pagination
 - [ ] Selection mode has clear entry/exit and shows count
+
+---
+
+## Virtual Lists / Windowing
+
+For lists with 100+ items, rendering all DOM nodes kills performance. Virtual lists render only visible items + a small buffer.
+
+### When to Use
+
+| Item count | Strategy | Notes |
+|-----------|----------|-------|
+| < 50 | Render all | No virtualization needed |
+| 50–500 | Virtual list | Render visible + 5-10 buffer rows |
+| 500–10,000 | Virtual list + pagination | Paginate at API level, virtualize within page |
+| > 10,000 | Server-side pagination | Client-side virtualization alone is not enough |
+
+### Implementation Rules
+- **Fixed row height** (preferred): much simpler — all rows same height, position calculated by index × height
+- **Variable row height**: requires measuring or estimating — use a height cache, re-measure on resize
+- **Buffer**: render 5-10 rows above and below viewport to prevent blank flashes during fast scroll
+- **Scroll position preservation**: when data updates (new items, filter change), maintain scroll position — never jump to top
+- **Placeholder rows**: if data is loading for a visible range, show skeleton rows (same height as real rows)
+- **Keyboard navigation**: arrow keys must work across virtual boundaries — pre-render the target row before focusing it
+
+### Platform Libraries
+| Platform | Library | Notes |
+|----------|---------|-------|
+| React | `@tanstack/react-virtual` (TanStack Virtual) | Most popular, supports variable heights |
+| React | `react-window` | Lighter, fixed heights preferred |
+| Vue | `vue-virtual-scroller` | Similar API to react-virtual |
+| iOS | `UICollectionView` / `List` (SwiftUI) | Native virtualization built-in |
+| Android | `LazyColumn` (Compose) / `RecyclerView` | Native virtualization built-in |
+
+### Scroll Indicators
+- Show a scrollbar thumb that represents total list height (even if only a fraction is rendered)
+- Optional: "Showing X of Y items" counter at bottom or top
+- Optional: alphabet scrubber for alphabetically sorted long lists (contacts pattern)
+
+---
+
+## Drag & Drop
+
+Reordering items within a list, moving between columns (Kanban), or reorganizing hierarchical content.
+
+### Visual Feedback
+
+```
+Before drag:
+┌─────────────────────┐
+│ ⠿ Item 1            │   ← Grip handle (6-dot icon)
+├─────────────────────┤
+│ ⠿ Item 2            │   ← cursor: grab
+├─────────────────────┤
+│ ⠿ Item 3            │
+└─────────────────────┘
+
+During drag:
+┌─────────────────────┐
+│ ⠿ Item 1            │
+├╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌╌┤   ← Drop zone indicator (dashed line or colored bar)
+│ ⠿ Item 3            │
+└─────────────────────┘
+       ┌─────────────────────┐
+       │ ⠿ Item 2            │   ← Ghost/dragged element (semi-transparent, follows cursor)
+       └─────────────────────┘
+```
+
+### Mechanics
+- **Grip handle**: 6-dot icon or drag handle on left side of row. Do NOT make the entire row draggable (conflicts with text selection and click)
+- **Cursors**: `grab` on handle hover, `grabbing` during drag
+- **Ghost element**: semi-transparent (50-70% opacity) clone of the dragged item, follows cursor/touch
+- **Drop zone**: highlight where the item will land — use a 2px colored line between items, or highlight the target container (Kanban column)
+- **Placeholder**: the original position shows an empty space (same height) or a dashed border
+- **Animation**: items shift smoothly (200ms ease-out) to make room for the drop zone
+- **Cancel**: press Escape to cancel drag, item returns to original position
+- **Accessibility**: keyboard alternative — select item, use arrow keys to move, Enter to confirm position
+
+### Touch Behavior
+- **Long press** (300-500ms) to initiate drag on touch devices (prevents conflict with scroll)
+- **Haptic feedback** on drag start (iOS: UIImpactFeedbackGenerator, Android: HapticFeedback)
+- **Auto-scroll**: when dragging near top/bottom edge, scroll the container
+
+### Platform Libraries
+| Platform | Library | Notes |
+|----------|---------|-------|
+| React | `@dnd-kit/core` | Modern, accessible, supports multiple strategies |
+| React | `react-beautiful-dnd` (deprecated) | Legacy, use dnd-kit instead |
+| Vue | `vuedraggable` + Sortable.js | Standard for Vue |
+| iOS | `.onDrag` / `.onDrop` (SwiftUI) | Native drag and drop |
+| Android | `ItemTouchHelper` / Compose `detectDragGestures` | Native support |
+
+---
+
+## Selection Patterns
+
+How users select one or multiple items in lists and tables.
+
+### Selection Modes
+
+| Mode | Trigger | Use case |
+|------|---------|----------|
+| Single click | Click on row | Navigate to detail / select one item |
+| Checkbox | Click checkbox column | Multi-select for bulk actions |
+| Shift+Click | Click first, Shift+Click last | Range selection (all items between) |
+| Cmd/Ctrl+Click | Cmd+Click individual rows | Toggle individual selection (add/remove) |
+| Select All | Checkbox in table header | Select all visible items (or all items with confirmation) |
+
+### Visual Feedback
+- Selected row: subtle accent background (e.g., `rgba(accent, 0.08)`) + checkbox filled
+- Hover (not selected): very subtle background change (`rgba(0,0,0,0.02)` light / `rgba(255,255,255,0.02)` dark)
+- Multi-select active: show bulk action bar (appears at top or bottom of table)
+
+### Bulk Action Bar
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ 12 items selected    [Change status ▾] [Delete] [Export]  [×]│
+└──────────────────────────────────────────────────────────────┘
+```
+
+- Appears when ≥1 item is selected
+- Shows count of selected items
+- Provides bulk actions (contextual to the list type)
+- "x" or "Clear selection" to deselect all
+- Position: sticky top (below header) or sticky bottom
+- Destructive actions (Delete): require confirmation modal with count ("Delete 12 items?")
+
+### Select All — "All pages" Pattern
+When user clicks "Select All" in header:
+1. First click: select all visible items on current page
+2. Show banner: "All 25 items on this page are selected. **Select all 1,247 items?**"
+3. If user clicks "Select all 1,247": switch to server-side selection (send "all" flag to API, not individual IDs)
+
+---
+
+## Accordions / Collapsible Sections
+
+Expandable content sections that show/hide detail.
+
+### Anatomy
+
+```
+Collapsed:
+┌──────────────────────────────────────────┐
+│ ▶ Section title              [3 items]   │
+└──────────────────────────────────────────┘
+
+Expanded:
+┌──────────────────────────────────────────┐
+│ ▼ Section title              [3 items]   │
+├──────────────────────────────────────────┤
+│   Content line 1                         │
+│   Content line 2                         │
+│   Content line 3                         │
+└──────────────────────────────────────────┘
+```
+
+### Behavior
+- **Chevron icon**: collapsed → expanded (rotates 90 degrees with 200ms animation)
+- **Click target**: entire header row is clickable (not just the chevron)
+- **Animation**: content slides down/up with height animation (250ms ease-out). Use `max-height` transition or `grid-template-rows: 0fr → 1fr`.
+- **Multiple open**: default behavior — multiple sections can be open simultaneously
+- **Single open (accordion mode)**: opening one section closes others. Use when sections are mutually exclusive or screen space is limited.
+- **Default state**: define per context — settings sections typically default open, FAQ sections default closed
+- **Counter badge**: optionally show item count or summary in the header (e.g., "3 items", "2 errors")
+
+### Nested Accordions
+- Maximum nesting: 2 levels (section → subsection). Beyond 2 levels, use a tree view instead.
+- Indent each level by 16-24px
+- Different chevron styles per level help distinguish depth
+
+### Keyboard
+- Enter/Space: toggle expand/collapse
+- Arrow Down: move to next section header
+- Arrow Up: move to previous section header
+- Home/End: jump to first/last section
+
+---
+
+## Advanced Table Patterns
+
+Extensions to basic list/table layout for data-dense views.
+
+### Column Sorting
+
+```
+NAME             STATUS     CREATED        AMOUNT
+───────────────────────────────────────────────────
+Jane Doe         ● Active   Mar 20, 2026   $1,234
+John Smith       ○ Invited  Mar 19, 2026   $567
+```
+
+- **Sort indicator**: unsorted, ascending, descending — shown in the column header
+- **Click to cycle**: unsorted → ascending → descending → unsorted
+- **Single column sort** by default. Multi-column sort only if explicitly needed (power-user feature).
+- **Sorted column**: subtle background tint on the entire column (optional, improves scanability)
+- **Default sort**: most recent first (descending date) for time-based data, alphabetical for names
+
+### Sticky Headers & Columns
+
+- **Sticky header**: table header row stays visible when scrolling vertically (`position: sticky; top: 0`)
+- **Sticky first column**: for wide tables with horizontal scroll, first column (usually name/identifier) stays pinned left
+- **Shadow indicator**: subtle shadow on the sticky edge to signal that content scrolls behind it (e.g., `box-shadow: 2px 0 4px rgba(0,0,0,0.1)` on sticky column)
+- **Z-index**: sticky header = `z-sticky` (20), intersection (header + first column) = +1 above both
+
+### Column Resizing
+
+- **Trigger**: drag the border between column headers
+- **Cursor**: `col-resize` on hover over the border area (4-6px hit zone)
+- **Minimum width**: each column has a minimum (typically 80-120px) to prevent content from becoming unreadable
+- **Persist**: save column widths per user (localStorage or user settings)
+- **Double-click**: auto-resize to fit content (shrink to widest cell value)
+
+### Horizontal Scroll for Wide Tables
+
+- When a table has too many columns for the viewport:
+  - The table container scrolls horizontally (NOT the page)
+  - First column stays sticky
+  - Fade or shadow at the scroll edges to signal more content
+  - Horizontal scrollbar visible (or scroll hint arrows on hover)
+- **Mobile**: tables with 5+ columns → allow horizontal scroll with momentum scrolling. Consider an alternative layout (cards) for truly narrow screens.
+
+### Row Expansion (Inline Detail)
+
+```
+│ Jane Doe    ● Active    Mar 20    $1,234    ▶ │
+├─────────────────────────────────────────────────┤
+│ John Smith  ○ Invited   Mar 19    $567      ▼ │
+│ ┌─────────────────────────────────────────┐    │
+│ │ Email: john@example.com                 │    │
+│ │ Role: Member · Invited by @jane         │    │
+│ │ Last login: Never                       │    │
+│ └─────────────────────────────────────────┘    │
+│ Alice M.    ● Active    Mar 18    $890      ▶ │
+```
+
+- Chevron in last column or first column to toggle expansion
+- Expanded content appears as an inset row below (different background color, slightly indented)
+- Only one row expanded at a time (default) or multiple (configurable)
+- Animation: slide-down (200ms)

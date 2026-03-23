@@ -20,9 +20,9 @@ domains:
     file_count: 3
 
   design:
-    description: "Cross-platform design reference: tokens (spacing, typography, colors, motion), platform systems (HIG, Material, Web, CLI/TUI), UI components (forms, lists, modals, payments, log viewer, data viz, real-time streams, email templates), visual QA rules, accessibility (WCAG), market design references (landing pages, app UI, app views, per-company systems)."
+    description: "Cross-platform design reference: tokens (spacing, typography, colors, motion), platform systems (HIG, Material, Web, CLI/TUI), UI components (forms, lists, modals, buttons, navigation, feedback, payments, log viewer, data viz, real-time streams, email templates), visual QA rules (responsive, cursors, scrollbars, alignment, image fitting, truncation), accessibility (WCAG), market design references (landing pages, app UI, app views incl. integrations/webhooks/audit log, per-company systems)."
     status: complete
-    file_count: 24
+    file_count: 27
     subdirectories:
       - components
       - quality

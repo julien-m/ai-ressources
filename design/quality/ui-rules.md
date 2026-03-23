@@ -100,3 +100,155 @@ When a visual mockup or reference image exists (AI-generated or user-provided), 
 - **Sanity-check AI-generated mockups**: AI mockups may show impossible layouts (overlapping elements, inconsistent spacing, text that doesn't fit). Identify and resolve conflicts before implementing — don't blindly reproduce a broken layout
 - **Screenshot after implementation** (Playwright or equivalent) and compare visually to the mockup before marking a task complete
 - **Match intensity of effects**: if the mockup shows a strong glow, implement a strong glow — don't default to subtle
+
+## Responsive — Mandatory Rule
+
+Responsiveness is NOT optional. Every application must support multiple form factors:
+
+- **Web applications**: mobile (< 768px) + tablet (768–1023px) + desktop (≥ 1024px) — minimum 3 breakpoints
+- **Native mobile applications**: phone + tablet — minimum 2 form factors
+- **Exception**: phone-only apps (must be explicitly justified — rare in 2026)
+
+No layout, component, or view may be designed for a single viewport only. If it works on desktop, it must degrade gracefully on mobile — and vice versa.
+
+Breakpoints reference (Tailwind-aligned, mobile-first):
+
+| Token | Range | Target |
+|-------|-------|--------|
+| xs | 0–479px | Small phone |
+| sm | 480–639px | Large phone |
+| md | 640–767px | Small tablet |
+| lg | 768–1023px | Tablet / small laptop |
+| xl | 1024–1279px | Laptop / desktop |
+| 2xl | 1280+px | Large desktop |
+
+## Cursors
+
+Every interactive element must use the correct CSS cursor to signal its affordance:
+
+| Element type | Cursor | Notes |
+|-------------|--------|-------|
+| Buttons, links, clickable cards | `pointer` | Hand icon — signals "this is clickable" |
+| Text inputs, textareas | `text` | I-beam — signals "this is editable" |
+| Selectable/copyable text | `text` | I-beam, even if not editable (allows selection) |
+| Disabled buttons/controls | `not-allowed` | Slash circle — signals "this is not available" |
+| Draggable elements | `grab` (idle), `grabbing` (active) | Signals drag-and-drop affordance |
+| Resizable edges (columns, panels) | `col-resize` or `row-resize` | Signals resize affordance |
+| Loading/processing | `wait` or `progress` | Signals system is working (use sparingly) |
+| Default (non-interactive areas) | `default` | Arrow — signals "nothing to interact with here" |
+
+**Rules:**
+- Never use `default` (arrow) cursor on a clickable element — this is a common bug that confuses users
+- Never use `pointer` on non-clickable text — this falsely suggests interactivity
+- Draggable items: show `grab` on hover, switch to `grabbing` on mousedown
+- Ensure cursor changes are consistent across all interactive components
+
+## Scrollbars
+
+Unintentional scrollbars are bugs. Audit scrollbar behavior for every component and view.
+
+**Prevention:**
+- Never let child elements overflow parent containers unintentionally
+- Use `overflow: hidden` on containers that should not scroll, `overflow: auto` on containers that may scroll
+- Never use `overflow: scroll` (always shows scrollbar) — prefer `overflow: auto` (shows only when needed)
+- Test at multiple viewport sizes — a container that fits at 1440px may overflow at 1024px
+
+**Styling (web):**
+- Thin scrollbars: 6-8px width (use `scrollbar-width: thin` or WebKit pseudo-elements)
+- Color: match theme (subtle gray, not default OS blue/gray)
+- Show on hover/scroll only (`scrollbar-gutter: stable` to reserve space without showing)
+- Mobile: hide custom scrollbars — use native momentum scrolling
+
+**Audit checklist:**
+- [ ] No horizontal scroll on any view (unless explicitly a horizontal scroll container like tabs or carousel)
+- [ ] No double scrollbars (parent + child both scrolling vertically)
+- [ ] Sidebar scrolls independently from main content
+- [ ] Modal body scrolls if content overflows, but page behind does not
+- [ ] Tables with many columns: horizontal scroll on the table container, not the page
+
+## Alignment
+
+Consistent alignment prevents visual chaos. Every element must be deliberately aligned.
+
+**Text alignment:**
+- Labels, titles, descriptions: **left-aligned** (LTR) or right-aligned (RTL)
+- Numbers, prices, percentages: **right-aligned** in tables and columns (aligns decimal points)
+- Center alignment: only for very short content (buttons labels, empty state messages, single-line headers)
+
+**Vertical alignment within rows:**
+- Single-line rows: **center vertically** (align-items: center)
+- Multi-line rows (title + subtitle): **top-aligned** (align-items: flex-start)
+- Icon + text: icon centered to first line of text, not to the whole text block
+
+**Grid alignment:**
+- All elements on the same row must share the same baseline or vertical center
+- Cards in a grid: same height per row (use CSS Grid `auto-rows` or `align-items: stretch`)
+- Form labels: consistent width (or consistent position — above or beside, not mixed)
+
+**Common alignment bugs:**
+- [ ] Buttons in a group are not the same height
+- [ ] Avatar and text in a row are not vertically centered
+- [ ] Table columns are not consistently aligned (mixing left and center)
+- [ ] Cards in a grid have inconsistent heights (varying content length)
+
+## Image Fitting
+
+Images must always fit their container correctly. Never stretch, squash, or overflow.
+
+**Object-fit rules:**
+
+| Content type | object-fit | Behavior | Use case |
+|-------------|-----------|----------|----------|
+| Avatars, profile photos | `cover` | Fill container, crop edges | Always circular or square, cropped to center |
+| Thumbnails, cards | `cover` | Fill container, crop edges | Product images, video thumbnails, hero images |
+| Logos, illustrations | `contain` | Fit inside, preserve aspect ratio, may letterbox | Company logos, icons, SVG illustrations |
+| Screenshots, diagrams | `contain` | Fit inside, preserve aspect ratio | Documentation, mockups, full-width previews |
+| Background images | `cover` | Fill area, crop edges | Hero sections, cards with background image |
+
+**Rules:**
+- **Never distort aspect ratio** — `object-fit: fill` (the default) stretches. Always set `cover` or `contain`.
+- **Always set dimensions** on image containers (width + height or aspect-ratio) to prevent CLS (layout shift)
+- **Fallback**: if image fails to load, show a neutral placeholder (gray background + subtle icon or initial)
+- **Border-radius**: avatars = 50% (circle), cards = match card border-radius, logos = 0 (sharp edges)
+- **Lazy loading**: `loading="lazy"` for below-fold images, eager for above-fold/LCP images
+
+## Truncation
+
+Text that exceeds its container must be handled deliberately — never hidden without indication.
+
+**Single-line truncation:**
+```css
+overflow: hidden;
+text-overflow: ellipsis;
+white-space: nowrap;
+```
+- Use for: table cells, list item titles, sidebar labels, card titles
+- **Always add tooltip on hover** showing the full text (mandatory — truncated text without tooltip is inaccessible)
+
+**Multi-line clamping:**
+```css
+display: -webkit-box;
+-webkit-line-clamp: 2; /* or 3 */
+-webkit-box-orient: vertical;
+overflow: hidden;
+```
+- Use for: card descriptions (2-3 lines), preview text, notification messages
+- Add "Show more" link if full content is important
+
+**Rules:**
+- Never truncate essential identifiers (IDs, emails, dates) — these must always be fully visible or expandable
+- Truncation is always a deliberate design choice, never an accident (as per existing Text rules)
+- Test with extreme content: 5-character name AND 50-character name in the same component
+
+## Dividers
+
+**When to use lines vs spacing:**
+- **Lines (1px border)**: between heterogeneous content (different sections, different content types)
+- **Spacing only**: between homogeneous content (same type of list rows, same type of cards)
+- **When in doubt**: use spacing. Lines add visual noise.
+
+**Specifications:**
+- Color: `--color-border` or `rgba(0,0,0,0.08)` (light mode) / `rgba(255,255,255,0.08)` (dark mode)
+- Height: 1px — never thicker unless it's a named section divider
+- Full-width: for major section breaks
+- Inset (indented): for list items (indent matches content padding, not edge-to-edge)

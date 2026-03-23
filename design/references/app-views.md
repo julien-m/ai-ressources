@@ -949,3 +949,204 @@ Avant de livrer une application SaaS :
 - [ ] Error pages (404, 403, 500) avec CTA retour
 - [ ] Danger zone en bas de chaque page de settings destructive
 - [ ] Confirmation modale pour toute action irréversible
+
+---
+
+## Settings — Integrations
+
+Connected third-party apps and services.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Integrations                                  [Browse all →] │
+│                                                              │
+│ CONNECTED                                                    │
+│                                                              │
+│ ┌────────────────────────────────────────────────────────┐  │
+│ │ [Logo] Slack                        ● Connected  [⋯]  │  │
+│ │        Post notifications to #product channel          │  │
+│ │        Connected by @jane · Mar 1, 2026                │  │
+│ └────────────────────────────────────────────────────────┘  │
+│                                                              │
+│ ┌────────────────────────────────────────────────────────┐  │
+│ │ [Logo] GitHub                       ● Connected  [⋯]  │  │
+│ │        Auto-link commits to issues                     │  │
+│ │        Connected by @john · Feb 15, 2026               │  │
+│ └────────────────────────────────────────────────────────┘  │
+│                                                              │
+│ AVAILABLE                                                    │
+│                                                              │
+│ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
+│ │ [Logo]   │ │ [Logo]   │ │ [Logo]   │ │ [Logo]   │       │
+│ │ Figma    │ │ Jira     │ │ Sentry   │ │ Zapier   │       │
+│ │ [Connect]│ │ [Connect]│ │ [Connect]│ │ [Connect]│       │
+│ └──────────┘ └──────────┘ └──────────┘ └──────────┘       │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Elements:**
+- Two sections: Connected (active integrations) and Available (installable)
+- Connected cards: logo (32-40px) + name + status badge (● Connected, green) + description + who connected + when + overflow menu (⋯ → Configure / Disconnect)
+- Available cards: logo + name + "Connect" button
+- Search/filter: optional for 10+ integrations
+- "Browse all" link: opens a full catalog/marketplace if many integrations
+
+**Disconnect flow:**
+- Confirmation modal: "Disconnect Slack? This will stop all notifications to #product."
+- Clearly state what will stop working
+- No type-to-confirm (reversible action — user can reconnect)
+
+**Empty state:**
+- "No integrations connected yet" + brief value proposition + "Browse integrations" CTA
+
+---
+
+## Settings — Webhooks
+
+Webhook endpoints for event delivery.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Webhooks                                    [+ Add endpoint] │
+│                                                              │
+│ ENDPOINT          EVENTS       STATUS    LAST DELIVERY       │
+│                                                              │
+│ https://api.ex…   5 events     ● Active  ✓ 2min ago    [⋯] │
+│   Created Mar 1, 2026                                        │
+│                                                              │
+│ https://staging…  All events   ● Active  ✕ Failed 1h   [⋯] │
+│   Created Feb 20, 2026                                       │
+│                                                              │
+│ https://old.ex…   3 events     ○ Disabled  — Never     [⋯] │
+│   Created Jan 5, 2026                                        │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Create/Edit endpoint modal:**
+
+```
+┌───────────────────────────────────────────┐
+│ Add webhook endpoint                      │
+│                                           │
+│ Endpoint URL                              │
+│ ┌───────────────────────────────────┐    │
+│ │ https://                          │    │
+│ └───────────────────────────────────┘    │
+│                                           │
+│ Events                                    │
+│ ○ All events                              │
+│ ● Select events                           │
+│   ☑ invoice.paid                          │
+│   ☑ customer.created                      │
+│   ☐ charge.failed                         │
+│   ☐ subscription.updated                  │
+│   [Show all events...]                    │
+│                                           │
+│ Signing secret                            │
+│ ┌───────────────────────────────────┐ 📋 │
+│ │ whsec_••••••••••••4f2a            │    │
+│ └───────────────────────────────────┘    │
+│ Reveal secret only once (Stripe pattern)  │
+│                                           │
+│              [Cancel]  [Create endpoint]  │
+└───────────────────────────────────────────┘
+```
+
+**Delivery log (click on endpoint to expand):**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ ← Webhooks    https://api.example.com/webhooks               │
+│                                                              │
+│ STATUS    EVENT              RESPONSE    TIMESTAMP            │
+│ ✓ 200     invoice.paid       200 OK      Mar 20, 14:32:01   │
+│ ✓ 200     customer.created   200 OK      Mar 20, 14:31:45   │
+│ ✕ 500     charge.failed      500 Error   Mar 20, 14:30:12   │
+│           ↳ Next retry: Mar 20, 14:35                        │
+│ ✓ 200     invoice.paid       200 OK      Mar 19, 09:15:33   │
+│                                                              │
+│                                          [Load more]         │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Conventions:**
+- **URL**: monospace, truncated with tooltip for long URLs
+- **Signing secret**: visible once on creation (like API tokens), masked afterward. Copy button.
+- **Events**: checkbox list, grouped by resource type (customer.*, invoice.*, charge.*). "Select all" per group.
+- **Delivery log**: status code (colored: 2xx green, 4xx/5xx red), event name, response, timestamp (precise, not relative — financial/technical data)
+- **Retry**: automatic on failure (exponential backoff), next retry time shown inline
+- **Disable/Enable**: toggle without deleting — preserves configuration
+- **Delete**: confirmation modal, warns about data loss (delivery history deleted)
+- **Test**: "Send test event" button to verify endpoint is working
+
+**Empty state:**
+- "No webhook endpoints" + explanation of what webhooks do + "Add your first endpoint" CTA
+
+---
+
+## Settings — Audit Log
+
+Security and compliance event history.
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Audit log                                                    │
+│                                                              │
+│ [Search events...]  [Actor ▾]  [Action ▾]  [Date range ▾]   │
+│                                                              │
+│ TIMESTAMP           ACTOR          ACTION          TARGET    │
+│                                                              │
+│ Mar 20, 14:32 UTC   [Av] Jane D.  Deleted token   "CI/CD"  │
+│ Mar 20, 14:30 UTC   [Av] Jane D.  Updated role    @john →   │
+│                                                    Member    │
+│ Mar 20, 09:15 UTC   [Av] John S.  Logged in       —         │
+│                                    from Paris, FR            │
+│ Mar 19, 18:42 UTC   System        Renewed plan    Pro Plan  │
+│ Mar 19, 16:00 UTC   [Av] Alice M. Invited user    bob@ex…   │
+│ Mar 19, 10:23 UTC   [Av] Jane D.  Enabled 2FA     —         │
+│                                                              │
+│ Showing 6 of 1,247 events              [← 1 2 3 ... 42 →]  │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Event detail (click on row to expand):**
+
+```
+┌──────────────────────────────────────────────────────────────┐
+│ Event detail                                                 │
+│                                                              │
+│ Action       Deleted token                                   │
+│ Actor        Jane Doe (jane@example.com)                     │
+│ Timestamp    Mar 20, 2026 14:32:15 UTC                       │
+│ IP address   203.0.113.42                                    │
+│ User agent   Chrome 122 · macOS 15.3                         │
+│ Target       API token "CI/CD" (sk-ci-••••8b1c)             │
+│ Changes      status: active → deleted                        │
+│                                                              │
+│                                              [Export JSON]   │
+└──────────────────────────────────────────────────────────────┘
+```
+
+**Elements:**
+- **Columns**: timestamp (precise UTC), actor (avatar + name), action (verb), target (resource affected)
+- **Filters**: search (free text), actor (dropdown of team members + "System"), action type (dropdown), date range
+- **Pagination**: numbered pages, not infinite scroll (audit = precision, need to jump to specific period)
+- **Export**: CSV or JSON export of filtered results (for compliance reporting)
+- **Retention**: display retention period ("Events retained for 90 days" or "1 year" depending on plan)
+
+**Event types to log (standard):**
+- Authentication: login, logout, failed login, 2FA enabled/disabled, password changed
+- Team: member invited, member removed, role changed
+- Security: API token created/deleted, webhook created/deleted, session revoked
+- Billing: plan changed, payment method updated, invoice generated
+- Data: workspace settings changed, resource deleted
+
+**Conventions:**
+- **Timestamps**: always UTC, precise to the second (not relative — audit needs precision)
+- **Actor "System"**: for automated events (plan renewal, scheduled deletion, system alerts) — use a distinct system icon, not an avatar
+- **IP address and user agent**: shown in detail view, not in list (privacy consideration)
+- **Immutable**: audit log entries cannot be edited or deleted by any user (compliance requirement)
+- **Read-only for non-admins**: only Admin role can view audit log (or a dedicated "Auditor" role)
+
+**Empty state:**
+- "No events recorded yet" + brief explanation of what the audit log tracks
