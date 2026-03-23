@@ -58,6 +58,8 @@ sections:
         description: "Standard SaaS views catalog: dashboard, settings (general/profile/security/tokens/billing/team/notifications), user management, auth, activity log, search, error pages"
       - file: references/devtools.md
         description: "DevTools UI conventions: monitoring dashboards, log viewers, deployment pipelines, container management. References: Axiom, Grafana, Datadog, Portainer, Coolify, Railway, Cloudflare, Uptime Kuma"
+      - file: references/mockup-specs.md
+        description: "Mockup maquettage reference: explicit px values for component heights, paddings, icon sizes, modal/dialog anatomy, mobile translations, overlay opacities, layout composition patterns, corner radius, screen dimensions. Based on shadcn/ui + SaaS conventions. For design tools only — not for code."
 
   quality:
     description: "Visual QA and non-regression rules"

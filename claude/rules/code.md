@@ -35,6 +35,9 @@ When the task involves frontend or UI work, also load the relevant design refere
 
 Component references (load when relevant): [`forms.md`](../../design/components/forms.md), [`lists.md`](../../design/components/lists.md), [`modals.md`](../../design/components/modals.md)
 
+When the task involves **design maquettage** (generating mockups in Pencil, Figma, or any tool without built-in design system components), also load:
+- **Read** [`mockup-specs.md`](../../design/references/mockup-specs.md) — explicit px values for component heights, paddings, icon sizes, modal anatomy, mobile translations, overlays, and layout composition patterns. **Do not use these values in code** — use design system components instead.
+
 ## Display rule
 
 This rule is subject to the same guard clause as the rest of this file: **do not display anything for non-coding tasks.**

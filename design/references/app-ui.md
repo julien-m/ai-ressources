@@ -156,6 +156,8 @@ Deux approches :
 
 **Recommandation** : Header contextuel pour les apps denses (PM tools, devtools). Topbar globale pour les apps avec navigation account/org complexe (fintech, collaboration).
 
+> **Pour les valeurs de maquettage** (hauteurs en px, tailles d'icônes, largeurs de modals, opacités, translations mobile) : voir [mockup-specs.md](mockup-specs.md). Ce fichier est dédié à la génération de maquettes dans des outils sans composants design system intégrés.
+
 ---
 
 ## Composants clés
