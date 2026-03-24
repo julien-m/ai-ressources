@@ -2,31 +2,55 @@ files:
   - file: auth-flows.md
     description: "OAuth2/OIDC flows, JWT strategies, token refresh patterns"
     status: complete
+    use_when: ["authentication", "login flow", "OAuth2", "JWT", "token refresh", "MFA", "social login"]
+    questions_answered: ["Which auth flow for my SaaS?", "JWT vs session?", "How to handle token refresh?", "MFA implementation?"]
+    see_also: ["../stack-ref/auth/", "../code-conventions/general.md"]
 
   - file: multi-tenant.md
     description: "Multi-tenant architecture: DB-per-tenant, schema-per-tenant, row-level security"
     status: complete
+    use_when: ["multi-tenant", "B2B SaaS", "tenant isolation", "row-level security", "organization model"]
+    questions_answered: ["Which tenant isolation strategy?", "DB-per-tenant vs RLS?", "How to handle tenant data?"]
+    see_also: ["auth-flows.md", "../stack-ref/databases/"]
 
   - file: rate-limiting.md
     description: "Rate limiting strategies: token bucket, sliding window, distributed rate limiting"
     status: complete
+    use_when: ["rate limiting", "API throttling", "abuse prevention", "usage quotas", "DDoS protection"]
+    questions_answered: ["Which rate limiting algorithm?", "How to implement distributed rate limiting?", "Quota design for API?"]
+    see_also: ["../pricing-models/usage-based.md", "../stack-ref/databases/upstash-redis.md"]
 
   - file: webhook-patterns.md
     description: "Webhook design: delivery guarantees, retry logic, signature verification, idempotency"
     status: complete
+    use_when: ["webhooks", "event delivery", "retry logic", "signature verification", "idempotency"]
+    questions_answered: ["How to design reliable webhooks?", "Retry strategy?", "How to verify webhook signatures?", "Idempotency keys?"]
+    see_also: ["event-driven.md", "background-jobs.md", "../code-conventions/logging.md"]
 
   - file: event-driven.md
     description: "Event-driven architecture, pub/sub, message queues, CQRS, event sourcing"
     status: complete
+    use_when: ["event-driven", "pub/sub", "message queue", "CQRS", "event sourcing", "decoupling services"]
+    questions_answered: ["When to use event-driven?", "CQRS worth it?", "Event sourcing vs CRUD?", "Which message broker?"]
+    see_also: ["webhook-patterns.md", "background-jobs.md", "../stack-ref/jobs/"]
 
   - file: caching-strategies.md
     description: "Multi-layer caching: application, Redis/KV, CDN/edge, invalidation strategies"
     status: complete
+    use_when: ["caching", "Redis", "CDN", "edge caching", "cache invalidation", "performance"]
+    questions_answered: ["Which caching layer?", "Cache invalidation strategy?", "Redis vs KV vs CDN?", "Stale-while-revalidate?"]
+    see_also: ["../stack-ref/databases/upstash-redis.md", "../stack-ref/platforms/cloudflare.md"]
 
   - file: background-jobs.md
     description: "Background job patterns: queues, workflows, retry, DLQ, observability"
     status: complete
+    use_when: ["background jobs", "async processing", "queues", "cron jobs", "workflow orchestration", "DLQ"]
+    questions_answered: ["Which job queue?", "How to handle retries and DLQ?", "Job observability?", "Cron vs event-triggered?"]
+    see_also: ["event-driven.md", "../stack-ref/jobs/", "../code-conventions/logging.md"]
 
   - file: database-migrations.md
     description: "Database migration patterns: versioning, zero-downtime, expand/contract, rollback"
     status: complete
+    use_when: ["database migration", "schema change", "zero-downtime deploy", "rollback strategy"]
+    questions_answered: ["How to do zero-downtime migrations?", "Expand/contract pattern?", "Rollback strategy?", "Migration versioning?"]
+    see_also: ["../code-conventions/database.md", "../stack-ref/databases/"]

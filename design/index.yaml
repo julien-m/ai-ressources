@@ -30,42 +30,93 @@ sections:
     files:
       - file: components/forms.md
         description: "Form patterns: validation, layout, input types, error states"
+        use_when: ["form design", "input validation UX", "form layout", "error states"]
+        questions_answered: ["How to layout a form?", "Inline vs summary validation?", "Which input types?"]
+        see_also: ["../quality/ui-rules.md", "../tokens/spacing.md"]
       - file: components/lists.md
         description: "List patterns: virtualization, pull-to-refresh, swipe actions"
+        use_when: ["list UI", "infinite scroll", "pull-to-refresh", "swipe actions", "virtualization"]
+        questions_answered: ["When to virtualize?", "Pull-to-refresh pattern?", "Swipe action conventions?"]
+        see_also: ["../quality/ui-rules.md"]
       - file: components/modals.md
         description: "Modals and dialogs: sheets, alerts, confirmation patterns"
+        use_when: ["modal design", "dialog", "bottom sheet", "alert", "confirmation flow"]
+        questions_answered: ["Modal vs sheet vs alert?", "Confirmation dialog pattern?", "Nested modals?"]
+        see_also: ["../quality/accessibility.md"]
       - file: components/payment-flows.md
         description: "Payment UX patterns: tip/donation, subscription, one-time, express checkout, error handling"
+        use_when: ["payment UI", "checkout flow", "tip/donation UX", "subscription billing UI"]
+        questions_answered: ["Checkout flow best practices?", "How to handle payment errors?", "Express checkout?"]
+        see_also: ["../../stack-ref/payments/", "../../legal/cgv-saas.md", "../../pricing-models/"]
       - file: components/log-viewer.md
         description: "Log viewer patterns: terminal streaming, web table layout, filtering, JSON expand, multi-service"
+        use_when: ["log viewer", "terminal UI", "log streaming", "JSON viewer", "devtools UI"]
+        questions_answered: ["How to build a log viewer?", "Auto-scroll behavior?", "Log filtering patterns?"]
+        see_also: ["../references/devtools.md", "realtime-streams.md"]
       - file: components/data-visualization.md
         description: "Data visualization patterns: metric cards, sparklines, charts (line/bar/area/pie), dashboard layout, number formatting"
+        use_when: ["dashboard", "charts", "metrics display", "data visualization", "sparklines"]
+        questions_answered: ["Which chart type?", "Dashboard layout patterns?", "Number formatting conventions?"]
+        see_also: ["../references/devtools.md", "../references/app-ui.md"]
       - file: components/realtime-streams.md
         description: "Real-time streaming UI: WebSocket/SSE, reconnection, buffering, auto-scroll, optimistic updates, token streaming"
+        use_when: ["real-time UI", "WebSocket", "SSE", "live updates", "chat UI", "AI token streaming"]
+        questions_answered: ["WebSocket vs SSE?", "Reconnection strategy?", "Optimistic updates?", "Token streaming UI?"]
+        see_also: ["log-viewer.md", "../../architecture/event-driven.md"]
       - file: components/email-templates.md
         description: "Email template patterns: responsive layout, dark mode, client quirks, components"
+        use_when: ["email design", "transactional email", "email template", "dark mode email"]
+        questions_answered: ["Email client compatibility?", "Responsive email layout?", "Dark mode support?"]
+        see_also: ["../../copywriting/email-sequences.md", "../../stack-ref/email/"]
       - file: components/buttons.md
         description: "Button patterns: variants, sizes, states, icons, loading, groups, accessibility"
+        use_when: ["button design", "CTA button", "button states", "button group", "icon button"]
+        questions_answered: ["Button variant hierarchy?", "Loading state pattern?", "Icon button accessibility?"]
+        see_also: ["forms.md", "../quality/accessibility.md"]
       - file: components/feedback.md
         description: "Feedback patterns: toasts, alerts, banners, progress indicators, empty states, skeleton loading"
+        use_when: ["toast notification", "alert banner", "empty state", "skeleton loading", "progress indicator"]
+        questions_answered: ["Toast vs alert vs banner?", "Empty state design?", "Skeleton loading pattern?"]
+        see_also: ["../quality/ui-rules.md", "../quality/accessibility.md"]
       - file: components/navigation.md
         description: "Navigation patterns: tabs, breadcrumbs, sidebars, menus, mobile bottom nav, command palette"
+        use_when: ["navigation design", "sidebar", "tabs", "breadcrumbs", "mobile nav", "command palette"]
+        questions_answered: ["Sidebar vs top nav?", "Mobile navigation pattern?", "Command palette implementation?"]
+        see_also: ["../references/app-ui.md", "../quality/accessibility.md"]
 
   references:
     description: "Market design references: per-company design systems, landing page conventions, app UI patterns (based on 2026 market analysis)"
     files:
       - file: references/landing-pages.md
         description: "Landing page conventions by product type: devtools, B2B SaaS, fintech, consumer, creators, health, AI, e-commerce"
+        use_when: ["landing page design", "marketing site", "product page layout", "hero section"]
+        questions_answered: ["Landing page conventions by industry?", "Hero section patterns?", "Social proof placement?"]
+        see_also: ["../../copywriting/landing-page.md", "../../seo/core-web-vitals.md"]
       - file: references/app-ui.md
-        description: "App UI conventions: universal SaaS patterns, layout, components, views by category (PM, dashboard, editor, library, fintech, health, AI, e-commerce)"
+        description: "App UI conventions: universal SaaS patterns, layout, components, views by category"
+        use_when: ["SaaS app design", "dashboard layout", "app shell", "sidebar layout"]
+        questions_answered: ["Standard SaaS layout?", "Dashboard design patterns?", "App shell structure?"]
+        see_also: ["app-views.md", "devtools.md", "../components/navigation.md"]
       - file: references/design-references.md
-        description: "Per-company design system references: Vercel, Resend, Linear, Stripe, Clerk, Raycast, Supabase, Ko-fi, BMC, Patreon, Gumroad, beehiiv, Contra, Revolut, Wise, Monzo, Doctolib, Alan, Withings, Duolingo, Arc, Craft, Superhuman, Framer, Pitch, Claude, ChatGPT, Perplexity, Shopify, Etsy, Vinted"
+        description: "Per-company design system references: Vercel, Linear, Stripe, Clerk, etc."
+        use_when: ["design inspiration", "design system reference", "company design benchmarks"]
+        questions_answered: ["How does Stripe/Linear/Vercel design their UI?", "Design system benchmarks?"]
+        see_also: ["app-ui.md", "landing-pages.md"]
       - file: references/app-views.md
-        description: "Standard SaaS views catalog: dashboard, settings (general/profile/security/tokens/billing/team/notifications), user management, auth, activity log, search, error pages"
+        description: "Standard SaaS views catalog: dashboard, settings, user management, auth, activity log"
+        use_when: ["settings page", "user management UI", "activity log", "auth pages", "standard SaaS views"]
+        questions_answered: ["What views does a SaaS need?", "Settings page structure?", "Activity log design?"]
+        see_also: ["app-ui.md", "../components/forms.md", "../components/lists.md"]
       - file: references/devtools.md
-        description: "DevTools UI conventions: monitoring dashboards, log viewers, deployment pipelines, container management. References: Axiom, Grafana, Datadog, Portainer, Coolify, Railway, Cloudflare, Uptime Kuma"
+        description: "DevTools UI conventions: monitoring dashboards, log viewers, deployment pipelines"
+        use_when: ["devtools UI", "monitoring dashboard", "deployment UI", "container management"]
+        questions_answered: ["DevTools dashboard patterns?", "Log viewer layout?", "Deployment pipeline UI?"]
+        see_also: ["app-ui.md", "../components/log-viewer.md", "../components/data-visualization.md"]
       - file: references/mockup-specs.md
-        description: "Mockup maquettage reference: explicit px values for component heights, paddings, icon sizes, modal/dialog anatomy, mobile translations, overlay opacities, layout composition patterns, corner radius, screen dimensions. Based on shadcn/ui + SaaS conventions. For design tools only — not for code."
+        description: "Mockup maquettage reference: explicit px values for component heights, paddings, icon sizes"
+        use_when: ["mockup", "maquettage", "wireframe", "pixel specs", "component dimensions"]
+        questions_answered: ["Standard component heights?", "Padding values?", "Modal dimensions?", "Mobile screen sizes?"]
+        see_also: ["../tokens/spacing.md", "../tokens/typography.md"]
 
   quality:
     description: "Visual QA and non-regression rules"
