@@ -190,3 +190,8 @@ Pour un SaaS indie : **généralement pas obligatoire**, mais recommandé de dé
 - [ ] Implémenter un bandeau cookies conforme CNIL.
 - [ ] Conserver les preuves de consentement.
 - [ ] Maintenir un registre des violations (même vide).
+
+## Voir aussi
+- [Privacy policy](privacy-policy.md) — politique de confidentialité type
+- [Cookie policy](cookie-policy.md) — gestion des cookies
+- [Mentions légales](mentions-legales.md) — obligations d'identification

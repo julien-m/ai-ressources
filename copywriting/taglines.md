@@ -185,3 +185,7 @@ Si la phrase fonctionne aussi avec le nom d'un concurrent, le différenciateur n
 - [ ] Mémorisable après une seule lecture
 - [ ] Le H2 ajoute une info, ne répète pas le H1
 - [ ] Testée auprès de 3+ personnes de la cible
+
+## Voir aussi
+- [Landing page copywriting](landing-page.md) — intégration des taglines dans la page
+- [SEO programmatique](../seo/programmatic.md) — taglines et title tags

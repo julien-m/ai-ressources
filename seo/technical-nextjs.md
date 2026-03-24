@@ -241,3 +241,9 @@ const nextConfig = {
 - [ ] Bundle analysis : pas de dependances lourdes cote client
 - [ ] Tester avec Rich Results Test et PageSpeed Insights
 - [ ] Verifier l'indexation dans Search Console apres deploiement
+
+## Voir aussi
+- [Core Web Vitals](core-web-vitals.md) — métriques de performance
+- [SEO programmatique](programmatic.md) — génération de pages à l'échelle
+- [Web standards design](../design/systems/web-standards.md) — responsive et accessibilité
+- [Landing page copywriting](../copywriting/landing-page.md) — contenu optimisé SEO

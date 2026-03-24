@@ -44,6 +44,12 @@ sections:
         description: "Real-time streaming UI: WebSocket/SSE, reconnection, buffering, auto-scroll, optimistic updates, token streaming"
       - file: components/email-templates.md
         description: "Email template patterns: responsive layout, dark mode, client quirks, components"
+      - file: components/buttons.md
+        description: "Button patterns: variants, sizes, states, icons, loading, groups, accessibility"
+      - file: components/feedback.md
+        description: "Feedback patterns: toasts, alerts, banners, progress indicators, empty states, skeleton loading"
+      - file: components/navigation.md
+        description: "Navigation patterns: tabs, breadcrumbs, sidebars, menus, mobile bottom nav, command palette"
 
   references:
     description: "Market design references: per-company design systems, landing page conventions, app UI patterns (based on 2026 market analysis)"

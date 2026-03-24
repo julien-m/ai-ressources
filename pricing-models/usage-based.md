@@ -177,3 +177,8 @@ Plan Pro : 49 EUR/mois
 - **Choisir hybride** pour les SaaS B2B avec une base de fonctionnalites + une composante variable (modele dominant 2025-2026).
 - **Eviter pure usage** si l'audience a besoin de previsibilite budgetaire ou si la metrique de consommation n'est pas intuitive.
 - **Toujours implementer** : estimateur de cout, alertes de seuil, dashboard temps reel.
+
+## Voir aussi
+- [CGV SaaS](../legal/cgv-saas.md) — facturation à l'usage et conditions
+- [Rate limiting](../architecture/rate-limiting.md) — contrôle de la consommation
+- [Merchant of Record](../legal/merchant-of-record.md) — délégation de la facturation complexe

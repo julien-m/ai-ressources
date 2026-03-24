@@ -190,3 +190,9 @@ Le bandeau cookies (séparé des mentions légales) doit :
 - [ ] Médiateur de la consommation désigné (si B2C).
 - [ ] Date de dernière mise à jour affichée.
 - [ ] Informations mises à jour après tout changement de statut, adresse ou hébergeur.
+
+## Voir aussi
+- [Privacy policy](privacy-policy.md) — politique de confidentialité
+- [Cookie policy](cookie-policy.md) — politique cookies
+- [CGV SaaS](cgv-saas.md) — conditions générales de vente
+- [RGPD obligations](rgpd-obligations.md) — checklist RGPD

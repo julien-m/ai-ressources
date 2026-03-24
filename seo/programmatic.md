@@ -198,3 +198,8 @@ export default async function sitemap(): Promise<MetadataRoute.Sitemap> {
 - [ ] Velocite : publication progressive (50-500 pages/jour)
 - [ ] Monitoring : Search Console, pages indexees, impressions, CTR
 - [ ] Review qualite : audit manuel d'un echantillon avant publication de masse
+
+## Voir aussi
+- [Taglines copywriting](../copywriting/taglines.md) — title tags et meta descriptions
+- [Landing page copywriting](../copywriting/landing-page.md) — pages programmatiques
+- [SEO technique Next.js](technical-nextjs.md) — implémentation technique

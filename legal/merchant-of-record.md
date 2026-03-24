@@ -191,3 +191,8 @@ Chaque transaction génère une écriture comptable. La TVA doit être déclaré
 | > 10 000 euros ventes intra-UE B2C, comptable dispo | Stripe + OSS |
 | Ventes mondiales (hors UE inclus) | MoR fortement recommandé |
 | B2B uniquement (autoliquidation) | Stripe direct (TVA simplifiée) |
+
+## Voir aussi
+- [CGV SaaS](cgv-saas.md) — conditions de vente directe (alternative au MoR)
+- [Usage-based pricing](../pricing-models/usage-based.md) — facturation complexe
+- [Stripe](../stack-ref/payments/stripe.md) — paiement direct sans MoR

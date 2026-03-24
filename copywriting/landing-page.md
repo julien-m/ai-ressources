@@ -174,3 +174,9 @@ Limiter à 3-6 features sur la landing. Trop de features = aucune ne ressort.
 - [ ] Temps de chargement < 3 secondes (LCP)
 - [ ] Aucun lien externe dans le corps (garder le visiteur sur la page)
 - [ ] Le CTA final reprend la promesse hero avec une formulation différente
+
+## Voir aussi
+- [Landing pages design](../design/references/landing-pages.md) — conventions visuelles par type de produit
+- [SEO technique Next.js](../seo/technical-nextjs.md) — optimisation technique de la landing
+- [Pricing models](../pricing-models/) — choix du modèle de tarification à présenter
+- [Core Web Vitals](../seo/core-web-vitals.md) — performance de la page

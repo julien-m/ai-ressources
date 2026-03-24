@@ -121,3 +121,8 @@ La reverse trial est la variante la plus efficace en 2025-2026. L'utilisateur de
 - **Choisir freemium** si le produit a un effet reseau, un cout marginal faible, et une valeur decouverte progressivement.
 - **Choisir free trial** si la valeur est immediate mais complexe, ou si le cycle de vente est assiste.
 - **Choisir reverse trial** si le produit est entre les deux : valeur forte mais decouverte necessaire.
+
+## Voir aussi
+- [CGU SaaS](../legal/cgu-saas-type.md) — conditions d'utilisation du tier gratuit
+- [Landing page copywriting](../copywriting/landing-page.md) — mise en avant du free tier
+- [Auth flows](../architecture/auth-flows.md) — gestion des rôles free vs paid

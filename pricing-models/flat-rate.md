@@ -131,3 +131,8 @@ Un seul prix = un seul point d'ancrage. Le client compare directement avec le co
 - **Garder le flat-rate** si l'audience est homogene, le produit est simple, et la croissance vient du volume.
 - **Passer au tiered** si les profils clients divergent fortement et que l'expansion revenue est critique.
 - **Flat-rate + enterprise custom** est le meilleur compromis intermediaire.
+
+## Voir aussi
+- [CGV SaaS](../legal/cgv-saas.md) — conditions de vente pour abonnement fixe
+- [Stripe](../stack-ref/payments/stripe.md) — intégration paiement récurrent
+- [Landing page copywriting](../copywriting/landing-page.md) — présentation du pricing

@@ -14,3 +14,15 @@ files:
   - file: merchant-of-record.md
     description: "Merchant of Record model: legal implications, VAT delegation, provider comparison"
     status: complete
+
+  - file: privacy-policy.md
+    description: "Privacy policy template for French SaaS (RGPD-compliant, data types, rights, retention)"
+    status: complete
+
+  - file: cookie-policy.md
+    description: "Cookie policy template for French SaaS (categories, consent, third-party cookies)"
+    status: complete
+
+  - file: cgv-saas.md
+    description: "CGV (general sales conditions) template for paid French SaaS subscription"
+    status: complete

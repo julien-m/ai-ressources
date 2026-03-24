@@ -147,3 +147,7 @@ function handleSearch(query: string) {
 - [ ] TTFB < 800ms (idealement < 200ms)
 - [ ] Compression Brotli activee
 - [ ] Monitoring terrain configure (CrUX, Search Console, ou outil tiers)
+
+## Voir aussi
+- [Web standards design](../design/systems/web-standards.md) — bonnes pratiques CSS/responsive
+- [Landing page copywriting](../copywriting/landing-page.md) — performance de la landing

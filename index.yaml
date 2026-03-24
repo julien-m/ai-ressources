@@ -26,7 +26,7 @@ domains:
   design:
     description: "Cross-platform design reference: tokens (spacing, typography, colors, motion), platform systems (HIG, Material, Web, CLI/TUI), UI components (forms, lists, modals, buttons, navigation, feedback, payments, log viewer, data viz, real-time streams, email templates), visual QA rules (responsive, cursors, scrollbars, alignment, image fitting, truncation), accessibility (WCAG), market design references (landing pages, app UI, app views incl. integrations/webhooks/audit log, per-company systems)."
     status: complete
-    file_count: 27
+    file_count: 30
     last_reviewed: 2026-03-24
     subdirectories:
       - components
@@ -36,10 +36,10 @@ domains:
       - tokens
 
   legal:
-    description: "French/EU legal templates for SaaS: CGU, RGPD, mentions legales, merchant of record."
+    description: "French/EU legal templates for SaaS: CGU, CGV, RGPD, mentions legales, privacy policy, cookie policy, merchant of record."
     status: complete
-    file_count: 4
-    last_reviewed: 2026-03-20
+    file_count: 7
+    last_reviewed: 2026-03-24
 
   pricing-models:
     description: "SaaS pricing model references: freemium, flat-rate, per-seat, usage-based."
@@ -56,7 +56,7 @@ domains:
   stack-ref:
     description: "Vendor comparison sheets with decision matrices, cost comparisons, and recommended stack combos. Covers 12 categories: AI, auth, CMS, databases, email, frontend, jobs, ops, payments, platforms, search, storage."
     status: complete
-    file_count: 50
+    file_count: 58
     last_reviewed: 2026-03-20
     subdirectories:
       - ai

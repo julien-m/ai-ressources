@@ -184,3 +184,7 @@ Règle : les emails transactionnels doivent arriver en < 30 secondes. Pas de bat
 | Pas de plain text fallback | Rendu cassé sur certains clients | Toujours générer une version plain text |
 | Reply-to en noreply@ | Tue l'opportunité de feedback | Utiliser une vraie adresse monitorée |
 | Pas de tracking UTM sur les liens | Impossible de mesurer le ROI | Taguer chaque lien CTA |
+
+## Voir aussi
+- [Email templates design](../design/components/email-templates.md) — patterns visuels d'emails
+- [RGPD obligations](../legal/rgpd-obligations.md) — consentement et désinscription

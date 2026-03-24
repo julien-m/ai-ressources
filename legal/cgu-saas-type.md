@@ -134,3 +134,9 @@ Motifs légitimes de suspension immédiate :
 - [ ] Les CGU sont accessibles depuis toutes les pages (lien en footer).
 - [ ] La date de dernière mise à jour est visible.
 - [ ] Un versionnage des CGU est en place (archiver chaque version).
+
+## Voir aussi
+- [CGV SaaS](cgv-saas.md) — conditions commerciales (complémentaires aux CGU)
+- [Mentions légales](mentions-legales.md) — obligations d'identification
+- [RGPD obligations](rgpd-obligations.md) — protection des données
+- [Merchant of Record](merchant-of-record.md) — délégation légale du paiement

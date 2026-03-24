@@ -154,3 +154,8 @@ Le tier determine les fonctionnalites accessibles, le nombre de sieges determine
 - **Choisir per-seat** si la valeur du produit augmente avec le nombre d'utilisateurs dans l'organisation et que l'usage est relativement homogene.
 - **Eviter per-seat** si la valeur est concentree sur quelques power users ou si le produit est consomme individuellement sans collaboration.
 - **Preferer per-active-user** au per-seat provisionne pour reduire la friction d'adoption et aligner le cout sur la valeur recue.
+
+## Voir aussi
+- [CGV SaaS](../legal/cgv-saas.md) — conditions de vente par siège
+- [Multi-tenant](../architecture/multi-tenant.md) — isolation des données par organisation
+- [Auth flows](../architecture/auth-flows.md) — gestion des membres et invitations
