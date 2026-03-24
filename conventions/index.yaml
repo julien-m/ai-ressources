@@ -1,3 +1,9 @@
 files:
   - file: diagrams.md
     description: "Diagram conventions: Gherkin for business flows, Mermaid for technical flows. Applies to all contexts (code, specs, rules, skills, docs)"
+
+  - file: authority.md
+    description: "Convention authority and conflict resolution: hierarchy levels, non-overridable rules, design convention priority"
+
+  - file: naming.md
+    description: "File and directory naming conventions: kebab-case, extensions, encoding, macOS case-insensitivity warning"

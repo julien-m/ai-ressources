@@ -1,33 +1,66 @@
+coverage:
+  TypeScript: full
+  JavaScript: full
+  Go: full
+  REST: full
+  Rust: partial
+  Swift: partial
+  Kotlin: partial
+  Delphi: legacy
+
 files:
   - file: general.md
     description: "Shared rules for all languages: types, naming, testing, errors, imports, security"
+    applies_to: ["*"]
+    priority: 1
 
   - file: architecture.md
     description: "Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events"
+    applies_to: ["*"]
+    priority: 2
 
   - file: logging.md
     description: "Structured logging, sensitive data redaction, compliance rules"
+    applies_to: ["*"]
+    priority: 3
 
   - file: testing.md
     description: "Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage"
+    applies_to: ["*"]
+    priority: 4
 
   - file: javascript.md
     description: "TypeScript/Node.js/React conventions (delta on general.md)"
+    applies_to: ["TypeScript", "JavaScript", "Node", "React", "Next.js"]
+    priority: 5
 
   - file: go.md
     description: "Go-specific patterns and tooling (delta on general.md)"
+    applies_to: ["Go"]
+    priority: 5
 
   - file: rust.md
     description: "Rust idioms, ownership, error handling (delta on general.md)"
+    applies_to: ["Rust"]
+    priority: 5
+    status: partial
 
   - file: delphi.md
     description: "Delphi/Pascal memory management and style (delta on general.md)"
+    applies_to: ["Delphi", "Pascal"]
+    priority: 5
+    status: legacy
 
   - file: swift-kotlin.md
     description: "iOS/Android native conventions for Swift and Kotlin (delta on general.md)"
+    applies_to: ["Swift", "Kotlin"]
+    priority: 5
+    status: partial
 
   - file: database.md
     description: "SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)"
+    applies_to: ["SQL", "PostgreSQL", "MySQL", "SQLite"]
+    priority: 6
 
   - file: ../conventions/diagrams.md
     description: "Diagram conventions (transversal — also loaded outside code context). See conventions/"

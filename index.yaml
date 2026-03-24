@@ -3,26 +3,31 @@ domains:
     description: "SaaS architecture patterns: auth flows (OAuth2/OIDC/JWT/MFA), multi-tenant isolation, rate limiting algorithms, webhook delivery and consumption, event-driven/CQRS, caching strategies, background jobs, database migrations."
     status: complete
     file_count: 8
+    last_reviewed: 2026-03-24
 
   conventions:
-    description: "Transversal conventions (not code-specific): diagram formats, shared standards. Loaded by dedicated global rules."
+    description: "Transversal conventions (not code-specific): diagram formats, naming rules, authority hierarchy. Loaded by dedicated global rules."
     status: active
-    file_count: 1
+    file_count: 3
+    last_reviewed: 2026-03-24
 
   code-conventions:
     description: "Language-agnostic and per-language coding standards. Loaded automatically by claude/rules/code.md dispatcher."
     status: complete
     file_count: 10
+    last_reviewed: 2026-03-24
 
   copywriting:
     description: "SaaS copywriting templates: landing pages, email sequences, taglines."
     status: complete
     file_count: 3
+    last_reviewed: 2026-03-20
 
   design:
     description: "Cross-platform design reference: tokens (spacing, typography, colors, motion), platform systems (HIG, Material, Web, CLI/TUI), UI components (forms, lists, modals, buttons, navigation, feedback, payments, log viewer, data viz, real-time streams, email templates), visual QA rules (responsive, cursors, scrollbars, alignment, image fitting, truncation), accessibility (WCAG), market design references (landing pages, app UI, app views incl. integrations/webhooks/audit log, per-company systems)."
     status: complete
     file_count: 27
+    last_reviewed: 2026-03-24
     subdirectories:
       - components
       - quality
@@ -34,21 +39,25 @@ domains:
     description: "French/EU legal templates for SaaS: CGU, RGPD, mentions legales, merchant of record."
     status: complete
     file_count: 4
+    last_reviewed: 2026-03-20
 
   pricing-models:
     description: "SaaS pricing model references: freemium, flat-rate, per-seat, usage-based."
     status: complete
     file_count: 4
+    last_reviewed: 2026-03-20
 
   seo:
     description: "SEO knowledge base: Core Web Vitals, programmatic SEO, Next.js technical SEO."
     status: complete
     file_count: 3
+    last_reviewed: 2026-03-20
 
   stack-ref:
     description: "Vendor comparison sheets with decision matrices, cost comparisons, and recommended stack combos. Covers 12 categories: AI, auth, CMS, databases, email, frontend, jobs, ops, payments, platforms, search, storage."
     status: complete
     file_count: 50
+    last_reviewed: 2026-03-20
     subdirectories:
       - ai
       - auth
