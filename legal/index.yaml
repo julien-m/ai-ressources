@@ -2,27 +2,48 @@ files:
   - file: cgu-saas-type.md
     description: "SaaS terms of service template (French law, CGU type)"
     status: complete
+    use_when: ["launching SaaS", "writing terms of service", "CGU", "user agreement"]
+    questions_answered: ["What to include in CGU?", "CGU vs CGV difference?", "Liability clauses?"]
+    see_also: ["cgv-saas.md", "mentions-legales.md", "rgpd-obligations.md"]
 
   - file: rgpd-obligations.md
     description: "RGPD/GDPR obligations checklist for SaaS: DPA, consent, data retention, rights"
     status: complete
+    use_when: ["RGPD compliance", "GDPR", "data protection", "DPA", "user data handling"]
+    questions_answered: ["What RGPD obligations for a SaaS?", "Do I need a DPA?", "Data retention rules?"]
+    see_also: ["privacy-policy.md", "cookie-policy.md"]
 
   - file: mentions-legales.md
     description: "French legal notices template (mentions legales obligatoires)"
     status: complete
+    use_when: ["French website", "legal notices", "mentions légales", "site identity"]
+    questions_answered: ["What legal notices are required in France?", "Where to display them?"]
+    see_also: ["privacy-policy.md", "cookie-policy.md", "cgv-saas.md"]
 
   - file: merchant-of-record.md
     description: "Merchant of Record model: legal implications, VAT delegation, provider comparison"
     status: complete
+    use_when: ["international sales", "VAT handling", "tax compliance", "Paddle vs Stripe decision"]
+    questions_answered: ["What is a Merchant of Record?", "MoR vs direct sales?", "VAT obligations?"]
+    see_also: ["cgv-saas.md", "../pricing-models/usage-based.md", "../stack-ref/payments/paddle.md"]
 
   - file: privacy-policy.md
     description: "Privacy policy template for French SaaS (RGPD-compliant, data types, rights, retention)"
     status: complete
+    use_when: ["privacy policy", "RGPD", "data collection disclosure", "user rights"]
+    questions_answered: ["What to include in a privacy policy?", "Data retention periods?", "User rights under RGPD?"]
+    see_also: ["rgpd-obligations.md", "cookie-policy.md", "mentions-legales.md"]
 
   - file: cookie-policy.md
     description: "Cookie policy template for French SaaS (categories, consent, third-party cookies)"
     status: complete
+    use_when: ["cookie banner", "cookie consent", "analytics cookies", "RGPD cookies"]
+    questions_answered: ["Which cookies need consent?", "How to categorize cookies?", "Cookie banner requirements?"]
+    see_also: ["privacy-policy.md", "rgpd-obligations.md"]
 
   - file: cgv-saas.md
     description: "CGV (general sales conditions) template for paid French SaaS subscription"
     status: complete
+    use_when: ["paid SaaS", "subscription billing", "CGV", "sales terms", "refund policy"]
+    questions_answered: ["What to include in CGV?", "Refund/retraction rules?", "Subscription renewal terms?"]
+    see_also: ["cgu-saas-type.md", "mentions-legales.md", "merchant-of-record.md"]

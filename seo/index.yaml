@@ -1,12 +1,21 @@
 files:
   - file: core-web-vitals.md
-    description: "Core Web Vitals (LCP, INP, CLS): thresholds, diagnostics, optimization techniques"
+    description: "Core Web Vitals: LCP, FID, CLS optimization techniques and targets"
     status: complete
+    use_when: ["performance optimization", "Lighthouse score", "page speed", "SEO ranking"]
+    questions_answered: ["What are good CWV scores?", "How to fix LCP?", "How to reduce CLS?"]
+    see_also: ["../design/systems/web-standards.md", "technical-nextjs.md"]
 
   - file: programmatic.md
-    description: "Programmatic SEO: template pages, dynamic content, internal linking, indexation"
+    description: "Programmatic SEO: template pages, dynamic content, internal linking at scale"
     status: complete
+    use_when: ["generating many pages", "template-based content", "marketplace SEO", "directory site"]
+    questions_answered: ["How to do programmatic SEO?", "How to avoid thin content penalties?", "Internal linking strategy?"]
+    see_also: ["../copywriting/taglines.md", "technical-nextjs.md"]
 
   - file: technical-nextjs.md
-    description: "Next.js technical SEO: Metadata API, sitemap, robots, ISR, structured data, OG images"
+    description: "Next.js technical SEO: metadata, sitemap, robots, structured data, ISR/SSG"
     status: complete
+    use_when: ["Next.js project", "technical SEO setup", "sitemap generation", "structured data"]
+    questions_answered: ["How to set up SEO in Next.js?", "How to generate sitemaps?", "ISR vs SSG for SEO?"]
+    see_also: ["core-web-vitals.md", "programmatic.md", "../design/systems/web-standards.md"]

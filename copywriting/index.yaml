@@ -1,12 +1,21 @@
 files:
   - file: landing-page.md
-    description: "SaaS landing page structure, copy formulas, hero/CTA patterns"
+    description: "Landing page copywriting: hero, features, social proof, CTA, pricing section"
     status: complete
+    use_when: ["writing landing page", "launching product", "marketing site", "conversion optimization"]
+    questions_answered: ["How to structure a SaaS landing page?", "What sections to include?", "How to write a compelling hero?"]
+    see_also: ["../design/references/landing-pages.md", "../seo/technical-nextjs.md", "../pricing-models/"]
 
   - file: email-sequences.md
-    description: "Onboarding, activation, and retention email sequence templates"
+    description: "Email sequence templates: onboarding, trial expiry, win-back, feature announcements"
     status: complete
+    use_when: ["email marketing", "onboarding flow", "retention", "user engagement"]
+    questions_answered: ["What emails to send after signup?", "How to write onboarding sequences?", "Trial expiry email strategy?"]
+    see_also: ["../design/components/email-templates.md", "../legal/rgpd-obligations.md"]
 
   - file: taglines.md
-    description: "Tagline and value proposition formulas, positioning frameworks"
+    description: "Tagline and headline writing: formulas, patterns, A/B testing guidance"
     status: complete
+    use_when: ["naming product", "writing headlines", "brand messaging", "A/B testing copy"]
+    questions_answered: ["How to write a good tagline?", "What headline formulas work?", "How to test taglines?"]
+    see_also: ["landing-page.md", "../seo/programmatic.md"]

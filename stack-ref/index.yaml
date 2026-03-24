@@ -112,6 +112,8 @@ sections:
     files:
       - file: ops/notion-crm.md
         description: "Notion as CRM: early-stage lead management with n8n automation"
+      - file: ops/solo-saas-ops-stack.md
+        description: "Solo SaaS ops playbook: error tracking, analytics, uptime, support, feature flags"
 
   payments:
     description: "Payment providers and merchant of record"

@@ -1,16 +1,28 @@
 files:
   - file: freemium.md
-    description: "Freemium model: free tier design, conversion triggers, feature gating strategies"
+    description: "Freemium pricing model: free tier design, conversion triggers, feature gating"
     status: complete
+    use_when: ["product with free tier", "conversion optimization", "feature gating strategy"]
+    questions_answered: ["How to design a free tier?", "What features to gate?", "How to convert free to paid?"]
+    see_also: ["../legal/cgu-saas-type.md", "../architecture/auth-flows.md"]
 
   - file: flat-rate.md
-    description: "Flat-rate pricing: single plan design, when to use, pros/cons vs tiered"
+    description: "Flat-rate pricing model: single price, simple billing, predictable revenue"
     status: complete
+    use_when: ["simple SaaS", "single plan product", "predictable billing"]
+    questions_answered: ["When is flat-rate better than usage-based?", "How to set the right price?"]
+    see_also: ["../legal/cgv-saas.md", "../stack-ref/payments/stripe.md"]
 
   - file: per-seat.md
-    description: "Per-seat pricing: billing mechanics, discounts, hybrid models"
+    description: "Per-seat pricing model: team billing, seat management, volume discounts"
     status: complete
+    use_when: ["team/B2B product", "collaborative tool", "multi-user billing"]
+    questions_answered: ["How to bill per user?", "How to handle seat changes mid-cycle?", "Volume discount structure?"]
+    see_also: ["../legal/cgv-saas.md", "../architecture/multi-tenant.md"]
 
   - file: usage-based.md
-    description: "Usage-based pricing: metering, billing cycles, cost predictability, hybrid approaches"
+    description: "Usage-based pricing model: metered billing, API pricing, consumption tracking"
     status: complete
+    use_when: ["API product", "LLM/AI app", "variable consumption", "infrastructure tool"]
+    questions_answered: ["How to meter usage?", "How to set API pricing?", "How to handle usage spikes?"]
+    see_also: ["../legal/cgv-saas.md", "../architecture/rate-limiting.md", "../legal/merchant-of-record.md"]
