@@ -21,6 +21,7 @@ if ! command -v cc-hub &>/dev/null; then
   echo "   cc-hub is required to link Claude Code skills and rules."
   echo "   Install it:"
   echo ""
+  echo "     git clone https://github.com/julien-m/cc-hub.git ~/projects/cc-hub"
   echo "     cd ~/projects/cc-hub && bun install && bun link"
   echo ""
   echo "   Then re-run this script."

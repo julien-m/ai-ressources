@@ -6,7 +6,7 @@ Reference knowledge base for building cross-platform SaaS applications. Designed
 
 ### Prerequisites
 
-- [cc-hub](https://github.com/julien-m/cc-hub) — CLI tool for linking Claude Code assets (skills, rules)
+- [cc-hub](https://github.com/julien-m/cc-hub) — Global AI CLI for linking Claude Code assets, LLM queries, image/video generation, and more
 
 ### Install
 
