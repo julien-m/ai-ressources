@@ -752,7 +752,7 @@ Escape      Fermer panel / deselect
 - [ ] Filtre par clic sur une valeur dans le log
 
 **Services / Containers**
-- [ ] Status indicators colores (* vert, * rouge, o gris)
+- [ ] Status indicators colores (vert, rouge, gris)
 - [ ] CPU/Memory en colonnes avec mini-bar
 - [ ] Actions au hover uniquement
 - [ ] Clic -> panel detail ou page dediee

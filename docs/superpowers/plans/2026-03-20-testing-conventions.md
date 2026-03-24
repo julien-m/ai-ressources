@@ -12,7 +12,7 @@
 
 ---
 
-### Task 1: Create `code-conventions/testing.md`
+## Task 1: Create `code-conventions/testing.md`
 
 **Files:**
 - Create: `code-conventions/testing.md`

@@ -101,7 +101,7 @@ HH:MM:SS.mmm  LEVEL  [service]  Message texte libre
 **Règles :**
 
 - Timestamp en format 24h avec millisecondes — jamais de date complète en mode stream (trop large)
-- Niveau aligné sur 5 caractères (`FATAL`, `ERROR`, `WARN `, `INFO `, `DEBUG`, `TRACE`)
+- Niveau aligné sur 5 caractères (`FATAL`, `ERROR`, `WARN`, `INFO`, `DEBUG`, `TRACE`)
 - Service entre crochets, tronqué à 10 caractères max (`[api]`, `[worker]`, `[scheduler…]`)
 - Message sur le reste de la ligne, wrap autorisé si terminal > 120 cols
 

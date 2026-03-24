@@ -1,0 +1,70 @@
+name: CI
+
+on:
+  push:
+    branches: ["**"]
+  pull_request:
+    branches: ["**"]
+
+permissions:
+  contents: read
+
+jobs:
+  lint-yaml:
+    name: Lint YAML
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install yamllint
+        run: pip install yamllint
+
+      - name: Lint all YAML files
+        run: yamllint -c .yamllint.yaml $(find . -name '*.yaml' -o -name '*.yml' | grep -v '.git/')
+
+  lint-markdown:
+    name: Lint Markdown
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Lint Markdown files
+        uses: DavidAnson/markdownlint-cli2-action@v16
+        with:
+          config: ".markdownlint.yaml"
+          globs: "**/*.md"
+
+  validate-schemas:
+    name: Validate index.yaml schemas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install check-jsonschema
+        run: pip install check-jsonschema
+
+      - name: Validate root index.yaml
+        run: check-jsonschema --schemafile schemas/root-index.schema.yaml index.yaml
+
+      - name: Validate domain index files (flat format)
+        run: |
+          for f in \
+            architecture/index.yaml \
+            code-conventions/index.yaml \
+            conventions/index.yaml \
+            copywriting/index.yaml \
+            legal/index.yaml \
+            pricing-models/index.yaml \
+            seo/index.yaml; do
+            echo "Validating $f …"
+            check-jsonschema --schemafile schemas/domain-index.schema.yaml "$f"
+          done
+
+      - name: Validate domain index files (sectioned format)
+        run: |
+          for f in \
+            design/index.yaml \
+            stack-ref/index.yaml; do
+            echo "Validating $f …"
+            check-jsonschema --schemafile schemas/domain-index.schema.yaml "$f"
+          done

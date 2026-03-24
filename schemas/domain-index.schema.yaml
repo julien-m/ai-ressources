@@ -1,0 +1,66 @@
+# JSON Schema for per-domain index.yaml files
+# Covers two layout variants:
+#   - flat   : top-level "files:" list  (e.g. architecture/, code-conventions/)
+#   - sectioned : top-level "sections:" map  (e.g. design/, stack-ref/)
+# Format: https://json-schema.org/draft/2020-12
+$schema: "https://json-schema.org/draft/2020-12/schema"
+$id: "https://github.com/julien-m/ai-ressources/schemas/domain-index.schema.yaml"
+title: Domain Index
+description: Schema for per-domain index.yaml files.
+
+type: object
+additionalProperties: false
+
+# A domain index must have either "files" or "sections" at the top level.
+anyOf:
+  - required: [files]
+  - required: [sections]
+
+$defs:
+  file-entry:
+    type: object
+    required: [file, description]
+    additionalProperties: false
+    properties:
+      file:
+        type: string
+        minLength: 1
+        description: Relative path to the file from the domain root.
+      description:
+        type: string
+        minLength: 1
+        description: One-line summary of the file's content.
+      status:
+        type: string
+        enum: [complete, active, partial, placeholder]
+        description: Optional completeness marker for this specific file.
+
+  section:
+    type: object
+    required: [description, files]
+    additionalProperties: false
+    properties:
+      description:
+        type: string
+        minLength: 1
+        description: Human-readable description of this section.
+      files:
+        type: array
+        minItems: 1
+        items:
+          $ref: "#/$defs/file-entry"
+
+properties:
+  files:
+    type: array
+    description: Flat list of files in this domain (used when there are no sub-sections).
+    minItems: 1
+    items:
+      $ref: "#/$defs/file-entry"
+
+  sections:
+    type: object
+    description: Named sections, each containing a group of related files.
+    minProperties: 1
+    additionalProperties:
+      $ref: "#/$defs/section"

@@ -553,7 +553,6 @@ Avant de livrer une interface applicative :
 - ChatGPT : puissance (noir, sans-serif, densité sidebar)
 - Perplexity : vérifiabilité (teal, citations numérotées, icônes focus)
 
-
 ---
 
 ### E-commerce — patterns UI
@@ -605,4 +604,3 @@ Avant de livrer une interface applicative :
 - Bottom navigation × 5 onglets pour les apps natives (Accueil / Recherche / Vendre / Messages / Profil)
 - Recherche visuelle par photo (standard émergent 2024–2026)
 - Paiement biométrique (Face ID / Touch ID) via Shop Pay ou équivalent
-

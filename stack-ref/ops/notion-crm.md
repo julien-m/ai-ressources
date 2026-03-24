@@ -34,7 +34,7 @@ Tu ouvres Notion → tu vois tous tes contacts, tu peux filtrer par statut, tagg
 ## Intégrations recommandées
 
 | Source | Outil intermédiaire | Résultat |
-|--------|--------------------|---------| 
+|--------|--------------------|---------||
 | Formulaire web | n8n / Zapier | Nouvelle row dans une table Notion |
 | Email entrant | n8n (IMAP/Gmail) | Parsing + row Notion |
 | Webhook externe | n8n | Row Notion avec données extraites |

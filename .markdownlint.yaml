@@ -1,0 +1,48 @@
+default: true
+
+# Line length — existing content has long lines in descriptions and tables
+MD013: false
+
+# Allow multiple headings with same content across files
+MD024:
+  siblings_only: true
+
+# Ordered list item prefix — allow ordered style
+MD029:
+  style: ordered
+
+# Allow HTML in Markdown (badges, callouts)
+MD033: false
+
+# Allow bare URLs
+MD034: false
+
+# Table column style — existing content uses compact style (no spaces around pipes)
+MD060: false
+
+# Blanks around lists — existing content omits these blank lines
+MD032: false
+
+# Blanks around headings — existing content omits these blank lines
+MD022: false
+
+# Blanks around fences — existing content omits these blank lines
+MD031: false
+
+# No emphasis as heading — existing content uses bold text as section labels
+MD036: false
+
+# Blanks around tables — existing content omits these blank lines
+MD058: false
+
+# Hard tabs — existing content uses tabs in some code examples
+MD010: false
+
+# Single title/H1 per file — existing docs reuse H1 in multi-section files
+MD025: false
+
+# Blank lines in blockquotes — existing content uses blank blockquotes as dividers
+MD028: false
+
+# Fenced code language — existing content has many unlabelled code blocks
+MD040: false

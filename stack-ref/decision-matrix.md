@@ -391,7 +391,7 @@ Search ?
 
 ---
 
-## 🧩 Combinaisons stack recommandées par profil
+## 🧩 Combinaisons stack recommandées par coût
 
 > Coûts infra uniquement (hors paiements, tokens AI, emails transactionnels au-delà du free tier).
 

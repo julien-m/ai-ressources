@@ -829,7 +829,6 @@
 - **Motion :** Easing classique (Ease-in/out) + 4 transitions (Enter/Exit, Elevation, Top Level, Container Transform).
 - **Influence :** Acrylic material (précurseur Liquid Glass), icônes outline/filled duaux, Persona component, Inclusive Design triangle (permanent/temporary/situational)
 
-
 ---
 
 # E-commerce — Références
@@ -929,4 +928,3 @@
 | **Dashboard vendeur** | Complet (analytics, marketing) | Medium (artisans) | Minimal (particuliers) |
 | **Mobile** | Responsive + app marchands | Responsive + app acheteurs | **App-first** (bottom tabs, caméra) |
 | **Différenciateur** | Checkout conversion +15% | Confiance multi-couches | 0% commission + offres C2C |
-

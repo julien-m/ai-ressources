@@ -380,7 +380,6 @@ Signal de confiance : Note App Store + nombre d'utilisateurs
 - **Puissance froide** (OpenAI) : noir/blanc pur, sans-serif, densité
 - **Vérifiabilité techno** (Perplexity) : teal froid, icônes, citations inline
 
-
 ---
 
 ### E-commerce
@@ -418,4 +417,3 @@ Dark premium sur le marketing site, light fonctionnel dans l'admin.
 - Social proof volume : "150M acheteurs actifs", "500K+ résultats"
 - Programme de confiance acheteur visible (Buyer Protection, Shop Pay)
 - Navigation par catégories en second tier sous le header
-

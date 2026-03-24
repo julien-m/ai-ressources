@@ -45,6 +45,50 @@ Vendor comparison sheets with a consistent template: pricing, DX, limits, best-f
 
 ## Usage
 
+### Local usage with Claude Code on macOS
+
+#### 1. Clone the repository
+
+```bash
+git clone https://github.com/julien-m/ai-ressources.git ~/projects/ai-ressources
+```
+
+#### 2. Point the `/ai-res` skill at your local path
+
+Open `claude/skills/ai-res/SKILL.md` and update the `Base path` to match your clone location:
+
+```
+## Base path
+
+/Users/<your-username>/projects/ai-ressources/
+```
+
+Then link the skill globally via `cc-hub`:
+
+```bash
+cc-hub skill link claude/skills/ai-res/SKILL.md
+```
+
+#### 3. Link the coding rules globally
+
+```bash
+cc-hub rule link claude/rules/code.md
+cc-hub rule link claude/rules/diagrams.md
+```
+
+After this, Claude Code will automatically load your coding conventions whenever it starts a coding task.
+
+#### 4. Refreshing indexes
+
+When you pull updates or add new files, the indexes (`index.yaml`) are updated in the same commit. No manual refresh is needed — Claude Code re-reads the index on each `/ai-res` invocation.
+
+To verify all indexes are schema-valid after a pull:
+
+```bash
+pip install check-jsonschema  # one-time
+check-jsonschema --schemafile schemas/root-index.schema.yaml index.yaml
+```
+
 ### `/ai-res` skill
 
 The `/ai-res` skill provides structured, on-demand access to any domain:
@@ -62,3 +106,7 @@ Each domain contains an `index.yaml` that describes its files and structure. The
 ### Direct browsing
 
 Browse files directly or point an AI coding assistant at the relevant section for context-aware recommendations.
+
+## Contributing
+
+See [CONTRIBUTING.md](CONTRIBUTING.md) for instructions on adding resources, updating indexes, and keeping the repository consistent.
