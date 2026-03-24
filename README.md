@@ -2,19 +2,44 @@
 
 Reference knowledge base for building cross-platform SaaS applications. Designed to be consumed by humans and AI agents alike.
 
+## Setup
+
+### Prerequisites
+
+- [cc-hub](https://github.com/julien-m/cc-hub) — CLI tool for linking Claude Code assets (skills, rules)
+
+### Install
+
+```bash
+git clone <repo-url> ~/projects/ai-ressources
+cd ~/projects/ai-ressources
+chmod +x setup.sh
+./setup.sh
+```
+
+The setup script:
+1. Checks that `cc-hub` is installed
+2. Sets `AI_RESOURCES_PATH` in your `.zshrc` (pointing to the project directory)
+3. Links all Claude Code skills and rules via `cc-hub`
+
+After setup, restart your shell or run `source ~/.zshrc`.
+
 ## Structure
 
 ```
 architecture/      → Auth flows, multi-tenant, rate limiting, webhook patterns
-claude/            → Claude Code mechanics (rules dispatcher, skills)
+claude/            → Claude Code skills and rules (synced to ~/.claude/ via cc-hub)
 code-conventions/  → Language-agnostic and per-language coding standards
+conventions/       → Transversal conventions (naming, authority, diagrams)
 copywriting/       → Landing pages, email sequences, taglines
 design/            → Design tokens, platform systems (HIG, M3, Web), components
-legal/             → CGU, RGPD, mentions légales, merchant of record
+legal/             → CGU, CGV, RGPD, privacy, cookies, mentions légales, MoR
 pricing-models/    → Freemium, flat-rate, per-seat, usage-based
 seo/               → Core Web Vitals, programmatic SEO, Next.js technical SEO
 stack-ref/         → Vendor comparison sheets (auth, DB, email, payments, platforms, etc.)
 ```
+
+> **Note:** `claude/` contains skills and rules that are symlinked into `~/.claude/` by `cc-hub`. They are not knowledge base content — they define how Claude Code discovers and loads the knowledge base.
 
 ## Code Conventions
 

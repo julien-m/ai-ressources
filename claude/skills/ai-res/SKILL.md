@@ -10,11 +10,11 @@ Load structured reference knowledge from the ai-ressources knowledge base.
 
 ## Base path
 
-```
-/Users/julienm/projects/ai-ressources/
-```
+Resolved in order:
+1. Environment variable `AI_RESOURCES_PATH` (if set)
+2. Default: `~/projects/ai-ressources/`
 
-All file paths below are relative to this base.
+All file paths below are relative to the resolved base. Verify the path exists before loading files.
 
 ## Aliases
 
