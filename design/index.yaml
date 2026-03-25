@@ -86,6 +86,7 @@ sections:
 
   references:
     description: "Market design references: per-company design systems, landing page conventions, app UI patterns (based on 2026 market analysis)"
+    last_reviewed: "2026-03-25"
     files:
       - file: references/landing-pages.md
         description: "Landing page conventions by product type: devtools, B2B SaaS, fintech, consumer, creators, health, AI, e-commerce"
@@ -117,6 +118,16 @@ sections:
         use_when: ["mockup", "maquettage", "wireframe", "pixel specs", "component dimensions"]
         questions_answered: ["Standard component heights?", "Padding values?", "Modal dimensions?", "Mobile screen sizes?"]
         see_also: ["../tokens/spacing.md", "../tokens/typography.md"]
+      - file: references/component-blocks-catalog.md
+        description: "UI blocks taxonomy and template patterns: marketing section types, application block types (dashboard, data, auth, nav, settings, content, commerce, integration), page compositions by product type, universal ordering rules"
+        use_when: ["page composition", "landing page sections", "block types", "template pattern", "section ordering", "what sections to include", "app blocks", "dashboard blocks", "CRUD table", "auth flow blocks"]
+        questions_answered: ["Which sections for a SaaS landing?", "What block types exist?", "Section ordering rules?", "Primitives vs blocks?", "What app blocks exist?", "Dashboard block anatomy?", "Auth flow blocks?"]
+        see_also: ["landing-pages.md", "app-ui.md", "app-views.md"]
+      - file: references/app-views-catalog.md
+        description: "App views catalog: view compositions from blocks, app template patterns (SaaS B2B, Creator, AI Chat, DevTool, CRM, E-commerce, Mobile, Project Tracker, Internal Tool/Admin Panel), composable traits (Auth, Billing, Team, API, Notifications, Integrations, Audit), views (Chat View, Billing Upgrade Flow, Board, Calendar, Notifications Inbox, Settings Integrations, Media Library)"
+        use_when: ["app template", "which views for an app", "view composition", "SaaS app structure", "app pattern shorthand", "composable traits", "project tracker", "kanban board", "issue tracker", "internal tool", "admin panel", "chat view", "billing upgrade"]
+        questions_answered: ["Which views does a SaaS B2B need?", "What blocks go in a Dashboard view?", "How to describe an app with one line?", "What does Auth/Billing/Team trait add?", "What does Notifications/Integrations/Audit trait add?", "How to build a project tracker app?", "How to build an internal admin tool?", "What is a Chat View?"]
+        see_also: ["component-blocks-catalog.md", "app-views.md", "app-ui.md"]
 
   quality:
     description: "Visual QA and non-regression rules"

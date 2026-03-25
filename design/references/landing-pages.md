@@ -2,6 +2,8 @@
 
 > Guide pour construire des landing pages marketing par type de produit.
 > Basé sur l'analyse de : Vercel, Resend, Linear, Stripe, Clerk, Raycast, Supabase (mars 2026).
+>
+> **See also:** [`component-blocks-catalog.md`](component-blocks-catalog.md) for block taxonomy and section sequencing by product type.
 
 ---
 
