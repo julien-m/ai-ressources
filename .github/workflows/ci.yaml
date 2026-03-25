@@ -1,0 +1,39 @@
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  validate-schemas:
+    name: Validate index.yaml schemas
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Install check-jsonschema
+        run: pip install check-jsonschema
+
+      - name: Validate root index.yaml
+        run: check-jsonschema --schemafile schemas/root-index.schema.yaml index.yaml
+
+      - name: Validate domain index files
+        run: |
+          for f in \
+            architecture/index.yaml \
+            code-conventions/index.yaml \
+            conventions/index.yaml \
+            copywriting/index.yaml \
+            design/index.yaml \
+            legal/index.yaml \
+            pricing-models/index.yaml \
+            seo/index.yaml \
+            stack-ref/index.yaml; do
+            echo "Validating $f …"
+            check-jsonschema --schemafile schemas/domain-index.schema.yaml "$f"
+          done
