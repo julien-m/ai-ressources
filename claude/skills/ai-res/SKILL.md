@@ -1,20 +1,12 @@
 ---
 name: ai-res
 description: Load domain-specific reference knowledge from ai-ressources on demand
-argument-hint: "[domain] — e.g., design, stack-ref, code-conventions"
+argument-hint: "[domain or question] — e.g., design, stack-ref, 'SaaS B2B billing views'"
 ---
 
 # /ai-res — Domain Knowledge Loader
 
-Load structured reference knowledge from the ai-ressources knowledge base.
-
-## Base path
-
-Resolved in order:
-1. Environment variable `AI_RESOURCES_PATH` (if set)
-2. Default: `~/projects/ai-ressources/`
-
-All file paths below are relative to the resolved base. Verify the path exists before loading files.
+Load structured reference knowledge from the ai-ressources knowledge base via the `ai-res-librarian` agent.
 
 ## Aliases
 
@@ -26,26 +18,85 @@ All file paths below are relative to the resolved base. Verify the path exists b
 
 ## Procedure
 
-### With argument: `/ai-res <domain>`
+**Always delegate to the `ai-res-librarian` agent.** Never read knowledge base files directly.
 
-1. Resolve alias if applicable
-2. **Read** `<base>/<domain>/index.yaml`
-3. If the domain is not found, show available domains from root `index.yaml` and stop
-4. Select only the files relevant to the current conversation context
-5. **Read** the selected files
-6. If any selected file is marked `status: placeholder`, report it to the user: "Note: `<file>` is a placeholder (empty)."
+### With argument: `/ai-res <domain or question>`
+
+1. Resolve alias if applicable (see table above)
+2. Spawn `ai-res-librarian` agent with the resolved domain or question as prompt
+3. Return the agent's response to the user
 
 ### Without argument: `/ai-res`
 
-1. **Read** `<base>/index.yaml` (root index)
-2. Present the available domains with their descriptions and status
-3. If conversation context suggests relevant domains, recommend them
-4. Wait for user to specify a domain or proceed with recommendation
+1. Spawn `ai-res-librarian` agent with prompt: "List all available domains with their descriptions and status"
+2. If conversation context suggests relevant domains, add that context to the prompt
+3. Return the agent's response to the user
+
+## Examples
+
+These examples show how to formulate requests. The agent crosses domains automatically when needed.
+
+### Design — views and components for an app
+
+```
+/ai-res I'm building a SaaS B2B with billing and team management. What views do I need and which UI components go in each?
+```
+
+Returns: matching app views (Dashboard, Settings, Billing...), component blocks for each view, layout compositions, mobile considerations.
+
+### Code conventions — language + database
+
+```
+/ai-res I have a TypeScript API with PostgreSQL. What conventions should I follow?
+```
+
+Returns: TypeScript coding rules, database conventions (naming, migrations, queries), architecture patterns for API + DB.
+
+```
+/ai-res Delphi app with SQL Server database — give me the coding and database conventions
+```
+
+Returns: Delphi-specific rules, database conventions, relevant architecture patterns.
+
+### Pricing — explore models then deep-dive
+
+```
+/ai-res What pricing models are available? I need to build a pricing page
+```
+
+Returns: all documented models (freemium, per-seat, usage-based, flat-rate...) with characteristics, pros/cons, and when to use each.
+
+```
+/ai-res Give me the freemium model details for a developer tools SaaS
+```
+
+Returns: freemium structure, tier design, conversion triggers, pricing page anatomy.
+
+### Legal — CGU, RGPD, privacy
+
+```
+/ai-res I need to set up CGU and a RGPD-compliant privacy page for a French SaaS
+```
+
+Returns: CGU template structure, RGPD requirements, privacy policy sections, cookie policy rules.
+
+### Multi-domain — full project context
+
+```
+/ai-res I'm starting a B2C mobile app for fitness tracking. Give me everything: views, design tokens, architecture patterns, and legal requirements
+```
+
+Returns: cross-domain synthesis — relevant views, design system tokens, architecture decisions, legal templates. The agent prioritizes and structures the response.
+
+### Browse available domains
+
+```
+/ai-res
+```
+
+Returns: list of all domains with descriptions and current status (complete, draft, placeholder).
 
 ## Rules
 
-- **Consultation only** — never modify any file in the knowledge base
-- **Selective loading** — read the domain index first, then pick only files relevant to the task. Never bulk-load an entire domain
-- **Report placeholders** — if a file has `status: placeholder`, tell the user it's empty
-- **Domain not found** — read root `index.yaml` and show available domains
-- **Coexistence** — `code-conventions` is also loaded by `claude/rules/code.md` during coding tasks. Both mechanisms coexist without conflict: the rule dispatcher loads conventions automatically for coding, while `/ai-res code` provides on-demand browsing
+- **Always use the agent** — never read `index.yaml` or knowledge base files directly from this skill. The `ai-res-librarian` agent handles all navigation, reading, and synthesis in an isolated context.
+- **Coexistence** — `code-conventions` is also loaded by `claude/rules/code.md` during coding tasks. Both mechanisms coexist without conflict: the rule dispatcher loads conventions automatically for coding, while `/ai-res code` provides on-demand browsing via the agent.
