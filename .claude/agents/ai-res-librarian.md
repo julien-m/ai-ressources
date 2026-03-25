@@ -6,7 +6,7 @@ description: >
   SEO rules, copywriting, pricing models. Reads structured files and returns synthesized
   information without polluting the caller's context.
 color: green
-model: haiku
+model: sonnet
 tools: Read, Glob, Grep
 ---
 

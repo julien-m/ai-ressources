@@ -99,4 +99,5 @@ Returns: list of all domains with descriptions and current status (complete, dra
 ## Rules
 
 - **Always use the agent** — never read `index.yaml` or knowledge base files directly from this skill. The `ai-res-librarian` agent handles all navigation, reading, and synthesis in an isolated context.
+- **Pagination** — the agent reads at most 15 files per invocation. If its response includes a **Cross-References** section with unread files, re-invoke the agent with those specific files/topics to get the remaining content. Example: `Spawn ai-res-librarian with prompt: "Read these files: design/references/app-views-catalog.md, design/components/forms.md"`.
 - **Coexistence** — `code-conventions` is also loaded by `claude/rules/code.md` during coding tasks. Both mechanisms coexist without conflict: the rule dispatcher loads conventions automatically for coding, while `/ai-res code` provides on-demand browsing via the agent.
