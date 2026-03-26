@@ -24,6 +24,22 @@ Stop at the first index found that references files in the affected directory.
 
 - **last_reviewed**: set to today's date (`YYYY-MM-DD`) on the domain entry in the **root `index.yaml`** that owns the affected file. This tracks when a domain was last touched.
 
+## Compiled index
+
+After **any** of these events, regenerate the compiled index:
+
+- Creation, deletion, or rename of a `.md` file in the knowledge base
+- Modification of any `index.yaml` (adding, removing, or changing file entries)
+- Modification of a file's `description`, `use_when`, or `questions_answered` in an `index.yaml`
+
+```bash
+bun run scripts/build-index.ts
+```
+
+This keeps `compiled-index.txt` in sync with the domain indexes. The compiled index is used by the `ai-res-librarian` agent for fast routing. **A stale compiled index means the agent cannot find newly added files.**
+
+This step must happen **in the same pass** as the index.yaml update — never defer it.
+
 ## Rules
 
 - Never wait for the user to notice a stale index — sync it in the same pass as the file operation.

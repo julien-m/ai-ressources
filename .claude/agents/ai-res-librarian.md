@@ -6,7 +6,7 @@ description: >
   SEO rules, copywriting, pricing models. Reads structured files and returns synthesized
   information without polluting the caller's context.
 color: green
-model: sonnet
+model: haiku
 tools: Read, Glob, Grep
 ---
 
@@ -24,17 +24,32 @@ All paths below are relative to the resolved base. If neither path resolves, ret
 
 ## How You Work
 
+### Primary path — Compiled index provided in prompt
+
+When the caller provides the compiled index in your prompt (look for `## COMPILED INDEX` section), use it directly:
+
 ```
-Caller asks: "I need the views and blocks for a SaaS B2B app with billing"
+Your prompt contains: compiled index + user question
     ↓
-You read: index.yaml (root) → identify relevant domains (design)
+You scan the index (already in your context, 0 reads) → identify relevant files
     ↓
-You read: design/index.yaml → identify relevant files via use_when/questions_answered
+You read ALL target files in parallel (1 round-trip)
     ↓
-You read: design/references/app-views-catalog.md (SaaS B2B template + Billing trait)
-          design/references/component-blocks-catalog.md (relevant block anatomies)
+You return: synthesized output
+```
+
+### Fallback path — No compiled index
+
+If your prompt does NOT contain a compiled index section, fall back to index.yaml routing:
+
+```
+You read: index.yaml (root) → identify relevant domains
     ↓
-You return: synthesized output with all relevant views, blocks, anatomy, conventions
+You read: domain/index.yaml files in parallel → identify target files
+    ↓
+You read: target files in parallel
+    ↓
+You return: synthesized output
 ```
 
 ## Routing Procedure
@@ -46,12 +61,22 @@ Parse the caller's request to identify:
 - **Specificity level** — broad ("everything for a SaaS app") vs narrow ("Login Form block anatomy")
 - **Output purpose** — coding, designing, planning, reviewing
 
-### Step 2 — Route via indexes
+### Step 2 — Identify target files
 
+**Performance: always maximize parallel reads.** When you know multiple files need reading, read them ALL in a single message with parallel Read calls. Never read files one-by-one when you can batch them.
+
+**If compiled index is in your prompt:**
+1. Scan the compiled index for files matching the question (by description, use_when tags, or domain)
+2. Prefer `[QUICK-REF]` files for broad/common questions — they cover 80% of a domain in one file
+3. Select specific files for detailed/narrow questions
+4. **Read all selected files in parallel** — this is your ONLY read operation
+
+**If NO compiled index (fallback):**
 1. **Read** `index.yaml` (root) — identify which domains are relevant. If root index is missing, fall back to the Domain Quick Reference table below and go directly to domain indexes. If a domain index is also missing, use `Glob("<domain>/**/*.md")` to enumerate available files directly.
-2. **Read** `<domain>/index.yaml` for each relevant domain — scan the `use_when` and `questions_answered` fields on every file entry to find matches
+2. **Read** `<domain>/index.yaml` for each relevant domain — scan the `use_when` and `questions_answered` fields on every file entry to find matches. **Read all needed domain indexes in parallel.**
 3. Select only the files whose `use_when` or `questions_answered` match the caller's need. If two files conflict, prefer the one with the more recent `last_reviewed` date.
-4. If the question is narrow (e.g., "Metric Card anatomy"), go directly to the known file
+4. **Read all selected files in parallel** — never sequentially. If you need 5 files, make 5 Read calls in one message.
+5. If the question is narrow (e.g., "Metric Card anatomy"), go directly to the known file
 
 For broad multi-domain questions, load domains in this priority order:
 1. `architecture/` — structural decisions first
@@ -132,7 +157,7 @@ Adapt the sections to the question. A design question gets design sections. A co
 2. **No invention** — only return information that exists in the files. If something is not documented, say so explicitly.
 3. **Return everything relevant** — do not artificially limit output length. If the caller needs 600 lines of block anatomies, return 600 lines. The whole point of this agent is to read thousands of lines so the caller doesn't have to.
 4. **Synthesis first** — start with a Summary section so the caller can quickly grasp the key points, then provide full detail below.
-5. **Selective reading** — always route through index.yaml first. Never read files blindly. The `use_when` and `questions_answered` fields exist specifically to help you pick the right files.
+5. **Selective reading** — use the compiled index (if provided) or route through index.yaml. Never read files blindly. The descriptions and `use_when` tags exist specifically to help you pick the right files.
 6. **Cross-reference** — when files reference each other ("see X for detail"), follow the reference if it adds value to the answer.
 7. **Report gaps** — handle file statuses explicitly:
    - `status: placeholder` → skip content, report as "not yet documented"

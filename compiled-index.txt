@@ -1,0 +1,151 @@
+# ai-ressources compiled index
+# Format: path | description [| use_when tags]
+# [QUICK-REF] = read first for common questions in this domain
+# Generated: 2026-03-26T17:12:17.998Z
+
+## architecture
+architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
+architecture/background-jobs.md | Background job patterns: queues, workflows, retry, DLQ, observability | background jobs, async processing, queues, cron jobs, workflow orchestration, DLQ
+architecture/caching-strategies.md | Multi-layer caching: application, Redis/KV, CDN/edge, invalidation strategies | caching, Redis, CDN, edge caching, cache invalidation, performance
+architecture/database-migrations.md | Database migration patterns: versioning, zero-downtime, expand/contract, rollback | database migration, schema change, zero-downtime deploy, rollback strategy
+architecture/event-driven.md | Event-driven architecture, pub/sub, message queues, CQRS, event sourcing | event-driven, pub/sub, message queue, CQRS, event sourcing, decoupling services
+architecture/multi-tenant.md | Multi-tenant architecture: DB-per-tenant, schema-per-tenant, row-level security | multi-tenant, B2B SaaS, tenant isolation, row-level security, organization model
+architecture/rate-limiting.md | Rate limiting strategies: token bucket, sliding window, distributed rate limiting | rate limiting, API throttling, abuse prevention, usage quotas, DDoS protection
+architecture/webhook-patterns.md | Webhook design: delivery guarantees, retry logic, signature verification, idempotency | webhooks, event delivery, retry logic, signature verification, idempotency
+
+## conventions
+conventions/authority.md | Convention authority and conflict resolution: hierarchy levels, non-overridable rules, design convention priority
+conventions/diagrams.md | Diagram conventions: Gherkin for business flows, Mermaid for technical flows. Applies to all contexts (code, specs, rules, skills, docs)
+conventions/naming.md | File and directory naming conventions: kebab-case, extensions, encoding, macOS case-insensitivity warning
+
+## code-conventions
+conventions/diagrams.md | Diagram conventions (transversal — also loaded outside code context). See conventions/
+code-conventions/architecture.md | Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events
+code-conventions/database.md | SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)
+code-conventions/delphi.md | Delphi/Pascal memory management and style (delta on general.md)
+code-conventions/general.md | Shared rules for all languages: types, naming, testing, errors, imports, security
+code-conventions/go.md | Go-specific patterns and tooling (delta on general.md)
+code-conventions/javascript.md | TypeScript/Node.js/React conventions (delta on general.md)
+code-conventions/logging.md | Structured logging, sensitive data redaction, compliance rules
+code-conventions/rust.md | Rust idioms, ownership, error handling (delta on general.md)
+code-conventions/swift-kotlin.md | iOS/Android native conventions for Swift and Kotlin (delta on general.md)
+code-conventions/testing.md | Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage
+
+## copywriting
+copywriting/email-sequences.md | Email sequence templates: onboarding, trial expiry, win-back, feature announcements | email marketing, onboarding flow, retention, user engagement
+copywriting/landing-page.md | Landing page copywriting: hero, features, social proof, CTA, pricing section | writing landing page, launching product, marketing site, conversion optimization
+copywriting/taglines.md | Tagline and headline writing: formulas, patterns, A/B testing guidance | naming product, writing headlines, brand messaging, A/B testing copy
+
+## design
+design/components/buttons.md | Button patterns: variants, sizes, states, icons, loading, groups, accessibility | button design, CTA button, button states, button group, icon button
+design/components/data-visualization.md | Data visualization patterns: metric cards, sparklines, charts (line/bar/area/pie), dashboard layout, number formatting | dashboard, charts, metrics display, data visualization, sparklines
+design/components/email-templates.md | Email template patterns: responsive layout, dark mode, client quirks, components | email design, transactional email, email template, dark mode email
+design/components/feedback.md | Feedback patterns: toasts, alerts, banners, progress indicators, empty states, skeleton loading | toast notification, alert banner, empty state, skeleton loading, progress indicator
+design/components/forms.md | Form patterns: validation, layout, input types, error states | form design, input validation UX, form layout, error states
+design/components/lists.md | List patterns: virtualization, pull-to-refresh, swipe actions | list UI, infinite scroll, pull-to-refresh, swipe actions, virtualization
+design/components/log-viewer.md | Log viewer patterns: terminal streaming, web table layout, filtering, JSON expand, multi-service | log viewer, terminal UI, log streaming, JSON viewer, devtools UI
+design/components/modals.md | Modals and dialogs: sheets, alerts, confirmation patterns | modal design, dialog, bottom sheet, alert, confirmation flow
+design/components/navigation.md | Navigation patterns: tabs, breadcrumbs, sidebars, menus, mobile bottom nav, command palette | navigation design, sidebar, tabs, breadcrumbs, mobile nav, command palette
+design/components/payment-flows.md | Payment UX patterns: tip/donation, subscription, one-time, express checkout, error handling | payment UI, checkout flow, tip/donation UX, subscription billing UI
+design/components/realtime-streams.md | Real-time streaming UI: WebSocket/SSE, reconnection, buffering, auto-scroll, optimistic updates, token streaming | real-time UI, WebSocket, SSE, live updates, chat UI, AI token streaming
+design/quality/accessibility.md | Accessibility patterns: WCAG 2.2 AA, ARIA, keyboard nav, focus management, screen readers
+design/quality/ui-rules.md | UI visual non-regression rules: alignment, spacing, overflow checks
+design/references/app-ui.md | App UI conventions: universal SaaS patterns, layout, components, views by category | SaaS app design, dashboard layout, app shell, sidebar layout
+design/references/app-views-catalog.md | App views catalog: view compositions from blocks, app template patterns (SaaS B2B, Creator, AI Chat, DevTool, CRM, E-commerce, Mobile, Project Tracker, Internal Tool/Admin Panel), composable traits (Auth, Billing, Team, API, Notifications, Integrations, Audit), views (Chat View, Billing Upgrade Flow, Board, Calendar, Notifications Inbox, Settings Integrations, Media Library) | app template, which views for an app, view composition, SaaS app structure, app pattern shorthand, composable traits, project tracker, kanban board, issue tracker, internal tool, admin panel, chat view, billing upgrade
+design/references/app-views.md | Standard SaaS views catalog: dashboard, settings, user management, auth, activity log | settings page, user management UI, activity log, auth pages, standard SaaS views
+design/references/component-blocks-catalog.md | UI blocks taxonomy and template patterns: marketing section types, application block types (dashboard, data, auth, nav, settings, content, commerce, integration), page compositions by product type, universal ordering rules | page composition, landing page sections, block types, template pattern, section ordering, what sections to include, app blocks, dashboard blocks, CRUD table, auth flow blocks
+design/references/design-references.md | Per-company design system references: Vercel, Linear, Stripe, Clerk, etc. | design inspiration, design system reference, company design benchmarks
+design/references/devtools.md | DevTools UI conventions: monitoring dashboards, log viewers, deployment pipelines | devtools UI, monitoring dashboard, deployment UI, container management
+design/references/landing-pages.md | Landing page conventions by product type: devtools, B2B SaaS, fintech, consumer, creators, health, AI, e-commerce | landing page design, marketing site, product page layout, hero section
+design/references/mockup-specs.md | Mockup maquettage reference: explicit px values for component heights, paddings, icon sizes | mockup, maquettage, wireframe, pixel specs, component dimensions
+design/systems/apple-hig.md | Apple Human Interface Guidelines: iOS/macOS patterns, SF Symbols, navigation
+design/systems/cli-patterns.md | CLI design system: colors ANSI, typographie terminal, composants (spinner, progress, prompts, tables), TUI frameworks, layout, error handling
+design/systems/material-design.md | Material Design 3: Android patterns, dynamic color, components
+design/systems/web-standards.md | Web standards: responsive patterns, accessibility, CSS best practices
+design/tokens/colors.md | Color tokens: semantic palette, dark mode, contrast rules
+design/tokens/cross-platform.md | Cross-platform design: unit mapping (px/pt/dp/sp), shared patterns
+design/tokens/motion.md | Motion tokens: duration scale, easing functions, transition types, reduced motion, cross-platform
+design/tokens/spacing.md | 8px grid, semantic spacing scale, platform unit mapping
+design/tokens/typography.md | Type scale, font stacks, line-height/tracking per platform
+
+## legal
+legal/cgu-saas-type.md | SaaS terms of service template (French law, CGU type) | launching SaaS, writing terms of service, CGU, user agreement
+legal/cgv-saas.md | CGV (general sales conditions) template for paid French SaaS subscription | paid SaaS, subscription billing, CGV, sales terms, refund policy
+legal/cookie-policy.md | Cookie policy template for French SaaS (categories, consent, third-party cookies) | cookie banner, cookie consent, analytics cookies, RGPD cookies
+legal/mentions-legales.md | French legal notices template (mentions legales obligatoires) | French website, legal notices, mentions légales, site identity
+legal/merchant-of-record.md | Merchant of Record model: legal implications, VAT delegation, provider comparison | international sales, VAT handling, tax compliance, Paddle vs Stripe decision
+legal/privacy-policy.md | Privacy policy template for French SaaS (RGPD-compliant, data types, rights, retention) | privacy policy, RGPD, data collection disclosure, user rights
+legal/rgpd-obligations.md | RGPD/GDPR obligations checklist for SaaS: DPA, consent, data retention, rights | RGPD compliance, GDPR, data protection, DPA, user data handling
+
+## pricing-models
+pricing-models/flat-rate.md | Flat-rate pricing model: single price, simple billing, predictable revenue | simple SaaS, single plan product, predictable billing
+pricing-models/freemium.md | Freemium pricing model: free tier design, conversion triggers, feature gating | product with free tier, conversion optimization, feature gating strategy
+pricing-models/per-seat.md | Per-seat pricing model: team billing, seat management, volume discounts | team/B2B product, collaborative tool, multi-user billing
+pricing-models/usage-based.md | Usage-based pricing model: metered billing, API pricing, consumption tracking | API product, LLM/AI app, variable consumption, infrastructure tool
+
+## seo
+seo/core-web-vitals.md | Core Web Vitals: LCP, FID, CLS optimization techniques and targets | performance optimization, Lighthouse score, page speed, SEO ranking
+seo/programmatic.md | Programmatic SEO: template pages, dynamic content, internal linking at scale | generating many pages, template-based content, marketplace SEO, directory site
+seo/technical-nextjs.md | Next.js technical SEO: metadata, sitemap, robots, structured data, ISR/SSG | Next.js project, technical SEO setup, sitemap generation, structured data
+
+## stack-ref
+[QUICK-REF] stack-ref/quick-ref.md | Condensed quick reference for common stack questions (hosting, auth, DB, combos). Read this FIRST for fast answers.
+stack-ref/ai/openrouter.md | OpenRouter: multi-model routing, unified API, pricing
+stack-ref/ai/pyo.md | Pyo: image and video generation API
+stack-ref/ai/vercel-ai-sdk.md | Vercel AI SDK: unified TypeScript SDK for streaming, tool use, multi-provider
+stack-ref/auth/authjs.md | Auth.js (NextAuth v5): Next.js multi-provider OAuth
+stack-ref/auth/better-auth.md | Better Auth: open-source, self-hosted, TypeScript-first auth
+stack-ref/auth/clerk.md | Clerk: managed auth with prebuilt UI components
+stack-ref/auth/supabase-auth.md | Supabase Auth: auth integrated with Supabase platform
+stack-ref/auth/workos.md | WorkOS: enterprise SSO (SAML, SCIM), directory sync
+stack-ref/cms/notion-cms.md | Notion as CMS: editorial content via ISR, blog/changelog/FAQ
+stack-ref/databases/cloudflare-d1.md | Cloudflare D1: edge SQL database for Workers
+stack-ref/databases/cloudflare-kv.md | Cloudflare KV: edge key-value store with TTL
+stack-ref/databases/cockroachdb.md | CockroachDB: distributed SQL, multi-region strong consistency
+stack-ref/databases/convex.md | Convex: realtime TypeScript-first database with auto subscriptions
+stack-ref/databases/mysql.md | MySQL: legacy/migration scenarios
+stack-ref/databases/neon.md | Neon: serverless Postgres with branching and scale-to-zero
+stack-ref/databases/planetscale.md | PlanetScale: MySQL-compatible with branching, high throughput
+stack-ref/databases/postgres.md | Postgres: self-hosted, full control
+stack-ref/databases/redis-self-hosted.md | Redis self-hosted: ultra-low latency cache
+stack-ref/databases/sqlite.md | SQLite: local/embedded, CLI tools, bun:sqlite
+stack-ref/databases/supabase-db.md | Supabase DB: managed Postgres with auth, storage, realtime
+stack-ref/databases/turso.md | Turso: edge SQLite with embedded replicas
+stack-ref/databases/upstash-redis.md | Upstash Redis: serverless Redis with REST API
+stack-ref/decision-matrix.md | Full decision matrix, cost comparisons, recommended stack combos, quick decision keys. Read only if quick-ref.md doesn't fully answer the question.
+stack-ref/email/ahasend.md | Ahasend: EU-based alternative to Resend
+stack-ref/email/amazon-ses.md | Amazon SES: lowest cost at scale, AWS-native
+stack-ref/email/brevo.md | Brevo: all-in-one email + marketing + CRM, EU-based
+stack-ref/email/mailgun.md | Mailgun: high volume, advanced routing
+stack-ref/email/postmark.md | Postmark: best deliverability for transactional email
+stack-ref/email/resend.md | Resend: modern DX, React Email, best for MVPs
+stack-ref/email/sendgrid.md | SendGrid: volume transactional + marketing suite
+stack-ref/frontend/cli.md | CLI frameworks: Go (cobra + bubbletea), Bun/TS, Rust
+stack-ref/frontend/desktop.md | Desktop: Tauri (Rust + React), SwiftUI native
+stack-ref/frontend/mobile.md | Mobile: React Native/Expo, Swift/SwiftUI, Kotlin
+stack-ref/frontend/web.md | Web frameworks: Next.js, Astro, shadcn/ui, DaisyUI
+stack-ref/jobs/bullmq.md | BullMQ: Redis-based queue for Node.js
+stack-ref/jobs/cloudflare-queues.md | Cloudflare Queues: native queue for CF Workers
+stack-ref/jobs/inngest.md | Inngest: serverless TypeScript jobs with retry and scheduling
+stack-ref/jobs/triggerdotdev.md | Trigger.dev: long-running multi-step workflows
+stack-ref/ops/notion-crm.md | Notion as CRM: early-stage lead management with n8n automation
+stack-ref/ops/solo-saas-ops-stack.md | Solo SaaS ops playbook: error tracking, analytics, uptime, support, feature flags
+stack-ref/payments/lemon-squeezy.md | Lemon Squeezy: MoR for indie/solo, VAT delegation
+stack-ref/payments/mollie.md | Mollie: EU-native payments, SEPA/iDEAL/Bancontact
+stack-ref/payments/paddle.md | Paddle: MoR for growing SaaS, international sales
+stack-ref/payments/stripe.md | Stripe: full control, flexible API, B2B focus
+stack-ref/platforms/aws.md | AWS: full cloud suite for large teams
+stack-ref/platforms/cloudflare.md | Cloudflare: 100% edge stack (Workers, D1, KV, R2, DO)
+stack-ref/platforms/firebase.md | Firebase: mobile-first platform (offline sync, FCM, auth)
+stack-ref/platforms/flyio.md | Fly.io: Docker containers, multi-region
+stack-ref/platforms/gcp.md | GCP: Cloud Run, EU data residency
+stack-ref/platforms/infomaniak.md | Infomaniak: sovereign EU hosting (FR/CH), ISO 27001
+stack-ref/platforms/supabase.md | Supabase: full-stack platform (Postgres, auth, storage, realtime)
+stack-ref/platforms/vercel.md | Vercel: frontend deployment, Next.js/Astro, edge functions
+stack-ref/search/algolia.md | Algolia: managed search, enterprise, merchandising
+stack-ref/search/meilisearch.md | Meilisearch: self-hosted search, open-source, FR-based
+stack-ref/search/orama.md | Orama: embedded search for edge/browser, zero infra
+stack-ref/search/typesense.md | Typesense: cloud managed search with geo-search
+stack-ref/storage/backblaze-b2.md | Backblaze B2: cheapest active storage, free egress via CF
+stack-ref/storage/cloudflare-r2.md | Cloudflare R2: native CF blob storage, zero egress fees
+stack-ref/storage/google-cloud-storage.md | Google Cloud Storage: Archive/Coldline tiers for cold storage

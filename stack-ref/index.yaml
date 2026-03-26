@@ -2,8 +2,10 @@ sections:
   overview:
     description: "Decision matrices, cost comparisons, and recommended stack combos by profile"
     files:
+      - file: quick-ref.md
+        description: "Condensed quick reference for common stack questions (hosting, auth, DB, combos). Read this FIRST for fast answers."
       - file: decision-matrix.md
-        description: "Decision matrix, cost comparisons, recommended stack combos, quick decision keys"
+        description: "Full decision matrix, cost comparisons, recommended stack combos, quick decision keys. Read only if quick-ref.md doesn't fully answer the question."
 
   ai:
     description: "AI/LLM providers and SDKs"

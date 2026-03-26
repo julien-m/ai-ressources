@@ -18,13 +18,22 @@ Load structured reference knowledge from the ai-ressources knowledge base via th
 
 ## Procedure
 
-**Always delegate to the `ai-res-librarian` agent.** Never read knowledge base files directly.
+**Always delegate to the `ai-res-librarian` agent.** Never read knowledge base files directly — except `compiled-index.txt` which is read once to accelerate routing.
 
 ### With argument: `/ai-res <domain or question>`
 
 1. Resolve alias if applicable (see table above)
-2. Spawn `ai-res-librarian` agent with the resolved domain or question as prompt
-3. Return the agent's response to the user
+2. **Read** `compiled-index.txt` at the project root (`~/projects/ai-ressources/compiled-index.txt`)
+3. Spawn `ai-res-librarian` agent with a prompt structured as:
+   ```
+   ## COMPILED INDEX
+   <content of compiled-index.txt>
+
+   ## QUESTION
+   <resolved domain or question>
+   ```
+4. Return the agent's response to the user
+5. If `compiled-index.txt` does not exist, spawn the agent with just the question (fallback — the agent will route via index.yaml)
 
 ### Without argument: `/ai-res`
 
