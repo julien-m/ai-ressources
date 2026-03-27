@@ -54,8 +54,8 @@ domains:
     last_reviewed: 2026-03-20
 
   models:
-    description: "Generative AI model reference: decision tables, pricing, strengths/weaknesses for image, video, chat/LLM, and music models via PoYo platform."
-    status: active
+    description: "Generative AI model reference: decision tables, use cases, pricing, strengths/weaknesses for image (9), video (18+1 coming), chat/LLM (5 series: GPT-5.4, Codex, Gemini 3, Claude 4.6, Haiku 4.5), and music (15) models."
+    status: complete
     file_count: 5
     last_reviewed: 2026-03-27
 

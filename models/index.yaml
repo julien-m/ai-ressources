@@ -10,16 +10,16 @@ files:
     questions_answered: ["Which image model is best for my use case?", "What's the cheapest image model?", "Which model supports multi-reference?", "Which model has 4K?"]
 
   - file: video.md
-    description: "Video generation models: decision table by use case, quick shortcuts, detailed specs for 17 models (Sora, Kling, Seedance, Hailuo, Wan, Runway, Grok)."
+    description: "Video generation models: decision table by use case, quick shortcuts, detailed specs for 18 models (Sora 2, Sora 2 Official, Kling, Seedance, Hailuo, Wan, Runway, Grok) + Seedance 2.0 Coming Soon."
     use_when: ["video generation", "text to video", "image to video", "motion control", "video model selection"]
     questions_answered: ["Which video model is best for my use case?", "Which models support audio/lip-sync?", "Which models support multi-shots?", "What's the cheapest video model?"]
 
   - file: chat.md
-    description: "Chat/LLM models: decision table by use case, quick shortcuts, detailed specs for Gemini 3 and Claude 4.5 series."
-    use_when: ["LLM selection", "chat model", "Gemini vs Claude", "coding model"]
-    questions_answered: ["Which LLM is best for coding?", "Which has the largest context window?", "What's the cheapest LLM?"]
+    description: "Chat/LLM models: decision table by use case, quick shortcuts, detailed specs for GPT-5.4, OpenAI Codex, Gemini 3, Claude 4.6, and Claude Haiku 4.5."
+    use_when: ["LLM selection", "chat model", "Gemini vs Claude", "coding model", "GPT vs Claude", "OpenAI Codex", "computer use"]
+    questions_answered: ["Which LLM is best for coding?", "Which has the largest context window?", "What's the cheapest LLM?", "Which model for debugging?", "Best reasoning model?", "Which model supports computer use?"]
 
   - file: music.md
-    description: "Music generation models: decision table, 3 fully documented Suno-powered models (generate, extend, cover). 12 additional models pending."
-    use_when: ["music generation", "music extension", "audio cover", "music model selection"]
-    questions_answered: ["How to create original music?", "How to extend an existing track?", "How to change the style of a song?"]
+    description: "Music generation models: decision table, 15 fully documented Suno-powered models (generate, extend, cover, upload-extend, add-instrumental, add-vocals, replace-section, covers, lyrics, persona, boost, WAV, vocal-remover, music-video)."
+    use_when: ["music generation", "music extension", "audio cover", "music model selection", "karaoke", "vocal removal", "stem separation", "lyrics generation"]
+    questions_answered: ["How to create original music?", "How to extend an existing track?", "How to change the style of a song?", "How to separate vocals from instruments?", "How to add vocals to an instrumental?", "How to create a music video?"]
