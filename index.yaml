@@ -56,7 +56,7 @@ domains:
   models:
     description: "Generative AI model reference: decision tables, use cases, pricing, strengths/weaknesses for image (9), video (18+1 coming), chat/LLM (5 series: GPT-5.4, Codex, Gemini 3, Claude 4.6, Haiku 4.5), and music (15) models."
     status: complete
-    file_count: 5
+    file_count: 6
     last_reviewed: 2026-03-27
 
   stack-ref:

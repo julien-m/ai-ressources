@@ -18,13 +18,49 @@ Load structured reference knowledge from the ai-ressources knowledge base via th
 
 ## Procedure
 
-**Always delegate to the `ai-res-librarian` agent.** Never read knowledge base files directly — except `compiled-index.txt` which is read once to accelerate routing.
-
 ### With argument: `/ai-res <domain or question>`
 
 1. Resolve alias if applicable (see table above)
-2. **Read** `compiled-index.txt` at the project root (`~/projects/ai-ressources/compiled-index.txt`)
-3. Spawn `ai-res-librarian` agent with a prompt structured as:
+
+#### Step 2 — Quick-ref fast path
+
+Before reading the compiled index or spawning the agent, check if the question can be answered directly from a quick-ref file. This avoids the ~60s agent overhead for common questions.
+
+**Quick-ref domains:**
+
+| Keywords in question | Domain | Quick-ref file |
+|---|---|---|
+| model, modèle, LLM, image gen, video gen, music, cheapest model, best model, which model, quel modèle | `models` | `~/projects/ai-ressources/models/quick-ref.md` |
+| stack, hosting, auth, database, DB, payment, email provider, platform, quelle stack, quel hébergeur | `stack-ref` | `~/projects/ai-ressources/stack-ref/quick-ref.md` |
+
+**Bare domain shortcut:** if the argument is exactly `models` or `stack-ref` (after alias resolution), this is a fast path match — return the entire quick-ref file.
+
+**Matching rules:**
+1. Scan the question for keywords above
+2. If it matches **exactly one** quick-ref domain → candidate for fast path
+3. If it matches **two domains**, **zero domains**, or **one quick-ref domain + another domain** (e.g., "which model + which architecture") → skip fast path, go to step 3
+
+**Depth signals — force fallback to agent if ANY is present:**
+- Detailed comparison: "compare X vs Y in detail", "full specs", "differences between"
+- Specific model/tech name not covered in the quick-ref
+- Exhaustive request: "all options", "everything", "complete list"
+- Cross-domain: question mixes topics from different domains
+
+When in doubt → skip fast path, go to step 3.
+
+**If fast path matches:**
+1. **Read** the quick-ref file directly (1 Read, no agent)
+2. If the question targets a specific type (e.g., "image", "video", "auth", "hosting"), extract only the matching `##` section from the file
+3. If the question is general about the domain, return the entire file content
+4. Append footer: `> For deeper detail, use /ai-res <detailed question> (routed via agent)`
+5. **Stop here** — do NOT read compiled-index.txt, do NOT spawn the agent
+
+#### Step 3 — Agent path (default)
+
+If the fast path did not match, delegate to the `ai-res-librarian` agent:
+
+1. **Read** `compiled-index.txt` at the project root (`~/projects/ai-ressources/compiled-index.txt`)
+2. Spawn `ai-res-librarian` agent with a prompt structured as:
    ```
    ## COMPILED INDEX
    <content of compiled-index.txt>
@@ -32,8 +68,8 @@ Load structured reference knowledge from the ai-ressources knowledge base via th
    ## QUESTION
    <resolved domain or question>
    ```
-4. Return the agent's response to the user
-5. If `compiled-index.txt` does not exist, spawn the agent with just the question (fallback — the agent will route via index.yaml)
+3. Return the agent's response to the user
+4. If `compiled-index.txt` does not exist, spawn the agent with just the question (fallback — the agent will route via index.yaml)
 
 ### Without argument: `/ai-res`
 
@@ -107,6 +143,7 @@ Returns: list of all domains with descriptions and current status (complete, dra
 
 ## Rules
 
-- **Always use the agent** — never read `index.yaml` or knowledge base files directly from this skill. The `ai-res-librarian` agent handles all navigation, reading, and synthesis in an isolated context.
+- **Quick-ref fast path first** — for single-domain questions matching `models` or `stack-ref`, read the quick-ref file directly (step 2). For everything else, delegate to the agent (step 3).
+- **Agent for complex queries** — never read `index.yaml` or deep knowledge base files directly from this skill. The `ai-res-librarian` agent handles all navigation, reading, and synthesis in an isolated context.
 - **Pagination** — the agent reads at most 15 files per invocation. If its response includes a **Cross-References** section with unread files, re-invoke the agent with those specific files/topics to get the remaining content. Example: `Spawn ai-res-librarian with prompt: "Read these files: design/references/app-views-catalog.md, design/components/forms.md"`.
 - **Coexistence** — `code-conventions` is also loaded by `claude/rules/code.md` during coding tasks. Both mechanisms coexist without conflict: the rule dispatcher loads conventions automatically for coding, while `/ai-res code` provides on-demand browsing via the agent.

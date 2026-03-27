@@ -1,7 +1,7 @@
 # ai-ressources compiled index
 # Format: path | description [| use_when tags]
 # [QUICK-REF] = read first for common questions in this domain
-# Generated: 2026-03-27T16:49:58.362Z
+# Generated: 2026-03-27T17:40:16.874Z
 
 ## architecture
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
@@ -89,6 +89,7 @@ seo/programmatic.md | Programmatic SEO: template pages, dynamic content, interna
 seo/technical-nextjs.md | Next.js technical SEO: metadata, sitemap, robots, structured data, ISR/SSG | Next.js project, technical SEO setup, sitemap generation, structured data
 
 ## models
+[QUICK-REF] models/quick-ref.md | Condensed decision tables and tree diagrams for fast model selection across all types (chat, image, video, music). | quick model selection, which model should I use, cheapest model, best model for X, model comparison shortcut
 models/chat.md | Chat/LLM models: decision table by use case, quick shortcuts, detailed specs for GPT-5.4, OpenAI Codex, Gemini 3, Claude 4.6, and Claude Haiku 4.5. | LLM selection, chat model, Gemini vs Claude, coding model, GPT vs Claude, OpenAI Codex, computer use
 models/image.md | Image generation models: decision table by use case, quick shortcuts, detailed specs for 9 models (Nano Banana, Seedream, GPT Image, FLUX, Z-Image, Grok). | image generation, image editing, text to image, image model selection
 models/music.md | Music generation models: decision table, 15 fully documented Suno-powered models (generate, extend, cover, upload-extend, add-instrumental, add-vocals, replace-section, covers, lyrics, persona, boost, WAV, vocal-remover, music-video). | music generation, music extension, audio cover, music model selection, karaoke, vocal removal, stem separation, lyrics generation

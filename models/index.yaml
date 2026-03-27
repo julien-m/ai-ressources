@@ -1,4 +1,9 @@
 files:
+  - file: quick-ref.md
+    description: "Condensed decision tables and tree diagrams for fast model selection across all types (chat, image, video, music)."
+    use_when: ["quick model selection", "which model should I use", "cheapest model", "best model for X", "model comparison shortcut"]
+    questions_answered: ["Which model is cheapest/fastest/best for my task?", "Quick decision tree for model selection", "Cross-type model comparison"]
+
   - file: overview.md
     description: "Cross-type selection guide with summary table and links to type-specific files."
     use_when: ["model selection", "generative AI overview", "compare model types"]
