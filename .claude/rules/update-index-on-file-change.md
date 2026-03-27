@@ -40,8 +40,19 @@ This keeps `compiled-index.txt` in sync with the domain indexes. The compiled in
 
 This step must happen **in the same pass** as the index.yaml update — never defer it.
 
+## Last-updated marker
+
+After any `.md` file change in a **domain directory indexed in the root `index.yaml`** (architecture, code-conventions, conventions, copywriting, design, legal, pricing-models, seo, stack-ref, templates), update the global last-updated marker:
+
+```bash
+date +%Y-%m-%d > .last-updated
+```
+
+This marker is read by `/conventions.refresh` in other projects to detect when the knowledge base has changed. It must be updated **in the same pass** as the index.yaml update.
+
 ## Rules
 
 - Never wait for the user to notice a stale index — sync it in the same pass as the file operation.
 - If no index exists anywhere in the ancestry, do nothing — don't create one unprompted.
 - Update `last_reviewed` even for content-only edits — the date reflects the last time a human or agent verified the domain.
+- Always update `.last-updated` when a domain `.md` file changes — this is the freshness signal for materialized conventions.
