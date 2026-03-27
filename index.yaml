@@ -53,6 +53,12 @@ domains:
     file_count: 3
     last_reviewed: 2026-03-20
 
+  models:
+    description: "Generative AI model reference: decision tables, pricing, strengths/weaknesses for image, video, chat/LLM, and music models via PoYo platform."
+    status: active
+    file_count: 5
+    last_reviewed: 2026-03-27
+
   stack-ref:
     description: "Vendor comparison sheets with decision matrices, cost comparisons, and recommended stack combos. Covers 12 categories: AI, auth, CMS, databases, email, frontend, jobs, ops, payments, platforms, search, storage."
     status: complete

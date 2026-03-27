@@ -1,0 +1,25 @@
+files:
+  - file: overview.md
+    description: "Cross-type selection guide with summary table and links to type-specific files."
+    use_when: ["model selection", "generative AI overview", "compare model types"]
+    questions_answered: ["Which model types are available?", "What's the cheapest model across all types?"]
+
+  - file: image.md
+    description: "Image generation models: decision table by use case, quick shortcuts, detailed specs for 9 models (Nano Banana, Seedream, GPT Image, FLUX, Z-Image, Grok)."
+    use_when: ["image generation", "image editing", "text to image", "image model selection"]
+    questions_answered: ["Which image model is best for my use case?", "What's the cheapest image model?", "Which model supports multi-reference?", "Which model has 4K?"]
+
+  - file: video.md
+    description: "Video generation models: decision table by use case, quick shortcuts, detailed specs for 17 models (Sora, Kling, Seedance, Hailuo, Wan, Runway, Grok)."
+    use_when: ["video generation", "text to video", "image to video", "motion control", "video model selection"]
+    questions_answered: ["Which video model is best for my use case?", "Which models support audio/lip-sync?", "Which models support multi-shots?", "What's the cheapest video model?"]
+
+  - file: chat.md
+    description: "Chat/LLM models: decision table by use case, quick shortcuts, detailed specs for Gemini 3 and Claude 4.5 series."
+    use_when: ["LLM selection", "chat model", "Gemini vs Claude", "coding model"]
+    questions_answered: ["Which LLM is best for coding?", "Which has the largest context window?", "What's the cheapest LLM?"]
+
+  - file: music.md
+    description: "Music generation models: decision table, 3 fully documented Suno-powered models (generate, extend, cover). 12 additional models pending."
+    use_when: ["music generation", "music extension", "audio cover", "music model selection"]
+    questions_answered: ["How to create original music?", "How to extend an existing track?", "How to change the style of a song?"]

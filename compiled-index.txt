@@ -1,7 +1,7 @@
 # ai-ressources compiled index
 # Format: path | description [| use_when tags]
 # [QUICK-REF] = read first for common questions in this domain
-# Generated: 2026-03-26T17:12:17.998Z
+# Generated: 2026-03-27T15:36:43.105Z
 
 ## architecture
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
@@ -87,6 +87,13 @@ pricing-models/usage-based.md | Usage-based pricing model: metered billing, API 
 seo/core-web-vitals.md | Core Web Vitals: LCP, FID, CLS optimization techniques and targets | performance optimization, Lighthouse score, page speed, SEO ranking
 seo/programmatic.md | Programmatic SEO: template pages, dynamic content, internal linking at scale | generating many pages, template-based content, marketplace SEO, directory site
 seo/technical-nextjs.md | Next.js technical SEO: metadata, sitemap, robots, structured data, ISR/SSG | Next.js project, technical SEO setup, sitemap generation, structured data
+
+## models
+models/chat.md | Chat/LLM models: decision table by use case, quick shortcuts, detailed specs for Gemini 3 and Claude 4.5 series. | LLM selection, chat model, Gemini vs Claude, coding model
+models/image.md | Image generation models: decision table by use case, quick shortcuts, detailed specs for 9 models (Nano Banana, Seedream, GPT Image, FLUX, Z-Image, Grok). | image generation, image editing, text to image, image model selection
+models/music.md | Music generation models: decision table, 3 fully documented Suno-powered models (generate, extend, cover). 12 additional models pending. | music generation, music extension, audio cover, music model selection
+models/overview.md | Cross-type selection guide with summary table and links to type-specific files. | model selection, generative AI overview, compare model types
+models/video.md | Video generation models: decision table by use case, quick shortcuts, detailed specs for 17 models (Sora, Kling, Seedance, Hailuo, Wan, Runway, Grok). | video generation, text to video, image to video, motion control, video model selection
 
 ## stack-ref
 [QUICK-REF] stack-ref/quick-ref.md | Condensed quick reference for common stack questions (hosting, auth, DB, combos). Read this FIRST for fast answers.
