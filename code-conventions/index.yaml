@@ -8,6 +8,17 @@ coverage:
   Kotlin: partial
   Delphi: legacy
 
+frameworks:
+  React: full
+  Next.js: full
+  shadcn/ui: full
+  Tailwind CSS v4: full
+  Cloudflare Workers: full
+  TanStack: full
+  Drizzle ORM: full
+  Prisma: full
+  Remotion: full
+
 files:
   - file: general.md
     description: "Shared rules for all languages: types, naming, testing, errors, imports, security"
@@ -61,6 +72,52 @@ files:
     description: "SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)"
     applies_to: ["SQL", "PostgreSQL", "MySQL", "SQLite"]
     priority: 6
+
+  # Framework deltas (priority 7 — loaded after language delta when framework detected)
+  - file: react.md
+    description: "React hooks, re-renders, composition, data fetching (delta on javascript.md)"
+    applies_to: ["React"]
+    priority: 7
+
+  - file: nextjs.md
+    description: "Next.js App Router, RSC, Server Components, caching (delta on react.md)"
+    applies_to: ["Next.js"]
+    priority: 7
+
+  - file: shadcn.md
+    description: "shadcn/ui composition, variants, semantic tokens, forms (delta on react.md + tailwind.md)"
+    applies_to: ["shadcn/ui"]
+    priority: 7
+
+  - file: tailwind.md
+    description: "Tailwind CSS v4 configuration, theming, utilities (delta on javascript.md)"
+    applies_to: ["Tailwind CSS"]
+    priority: 7
+
+  - file: cloudflare.md
+    description: "Cloudflare Workers, D1, R2, KV, Hono patterns and anti-patterns (delta on javascript.md)"
+    applies_to: ["Cloudflare Workers", "Hono"]
+    priority: 7
+
+  - file: tanstack.md
+    description: "TanStack Query v5, Router, Start conventions (delta on react.md)"
+    applies_to: ["TanStack Query", "TanStack Router", "TanStack Start"]
+    priority: 7
+
+  - file: drizzle.md
+    description: "Drizzle ORM schema, migrations, queries, D1/PostgreSQL (delta on database.md)"
+    applies_to: ["Drizzle ORM"]
+    priority: 7
+
+  - file: prisma.md
+    description: "Prisma v7 schema, client, transactions, migrations (delta on database.md)"
+    applies_to: ["Prisma"]
+    priority: 7
+
+  - file: remotion.md
+    description: "Remotion compositions, animations, sequencing, assets, rendering (delta on react.md)"
+    applies_to: ["Remotion"]
+    priority: 7
 
   - file: ../conventions/diagrams.md
     description: "Diagram conventions (transversal — also loaded outside code context). See conventions/"

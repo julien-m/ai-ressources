@@ -18,11 +18,23 @@ Before coding, always load the shared rules first, then cross-cutting rules, the
 - **SQL / Database** → **Read** [`database.md`](../../code-conventions/database.md)
 - **Any other language** → [`general.md`](../../code-conventions/general.md) + [`architecture.md`](../../code-conventions/architecture.md) is sufficient
 
+6. Then load applicable framework deltas (detect from imports, config files, or project context):
+
+- **React** (`useState`, `useEffect`, JSX) → **Read** [`react.md`](../../code-conventions/react.md)
+- **Next.js** (`next.config`, `app/` dir, `'use server'`) → **Read** [`nextjs.md`](../../code-conventions/nextjs.md)
+- **shadcn/ui** (`@/components/ui/`, shadcn CLI) → **Read** [`shadcn.md`](../../code-conventions/shadcn.md)
+- **Tailwind CSS** (`tailwind.config`, `@tailwindcss/`) → **Read** [`tailwind.md`](../../code-conventions/tailwind.md)
+- **Cloudflare Workers** (`wrangler.toml`, `@cloudflare/`, Hono) → **Read** [`cloudflare.md`](../../code-conventions/cloudflare.md)
+- **TanStack** (`@tanstack/react-query`, `@tanstack/react-router`, `@tanstack/react-start`) → **Read** [`tanstack.md`](../../code-conventions/tanstack.md)
+- **Drizzle ORM** (`drizzle.config`, `drizzle-orm`) → **Read** [`drizzle.md`](../../code-conventions/drizzle.md)
+- **Prisma** (`prisma/schema.prisma`, `@prisma/client`) → **Read** [`prisma.md`](../../code-conventions/prisma.md)
+- **Remotion** (`remotion.config`, `<Composition>`, `useCurrentFrame`) → **Read** [`remotion.md`](../../code-conventions/remotion.md)
+
 All paths are relative to this file's location (`claude/rules/`).
 
 Always load files **before** starting to code. If the task spans multiple domains (e.g. TypeScript + SQL), load all relevant files.
 
-Load order: [`general.md`](../../code-conventions/general.md) → [`architecture.md`](../../code-conventions/architecture.md) → [`logging.md`](../../code-conventions/logging.md) → [`testing.md`](../../code-conventions/testing.md) → language delta → [`database.md`](../../code-conventions/database.md) (if applicable).
+Load order: [`general.md`](../../code-conventions/general.md) → [`architecture.md`](../../code-conventions/architecture.md) → [`logging.md`](../../code-conventions/logging.md) → [`testing.md`](../../code-conventions/testing.md) → language delta → framework deltas (if applicable) → [`database.md`](../../code-conventions/database.md) (if applicable).
 
 ## Design conventions
 
@@ -51,6 +63,7 @@ After loading the convention files, **always** display the following confirmatio
   ✓ logging
   ✓ testing
   ✓ <language delta>
+  ✓ <framework deltas> (if loaded)
   ✓ database (if loaded)
   ✓ design/<system> (if loaded)
 ```

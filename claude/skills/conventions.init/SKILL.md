@@ -50,7 +50,7 @@ Before detection, **read these reference files** and **scan ai-ressources direct
 - `code-conventions/*.md`
 - `conventions/*.md`
 
-#### Channel 1: File extensions → code-conventions
+#### Channel 1: File extensions → code-conventions (language deltas)
 
 | Extensions | Category | Source files to read (all from `code-conventions/`) |
 |---|---|---|
@@ -65,6 +65,24 @@ Before detection, **read these reference files** and **scan ai-ressources direct
 | `.kt` with UI, layout XML | design | `design/systems/material-design.md` + `design/tokens/*.md` |
 | `.pen` | design | `design/references/mockup-specs.md` |
 | `.md` with mermaid/gherkin | diagrams | `conventions/diagrams.md` |
+
+#### Channel 1b: Dependencies + config → code-conventions (framework deltas)
+
+Detect frameworks from `package.json` dependencies AND config files in the project root. Each match adds the corresponding framework delta from `code-conventions/`:
+
+| Signal (dependency or config file) | Framework delta |
+|---|---|
+| `react`, `react-dom`, `.tsx` files with JSX | `react.md` |
+| `next`, `next.config.*` | `nextjs.md` |
+| `@shadcn/ui`, `components/ui/` dir, `components.json` | `shadcn.md` |
+| `tailwindcss`, `@tailwindcss/*`, `tailwind.config.*` | `tailwind.md` |
+| `wrangler.toml`, `wrangler.jsonc`, `@cloudflare/*`, `hono` | `cloudflare.md` |
+| `@tanstack/react-query`, `@tanstack/react-router`, `@tanstack/react-start` | `tanstack.md` |
+| `drizzle-orm`, `drizzle-kit`, `drizzle.config.*` | `drizzle.md` |
+| `@prisma/client`, `prisma/schema.prisma` | `prisma.md` |
+| `remotion`, `@remotion/*`, `remotion.config.*` | `remotion.md` |
+
+Multiple framework deltas can match simultaneously (e.g., React + Next.js + shadcn + Tailwind). Include all matching deltas.
 
 #### Channel 2: Dependencies → stack-ref + architecture
 
@@ -86,6 +104,12 @@ Domaines détectés pour [project-name] :
 Code:
   ✓ TypeScript (general + architecture + logging + testing + javascript)
   ✓ Database (database)
+
+Frameworks:
+  ✓ React (react)
+  ✓ Next.js (nextjs)
+  ✓ shadcn/ui (shadcn)
+  ✓ Tailwind CSS (tailwind)
 
 Architecture:
   ✓ auth-flows, webhook-patterns
@@ -119,7 +143,8 @@ Dispatch one `ai-res-librarian` agent per detected category, **in parallel**. Ea
 
 | Category | Agent prompt | Sources read by agent |
 |---|---|---|
-| code | "Synthesize coding conventions for a [language] project. Extract only essential rules: naming, types, imports, error handling, async, testing, logging, architecture layers, security. Format: imperative rules, no prose, do/don't examples only when ambiguous." | `code-conventions/*.md` (relevant ones) |
+| code | "Synthesize coding conventions for a [language] project. Extract only essential rules: naming, types, imports, error handling, async, testing, logging, architecture layers, security. Format: imperative rules, no prose, do/don't examples only when ambiguous." | `code-conventions/*.md` (language deltas: general, architecture, logging, testing, javascript, etc.) |
+| frameworks | "Synthesize framework conventions for: [detected frameworks]. Extract key rules, anti-patterns, composition patterns, and critical configuration. Format: imperative rules per framework, do/don't examples for non-obvious rules." | `code-conventions/*.md` (framework deltas: react, nextjs, shadcn, tailwind, cloudflare, tanstack, drizzle, prisma, remotion — only detected ones) |
 | architecture | "Synthesize architecture patterns for: [detected patterns]. Extract key rules, constraints, and patterns. Format: imperative rules per pattern." | `architecture/*.md` (matched ones) |
 | stack | "Synthesize stack reference for: [detected stack]. Extract essential setup, gotchas, and best practices for each. Format: imperative rules." | `stack-ref/**/*.md` (matched ones) |
 | design | "Synthesize design conventions for a [project type]. Extract key rules: spacing, typography, colors, component patterns, accessibility. Format: imperative rules." | `design/**/*.md` (relevant ones) |
@@ -145,6 +170,7 @@ generated: {ISO 8601 date YYYY-MM-DD}
 source: ~/projects/ai-ressources
 categories:
   - code
+  - frameworks
   - architecture
   - stack
   - design
@@ -154,6 +180,8 @@ categories:
 # Conventions — {project name}
 
 {output of code agent}
+
+{output of frameworks agent}
 
 {output of architecture agent}
 
