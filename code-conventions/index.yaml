@@ -73,6 +73,11 @@ files:
     applies_to: ["SQL", "PostgreSQL", "MySQL", "SQLite"]
     priority: 6
 
+  - file: runtime-configs.md
+    description: "Expected config defaults per runtime/language: tsconfig, package.json, editorconfig, prettier, gitignore patterns. Used by /conventions.init Phase 6."
+    applies_to: ["*"]
+    priority: 6
+
   # Framework deltas (priority 7 — loaded after language delta when framework detected)
   - file: react.md
     description: "React hooks, re-renders, composition, data fetching (delta on javascript.md)"

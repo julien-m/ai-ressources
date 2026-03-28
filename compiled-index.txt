@@ -1,7 +1,7 @@
 # ai-ressources compiled index
 # Format: path | description [| use_when tags]
 # [QUICK-REF] = read first for common questions in this domain
-# Generated: 2026-03-28T14:40:09.042Z
+# Generated: 2026-03-28T18:35:34.515Z
 
 ## architecture
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
@@ -33,6 +33,7 @@ code-conventions/nextjs.md | Next.js App Router, RSC, Server Components, caching
 code-conventions/prisma.md | Prisma v7 schema, client, transactions, migrations (delta on database.md)
 code-conventions/react.md | React hooks, re-renders, composition, data fetching (delta on javascript.md)
 code-conventions/remotion.md | Remotion compositions, animations, sequencing, assets, rendering (delta on react.md)
+code-conventions/runtime-configs.md | Expected config defaults per runtime/language: tsconfig, package.json, editorconfig, prettier, gitignore patterns. Used by /conventions.init Phase 6.
 code-conventions/rust.md | Rust idioms, ownership, error handling (delta on general.md)
 code-conventions/shadcn.md | shadcn/ui composition, variants, semantic tokens, forms (delta on react.md + tailwind.md)
 code-conventions/swift-kotlin.md | iOS/Android native conventions for Swift and Kotlin (delta on general.md)

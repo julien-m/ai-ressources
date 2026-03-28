@@ -1,0 +1,244 @@
+# Runtime Configurations
+
+Expected configuration defaults per runtime and language. Used by `/conventions.init` Phase 6 (Config Audit).
+
+Structure: `##` per language, `###` per config file. Each config section specifies expected keys, values, and behavior when the file is missing.
+
+## TypeScript
+
+### Runtime detection
+
+First match wins:
+
+| Signal | Runtime |
+|---|---|
+| `bun.lock` or `bunfig.toml` | Bun |
+| `deno.json` or `deno.lock` | Deno |
+| `pnpm-lock.yaml` | Node + pnpm |
+| `yarn.lock` | Node + yarn |
+| `package-lock.json` | Node + npm |
+| `package.json` (no lockfile) | Node + npm (fallback) |
+
+No JS/TS files detected = skip TypeScript config audit.
+
+### Config: tsconfig.json
+
+Create if missing: **confirm**
+
+**All runtimes:**
+
+| Key | Expected |
+|---|---|
+| `compilerOptions.strict` | `true` |
+| `compilerOptions.esModuleInterop` | `true` |
+| `compilerOptions.skipLibCheck` | `true` |
+| `compilerOptions.forceConsistentCasingInImports` | `true` |
+
+**Bun:**
+
+| Key | Expected |
+|---|---|
+| `compilerOptions.moduleResolution` | `"bundler"` |
+| `compilerOptions.target` | `"ESNext"` |
+| `compilerOptions.module` | `"ESNext"` |
+
+**Deno:**
+
+| Key | Expected |
+|---|---|
+| `compilerOptions.lib` | includes `"deno.ns"` |
+
+**Node (npm, pnpm, yarn):**
+
+| Key | Expected |
+|---|---|
+| `compilerOptions.moduleResolution` | `"node16"` or `"nodenext"` |
+| `compilerOptions.target` | `"ES2022"` or higher |
+| `compilerOptions.module` | `"node16"` or `"nodenext"` |
+
+### Config: package.json
+
+Create if missing: **confirm**
+
+**All runtimes:**
+
+| Key | Expected | If missing |
+|---|---|---|
+| `type` | `"module"` | auto |
+| `scripts.typecheck` | exists | auto |
+| `scripts.lint` | exists | signal |
+| `scripts.test` | exists | signal |
+
+**Bun:**
+
+| Key | Expected |
+|---|---|
+| `devDependencies.@types/bun` | present |
+| `scripts.typecheck` | `"bunx tsc --noEmit"` |
+
+### Config: .nvmrc / .node-version
+
+- **Node (all):** create `.nvmrc` with current LTS if missing — auto
+- **Bun:** create `.node-version` if missing — auto
+- **Deno:** skip
+
+### Config: .editorconfig
+
+Create if missing: **auto**
+
+```ini
+root = true
+
+[*]
+indent_style = tab
+indent_size = 4
+end_of_line = lf
+charset = utf-8
+trim_trailing_whitespace = true
+insert_final_newline = true
+```
+
+### Config: eslint
+
+**All runtimes (except Deno):** check `eslint.config.*` or `.eslintrc.*` exists. If missing — signal only.
+
+### Config: prettier
+
+Create if missing: **auto**
+
+**All runtimes (except Deno):** check `.prettierrc*` or `prettier` key in `package.json`.
+
+```json
+{
+  "useTabs": true,
+  "semi": true,
+  "singleQuote": false
+}
+```
+
+### Config: vitest.config.ts
+
+**All runtimes:** check existence when `vitest` is in devDependencies. If missing — signal only.
+
+### Config: bunfig.toml
+
+**Bun only:** no required defaults — file presence is enough signal.
+
+### Config: .npmrc
+
+Create if missing (pnpm only): **auto**
+
+```ini
+shamefully-hoist=true
+```
+
+---
+
+## .gitignore Patterns
+
+Language-independent. Composed in layers — common first, then per detected language.
+
+### Layer: common
+
+Always applied:
+
+```gitignore
+# OS
+.DS_Store
+Thumbs.db
+
+# IDE
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+*.log
+
+# Conventions
+.conventions/
+```
+
+> `.vscode/` is skippable if the user explicitly opts out (team shares VS Code settings).
+
+### Layer: typescript
+
+```gitignore
+node_modules/
+dist/
+build/
+.output/
+coverage/
+.tsbuildinfo
+.next/
+.nuxt/
+.astro/
+.turbo/
+.bun/
+.npm/
+.yarn/
+.pnpm-store/
+```
+
+### Layer: go
+
+```gitignore
+bin/
+*.exe
+vendor/
+```
+
+### Layer: rust
+
+```gitignore
+target/
+*.pdb
+```
+
+### Layer: delphi
+
+```gitignore
+*.dcu
+*.exe
+*.dll
+*.bpl
+*.dcp
+*.map
+*.drc
+__history/
+__recovery/
+Win32/
+Win64/
+```
+
+### Layer: python
+
+```gitignore
+__pycache__/
+*.pyc
+.venv/
+*.egg-info/
+.mypy_cache/
+.ruff_cache/
+```
+
+### Layer: swift
+
+```gitignore
+DerivedData/
+*.xcworkspace
+build/
+```
+
+### Layer: kotlin
+
+```gitignore
+build/
+.gradle/
+```

@@ -201,11 +201,60 @@ Check if `.conventions/` is in the project's `.gitignore`:
 - If `.gitignore` does not exist AND project is a git repo → create `.gitignore` with `.conventions/\n`
 - If not a git repo → skip
 
+### Phase 6: Config Audit
+
+1. **Read** [`~/projects/ai-ressources/code-conventions/runtime-configs.md`](~/projects/ai-ressources/code-conventions/runtime-configs.md)
+2. **Detect runtime** — glob lockfiles and config files in the project root, match against the runtime detection table
+3. **Detect languages** — reuse Phase 1 file extension analysis
+4. **If no supported language detected** → skip Phase 6
+5. **Audit .gitignore** — compose layers from `runtime-configs.md` (common + all detected languages). Add only missing patterns to the existing `.gitignore` (no duplicates). If `.gitignore` does not exist, create it. No confirmation needed — auto-apply.
+6. **Audit config files** (TypeScript only for now):
+   - Read each config file if it exists
+   - Compare each expected key/value from `runtime-configs.md` against the actual file
+   - Classify each item: `ok` (matches), `fix` (wrong value), `create` (file missing, auto-create), `signal` (info only, no action)
+7. **Display grouped summary:**
+
+```
+Config Audit ({runtime} detected):
+
+.gitignore:
+  + {N} patterns added ({list of key patterns}...)
+
+tsconfig.json:
+  ✓ strict: true
+  ⚠ moduleResolution: "node" → "bundler"
+  ⚠ target: "ES2020" → "ESNext"
+
+package.json:
+  ✓ type: "module"
+  ⚠ devDependencies: missing @types/bun
+  ⚠ scripts.typecheck: "tsc --noEmit" → "bunx tsc --noEmit"
+
+Files to create:
+  + .editorconfig (standard defaults)
+  + .prettierrc (tabs, semi, double quotes)
+  + .nvmrc (v22.x)
+
+ℹ eslint config not found (create manually)
+ℹ vitest.config.ts not found (vitest in devDependencies)
+
+Apply? (y/n, or list items to skip)
+```
+
+8. **On confirmation:**
+   - Fix existing files using JSON merge (not overwrite) for `.json` files
+   - Create missing files marked "auto" in `runtime-configs.md`
+   - Files marked "confirm" (tsconfig.json, package.json) are included in the grouped summary — the summary serves as the confirmation gate
+   - Files marked "signal" are displayed with `ℹ` — no action taken
+9. **User can skip items** — respond with "skip .nvmrc, .prettierrc" etc.
+10. **If nothing to fix or create** (all items `ok`) → display "Config audit: all checks passed ✓" and skip the confirmation prompt
+
 ### Completion
 
 Display:
 ```
 .conventions/conventions.md generated — {N} categories, {L} lines
+Config audit: {X} fixed, {Y} created, {Z} skipped
 ```
 
 ## Rules
