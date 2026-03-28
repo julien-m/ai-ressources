@@ -1,0 +1,15 @@
+{
+  "name": "ai-ressources",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "build-index": "bun run scripts/build-index.ts"
+  },
+  "dependencies": {
+    "yaml": "^2.7.1"
+  },
+  "devDependencies": {
+    "@types/bun": "^1.2.10",
+    "@types/node": "^25.5.0"
+  }
+}
