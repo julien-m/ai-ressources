@@ -43,6 +43,17 @@ pub use service::UserService;
 cargo fmt --check && cargo clippy -- -D warnings && cargo test && cargo build
 ```
 
+## Pre-commit Validation
+
+Before committing, all of these must pass with zero errors/warnings:
+
+```bash
+cargo check                       # type/borrow checking
+cargo clippy -- -D warnings       # linting (warnings as errors)
+cargo fmt --check                 # formatting
+cargo test                        # tests
+```
+
 ## Naming
 - Variables/functions: `snake_case`. Types/traits/enums: `PascalCase`. Constants: `UPPER_SNAKE_CASE`
 - Booleans: `is_active`, `has_credits`, `can_send_email`

@@ -70,6 +70,22 @@ await fetch(url, { signal: controller.signal });
 }
 ```
 
+## Pre-commit Validation
+
+Before committing, all of these must pass with zero errors/warnings:
+
+```bash
+tsc --noEmit          # type checking (or bunx tsc --noEmit for Bun projects)
+eslint .              # linting
+vitest run            # tests
+```
+
+## Bun Projects (setup only)
+
+When scaffolding a Bun project:
+- devDependency: `@types/bun` (not the deprecated `bun-types`)
+- tsconfig: `skipLibCheck: true`, `moduleResolution: "bundler"`, `target/module: "ESNext"`
+
 ## Magic Strings Pattern
 
 ```ts

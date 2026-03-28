@@ -37,6 +37,16 @@ pkg/            (shared libraries if needed)
 gofmt -l . && go vet ./... && golangci-lint run && go test ./...
 ```
 
+## Pre-commit Validation
+
+Before committing, all of these must pass with zero errors/warnings:
+
+```bash
+go vet ./...          # static analysis
+golangci-lint run     # linting
+go test ./...         # tests
+```
+
 ## Naming
 - Exported: `PascalCase`. Unexported: `camelCase`
 - Constants: `PascalCase` exported (`MaxRetryCount`), `camelCase` unexported

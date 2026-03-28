@@ -103,6 +103,25 @@ class UserService(
 - Swift: `swiftlint`, `swift build`, `swift test`
 - Kotlin: `./gradlew ktlintCheck`, `./gradlew detekt`, `./gradlew test`, `./gradlew build`
 
+## Pre-commit Validation
+
+Before committing, all of these must pass with zero errors/warnings:
+
+**Swift:**
+```bash
+swiftlint             # linting
+swift build           # compilation + type checking
+swift test            # tests
+```
+
+**Kotlin:**
+```bash
+./gradlew ktlintCheck   # linting
+./gradlew detekt        # static analysis
+./gradlew build         # compilation
+./gradlew test          # tests
+```
+
 ## Reactive State
 - Swift: `@Observable` (iOS 17+) or `ObservableObject` + `@Published` — single source of truth
 - Kotlin: `StateFlow` / `MutableStateFlow`, collect with `repeatOnLifecycle`

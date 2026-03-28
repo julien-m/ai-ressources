@@ -98,6 +98,10 @@ Prefer asynchronous flows over blocking operations when the framework supports i
 ### 20. Predictable code
 Clarity over cleverness. Code must be understandable by another developer in seconds.
 
+## Pre-commit Validation
+
+Before committing, compile with warnings treated as errors. The Delphi compiler is the primary static analysis tool — a clean compilation with zero hints/warnings is mandatory.
+
 ## Delphi-Specific Documentation
 
 General doc rules (23-30) from [`general.md`](general.md) apply. Additionally:
