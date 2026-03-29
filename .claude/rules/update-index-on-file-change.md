@@ -50,6 +50,30 @@ date +%Y-%m-%d > .last-updated
 
 This marker is read by `/conventions.refresh` in other projects to detect when the knowledge base has changed. It must be updated **in the same pass** as the index.yaml update.
 
+## Schema sync
+
+When adding a **new property** to any `index.yaml`, update the matching schema before committing:
+
+**Read** [`root-index.schema.yaml`](../../schemas/root-index.schema.yaml):
+- Top-level property (e.g. `domains`) → `properties:`
+- Domain property (e.g. `last_reviewed`, `subdirectories`) → `properties.domains.additionalProperties.properties:`
+- Domain `status` value → `properties.domains.additionalProperties.properties.status.enum`
+
+**Read** [`domain-index.schema.yaml`](../../schemas/domain-index.schema.yaml):
+- Root-level property (e.g. `coverage`, `frameworks`) → `properties:`
+- File-entry property (e.g. `applies_to`, `priority`) → `$defs.file-entry.properties:`
+- File-entry `status` value → `$defs.file-entry.properties.status.enum`
+- Section property → `$defs.section.properties:`
+
+Both schemas use `additionalProperties: false` — any unregistered property will fail CI.
+
+Validate locally after updating:
+
+```bash
+check-jsonschema --schemafile schemas/root-index.schema.yaml index.yaml
+check-jsonschema --schemafile schemas/domain-index.schema.yaml <domain>/index.yaml
+```
+
 ## Rules
 
 - Never wait for the user to notice a stale index — sync it in the same pass as the file operation.

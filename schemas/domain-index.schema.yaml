@@ -32,7 +32,7 @@ $defs:
         description: One-line summary of the file's content.
       status:
         type: string
-        enum: [complete, active, partial, placeholder]
+        enum: [complete, active, partial, placeholder, legacy]
         description: Optional completeness marker for this specific file.
       use_when:
         type: array
@@ -49,6 +49,15 @@ $defs:
         items:
           type: string
         description: Related files or paths for cross-referencing.
+      applies_to:
+        type: array
+        items:
+          type: string
+        description: Languages, frameworks, or targets this file applies to.
+      priority:
+        type: integer
+        minimum: 1
+        description: Load order priority (lower = loaded first).
 
   section:
     type: object
@@ -70,6 +79,18 @@ $defs:
           $ref: "#/$defs/file-entry"
 
 properties:
+  coverage:
+    type: object
+    description: Language coverage map (language → completeness level).
+    additionalProperties:
+      type: string
+
+  frameworks:
+    type: object
+    description: Framework coverage map (framework → completeness level).
+    additionalProperties:
+      type: string
+
   files:
     type: array
     description: Flat list of files in this domain (used when there are no sub-sections).
