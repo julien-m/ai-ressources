@@ -19,9 +19,13 @@ Check if `.conventions/conventions.md` is up to date with `~/projects/ai-ressour
 
 1. **Read** the `generated` date from the YAML frontmatter of `.conventions/conventions.md`
 2. **Read** `~/projects/ai-ressources/.last-updated` to get the last modification date of the knowledge base
-3. **Compare**:
-   - If `generated` >= `.last-updated` → conventions are up to date, stop
-   - If `generated` < `.last-updated` → conventions are stale, proceed to regeneration
+3. **Read** the `updated` date from `.specs/stacks/_default.md` YAML frontmatter (if the file exists)
+4. **Compare** (in priority order):
+   - If `.specs/stacks/_default.md` exists AND has an `updated` field AND `generated` < `updated` → conventions are stale (stack changed), proceed to **full** regeneration (re-detect domains, same as `--full` mode)
+   - If `generated` < `.last-updated` → conventions are stale (rules changed), proceed to regeneration (same categories)
+   - Otherwise → conventions are up to date, stop
+
+Note: If `.specs/stacks/_default.md` does not exist or has no `updated` frontmatter, skip the stack comparison and fall back to the ai-ressources date check only.
 
 #### Regeneration
 
@@ -59,8 +63,15 @@ Full mode:
 Full refresh: 6 categories (was 5), 1 new (copywriting), all regenerated
 ```
 
+Stack-triggered full refresh:
+```
+Full refresh (stack changed): 6 categories (was 5), 1 new (cloudflare), all regenerated
+```
+
 ## Rules
 
 - Never regenerate if `generated` >= `.last-updated`
 - The file must stay under **400 lines** after refresh
 - If `.last-updated` does not exist in ai-ressources, warn and skip (do not fail)
+- When stack staleness is detected (`generated` < `stacks.updated`), use `--full` mode automatically (re-detect domains) because a stack change may add/remove entire convention categories
+- When only ai-ressources staleness is detected, use default mode (same categories, refreshed content)

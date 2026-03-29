@@ -19,6 +19,16 @@ The output is equivalent to what the `ai-res-librarian` agent would return — b
 
 ### Phase 1: Analyze the target project
 
+0. **Spec stack (if available)** — Check if `.specs/stacks/_default.md` exists in the project root. If it does:
+   - Read the file
+   - Find the first Markdown table with a "Layer" or "Technology" column header
+   - Extract each row: the layer name (column 1) and the choice value (column 2)
+   - Store the extracted layers as an additional detection source — these are merged with the code scan results in Phase 2
+
+   This enables conventions generation for greenfield projects where no code exists yet but the stack is declared in LiveSpec specs.
+
+   If `.specs/stacks/_default.md` does not exist, skip this step silently. The rest of Phase 1 proceeds as normal.
+
 1. **Dependencies** — Read dependency files in the project root. Extract all package/module names:
    - `package.json` → `dependencies` + `devDependencies`
    - `go.mod` → `require` block
@@ -83,6 +93,33 @@ Detect frameworks from `package.json` dependencies AND config files in the proje
 | `remotion`, `@remotion/*`, `remotion.config.*` | `remotion.md` |
 
 Multiple framework deltas can match simultaneously (e.g., React + Next.js + shadcn + Tailwind). Include all matching deltas.
+
+#### Spec-aware detection (merges with channels above)
+
+If step 0 extracted layers from `.specs/stacks/_default.md`, map each layer's choice value to convention domains:
+
+| Choice value contains (case-insensitive) | Treated as |
+|---|---|
+| `typescript`, `javascript` | `.ts`/`.js` extension detected (Channel 1) |
+| `go` | `.go` extension detected (Channel 1) |
+| `rust` | `.rs` extension detected (Channel 1) |
+| `swift`, `kotlin` | `.swift`/`.kt` extension detected (Channel 1) |
+| `delphi`, `pascal` | `.pas` extension detected (Channel 1) |
+| `next.js`, `next` | `next` dependency detected (Channel 1b) |
+| `react` | `react` dependency detected (Channel 1b) |
+| `tailwind` | `tailwindcss` dependency detected (Channel 1b) |
+| `shadcn` | `@shadcn/ui` dependency detected (Channel 1b) |
+| `cloudflare`, `hono`, `workers` | `wrangler.toml` detected (Channel 1b) |
+| `tanstack` | `@tanstack/*` dependency detected (Channel 1b) |
+| `drizzle` | `drizzle-orm` dependency detected (Channel 1b) |
+| `prisma` | `@prisma/client` dependency detected (Channel 1b) |
+| `remotion` | `remotion` dependency detected (Channel 1b) |
+| `postgresql`, `sqlite`, `mysql` | `.sql` extension detected (Channel 1) |
+| `supabase`, `stripe`, `redis`, etc. | Package name for Channel 2 lookup |
+
+**Merge strategy:** Union. Spec layers and code scan results are combined. If both sources detect the same domain, it appears once. If only specs or only code detects a domain, it's included.
+
+This means on a greenfield project (no code), the specs alone provide enough signal to generate accurate conventions. On an existing project, both sources enrich each other.
 
 #### Channel 2: Dependencies → stack-ref + architecture
 
