@@ -1,7 +1,7 @@
 # ai-ressources compiled index
 # Format: path | description [| use_when tags]
 # [QUICK-REF] = read first for common questions in this domain
-# Generated: 2026-03-28T18:35:34.515Z
+# Generated: 2026-03-30T10:07:04.496Z
 
 ## architecture
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login

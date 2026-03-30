@@ -60,6 +60,18 @@ Before detection, **read these reference files** and **scan ai-ressources direct
 - `code-conventions/*.md`
 - `conventions/*.md`
 
+#### Catalog-Based Detection (Primary when signals provided)
+
+If the caller provides a list of keyword signals (e.g., from a LiveSpec stack file):
+
+1. **Read** [`~/projects/ai-ressources/domain-catalog.md`](~/projects/ai-ressources/domain-catalog.md)
+2. Match each provided signal against all tables in the catalog
+3. Collect all matched convention file paths
+4. Use these as the **primary** detected domains — they take precedence over file scanning and code grepping
+5. Still run Channels 1-3 for any additional signals not covered by the caller's list, but do NOT override catalog results
+
+If no signals are provided by the caller, proceed with Channels 1-3 as before (backward compatible).
+
 #### Channel 1: File extensions → code-conventions (language deltas)
 
 | Extensions | Category | Source files to read (all from `code-conventions/`) |
@@ -94,28 +106,15 @@ Detect frameworks from `package.json` dependencies AND config files in the proje
 
 Multiple framework deltas can match simultaneously (e.g., React + Next.js + shadcn + Tailwind). Include all matching deltas.
 
-#### Spec-aware detection (merges with channels above)
+#### Spec-Aware Detection (resolves through catalog)
 
-If step 0 extracted layers from `.specs/stacks/_default.md`, map each layer's choice value to convention domains:
+If step 0 extracted layers from `.specs/stacks/_default.md`:
 
-| Choice value contains (case-insensitive) | Treated as |
-|---|---|
-| `typescript`, `javascript` | `.ts`/`.js` extension detected (Channel 1) |
-| `go` | `.go` extension detected (Channel 1) |
-| `rust` | `.rs` extension detected (Channel 1) |
-| `swift`, `kotlin` | `.swift`/`.kt` extension detected (Channel 1) |
-| `delphi`, `pascal` | `.pas` extension detected (Channel 1) |
-| `next.js`, `next` | `next` dependency detected (Channel 1b) |
-| `react` | `react` dependency detected (Channel 1b) |
-| `tailwind` | `tailwindcss` dependency detected (Channel 1b) |
-| `shadcn` | `@shadcn/ui` dependency detected (Channel 1b) |
-| `cloudflare`, `hono`, `workers` | `wrangler.toml` detected (Channel 1b) |
-| `tanstack` | `@tanstack/*` dependency detected (Channel 1b) |
-| `drizzle` | `drizzle-orm` dependency detected (Channel 1b) |
-| `prisma` | `@prisma/client` dependency detected (Channel 1b) |
-| `remotion` | `remotion` dependency detected (Channel 1b) |
-| `postgresql`, `sqlite`, `mysql` | `.sql` extension detected (Channel 1) |
-| `supabase`, `stripe`, `redis`, etc. | Package name for Channel 2 lookup |
+1. Read the stack file and extract all technology names, dependency names, and keywords as a flat signal list
+2. Resolve these signals through **Read** [`~/projects/ai-ressources/domain-catalog.md`](~/projects/ai-ressources/domain-catalog.md) (same as catalog-based detection above)
+3. Merge results with Channel 1-3 detections (union)
+
+This replaces the previous hardcoded mapping table. The catalog is the single source of truth for signal-to-convention resolution.
 
 **Merge strategy:** Union. Spec layers and code scan results are combined. If both sources detect the same domain, it appears once. If only specs or only code detects a domain, it's included.
 
