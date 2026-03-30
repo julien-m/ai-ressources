@@ -87,6 +87,7 @@ If no signals are provided by the caller, proceed with Channels 1-3 as before (b
 | `.kt` with UI, layout XML | design | `design/systems/material-design.md` + `design/tokens/*.md` |
 | `.pen` | design | `design/references/mockup-specs.md` |
 | `.md` with mermaid/gherkin | diagrams | `conventions/diagrams.md` |
+| `.specs/` directory exists | diagrams | `conventions/diagrams.md` |
 
 #### Channel 1b: Dependencies + config → code-conventions (framework deltas)
 
@@ -173,27 +174,79 @@ Confirm? (or add/remove domains)
 
 This is the core step. The goal is to produce a **single, compact, synthesized file** — NOT a dump of source files.
 
+#### 4.0 Build project context for synthesis
+
+Before dispatching agents, build a **project context block** that will be injected into every librarian prompt:
+
+1. **Project type** — from Phase 1.4 (e.g., "CLI", "web app", "API", "library")
+2. **One-line vision** — from `.specs/project.md` if exists (first sentence of the Vision section), or from CLAUDE.md, or inferred from Phase 1
+3. **Constraints** — from `.specs/project.md` or `.specs/constitution.md` if exists. Extract:
+   - Scale signals: "single-user", "multi-tenant", "high-traffic", etc.
+   - Boundary signals: "local-only", "no auth", "no cloud", "no server", etc.
+   - Dependency signals: "minimal deps", "zero deps", etc.
+4. **Domain terms** — from `.specs/project.md`, `.specs/roadmap.md`, or CLAUDE.md. Extract 3-6 domain nouns that represent the project's core concepts (e.g., `Task`, `CronExpression`, `History` for a cron manager)
+5. **Exclusions** — derive from constraints:
+
+| Constraint | Exclude from architecture |
+|---|---|
+| "single-user", "local-only" | `multi-tenant`, `rate-limiting` |
+| "no auth", "no login" | `auth-flows` |
+| "no server", "no cloud" | cloud-specific patterns |
+| "no database", "flat file" | `database-migrations` (unless file contains migration logic) |
+
+Exclusions remove patterns from the architecture agent's scope. They do NOT prevent detection — if a pattern was detected in Phase 2, the exclusion overrides it at synthesis time.
+
+The context block format injected into each agent prompt (omit empty lines):
+
+```
+Project: {name} — {project type}
+Vision: {one-line vision}                              ← from specs/CLAUDE.md, omit if unavailable
+Constraints: {comma-separated constraints}             ← from specs, omit if unavailable
+Exclude: {comma-separated excluded architecture patterns} ← derived from constraints, omit if none
+Domain terms: {comma-separated terms for examples}     ← from specs/roadmap, omit if unavailable
+```
+
 #### 4.1 Dispatch ai-res-librarian agents per category
 
 Dispatch one `ai-res-librarian` agent per detected category, **in parallel**. Each agent reads the relevant source files and produces a **synthesized section** — not a copy.
 
 | Category | Agent prompt | Sources read by agent |
 |---|---|---|
-| code | "Synthesize coding conventions for a [language] project. Extract only essential rules: naming, types, imports, error handling, async, testing, logging, architecture layers, security. Format: imperative rules, no prose, do/don't examples only when ambiguous." | `code-conventions/*.md` (language deltas: general, architecture, logging, testing, javascript, etc.) |
-| frameworks | "Synthesize framework conventions for: [detected frameworks]. Extract key rules, anti-patterns, composition patterns, and critical configuration. Format: imperative rules per framework, do/don't examples for non-obvious rules." | `code-conventions/*.md` (framework deltas: react, nextjs, shadcn, tailwind, cloudflare, tanstack, drizzle, prisma, remotion — only detected ones) |
-| architecture | "Synthesize architecture patterns for: [detected patterns]. Extract key rules, constraints, and patterns. Format: imperative rules per pattern." | `architecture/*.md` (matched ones) |
-| stack | "Synthesize stack reference for: [detected stack]. Extract essential setup, gotchas, and best practices for each. Format: imperative rules." | `stack-ref/**/*.md` (matched ones) |
-| design | "Synthesize design conventions for a [project type]. Extract key rules: spacing, typography, colors, component patterns, accessibility. Format: imperative rules." | `design/**/*.md` (relevant ones) |
-| copywriting | "Synthesize copywriting conventions for: [detected needs]. Format: imperative rules." | `copywriting/*.md` (relevant ones) |
-| diagrams | "Synthesize diagram conventions. Format: imperative rules." | `conventions/diagrams.md` |
+| code | "Synthesize coding conventions for a [language] project. {context block}. Extract only essential rules: naming, types, imports, error handling, async, testing, logging, architecture layers, security. When providing do/don't examples, use domain terms from this project (e.g., {domain terms}). Format: imperative rules, no prose, do/don't examples only when ambiguous. Budget: {N} lines ({primary\|secondary})." | `code-conventions/*.md` (language deltas: general, architecture, logging, testing, javascript, etc.) |
+| frameworks | "Synthesize framework conventions for: [detected frameworks]. {context block}. Extract key rules, anti-patterns, composition patterns, and critical configuration. Format: imperative rules per framework, do/don't examples for non-obvious rules. Budget: {N} lines ({primary\|secondary})." | `code-conventions/*.md` (framework deltas: react, nextjs, shadcn, tailwind, cloudflare, tanstack, drizzle, prisma, remotion — only detected ones) |
+| architecture | "Synthesize architecture patterns for: [detected patterns]. {context block}. Exclude these patterns (not relevant to project constraints): {exclusions}. Extract key rules, constraints, and patterns for remaining items only. Format: imperative rules per pattern. Budget: {N} lines ({primary\|secondary})." | `architecture/*.md` (matched ones, minus excluded) |
+| stack | "Synthesize stack reference for: [detected stack]. {context block}. Extract essential setup, gotchas, and best practices for each. Format: imperative rules. Budget: {N} lines ({primary\|secondary})." | `stack-ref/**/*.md` (matched ones) |
+| design | "Synthesize design conventions for a [project type]. {context block}. Extract key rules: spacing, typography, colors, component patterns, accessibility. Format: imperative rules. Budget: {N} lines ({primary\|secondary})." | `design/**/*.md` (relevant ones) |
+| copywriting | "Synthesize copywriting conventions for: [detected needs]. {context block}. Format: imperative rules. Budget: {N} lines ({primary\|secondary})." | `copywriting/*.md` (relevant ones) |
+| config | "Extract expected configuration defaults for a {runtime} {language} project. {context block}. Include: compiler/runtime config (tsconfig, bunfig, etc.), package manager expectations, editor config, gitignore patterns. Format: imperative rules grouped by config file. Budget: {N} lines (secondary)." | `code-conventions/runtime-configs.md` |
+| diagrams | "Synthesize diagram conventions. {context block}. Format: imperative rules. Budget: {N} lines (secondary)." | `conventions/diagrams.md` |
 
 **Agent instructions for synthesis quality:**
 - Produce output equivalent to what `ai-res-librarian` would return for the same question
 - Rules in imperative form: "Use X", "Never Y", "Prefer Z over W"
 - No prose, no explanations of why — just the rules
-- `do:`/`don't:` inline examples only when the rule is ambiguous
+- `do:`/`don't:` inline examples only when the rule is ambiguous — use project domain terms from the context block
 - Each `##` section must start with a `> Covers:` line listing keywords
-- Budget: each category section should be **30-80 lines** — the entire file must stay under **400 lines**
+- The entire file must stay under **400 lines** (hard limit)
+
+#### Budget allocation
+
+Each category is classified as **primary** or **secondary** based on the project type detected in Phase 1.4:
+
+| Project type | Primary categories (60-100 lines) | Secondary categories (15-40 lines) |
+|---|---|---|
+| CLI | code, design | architecture, stack, config, diagrams |
+| Web app | code, design, frameworks | architecture, stack, config, diagrams |
+| API / backend | code, architecture | stack, frameworks, config, diagrams |
+| Library / SDK | code | architecture, config, diagrams |
+| Dashboard / admin | code, design, frameworks | architecture, stack, config, diagrams |
+| Default | code | all others |
+
+- **Primary**: 60-100 lines — full rules, examples for ambiguous cases, do/don't blocks
+- **Secondary**: 15-40 lines — essential rules only, no examples unless critical
+- A category with 0 detected files gets 0 lines (omitted entirely)
+- If the sum exceeds 400 lines, compress secondary categories first
+- Include the budget in each agent prompt: "Budget: {N} lines (primary)" or "Budget: {N} lines (secondary)"
 
 #### 4.2 Assemble the single file
 
@@ -210,6 +263,7 @@ categories:
   - architecture
   - stack
   - design
+  - config
   - diagrams
 ---
 
@@ -224,6 +278,8 @@ categories:
 {output of stack agent}
 
 {output of design agent}
+
+{output of config agent}
 
 {output of diagrams agent}
 ```

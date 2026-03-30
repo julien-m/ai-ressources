@@ -31,10 +31,11 @@ Note: If `.specs/stacks/_default.md` does not exist or has no `updated` frontmat
 
 When stale, re-synthesize all categories **without re-detecting the project**:
 
-1. Read the `categories` list from the frontmatter of `.conventions/conventions.md`
-2. For each category, dispatch an `ai-res-librarian` agent with the same synthesis prompts as `/conventions.init` Phase 4.1
-3. Reassemble the file with updated content and set `generated` to today's date
-4. The categories stay the same — only the synthesized content is refreshed
+1. **Rebuild project context** — same as `/conventions.init` Phase 4.0 (project type, vision, constraints, domain terms, exclusions). This ensures refreshed conventions maintain project-specific contextualization and budget weighting
+2. Read the `categories` list from the frontmatter of `.conventions/conventions.md`
+3. For each category, dispatch an `ai-res-librarian` agent with the same synthesis prompts as `/conventions.init` Phase 4.1 (including context block and weighted budget)
+4. Reassemble the file with updated content and set `generated` to today's date
+5. The categories stay the same — only the synthesized content is refreshed
 
 ### `--full` mode (re-detection)
 

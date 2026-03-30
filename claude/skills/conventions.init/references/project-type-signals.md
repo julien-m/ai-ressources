@@ -14,6 +14,7 @@ Maps detected project types to additional convention files from `design/`, `copy
 | Stripe/payment integration, checkout flows | App with payments |
 | WebSocket, SSE, real-time subscriptions, live updates | App with realtime |
 | `.swift`/`.kt` + UI components + mobile navigation | Mobile app |
+| `.specs/` directory exists | LiveSpec project |
 | Any UI components, forms, modals, buttons in the codebase | Project with UI |
 
 ## Type → files mapping
@@ -28,6 +29,7 @@ Maps detected project types to additional convention files from `design/`, `copy
 | App with payments | `design/components/payment-flows.md` |
 | App with realtime | `design/components/realtime-streams.md` |
 | Mobile app | Design system already covered by `design/ios` or `design/android` from Channel 1 |
+| LiveSpec project | `conventions/diagrams.md` |
 | Project with UI (selective) | `design/components/buttons.md` + `design/components/navigation.md` + `design/components/feedback.md` + `design/components/forms.md` + `design/components/modals.md` + `design/components/lists.md` — include only those relevant to the project, not all systematically |
 
 ## Rules
