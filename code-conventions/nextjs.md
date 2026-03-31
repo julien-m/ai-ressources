@@ -31,7 +31,7 @@ export default function Dashboard() {
 ## Data Fetching
 
 - Fetch data in Server Components — not in client `useEffect`
-- Use `async` Server Components for direct data access
+- Use `async` Server Components to initiate data reads through service/repository layers — not by importing ORM/SQL directly in page/layout files
 - Parallelize independent fetches with `Promise.all` — avoid sequential waterfalls
 - Use `React.cache()` or `unstable_cache` for request deduplication
 - Server Actions (`'use server'`) for mutations — not for reads

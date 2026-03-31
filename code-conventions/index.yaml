@@ -11,6 +11,7 @@ coverage:
 frameworks:
   React: full
   Next.js: full
+  Astro: full
   shadcn/ui: full
   Tailwind CSS v4: full
   Cloudflare Workers: full
@@ -21,7 +22,7 @@ frameworks:
 
 files:
   - file: general.md
-    description: "Shared rules for all languages: types, naming, testing, errors, imports, security"
+    description: "Shared rules for all languages: types, naming, testing, errors, imports, security, mandatory comment triggers (§25)"
     applies_to: ["*"]
     priority: 1
 
@@ -36,7 +37,7 @@ files:
     priority: 3
 
   - file: testing.md
-    description: "Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage"
+    description: "Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage, CLI output testing (ANSI/NO_COLOR)"
     applies_to: ["*"]
     priority: 4
 
@@ -117,6 +118,11 @@ files:
   - file: prisma.md
     description: "Prisma v7 schema, client, transactions, migrations (delta on database.md)"
     applies_to: ["Prisma"]
+    priority: 7
+
+  - file: astro.md
+    description: "Astro islands, client directives, content collections, routing, rendering modes (delta on javascript.md)"
+    applies_to: ["Astro"]
     priority: 7
 
   - file: remotion.md

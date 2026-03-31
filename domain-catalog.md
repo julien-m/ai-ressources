@@ -49,6 +49,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `tanstack`, `react-query`, `react-router`, `react-start`, `@tanstack` | `code-conventions/tanstack.md` |
 | `drizzle`, `drizzle-orm`, `drizzle-kit`, `drizzle.config` | `code-conventions/drizzle.md` |
 | `prisma`, `@prisma/client`, `prisma/schema.prisma` | `code-conventions/prisma.md` |
+| `astro`, `@astrojs`, `astro.config`, `.astro` | `code-conventions/astro.md` |
 | `remotion`, `@remotion`, `remotion.config` | `code-conventions/remotion.md` |
 
 ---

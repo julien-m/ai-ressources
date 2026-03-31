@@ -28,6 +28,7 @@ Before coding, always load the shared rules first, then cross-cutting rules, the
 - **TanStack** (`@tanstack/react-query`, `@tanstack/react-router`, `@tanstack/react-start`) → **Read** [`tanstack.md`](../../code-conventions/tanstack.md)
 - **Drizzle ORM** (`drizzle.config`, `drizzle-orm`) → **Read** [`drizzle.md`](../../code-conventions/drizzle.md)
 - **Prisma** (`prisma/schema.prisma`, `@prisma/client`) → **Read** [`prisma.md`](../../code-conventions/prisma.md)
+- **Astro** (`astro.config`, `.astro` files, `client:*` directives) → **Read** [`astro.md`](../../code-conventions/astro.md)
 - **Remotion** (`remotion.config`, `<Composition>`, `useCurrentFrame`) → **Read** [`remotion.md`](../../code-conventions/remotion.md)
 
 All paths are relative to this file's location (`claude/rules/`).

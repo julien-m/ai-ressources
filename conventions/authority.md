@@ -21,13 +21,26 @@ Level 3 — Language delta (overrides Level 1-2 for that language)
   code-conventions/swift-kotlin.md
   code-conventions/delphi.md
 
+Level 3.5 — Framework/runtime delta (overrides Level 1-3 for framework-specific concerns)
+  code-conventions/react.md
+  code-conventions/nextjs.md
+  code-conventions/tailwind.md
+  code-conventions/shadcn.md
+  code-conventions/cloudflare.md
+  code-conventions/tanstack.md
+  code-conventions/prisma.md
+  code-conventions/drizzle.md
+  code-conventions/astro.md
+  code-conventions/remotion.md
+
 Level 4 — Project local (highest override authority)
   CONVENTIONS.md in the target project (if it exists)
 ```
 
 ## Conflict Resolution Rule
 
-The most specific level wins: Level 3 overrides Level 1, Level 4 overrides Level 3.
+The most specific level wins: Level 3.5 overrides Level 3, Level 4 overrides all.
+Framework deltas (Level 3.5) override language and cross-cutting rules only for concerns within the framework's domain (e.g., Next.js file structure overrides general structure rules for Next.js projects).
 
 **Exception — non-overridable rules** (apply regardless of level):
 

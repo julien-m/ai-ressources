@@ -13,7 +13,7 @@
 ## Hooks
 
 - Follow the Rules of Hooks: top-level only, never conditional
-- `useMemo` / `useCallback` only when there is a measured performance problem — not by default
+- `useMemo` / `useCallback` only when needed: stabilizing references passed to memoized children, expensive computations, or after a measured performance problem — not by default on every value
 - Custom hooks must start with `use` and encapsulate a single concern
 - Prefer `useRef` for values that don't trigger re-renders (timers, DOM refs, previous values)
 - Use `useId()` for accessible form labels — never generate IDs manually
@@ -23,15 +23,18 @@
 - Move state down to the smallest component that needs it
 - Lift expensive children above state changes via composition (children pattern)
 - Split context providers by update frequency — avoid single giant context
-- Avoid inline object/array/function creation in JSX props (creates new references every render)
+- Avoid inline object/array/function creation in JSX props passed to memoized children or dependency arrays (creates new references every render)
 
 ```tsx
-// BAD — new object every render
+// BAD — new object every render, breaks React.memo on Chart
 <Chart config={{ color: "red" }} />
 
-// GOOD — stable reference
+// GOOD — stable reference (worthwhile when Chart is memoized or config is in a dependency array)
 const chartConfig = useMemo(() => ({ color: "red" }), []);
 <Chart config={chartConfig} />
+
+// OK — inline prop is fine when the child is not memoized and there's no perf issue
+<SimpleLabel style={{ color: "red" }} />
 ```
 
 ## Data Fetching
@@ -54,7 +57,7 @@ const [user, posts] = await Promise.all([getUser(id), getPosts(id)]);
 - Name handlers with `handle` prefix: `handleClick`, `handleSubmit`
 - Props callbacks use `on` prefix: `onClick`, `onSubmit`
 - Never use anonymous arrow functions for complex handlers in JSX — extract to named functions
-- Always `preventDefault()` on form submissions
+- Call `preventDefault()` on client-managed form submissions — not on forms using native submission (e.g., Next.js Server Actions)
 
 ## State Management
 
