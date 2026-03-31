@@ -121,8 +121,27 @@ Every file/module must start with a short description of its responsibility.
 ### 24. Public API Documentation
 Every public function, class, type, or interface must include documentation comments explaining purpose, parameters, return values, and side effects.
 
-### 25. Inline Comments for Complex Logic
-Use comments to explain intent of processing steps in multi-step operations.
+### 25. Mandatory Inline Comment Triggers
+
+The following code patterns **require** an inline comment explaining the "why". This is not optional — if the pattern appears, the comment must exist.
+
+| # | Trigger | Expected comment |
+|---|---------|------------------|
+| 1 | **Magic constant** — numeric or string literal without self-evident meaning | Origin and rationale for the value |
+| 2 | **Silent catch** — catch block that ignores, swallows, or returns a default | Why the error is intentionally ignored |
+| 3 | **Diff/merge/sync algorithm** — logic comparing two states to produce actions | Strategy summary before the implementation |
+| 4 | **Template/string building** — multi-line script, query, or document construction | End-to-end flow description of the generated output |
+| 5 | **Non-trivial business branch** — if/else encoding a business rule, not just type narrowing | The business rule in plain language |
+| 6 | **Non-obvious default value** — fallback that isn't zero/empty/null | Why this specific default was chosen |
+| 7 | **Loop with early exit** — break/continue/return inside a loop body | What condition triggers the exit and why |
+| 8 | **Backward compatibility code** — logic supporting an old format, schema, or API | What old version it supports and when it can be removed |
+| 9 | **Order-dependent operations** — sequence where reordering would break correctness | Why this order matters (e.g., write-then-rename for atomicity) |
+| 10 | **Non-trivial regex** — pattern longer than ~15 characters | What the pattern matches, in plain language |
+| 11 | **System/shell interaction** — external process call, OS-specific behavior | The contract: expected inputs, outputs, exit codes, platform quirks |
+| 12 | **Lossy data transformation** — conversion that intentionally discards information | What is lost and why it's acceptable |
+| 13 | **Intentionally ignored parameter** — received argument not used in a code path | Why it's unused (distinguish from a bug) |
+| 14 | **Arbitrary threshold/limit** — any bound not from a standard or spec | Where the number comes from and trade-offs |
+| 15 | **High cyclomatic function** — function >20 lines with >2 nesting levels (excluding test bodies) | Strategy summary at the top of the function |
 
 ### 26. Comments Explain Why, Not What
 Bad: `// increment counter` — Good: `// Retry up to 3 times because the service may temporarily reject requests`
@@ -131,7 +150,15 @@ Bad: `// increment counter` — Good: `// Retry up to 3 times because the servic
 Outdated comments are worse than no comments. Update comments immediately when logic changes.
 
 ### 28. No Trivial Comments
-Only document meaningful logic or decisions. Don't comment obvious code.
+Do not comment code where the intent is obvious from the code itself. The following patterns must **not** be commented:
+
+- Getters, setters, and trivial property access
+- Import/require statements
+- Function calls where the name is self-documenting (e.g., `validateCronExpression(expr)`)
+- Simple assignments and variable declarations
+- Types/interfaces whose name fully conveys their purpose
+- Standard framework boilerplate (route registration, middleware setup)
+- Test bodies — the test name is the documentation
 
 ### 29. Document Side Effects and Ownership
 Side effects, ownership transfer, and cleanup responsibilities must always be documented.

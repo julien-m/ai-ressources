@@ -111,6 +111,15 @@ General doc rules (23-30) from [`general.md`](general.md) apply. Additionally:
 - **Record/class fields**: each field must have its own `/// <summary>` doc describing the data it represents
 - **Public methods**: structured block comment with purpose, `@param`, `@return`, and main processing steps
 
+### Inline Comment Triggers
+All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments.
+
+Additionally for Delphi:
+- **`{$IFDEF}`** conditional compilation blocks — explain what each condition covers and why
+- **`FreeAndNil` outside `finally`** — explain why the standard `try/finally` pattern is not used
+- **`as` type casts** — explain why the cast is safe at this point
+- **`Pointer` / `PByte` arithmetic** — explain the memory layout being accessed
+
 ```pascal
 /// <summary>
 /// Handles the PDF signing workflow including form filling,

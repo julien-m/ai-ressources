@@ -115,5 +115,12 @@ Public APIs should return typed objects, not anonymous ones: `interface CreateUs
 - Describe: purpose, parameters meaning, return value, side effects
 - `@throws` for every function that can throw, with the error type
 - `@returns` to describe complex return structures (e.g. object shape)
-- Inline comments for complex logic (query construction, cursor decoding, etc.)
 - Keep documentation in sync with code — outdated JSDoc is worse than none
+
+### Inline Comment Triggers
+All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments.
+
+Additionally for TypeScript/JavaScript:
+- **Type assertions** (`as`, `!`) — explain why the assertion is safe
+- **`// eslint-disable`** directives — explain why the rule is suppressed
+- **Dynamic `import()`** — explain why static import is not possible

@@ -132,6 +132,15 @@ Implement `From<T>` / `Into<T>` for conversions between layers (DB model → dom
 - Doc examples are compiled and tested by `cargo test`
 - Document all `Result` error variants
 
+### Inline Comment Triggers
+All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments.
+
+Additionally for Rust:
+- **`unsafe` blocks** — require a `// SAFETY:` comment explaining why the invariants hold
+- **`#[allow(...)]`** attributes — explain why the lint is suppressed
+- **`mem::transmute`, `ptr::read`, raw pointer dereference** — explain the memory safety argument
+- **Lifetime annotations on structs** — explain the ownership relationship when non-obvious
+
 ```rust
 /// Creates a new user and returns the result.
 ///

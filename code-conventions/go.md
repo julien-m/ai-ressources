@@ -142,3 +142,12 @@ for _, tt := range tests {
 - Doc comments start with the symbol name: `// UserService handles user-related operations.`
 - Package comments in `doc.go`: `// Package user provides user management services.`
 - Document error return conditions: `// Returns ErrUserNotFound if no user exists with that ID.`
+
+### Inline Comment Triggers
+All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments.
+
+Additionally for Go:
+- **`// nolint:`** directives — explain why the lint rule is suppressed
+- **`go:embed`** directives — explain what is embedded and why
+- **Type switch fallthrough** — explain the routing logic at the top of the switch
+- **Goroutine launch** (`go func()`) — explain lifecycle: who waits, who cancels

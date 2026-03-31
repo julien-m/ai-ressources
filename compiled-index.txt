@@ -25,7 +25,7 @@ code-conventions/cloudflare.md | Cloudflare Workers, D1, R2, KV, Hono patterns a
 code-conventions/database.md | SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)
 code-conventions/delphi.md | Delphi/Pascal memory management and style (delta on general.md)
 code-conventions/drizzle.md | Drizzle ORM schema, migrations, queries, D1/PostgreSQL (delta on database.md)
-code-conventions/general.md | Shared rules for all languages: types, naming, testing, errors, imports, security
+code-conventions/general.md | Shared rules for all languages: types, naming, testing, errors, imports, security, mandatory comment triggers (§25)
 code-conventions/go.md | Go-specific patterns and tooling (delta on general.md)
 code-conventions/javascript.md | TypeScript/Node.js/React conventions (delta on general.md)
 code-conventions/logging.md | Structured logging, sensitive data redaction, compliance rules
@@ -39,7 +39,7 @@ code-conventions/shadcn.md | shadcn/ui composition, variants, semantic tokens, f
 code-conventions/swift-kotlin.md | iOS/Android native conventions for Swift and Kotlin (delta on general.md)
 code-conventions/tailwind.md | Tailwind CSS v4 configuration, theming, utilities (delta on javascript.md)
 code-conventions/tanstack.md | TanStack Query v5, Router, Start conventions (delta on react.md)
-code-conventions/testing.md | Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage
+code-conventions/testing.md | Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage, CLI output testing (ANSI/NO_COLOR)
 
 ## copywriting
 copywriting/email-sequences.md | Email sequence templates: onboarding, trial expiry, win-back, feature announcements | email marketing, onboarding flow, retention, user engagement

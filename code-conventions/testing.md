@@ -233,3 +233,58 @@ Prioritize business logic and edge case coverage. Do not chase percentage metric
 - Cover: business rules, validation logic, error paths, boundary conditions
 - Skip: glue code, trivial getters/setters, framework boilerplate, generated code
 - No mandatory coverage threshold — a well-tested 60% is better than a poorly-tested 90%
+
+---
+
+## 8. CLI Output Testing
+
+> Applies only when the project is a CLI tool with terminal output (ANSI colors, tables, formatted text).
+
+### Separate Content from Style
+
+Tests that verify **what** is displayed (text, values, structure) must not depend on **how** it is styled (ANSI codes, colors). Split into two categories:
+
+| Test type | What to assert | Environment dependency |
+|---|---|---|
+| Content test | `expect(output).toContain("Exit code: 1")` | None |
+| Style test | `expect(formatExitCode(1)).toBe("\x1b[31m1\x1b[0m")` | Must inject or force color support |
+
+### Never Assert ANSI Codes Without Controlling Color Detection
+
+Tests that check for ANSI escape sequences (`\x1b[31m`, `\x1b[32m`, etc.) must ensure the color-detection function returns `true` during the test. Color detection typically depends on multiple signals (`NO_COLOR`, `TERM`, `stdout.isTTY`), not just `NO_COLOR` — unsetting `NO_COLOR` alone is not sufficient in non-TTY environments (CI, piped output, sandboxes).
+
+Two approaches:
+
+1. **Inject a color-support abstraction** (preferred) — pass a `colorEnabled: boolean` parameter or use a `ColorSupport` interface that tests can override. This decouples formatting logic from environment detection entirely.
+2. **Force-color flag** — support a `FORCE_COLOR=1` environment variable that bypasses all other checks (mirrors the `chalk`/`kleur` convention). Tests set `FORCE_COLOR=1` to guarantee ANSI output regardless of TTY state.
+
+### Avoid Module-Level Environment Evaluation
+
+```typescript
+// ❌ Constant evaluated once at import — cannot be changed by tests
+export const SUPPORTS_COLOR = !process.env.NO_COLOR;
+export const ANSI_RED = SUPPORTS_COLOR ? "\x1b[31m" : "";
+
+// ✅ Function evaluated at call time — testable, with FORCE_COLOR for tests
+export function supportsColor(): boolean {
+  if (process.env.FORCE_COLOR === "0") return false;
+  if (process.env.FORCE_COLOR === "1") return true;
+  if (process.env.NO_COLOR !== undefined) return false;
+  if (process.env.TERM === "dumb") return false;
+  if (typeof process.stdout?.isTTY === "boolean") return process.stdout.isTTY;
+  return false; // non-TTY (piped, CI) defaults to no color
+}
+
+export function ansiRed(): string {
+  return supportsColor() ? "\x1b[31m" : "";
+}
+```
+
+Module-level `const` from `process.env` is frozen at first import. Tests that manipulate `process.env` after import have no effect — the value is already captured. Use a function or a getter instead.
+
+### Integration Tests for CLI Commands
+
+When testing CLI output end-to-end (spawning the binary), the child process writes to a pipe, not a TTY. Even without `NO_COLOR`, a properly implemented `supportsColor()` will disable colors because `stdout.isTTY` is `false` in the spawned process.
+
+- **Accept plain text** in integration tests (recommended) — do not assert ANSI codes in spawned process output. Verify content only.
+- **Force colors explicitly** if ANSI assertions are needed: `{ env: { ...process.env, FORCE_COLOR: "1" } }`. This requires the CLI to support `FORCE_COLOR` in its color detection (see example above).

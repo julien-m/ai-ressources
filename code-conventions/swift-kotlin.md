@@ -144,3 +144,12 @@ swift test            # tests
 - Kotlin: KDoc (`/** */`) with `@param`, `@return`, `@throws`
 - Document all public types, enums (including cases/variants), and thrown errors
 - Document types with semantic meaning, not just their name
+
+### Inline Comment Triggers
+All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments.
+
+Additionally for Swift & Kotlin:
+- **`@available` / `@Deprecated`** — include migration guidance (what to use instead)
+- **Force unwrap** (`!` in Swift) — explain why the value is guaranteed non-nil
+- **`@unchecked Sendable`** (Swift) — explain why the type is safe to send across actors
+- **`@Suppress` annotations** (Kotlin) — explain why the warning is suppressed

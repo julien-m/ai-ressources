@@ -356,6 +356,8 @@ Bon : afficher "Error" en rouge parce que c'est une erreur.
 
 **Toujours prévoir `NO_COLOR`** : si la variable d'environnement `NO_COLOR` est définie, désactiver toutes les couleurs. Standard industrie.
 
+**Encapsuler la détection couleur dans une fonction, pas une constante de module.** Une `export const SUPPORTS_COLOR = !process.env.NO_COLOR` est évaluée une seule fois à l'import — les tests ne peuvent plus la contrôler. Utiliser une fonction (`supportsColor()`) que les tests peuvent influencer en manipulant `process.env` avant l'appel. Voir [`testing.md`](../../code-conventions/testing.md) §8 (CLI Output Testing) pour les patterns de test associés.
+
 **Tester en 8 couleurs et en 256 couleurs.** Les terminaux basiques (CI, SSH) n'ont que 8 couleurs. Les couleurs RGB hex (#22C55E) ne fonctionnent que dans les terminaux modernes.
 
 ---
