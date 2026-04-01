@@ -56,12 +56,13 @@ src/
 
 ## Startup Optimization
 
-Parallelize all I/O at startup — fire config reads and credential lookups before argument parsing:
+Parallelize all I/O at startup — but only after fast-path exits (`--version`, `--help`):
 
 ```ts
+// Fast paths already handled above — now fire slow I/O in parallel
 const configPromise = loadConfig();
 const credentialsPromise = loadCredentials();
-// ... parse arguments ...
+// ... register commands ...
 const [config, credentials] = await Promise.all([configPromise, credentialsPromise]);
 ```
 
@@ -130,7 +131,7 @@ import type { Config } from "./types/config.js";
 
 ## Environment Variables
 
-- Validate all env vars with Zod at startup, before registering commands
+- Validate env vars with Zod when the selected command needs them — not globally at startup (keeps `--help` and offline commands working)
 - Respect `NO_COLOR` and `XDG_CONFIG_HOME`
 - Document every env var in `--help` output or README
 
