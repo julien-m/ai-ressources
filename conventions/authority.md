@@ -31,6 +31,7 @@ Level 3.5 — Framework/runtime delta (overrides Level 1-3 for framework-specifi
   code-conventions/prisma.md
   code-conventions/drizzle.md
   code-conventions/astro.md
+  code-conventions/cli.md
   code-conventions/remotion.md
 
 Level 4 — Project local (highest override authority)
