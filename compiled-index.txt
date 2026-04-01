@@ -1,7 +1,7 @@
 # ai-ressources compiled index
 # Format: path | description [| use_when tags]
 # [QUICK-REF] = read first for common questions in this domain
-# Generated: 2026-03-31T11:12:22.754Z
+# Generated: 2026-04-01T03:55:03.745Z
 
 ## architecture
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
@@ -22,6 +22,7 @@ conventions/naming.md | File and directory naming conventions: kebab-case, exten
 conventions/diagrams.md | Diagram conventions (transversal — also loaded outside code context). See conventions/
 code-conventions/architecture.md | Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events
 code-conventions/astro.md | Astro islands, client directives, content collections, routing, rendering modes (delta on javascript.md)
+code-conventions/cli.md | TypeScript/Node.js CLI application conventions: entry point fast-path, Commander.js, module structure, esbuild build pipeline, feature gates, startup optimization, error handling, Ink/React TUI (delta on javascript.md) | building a CLI, Node.js CLI, TypeScript CLI, Commander.js, Ink TUI, terminal application, bun build --compile
 code-conventions/cloudflare.md | Cloudflare Workers, D1, R2, KV, Hono patterns and anti-patterns (delta on javascript.md)
 code-conventions/database.md | SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)
 code-conventions/delphi.md | Delphi/Pascal memory management and style (delta on general.md)
