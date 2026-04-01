@@ -50,7 +50,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `drizzle`, `drizzle-orm`, `drizzle-kit`, `drizzle.config` | `code-conventions/drizzle.md` |
 | `prisma`, `@prisma/client`, `prisma/schema.prisma` | `code-conventions/prisma.md` |
 | `astro`, `@astrojs`, `astro.config`, `.astro` | `code-conventions/astro.md` |
-| `cli`, `commander`, `parseArgs`, `ink`, `ora`, `chalk`, `bin`, `shebang` | `code-conventions/cli.md` |
+| `cli`, `commander`, `parseArgs`, `ink`, `ora`, `chalk`, `bin`, `shebang`, `stdin`, `pipe` | `code-conventions/cli.md` |
 | `remotion`, `@remotion`, `remotion.config` | `code-conventions/remotion.md` |
 
 ---

@@ -30,6 +30,64 @@ await run();
 - Register all commands in `src/commands/`, one file per command
 - Every command that returns data **must** support `--json` for scripting
 
+## Stdin Input
+
+Commands accepting variable-length text input (prompts, messages, content bodies) **must** also accept stdin when the positional argument is omitted. This enables piping from files, other commands, and scripts.
+
+### Priority order
+
+1. **Positional argument** — if provided, use it (explicit over implicit)
+2. **stdin** — if `!process.stdin.isTTY` (piped input detected), read stdin
+3. **Error** — no input available, throw with a usage hint
+
+### Rules
+
+- **isTTY guard is mandatory** — never read stdin without checking `!process.stdin.isTTY` first, or the command hangs waiting for terminal input
+- stdin is consumed as **UTF-8 text** — binary input is out of scope
+- **Scope:** applies to arguments where a user might pipe content from a file. Does not apply to short structured args (IDs, paths, enum values)
+
+### Pattern
+
+Place `resolveInput()` in `services/` (services own all I/O):
+
+```ts
+// services/input.ts — resolve text input from arg or stdin
+export async function resolveInput(arg: string | undefined): Promise<string> {
+  if (arg !== undefined) return arg.trim();
+
+  if (!process.stdin.isTTY) {
+    const chunks: Buffer[] = [];
+    for await (const chunk of process.stdin) chunks.push(chunk);
+    const input = Buffer.concat(chunks).toString("utf-8").trim();
+    if (!input) throw new Error("Stdin was empty. Provide input via argument or non-empty pipe.");
+    return input;
+  }
+
+  throw new Error("No input provided. Pass text as argument or pipe via stdin.");
+}
+```
+
+Register the positional argument as optional with Commander.js (`[text]` = optional):
+
+```ts
+program
+  .command("ask [text]")
+  .description("Ask a question")
+  .action(async (text: string | undefined) => {
+    const input = await resolveInput(text);
+    // ...
+  });
+```
+
+### Usage
+
+```bash
+my-cli ask "direct question"           # positional arg
+echo "question" | my-cli ask           # piped string
+cat prompt.txt | my-cli ask            # piped file
+my-cli ask                             # error: no input provided
+```
+
 ## Module Structure
 
 ```
@@ -153,6 +211,7 @@ import type { Config } from "./types/config.js";
 | Mixed stdout/stderr output | Data on stdout, status on stderr |
 | Monolithic command files (>300 LOC) | Split: service layer + thin command handler |
 | Hardcoded `.env` path assumptions | Respect `XDG_CONFIG_HOME` |
+| Required positional for text input, no stdin | Optional `[arg]` + `resolveInput()` from stdin |
 
 ## Inline Comment Triggers (CLI-Specific)
 
@@ -162,3 +221,4 @@ All triggers from `general.md §25` apply. Additionally for CLI code:
 - **Lazy `import()`** inside a function — explain which circular dependency it breaks
 - **`process.exit()`** in non-boundary code — explain why throwing is not sufficient
 - **`isTTY` checks** — explain what the non-TTY fallback does and why
+- **stdin read without `isTTY` guard** — explain why hanging is possible and what the fallback is

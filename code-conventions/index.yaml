@@ -134,7 +134,7 @@ files:
     description: "TypeScript/Node.js CLI application conventions: entry point fast-path, Commander.js, module structure, esbuild build pipeline, feature gates, startup optimization, error handling, Ink/React TUI (delta on javascript.md)"
     applies_to: ["TypeScript", "Node.js", "Bun", "CLI"]
     priority: 7
-    use_when: ["building a CLI", "Node.js CLI", "TypeScript CLI", "Commander.js", "Ink TUI", "terminal application", "bun build --compile"]
+    use_when: ["building a CLI", "Node.js CLI", "TypeScript CLI", "Commander.js", "Ink TUI", "terminal application", "bun build --compile", "stdin input", "pipe input"]
     questions_answered:
       - "How to structure a TypeScript CLI project?"
       - "How to make CLI startup fast?"
@@ -143,6 +143,8 @@ files:
       - "How to handle errors in a CLI?"
       - "How to build a CLI with esbuild?"
       - "How to add --json output to a command?"
+      - "How to accept stdin in a CLI command?"
+      - "How to pipe input to a CLI?"
     see_also:
       - "../design/systems/cli-patterns.md"
       - "../stack-ref/frontend/cli.md"
