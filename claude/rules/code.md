@@ -13,6 +13,7 @@ Before coding, always load the shared rules first, then cross-cutting rules, the
 - **JavaScript / TypeScript** → **Read** [`javascript.md`](../../code-conventions/javascript.md)
 - **Delphi / Pascal** → **Read** [`delphi.md`](../../code-conventions/delphi.md)
 - **Go** → **Read** [`go.md`](../../code-conventions/go.md)
+- **Python** → **Read** [`python.md`](../../code-conventions/python.md)
 - **Rust** → **Read** [`rust.md`](../../code-conventions/rust.md)
 - **Swift / Kotlin** → **Read** [`swift-kotlin.md`](../../code-conventions/swift-kotlin.md)
 - **SQL / Database** → **Read** [`database.md`](../../code-conventions/database.md)

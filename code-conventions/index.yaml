@@ -2,6 +2,7 @@ coverage:
   TypeScript: full
   JavaScript: full
   Go: full
+  Python: full
   REST: full
   Rust: partial
   Swift: partial
@@ -62,6 +63,11 @@ files:
     applies_to: ["Delphi", "Pascal"]
     priority: 5
     status: legacy
+
+  - file: python.md
+    description: "Python conventions: typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)"
+    applies_to: ["Python"]
+    priority: 5
 
   - file: swift-kotlin.md
     description: "iOS/Android native conventions for Swift and Kotlin (delta on general.md)"

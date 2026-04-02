@@ -1,7 +1,7 @@
 # ai-ressources compiled index
 # Format: path | description [| use_when tags]
 # [QUICK-REF] = read first for common questions in this domain
-# Generated: 2026-04-01T18:01:53.530Z
+# Generated: 2026-04-02T19:43:05.386Z
 
 ## architecture
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
@@ -33,6 +33,7 @@ code-conventions/javascript.md | TypeScript/Node.js/React conventions (delta on 
 code-conventions/logging.md | Structured logging, sensitive data redaction, compliance rules
 code-conventions/nextjs.md | Next.js App Router, RSC, Server Components, caching (delta on react.md)
 code-conventions/prisma.md | Prisma v7 schema, client, transactions, migrations (delta on database.md)
+code-conventions/python.md | Python conventions: typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)
 code-conventions/react.md | React hooks, re-renders, composition, data fetching (delta on javascript.md)
 code-conventions/remotion.md | Remotion compositions, animations, sequencing, assets, rendering (delta on react.md)
 code-conventions/runtime-configs.md | Expected config defaults per runtime/language: tsconfig, package.json, editorconfig, prettier, gitignore patterns. Used by /conventions.init Phase 6.

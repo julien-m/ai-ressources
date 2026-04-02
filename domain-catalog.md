@@ -33,6 +33,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `swift`, `ios`, `macos`, `swiftui`, `uikit` | `code-conventions/swift-kotlin.md` |
 | `kotlin`, `android`, `jetpack` | `code-conventions/swift-kotlin.md` |
 | `delphi`, `pascal`, `.pas`, `.dfm`, `.dproj` | `code-conventions/delphi.md` |
+| `python`, `py`, `.py`, `pip`, `uv`, `poetry`, `fastapi`, `django`, `flask`, `pydantic`, `pytest`, `ruff`, `pyright`, `mypy` | `code-conventions/python.md` |
 | `sql`, `postgresql`, `mysql`, `sqlite`, `database`, `migration`, `schema` | `code-conventions/database.md` |
 
 ---
