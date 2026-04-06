@@ -57,13 +57,13 @@ await fetch(url, { signal: controller.signal });
 - Framework: **Vitest**, files named `*.test.ts`
 
 ## Tooling
-- **ESLint**, **Prettier**, **TypeScript** (`tsc --noEmit`), **Vitest**
+- **Biome** (lint + format — replaces ESLint + Prettier), **TypeScript** (`tsc --noEmit`), **Vitest**
 
 ```json
 {
 	"scripts": {
-		"lint": "eslint .",
-		"format": "prettier . --write",
+		"check": "biome check .",
+		"check:fix": "biome check --write .",
 		"typecheck": "tsc --noEmit",
 		"test": "vitest run"
 	}
@@ -76,7 +76,7 @@ Before committing, all of these must pass with zero errors/warnings:
 
 ```bash
 tsc --noEmit          # type checking (or bunx tsc --noEmit for Bun projects)
-eslint .              # linting
+biome check .         # linting + formatting
 vitest run            # tests
 ```
 
@@ -122,5 +122,5 @@ All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline 
 
 Additionally for TypeScript/JavaScript:
 - **Type assertions** (`as`, `!`) — explain why the assertion is safe
-- **`// eslint-disable`** directives — explain why the rule is suppressed
+- **`// biome-ignore`** directives — explain why the rule is suppressed
 - **Dynamic `import()`** — explain why static import is not possible

@@ -324,10 +324,8 @@ package.json:
 
 Files to create:
   + .editorconfig (standard defaults)
-  + .prettierrc (tabs, semi, double quotes)
+  + biome.json (tabs, semi, double quotes, lineWidth 120)
   + .nvmrc (v22.x)
-
-ℹ eslint config not found (create manually)
 ℹ vitest.config.ts not found (vitest in devDependencies)
 
 Apply? (y/n, or list items to skip)
@@ -338,7 +336,7 @@ Apply? (y/n, or list items to skip)
    - Create missing files marked "auto" in `runtime-configs.md`
    - Files marked "confirm" (tsconfig.json, package.json) are included in the grouped summary — the summary serves as the confirmation gate
    - Files marked "signal" are displayed with `ℹ` — no action taken
-9. **User can skip items** — respond with "skip .nvmrc, .prettierrc" etc.
+9. **User can skip items** — respond with "skip .nvmrc, biome.json" etc.
 10. **If nothing to fix or create** (all items `ok`) → display "Config audit: all checks passed ✓" and skip the confirmation prompt
 
 ### Completion

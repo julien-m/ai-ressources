@@ -98,21 +98,28 @@ trim_trailing_whitespace = true
 insert_final_newline = true
 ```
 
-### Config: eslint
-
-**All runtimes (except Deno):** check `eslint.config.*` or `.eslintrc.*` exists. If missing — signal only.
-
-### Config: prettier
+### Config: biome
 
 Create if missing: **auto**
 
-**All runtimes (except Deno):** check `.prettierrc*` or `prettier` key in `package.json`.
+**All runtimes (except Deno):** check `biome.json` or `biome.jsonc` exists.
 
 ```json
 {
-  "useTabs": true,
-  "semi": true,
-  "singleQuote": false
+  "$schema": "https://biomejs.dev/schemas/2.0.0/schema.json",
+  "formatter": {
+    "indentStyle": "tab",
+    "lineWidth": 120
+  },
+  "linter": {
+    "enabled": true
+  },
+  "javascript": {
+    "formatter": {
+      "quoteStyle": "double",
+      "semicolons": "always"
+    }
+  }
 }
 ```
 
