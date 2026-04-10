@@ -50,6 +50,187 @@ export default {
 - Service bindings for Worker-to-Worker calls (zero-cost, type-safe RPC)
 - Hyperdrive for external PostgreSQL/MySQL connections
 
+## Cache
+
+> For generic patterns (cache-aside, versioned keys, CDN `Cache-Control` headers), see [`architecture/caching-strategies.md`](../architecture/caching-strategies.md). This section covers Cloudflare-specific implementation via `caches.default` and service bindings.
+
+### Cache hierarchy
+
+```
+Request
+  └→ caches.default (Cache API)    ← L-1: free, edge-local, ~1 ms
+       └→ KV (cacheTtl option)     ← L-2: edge-distributed, ~1 ms with cacheTtl
+            └→ D1 / R2             ← source of truth, billable latency
+```
+
+Never hit D1 or R2 without checking the upper layers first.
+
+### Cache API (`caches.default`)
+
+Use synthetic `Request` objects as cache keys (URL-based).
+
+**R2 objects:**
+```ts
+async function getR2Cached(ctx: ExecutionContext, bucket: R2Bucket, cache: Cache, key: string): Promise<Response> {
+  const cacheKey = new Request(`https://r2-cache/${key}`);
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached;
+
+  const object = await bucket.get(key);
+  if (!object) return new Response(null, { status: 404 });
+
+  const response = new Response(object.body, {
+    headers: {
+      'Content-Type': object.httpMetadata?.contentType ?? 'application/octet-stream',
+      'Cache-Control': 'public, max-age=3600',
+    },
+  });
+  ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  return response;
+}
+```
+
+**D1 query results:**
+```ts
+async function getQueryCached<T>(
+  ctx: ExecutionContext,
+  cache: Cache,
+  db: D1Database,
+  query: string,
+  params: unknown[],
+  ttl = 60,
+): Promise<T[]> {
+  const cacheKey = new Request(`https://d1-cache/${btoa(query + JSON.stringify(params))}`);
+  const cached = await cache.match(cacheKey);
+  if (cached) return cached.json<T[]>();
+
+  const result = await db.prepare(query).bind(...params).all<T>();
+  const response = new Response(JSON.stringify(result.results), {
+    headers: { 'Cache-Control': `public, max-age=${ttl}`, 'Content-Type': 'application/json' },
+  });
+  ctx.waitUntil(cache.put(cacheKey, response.clone()));
+  return result.results;
+}
+```
+
+### KV with `cacheTtl`
+
+```ts
+// Without cacheTtl: ~50 ms round-trip to central KV store
+const value = await env.MY_KV.get('key');
+
+// With cacheTtl: ~1 ms from edge-local cache for 300s
+const value = await env.MY_KV.get('key', { cacheTtl: 300 });
+```
+
+Always use `cacheTtl` for read-heavy keys (feature flags, config, translations). Not suitable for data that changes more often than the TTL. See **Invalidation strategies** below for keys that need active invalidation.
+
+### R2 response headers
+
+```ts
+// Immutable assets (hash in filename): 1-year TTL
+'Cache-Control': 'public, max-age=31536000, immutable'
+
+// Versioned assets (content changes): 24h TTL + stale window
+'Cache-Control': 'public, max-age=86400, stale-while-revalidate=3600'
+
+// Private/user-specific: never cache
+'Cache-Control': 'private, no-store'
+```
+
+### Stale-while-revalidate (manual)
+
+Return the cached value immediately, refresh in the background:
+
+```ts
+const cached = await cache.match(cacheKey);
+if (cached) {
+  ctx.waitUntil(revalidate(cache, cacheKey, db, query, params)); // refresh silently
+  return cached;
+}
+// cache miss — fetch fresh, cache, return
+```
+
+### What NOT to cache
+
+- User-specific or sensitive data (unless `private` + client-side only)
+- Mutation responses (`POST`/`PUT`/`DELETE`) — always `Cache-Control: no-store`
+- Tokens, sessions, credentials
+
+### Invalidation strategies
+
+#### Strategy 1 — Short TTL + stale tolerance (default)
+
+Don't invalidate actively. Choose a TTL short enough that stale is acceptable.
+
+- Lists, counters: 10–30s TTL
+- Reference data: 5–15 min TTL
+- Use when: consistency is not critical
+
+#### Strategy 2 — Version tag via KV (global, multi-node)
+
+The safest strategy for Workers (avoids multi-node `cache.delete()` limitations).
+
+```ts
+// Read: include version in cache key
+const version = await env.MY_KV.get('cache:version:articles', { cacheTtl: 5 });
+const cacheKey = new Request(`https://d1-cache/articles/${version ?? '0'}`);
+
+// Invalidate: bump version → all old cache keys become orphaned
+await env.MY_KV.put('cache:version:articles', String(Date.now()));
+```
+
+Old entries expire naturally at their TTL. KV lookup cost: ~1 ms with `cacheTtl: 5`.
+
+#### Strategy 3 — `cache.delete()` (targeted, single-node)
+
+Best for well-identified resources (a specific R2 file, an entity by ID):
+
+```ts
+await cache.delete(new Request(`https://r2-cache/${objectKey}`));
+```
+
+Limitation: invalidates only on the current edge node. Other nodes serve stale until TTL expires. Acceptable when TTL is short or traffic is low/single-region.
+
+#### Strategy 4 — Durable Objects (advanced)
+
+Use a Durable Object as an L0 cache with coherent in-memory state when:
+- A single object receives very high read traffic
+- Strong consistency is required
+
+```
+Worker → Durable Object (in-memory state, refreshes from D1 periodically)
+```
+
+Use rarely — DOs have single-geography placement and operational cost.
+
+#### Drizzle + D1: multi-table invalidation
+
+When a `db.batch()` touches multiple tables, invalidate **all** affected table version tags — not just the primary table:
+
+```ts
+// Mutation touches both `articles` and `tags`
+await db.batch([
+  db.insert(articles).values(articleData),
+  db.insert(articleTags).values(tagData),
+]);
+
+// Invalidate both — missing one causes stale joins
+await env.MY_KV.put('cache:version:articles', String(Date.now()));
+await env.MY_KV.put('cache:version:tags', String(Date.now()));
+```
+
+### Decision tree
+
+```
+Can this data be slightly stale?
+  ├─ Yes → TTL short (Strategy 1)
+  └─ No → Is it a single identifiable resource + low traffic?
+              ├─ Yes → cache.delete() (Strategy 3)
+              └─ No  → Version tag via KV (Strategy 2)
+                        (Durable Objects only if very high contention on a single object)
+```
+
 ## D1 (SQLite)
 
 - Max 10 GB per database (paid), 500 MB (free)
@@ -69,7 +250,7 @@ export default {
 - Eventually consistent — not for coordination
 - Best for read-heavy, write-light patterns (config, feature flags)
 - Max value size: 25 MB
-- Use `cacheTtl` for frequently accessed keys
+- Use `cacheTtl` for frequently accessed keys — see **Cache** section above for full pattern and decision tree
 
 ## Hono on Workers
 
