@@ -51,6 +51,33 @@ Check if `.conventions/` is up to date with `~/projects/ai-ressources/`, and reg
 
 5. **Regenerate index** — update `.conventions/index.md` with the latest domain hints and availability
 
+6. **Stack tracking** — compare detected stack with `manifest.stack`:
+
+   a. **Re-detect stack** — scan project root for markers per **Read** [`~/projects/ai-ressources/code-conventions/stack-commands.md`](~/projects/ai-ressources/code-conventions/stack-commands.md)
+   
+   b. **Compare** current markers with `manifest.stack.markers`
+   
+   c. **If markers identical** → skip hook/CI refresh, display "Stack unchanged"
+   
+   d. **If markers changed:**
+      - **Hook:** regenerate `.githooks/pre-commit` using Phase 7 logic from `/conventions.init` (sentinel overwrite if present, ask confirmation otherwise)
+      - **CI:** display proposed changes:
+        ```
+        Stack changed: {old label(s)} → {new label(s)}
+        
+        Pre-commit hook:
+          ✓ Regenerated .githooks/pre-commit
+        
+        CI workflows:
+          - Remove {old files}?
+          + Create {new files}?
+          
+        Apply? (y/n)
+        ```
+      - Update `manifest.stack` with new detection
+   
+   e. **If `manifest.stack` does not exist** (old manifest without stack tracking) → run Phase 7 + Phase 8 from `/conventions.init`, update manifest
+
 ### Output — default mode
 
 **All fresh:**
@@ -81,6 +108,8 @@ Re-run the full `/conventions.init` workflow:
 - **Phase 4**: Call build-conventions.ts with detected domains
 - **Phase 5**: Update gitignore
 - **Phase 6**: Audit config files
+- **Phase 7**: Regenerate pre-commit hook
+- **Phase 8**: Regenerate CI workflows
 
 This regenerates the entire `.conventions/` directory and manifest from the current stack.
 
@@ -109,6 +138,9 @@ Manifest updated
 - **New sources in extends graph** → include in hash computation, rebuild if different
 - **Domain file deleted from ai-ressources** → warn, rebuild fails gracefully, update manifest with `"missing"`
 - **Empty domain after rebuild** → remove from manifest, remove file, update index
+- **Manifest has no `stack` field** (old format) → run Phase 7-8 from `/conventions.init`, write stack to manifest
+- **Stack markers changed** → regenerate hook (sentinel overwrite), propose CI changes
+- **Stack markers unchanged** → skip hook/CI, display "Stack unchanged"
 
 ## Rules
 
@@ -116,4 +148,4 @@ Manifest updated
 - Manifest is the single source of truth for staleness (not dates)
 - Incremental refresh is fast — only changed domains rebuild
 - `--full` is slower but guarantees detection of new conventions
-- The project directory is never modified except `.conventions/`
+- The project directory is modified only in: `.conventions/`, `.githooks/pre-commit` (with sentinel), `.github/workflows/` (with sentinel), `.github/dependabot.yml` (with sentinel), and `git config core.hooksPath`

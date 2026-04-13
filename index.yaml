@@ -14,8 +14,8 @@ domains:
   code-conventions:
     description: "Language-agnostic and per-language coding standards. Loaded automatically by claude/rules/code.md dispatcher."
     status: complete
-    file_count: 23
-    last_reviewed: 2026-04-09
+    file_count: 24
+    last_reviewed: 2026-04-13
 
   copywriting:
     description: "SaaS copywriting templates: landing pages, email sequences, taglines."

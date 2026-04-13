@@ -35,6 +35,11 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `delphi`, `pascal`, `.pas`, `.dfm`, `.dproj` | `code-conventions/delphi.md` |
 | `python`, `py`, `.py`, `pip`, `uv`, `poetry`, `fastapi`, `django`, `flask`, `pydantic`, `pytest`, `ruff`, `pyright`, `mypy` | `code-conventions/python.md` |
 | `sql`, `postgresql`, `mysql`, `sqlite`, `database`, `migration`, `schema` | `code-conventions/database.md` |
+| `pre-commit` | `code-conventions/stack-commands.md` |
+| `githooks` | `code-conventions/stack-commands.md` |
+| `ci workflow` | `code-conventions/stack-commands.md` |
+| `github actions` | `code-conventions/stack-commands.md` |
+| `linter commands` | `code-conventions/stack-commands.md` |
 
 ---
 

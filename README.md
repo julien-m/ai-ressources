@@ -87,3 +87,24 @@ Each domain contains an `index.yaml` that describes its files and structure. The
 ### Direct browsing
 
 Browse files directly or point an AI coding assistant at the relevant section for context-aware recommendations.
+
+## Conventions Lifecycle
+
+### `/conventions.init`
+
+Analyzes the project stack and generates:
+- `.conventions/` — compiled convention files from this knowledge base
+- `.githooks/pre-commit` — pre-commit hook with stack-adapted lint commands
+- `.github/workflows/` — CI pipelines (CI, security, CodeQL)
+- `.github/dependabot.yml` — Dependabot updates for npm-based stacks
+- Config audit — validates tsconfig.json, biome.json, .gitignore, etc.
+
+Stack detection uses `code-conventions/stack-commands.md` to map marker files (tsconfig.json, Cargo.toml, go.mod, etc.) to the appropriate lint commands and CI templates.
+
+### `/conventions.refresh`
+
+Incrementally updates materialized conventions when the knowledge base changes:
+- **Conventions**: hash-based staleness detection per domain
+- **Hooks/CI**: marker-based stack change detection — regenerates if the stack evolved
+
+Use `--full` to force a complete re-detection and rebuild.

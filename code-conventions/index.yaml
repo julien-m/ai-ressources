@@ -85,6 +85,11 @@ files:
     applies_to: ["*"]
     priority: 6
 
+  - file: stack-commands.md
+    description: "Stack detection → pre-commit commands + CI template mapping. Used by /conventions.init Phase 7-8."
+    applies_to: ["*"]
+    priority: 6
+
   # Framework deltas (priority 7 — loaded after language delta when framework detected)
   - file: react.md
     description: "React hooks, re-renders, composition, data fetching (delta on javascript.md)"
