@@ -21,20 +21,25 @@ Une CLI n'est pas une interface dégradée d'une app graphique. C'est un médium
 
 ## Les références et ce qu'elles font mieux que les autres
 
-### Claude Code
+### Vue comparative
 
-Claude Code est la CLI la mieux designée de l'écosystème AI en 2026. Elle a résolu un problème unique : afficher des conversations longues, du code, des diffs et des états de progression dans un terminal sans créer de chaos visuel.
+| CLI | Forces principales | Signature UX |
+|-----|-------------------|--------------|
+| **Claude Code** | La CLI la mieux designée de l'écosystème AI en 2026. Groupement sémantique, indicateurs d'état en ligne (`✓`/`⚡`/`✗` toujours en début de ligne, jamais noyés dans le texte), coût token visible, diffs colorés, input multi-ligne (zone de saisie clairement délimitée, différente visuellement du reste de l'output), couleur sobre | Blocs contextuels indentés par action |
+| **GitHub CLI (`gh`)** | La référence absolue en termes d'UX CLI — chaque interaction a été pensée. Output adaptatif (pager seulement si l'output dépasse le terminal, affichage direct sinon — l'utilisateur n'a jamais à gérer ce détail), tableaux alignés dynamiques, couleurs = GitHub.com, `--json` universel, suggestions d'erreur | Cohérence landing ↔ app absolue |
+| **Vercel CLI** | Startup screen (résumé avant action), progress temps réel, URL finale proéminente, termes = dashboard web | Étapes visibles sans clear écran |
+| **Stripe CLI** | Listen mode temps réel, coloration HTTP (GET=bleu, POST=vert, DELETE=rouge), IDs monospace gris, timestamps HH:MM:SS | Streaming webhooks structuré |
+| **Bun** | Vitesse comme identité (temps affiché), minimalisme radical (pas de barres de progression inutiles si l'install prend moins de 500ms), couleur marque rose/magenta | Rien de superflu, temps partout |
+| **pnpm** | Progress bars multi-packages simultanées, phases distinctes (Resolving/Downloading — les phases donnent une idée précise de où en est l'opération), deduplication visible | Densité d'info sans chaos |
+| **Turborepo** | Groupement tasks par package, cache hit très visible (`FULL TURBO`), summary final (réussies/échouées/cachées/durée) | Le cache est une feature, pas un détail d'implémentation — rendu explicite et célébré |
+| **Vite** | Startup screen élégant (ASCII logo + URLs), HMR silencieux, erreurs build contextualisées (ligne + extrait + surlignage) | Élégance minimaliste |
+| **Wrangler** | CLI officielle pour Workers, Pages, D1, R2, KV, Durable Objects — référence pour tout projet edge-native. Préfixe source `[tool:level]`, bindings listing au démarrage, tail groupé par requête, deploy structuré (taille+gzip+URL), migrations D1 avec confirmation | Séparation outil / app claire |
 
-**Ce qui est exemplaire :**
+### Claude Code — Détails
 
-- **Groupement sémantique** : les actions sont regroupées visuellement par contexte (lecture de fichier, écriture, exécution de commande). Chaque groupe a son propre "bloc" avec une ligne d'en-tête et un contenu indenté.
-- **Indicateurs d'état en ligne** : `✓` (succès), `⚡` (en cours), `✗` (erreur) — toujours en début de ligne, jamais noyés dans le texte.
-- **Coût token visible** : affichage du contexte utilisé et du coût estimé en bas de chaque réponse — transparence totale sur la consommation.
-- **Diffs colorés** : vert pour les ajouts (`+`), rouge pour les suppressions (`-`), gris pour le contexte. Standard git, immédiatement lisible.
-- **Input multi-ligne** : la zone de saisie est clairement délimitée, différente visuellement du reste de l'output.
-- **Couleur sobre** : pas de couleurs flashy. Blanc/gris pour l'output standard, cyan pour les titres de section, vert/rouge uniquement pour les états.
+Claude Code a résolu un problème unique : afficher des conversations longues, du code, des diffs et des états de progression dans un terminal sans créer de chaos visuel.
 
-**Palette Claude Code :**
+**Palette :**
 ```
 Texte standard    : blanc #FFFFFF / gris clair
 Titres sections   : cyan #00D7FF
@@ -47,22 +52,8 @@ Diff ajout (+)    : vert #22C55E sur fond vert très sombre
 Diff suppression  : rouge #EF4444 sur fond rouge très sombre
 ```
 
----
+### GitHub CLI (`gh`) — Output type
 
-### GitHub CLI (`gh`)
-
-La référence absolue en termes d'UX CLI. `gh` a été conçu par une équipe qui a pensé chaque interaction.
-
-**Ce qui est exemplaire :**
-
-- **Output adaptatif** : si l'output est plus long que le terminal, `gh` ouvre automatiquement un pager (less). Si l'output est court, il s'affiche directement. L'utilisateur n'a jamais à gérer ce détail.
-- **Tableaux alignés** : `gh pr list` affiche un tableau parfaitement aligné avec des colonnes de largeur dynamique (adaptées au contenu réel).
-- **Couleurs sémantiques cohérentes** : vert = ouvert/actif, rouge = fermé/rejeté, violet = merged, gris = brouillon. Ces couleurs sont identiques à celles de GitHub.com — cohérence landing <> app absolue.
-- **Confirmation interactive** : pour les actions destructives, `gh` demande une confirmation avec un prompt Y/n, la valeur par défaut clairement indiquée par la casse.
-- **`--json` flag universel** : chaque commande peut retourner du JSON structuré. Toujours. Sans exception. Parfait pour le scripting.
-- **Messages d'erreur avec suggestion** : si une commande échoue, `gh` suggère souvent la commande correcte ("Did you mean `gh pr view`?").
-
-**Output type `gh pr list` :**
 ```
 Showing 3 of 3 open pull requests in owner/repo
 
@@ -72,18 +63,9 @@ ID   TITLE                         BRANCH        CREATED
 #31  docs: update README           docs/readme   about 3 days ago
 ```
 
----
+Couleurs sémantiques : vert = ouvert/actif, rouge = fermé/rejeté, violet = merged, gris = brouillon (identiques à GitHub.com). Confirmation Y/n pour actions destructives, valeur par défaut indiquée par la casse.
 
-### Vercel CLI
-
-**Ce qui est exemplaire :**
-
-- **Startup screen** : à chaque `vercel deploy`, un résumé clair de ce qui va se passer (projet, environnement, région) avant que quoi que ce soit ne commence.
-- **Progress en temps réel** : chaque étape du déploiement s'affiche avec son statut et sa durée. Les étapes terminées restent visibles (pas de clear écran).
-- **URL finale proéminente** : à la fin d'un déploiement réussi, l'URL est affichée en grand, facile à copier.
-- **Cohérence avec le dashboard web** : les termes utilisés dans la CLI sont exactement les mêmes que dans le dashboard Vercel.
-
-**Output type `vercel deploy` :**
+### Vercel CLI — Output type `vercel deploy`
 ```
 Vercel CLI 39.1.0
 ? Set up and deploy "~/projects/my-app"? [Y/n] y
@@ -102,19 +84,7 @@ Auto-detected Project Settings (Next.js):
   Preview: https://my-app-git-main-team.vercel.app [45s]
   Deployed to production. Run `vercel --prod` to overwrite later.
 ```
-
----
-
-### Stripe CLI
-
-**Ce qui est exemplaire :**
-
-- **Listen mode** : `stripe listen --forward-to localhost:3000` maintient une connexion active et affiche chaque webhook reçu en temps réel avec son type, son ID et son statut HTTP de réponse.
-- **Coloration des méthodes HTTP** : GET en bleu, POST en vert, DELETE en rouge — convention universelle bien appliquée.
-- **IDs en monospace** : les IDs Stripe (evt_xxx, pi_xxx) sont toujours affichés en monospace gris, clairement distincts du texte normal.
-- **Timestamps précis** : chaque ligne de log commence par un timestamp HH:MM:SS en gris.
-
-**Output type `stripe listen` :**
+### Stripe CLI — Output type `stripe listen`
 ```
 > Ready! Your webhook signing secret is whsec_xxx (^C to quit)
 2026-03-21 14:23:45  --> payment_intent.created [evt_xxx]
@@ -122,18 +92,7 @@ Auto-detected Project Settings (Next.js):
 2026-03-21 14:23:46  --> payment_intent.succeeded [evt_xxx]
 2026-03-21 14:23:46 <--  [200] POST http://localhost:3000/webhook [evt_xxx]
 ```
-
----
-
-### Bun CLI
-
-**Ce qui est exemplaire :**
-
-- **Vitesse comme identité** : Bun affiche toujours le temps d'exécution en fin de commande. Ce n'est pas anecdotique — c'est la promesse de la marque traduite en output CLI.
-- **Minimalisme radical** : `bun install` affiche exactement ce dont on a besoin, rien de plus. Pas de barres de progression inutiles si l'install prend moins de 500ms.
-- **Couleurs marque** : le rose/magenta de Bun est cohérent entre le logo, le site et la CLI.
-
-**Output type `bun install` :**
+### Bun — Output type `bun install`
 ```
 bun install v1.1.0 (885e4ede)
 
@@ -141,28 +100,7 @@ bun install v1.1.0 (885e4ede)
 
 1 packages installed [312ms]
 ```
-
----
-
-### pnpm
-
-**Ce qui est exemplaire :**
-
-- **Progress bar multi-packages** : lors d'un install, pnpm affiche plusieurs progress bars simultanées (une par package en cours) — claire, non chaotique.
-- **Résolution séparée de l'installation** : deux phases distinctes affichées (Resolving puis Downloading) ce qui donne une idée précise de où en est l'opération.
-- **Deduplication visible** : pnpm affiche explicitement le nombre de packages dédupliqués — un signal fort de son modèle de stockage.
-
----
-
-### Turborepo
-
-**Ce qui est exemplaire :**
-
-- **Groupement de tasks par package** : dans un monorepo, chaque package a son propre bloc d'output clairement délimité.
-- **Cache hit très visible** : quand une task est servie depuis le cache, Turborepo affiche `FULL TURBO` en couleur vive. Le cache est une feature, pas un détail d'implémentation.
-- **Summary final** : à la fin d'une run, un tableau récapitulatif (tasks réussies, échouées, cachées, durée totale) donne une vue d'ensemble immédiate.
-
-**Output type `turbo build` :**
+### Turborepo — Output type `turbo build`
 ```
  Packages in scope: web, docs, ui
  Running build in 3 packages
@@ -180,18 +118,7 @@ Tasks:    3 successful, 3 total
 Cached:   1 cached, 3 total
 Time:     4.231s >>> FULL TURBO
 ```
-
----
-
-### Vite
-
-**Ce qui est exemplaire :**
-
-- **Startup screen** : le plus élégant de l'écosystème frontend. Logo ASCII + version + URLs locales/réseau clairement séparées.
-- **Hot reload silencieux** : Vite ne spamme pas le terminal à chaque HMR update. Il affiche un `[vite] hmm update /src/App.tsx` discret et passe à autre chose.
-- **Erreurs de build contextualisées** : ligne du fichier, extrait du code avec la ligne incriminée surlignée, message d'erreur clair.
-
-**Output type `vite` :**
+### Vite — Output type `vite`
 ```
   VITE v5.0.0  ready in 243 ms
 
@@ -199,24 +126,8 @@ Time:     4.231s >>> FULL TURBO
   ->  Network: http://192.168.1.42:5173/
   ->  press h + enter to show help
 ```
-
----
-
-### Wrangler (Cloudflare CLI)
-
-Wrangler est la CLI officielle pour développer et déployer sur Cloudflare Workers, Pages, D1, R2, KV, Durable Objects. Référence pour tout projet edge-native.
-
-**Ce qui est exemplaire :**
-
-- **Startup dev server très lisible** : version + séparateur + bindings détectés + box de raccourcis interactifs.
-- **Préfixe de source sur chaque log** : `[wrangler:inf]`, `[wrangler:wrn]`, `[wrangler:err]`, `[mf:wrn]` (miniflare). Les logs sans préfixe viennent du code utilisateur. Convention excellente pour séparer outil / app.
-- **Deploy output structuré** : taille + gzip + temps d'upload + URL finale.
-- **Tail en production** : chaque requête = `METHOD URL - Status @ timestamp`, les `console.log` / `console.error` du Worker sont indentés en dessous avec préfixe `(log)` / `(error)`.
-- **Bindings listing au démarrage** : D1, KV, R2 listés avec leur stockage local — l'utilisateur sait que tout est connecté avant de développer.
-- **Migrations D1** : tableau des migrations pending + confirmation Y/n avant apply.
-- **Secret management** : saisie masquée (dots), confirmation visuelle.
-
-**Output type `wrangler dev` :**
+### Wrangler — Output types
+**`wrangler dev` :**
 ```
  ⛅️ wrangler 3.x.x
 ─────────────────────────────────────
@@ -230,8 +141,7 @@ Wrangler est la CLI officielle pour développer et déployer sur Cloudflare Work
 │  [x] to exit                               │
 ╰────────────────────────────────────────────╯
 ```
-
-**Output type `wrangler tail` :**
+**`wrangler tail` :**
 ```
 Successfully created tail, now streaming logs from my-worker...
 
@@ -246,8 +156,7 @@ GET https://my-worker.workers.dev/health - Ok @ 2026-03-21T14:23:47Z
   (error) TypeError: Cannot read property 'id' of undefined
     at Object.<anonymous> (worker.js:42:18)
 ```
-
-**Output type `wrangler deploy` :**
+**`wrangler deploy` :**
 ```
 ⛅️ wrangler 3.x.x
 ─────────────────────────────────────
@@ -259,19 +168,15 @@ Published my-worker (0.45 sec)
 
 Current Deployment ID: abc123def456
 ```
-
 **Bindings listing :**
 ```
 [wrangler:inf] D1 Databases:
 [wrangler:inf]   my-db  (local)  → .wrangler/state/v3/d1/
-
 [wrangler:inf] KV Namespaces:
 [wrangler:inf]   MY_KV  → .wrangler/state/v3/kv/
-
 [wrangler:inf] R2 Buckets:
 [wrangler:inf]   my-bucket  → .wrangler/state/v3/r2/
 ```
-
 **Migrations D1 :**
 ```
 Migrations to be applied:
@@ -281,13 +186,11 @@ Migrations to be applied:
 │ 0001_create_users.sql                   │
 │ 0002_add_sessions.sql                   │
 └─────────────────────────────────────────┘
-
 ? Apply 2 pending migration(s) to my-db (local)? » (Y/n)
 
 ✅ Applied migration 0001_create_users.sql
 ✅ Applied migration 0002_add_sessions.sql
 ```
-
 **Palette Wrangler :**
 ```
 Icône principale  : ⛅️ (signature Cloudflare)
@@ -302,8 +205,9 @@ Erreur            : [wrangler:err] en rouge
 
 Wrangler utilise les emojis de façon cohérente et modérée — pas décoratif, chaque emoji a une signification précise.
 
-**Patterns réutilisables de Wrangler pour vos CLIs :**
+**Secret management :** `wrangler secret put` utilise une saisie masquée (dots) pour la valeur du secret, suivie d'une confirmation visuelle (`✨ Success! Uploaded secret SECRET_NAME`). Pattern réutilisable : saisie masquée + confirmation explicite pour toute donnée sensible.
 
+**Patterns réutilisables de Wrangler pour vos CLIs :**
 - **Bindings listing au démarrage** : toujours afficher les ressources détectées au lancement (DB, cache, storage) — l'utilisateur doit savoir que tout est connecté.
 - **Préfixe de source `[tool:level]`** : excellent pour séparer les logs de l'outil des logs de l'application de l'utilisateur.
 - **Tail groupé par requête** : le format `METHOD URL - Status @ timestamp` + logs indentés est une convention lisible et dense pour le streaming de production.
@@ -316,7 +220,7 @@ Wrangler utilise les emojis de façon cohérente et modérée — pas décoratif
 
 > Mapping vers les rôles sémantiques : voir **Read** [`../tokens/colors.md`](../tokens/colors.md)
 
-### Couleurs de base (compatibles tous terminaux)
+### Couleurs de base et usage sémantique
 
 ```
 Noir        \x1b[30m   Fond noir   \x1b[40m
@@ -332,8 +236,6 @@ Bold        \x1b[1m
 Dim         \x1b[2m
 ```
 
-### Usage sémantique — la convention universelle
-
 | Contexte | Couleur | Rôle sémantique (tokens) | Usage |
 |---|---|---|---|
 | Succès | Vert | `success` | ✓ Opération réussie, fichier créé, test passé |
@@ -347,12 +249,11 @@ Dim         \x1b[2m
 | Diff suppression | Rouge | `error` | Lignes supprimées (-) |
 | Diff contexte | Gris | `on-surface-variant` | Lignes inchangées (contexte) |
 
-### Règle des couleurs
+### Règles des couleurs
 
 **Ne jamais utiliser la couleur pour décorer — seulement pour signifier.**
-
-Mauvais : afficher le nom du projet en bleu parce que c'est joli.
-Bon : afficher "Error" en rouge parce que c'est une erreur.
+- Mauvais : afficher le nom du projet en bleu parce que c'est joli.
+- Bon : afficher "Error" en rouge parce que c'est une erreur.
 
 **Toujours prévoir `NO_COLOR`** : si la variable d'environnement `NO_COLOR` est définie, désactiver toutes les couleurs. Standard industrie.
 
@@ -421,20 +322,13 @@ Utilisé pour les opérations dont on ne connaît pas la durée.
 ```
 # Frames de base (compatibilité maximale)
 ⠋ ⠙ ⠹ ⠸ ⠼ ⠴ ⠦ ⠧ ⠇ ⠏
-
 # Frames simples (fallback)
 - \ | /
-
 # Pattern d'usage
 ⠋ Fetching dependencies...
 ⠙ Fetching dependencies...
 ✓ Fetched 142 dependencies in 2.3s
 ```
-
-**Règles spinner :**
-- Remplacer le spinner par ✓ ou ✗ à la fin (pas disparaître silencieusement)
-- Toujours afficher ce que le spinner fait (pas juste un spinner seul)
-- Pas de spinner pour les opérations < 100ms
 
 ### Progress bar
 
@@ -443,20 +337,13 @@ Utilisé pour les opérations dont on connaît la progression.
 ```
 # Standard
 Downloading  ████████████░░░░░░░░  60% (1.2 GB / 2.0 GB)
-
 # Compact
 [=====>    ] 50% Installing packages...
-
 # Multi-tasks (Turborepo style)
 web    ████████████████████ 100% build
 docs   ████████░░░░░░░░░░░░  40% build
 api    ██░░░░░░░░░░░░░░░░░░  10% build
 ```
-
-**Règles progress bar :**
-- Toujours afficher le % et/ou la valeur absolue
-- Afficher le temps restant estimé si possible
-- Largeur adaptative à la largeur du terminal
 
 ### Prompt interactif
 
@@ -482,12 +369,6 @@ Inspiré de `clack` — la meilleure librairie de prompts en 2026.
 │
 └  Run:  cd my-app && bun install
 ```
-
-**Règles prompts :**
-- Symboles `◆` (question active), `◇` (question répondue), `│` (guide vertical)
-- Valeur par défaut clairement indiquée
-- Navigation clavier : flèches pour les listes, Tab pour complétion, Ctrl+C pour annuler
-- Ctrl+C -> message "Operation cancelled." propre (pas de stack trace)
 
 ### Table de données
 
@@ -518,18 +399,14 @@ my-app-abc.vercel…   Error     2 hours ago
 # Succès
 ✓ Created project "my-app" in ./my-app
 ✓ Installed 142 packages in 1.23s
-
 # Erreur
 ✗ Failed to connect to database
   -> Check that DATABASE_URL is set correctly
   -> Run `bun run db:check` to diagnose
-
 # Warning
 ⚠ Deprecated: use `bun add` instead of `bun install`
-
 # Info
 i Using Node.js 20.11.0 (detected from .nvmrc)
-
 # Tip (discret, gris)
   Tip: Run with --verbose for more details
 ```
@@ -570,6 +447,24 @@ i Using Node.js 20.11.0 (detected from .nvmrc)
 
 ✓ File updated (3 changes)
 ```
+
+### Règles composants
+
+**Spinner :**
+- Remplacer le spinner par ✓ ou ✗ à la fin (pas disparaître silencieusement)
+- Toujours afficher ce que le spinner fait (pas juste un spinner seul)
+- Pas de spinner pour les opérations < 100ms
+
+**Progress bar :**
+- Toujours afficher le % et/ou la valeur absolue
+- Afficher le temps restant estimé si possible
+- Largeur adaptative à la largeur du terminal
+
+**Prompts :**
+- Symboles `◆` (question active), `◇` (question répondue), `│` (guide vertical)
+- Valeur par défaut clairement indiquée
+- Navigation clavier : flèches pour les listes, Tab pour complétion, Ctrl+C pour annuler
+- Ctrl+C -> message "Operation cancelled." propre (pas de stack trace)
 
 ---
 
@@ -617,13 +512,10 @@ Exemple complet :
 ```
 # Mode normal (défaut)
 ✓ Deployed in 31s — https://my-app.vercel.app
-
 # Mode verbose (--verbose)
 [Afficher tout le détail des étapes]
-
 # Mode silencieux (--quiet ou -q)
 https://my-app.vercel.app
-
 # Mode JSON (--json)
 { "url": "https://my-app.vercel.app", "status": "success", "duration": 31 }
 ```
@@ -635,7 +527,6 @@ https://my-app.vercel.app
 ```javascript
 // Récupérer la largeur du terminal
 const width = process.stdout.columns || 80
-
 // Règles pratiques
 // < 60 cols  : mode compact, pas de tableaux
 // 60-100 cols : mode normal
@@ -692,12 +583,10 @@ Toujours utiliser les exit codes corrects. Les scripts qui appellent votre CLI e
 ```
 # Mauvais
 ^C (curseur qui reste bloqué)
-
 # Mauvais
 ^CError: process exited with signal SIGINT
     at process.<anonymous> (node:internal/...)
     at ...
-
 # Bon
 ^C
 ✗ Operation cancelled.
@@ -808,19 +697,17 @@ Les TUI (Terminal User Interfaces) sont des interfaces interactives plein écran
 
 ### Architecture d'un TUI
 
-Tous les frameworks TUI modernes convergent vers le même modèle :
+Tous les frameworks TUI modernes convergent vers le même modèle (ELM architecture) :
 
 ```
 ┌─────────────────────────────────────────┐
 │            Boucle principale            │
-│                                         │
 │  ┌─────────┐  ┌──────────┐  ┌────────┐ │
 │  │  Model   │->│  Update  │->│  View  │ │
 │  │ (state)  │  │ (events) │  │(render)│ │
 │  └─────────┘  └──────────┘  └────────┘ │
 │       ^                          │      │
 │       └──────────────────────────┘      │
-│                                         │
 │  Events: clavier, souris, timer,        │
 │          réseau, resize terminal        │
 └─────────────────────────────────────────┘
@@ -830,15 +717,16 @@ Tous les frameworks TUI modernes convergent vers le même modèle :
 - **Update** : reçoit un événement, retourne un nouveau state
 - **View** : reçoit le state, retourne la représentation visuelle (string)
 
-Ce pattern (ELM architecture) est explicite dans `bubbletea` et `ratatui`, implicite dans `ink` (via React) et `textual` (via son système réactif).
+Ce pattern est explicite dans `bubbletea` et `ratatui`, implicite dans `ink` (via React) et `textual` (via son système réactif).
 
-### Patterns de layout
+### Patterns de layout — Template
+
+Les TUI partagent une structure commune : **header** (titre + contexte), **body** (panneaux de contenu), **status bar** (raccourcis clavier). Les exemples ci-dessous illustrent les variations.
 
 #### Dashboard
 
 ```
 ┌─ Dashboard ──────────────────────────────────────────────┐
-│                                                          │
 │  ┌─ System Status ────────┐  ┌─ Recent Events ────────┐ │
 │  │ CPU    ████████░░  80%  │  │ 14:23  Deploy #42 OK  │ │
 │  │ Memory ██████░░░░  60%  │  │ 14:21  Test suite  OK │ │
@@ -853,22 +741,16 @@ Ce pattern (ELM architecture) est explicite dans `bubbletea` et `ratatui`, impli
 │  │ worker       ✓ UP       7d 0h        89           │   │
 │  │ cron         ⚠ WARN     1d 5h        12           │   │
 │  └────────────────────────────────────────────────────┘   │
-│                                                          │
 │  [q] Quit  [r] Refresh  [/] Search  [?] Help            │
 └──────────────────────────────────────────────────────────┘
 ```
 
-**Principes :**
-- Split panes pour organiser l'information par domaine
-- La zone la plus importante en haut à gauche (lecture naturelle)
-- Status bar en bas avec les raccourcis clavier disponibles
-- Rafraîchissement automatique des données (timer events)
+Split panes par domaine, zone la plus importante en haut à gauche (lecture naturelle), status bar avec raccourcis, rafraîchissement automatique (timer events).
 
 #### Visualiseur de logs
 
 ```
 ┌─ Logs ── api-prod ── Follow: ON ─────────────────────────┐
-│                                                           │
 │  14:23:45.123  INFO   Request  GET /api/users  200  45ms │
 │  14:23:45.456  INFO   Request  POST /api/auth  201  12ms │
 │  14:23:46.789  WARN   Slow query  SELECT * FROM...  892ms│
@@ -879,7 +761,6 @@ Ce pattern (ELM architecture) est explicite dans `bubbletea` et `ratatui`, impli
 │  14:23:50.901  INFO   Request  GET /api/users  200  38ms │
 │  14:23:51.234  INFO   Request  GET /api/users  200  41ms │
 │  14:23:52.567  INFO   Cache hit  users:list  TTL: 245s   │
-│                                                           │
 │  ▼ Auto-scroll                                            │
 ├───────────────────────────────────────────────────────────┤
 │ Filter: [ERROR|WARN          ]  Source: [api-prod  v]     │
@@ -887,18 +768,12 @@ Ce pattern (ELM architecture) est explicite dans `bubbletea` et `ratatui`, impli
 └───────────────────────────────────────────────────────────┘
 ```
 
-**Principes :**
-- Viewport scrollable avec auto-scroll en mode follow
-- Coloration par niveau de log (INFO=gris, WARN=jaune, ERROR=rouge)
-- Barre de filtre en bas pour filtrer en temps réel
-- Timestamps alignés, colonnes fixes pour la structure
-- Toggle pause/resume pour figer l'affichage
+Viewport scrollable avec auto-scroll en mode follow. Coloration par niveau (INFO=gris, WARN=jaune, ERROR=rouge). Barre de filtre en bas, timestamps alignés, toggle pause/resume.
 
 #### Navigateur de fichiers
 
 ```
 ┌─ Files ── ~/projects/my-app ─────────────────────────────┐
-│                                                           │
 │  ▸ .github/                                               │
 │  ▸ node_modules/                         2,847 items      │
 │  ▾ src/                                                   │
@@ -912,7 +787,6 @@ Ce pattern (ELM architecture) est explicite dans `bubbletea` et `ratatui`, impli
 │    package.json                           1.2 kB          │
 │    tsconfig.json                          0.5 kB          │
 │    README.md                              3.1 kB          │
-│                                                           │
 ├─ Preview ── App.tsx ─────────────────────────────────────┤
 │  1 │ import { BrowserRouter } from 'react-router-dom'    │
 │  2 │ import { Layout } from './components/Layout'        │
@@ -926,12 +800,7 @@ Ce pattern (ELM architecture) est explicite dans `bubbletea` et `ratatui`, impli
 └───────────────────────────────────────────────────────────┘
 ```
 
-**Principes :**
-- Vue arborescente avec expand/collapse (▸/▾)
-- Curseur visible (●) pour l'item sélectionné
-- Panneau de preview split en bas ou à droite
-- Metadata alignée à droite (taille, nombre d'items)
-- Raccourcis contextuels dans la status bar
+Vue arborescente (▸/▾), curseur visible (●), panneau preview split, metadata alignée à droite, raccourcis contextuels.
 
 ### Gestion des entrées
 
@@ -946,60 +815,31 @@ Ce pattern (ELM architecture) est explicite dans `bubbletea` et `ratatui`, impli
 | Annulation | `Esc` (fermer panel/modal), `Ctrl+C` (quitter) | Ne jamais bloquer Ctrl+C |
 | Actions | `q` (quitter), `r` (refresh), `?` (aide) | Conventions `htop`/`less` |
 
-**Règles :**
-- Toujours afficher les raccourcis disponibles dans la status bar
-- `Ctrl+C` doit toujours quitter proprement — jamais le capturer pour autre chose
-- `q` et `Esc` doivent avoir un comportement prévisible (fermer le contexte courant)
-- Supporter les touches vi-like (`j`/`k`) en plus des flèches pour les utilisateurs avancés
-
 #### Support souris
 
-Le support souris est optionnel mais de plus en plus attendu :
-- Clic pour sélectionner un item dans une liste
-- Scroll pour naviguer dans un viewport
-- Clic sur un onglet pour changer de vue
-- Toujours désactiver proprement le mode souris à la sortie (sinon le terminal reste dans un état cassé)
+Le support souris est optionnel mais de plus en plus attendu : clic pour sélectionner, scroll pour naviguer, clic sur onglet pour changer de vue. Toujours désactiver proprement le mode souris à la sortie (sinon le terminal reste dans un état cassé).
 
 `bubbletea` et `ratatui` gèrent le mode souris nativement. `ink` le supporte via des composants tiers.
 
 #### Gestion du focus
 
-Dans un TUI multi-panneaux :
-- Un seul panneau a le focus à la fois
-- Bordure du panneau actif en couleur vive (cyan, blanc bold), les autres en gris/dim
-- `Tab` ou raccourci numérique (`1`, `2`, `3`) pour naviguer entre panneaux
-- Le panneau actif capture les événements clavier
+Dans un TUI multi-panneaux : un seul panneau a le focus à la fois. Bordure du panneau actif en couleur vive (cyan, blanc bold), les autres en gris/dim. `Tab` ou raccourci numérique (`1`, `2`, `3`) pour naviguer entre panneaux. Le panneau actif capture les événements clavier.
 
 ```
 ┌─ Panel 1 (actif) ════════════┐  ┌─ Panel 2 ─────────────┐
-│                               │  │                        │
 │  Contenu avec focus           │  │  Contenu sans focus    │
 │  Bordure vive (cyan/bold)     │  │  Bordure gris/dim      │
-│                               │  │                        │
 └═══════════════════════════════┘  └────────────────────────┘
   [Tab] Changer de panneau  [1] Panel 1  [2] Panel 2
 ```
 
 ### Patterns de rendu
 
-#### Alternate screen
+**Alternate screen :** les TUI plein écran doivent utiliser l'alternate screen buffer du terminal. Entrer au démarrage, quitter (restaurer le screen principal) à la sortie. L'historique du terminal reste intact. Tous les frameworks majeurs (`bubbletea`, `ratatui`, `textual`, `ink`) gèrent cela automatiquement.
 
-Les TUI plein écran doivent utiliser l'alternate screen buffer du terminal :
-- Entrer dans l'alternate screen au démarrage
-- Quitter (restaurer le screen principal) à la sortie
-- L'historique du terminal de l'utilisateur reste intact
-
-Tous les frameworks majeurs (`bubbletea`, `ratatui`, `textual`, `ink`) gèrent cela automatiquement.
-
-#### Responsive au resize
-
-Le TUI doit se re-rendre correctement quand la fenêtre du terminal est redimensionnée :
-- Écouter le signal `SIGWINCH` (resize)
-- Recalculer le layout proportionnellement
-- Définir des tailles minimales en dessous desquelles l'app affiche un message d'avertissement
+**Responsive au resize :** écouter `SIGWINCH`, recalculer le layout proportionnellement, définir des tailles minimales avec message d'avertissement :
 
 ```
-# Si le terminal est trop petit :
 ┌──────────────────┐
 │  Terminal trop    │
 │  petit.           │
@@ -1008,13 +848,19 @@ Le TUI doit se re-rendre correctement quand la fenêtre du terminal est redimens
 └──────────────────┘
 ```
 
-#### Rafraîchissement
-
+**Rafraîchissement :**
 - **Données statiques** : re-rendre uniquement sur événement (clavier, souris)
 - **Données live** (logs, métriques) : timer à intervalle configurable (1-5s par défaut)
 - **Ne jamais re-rendre plus vite que le terminal ne peut afficher** — limiter à 60 FPS maximum, 30 FPS recommandé pour les TUI
 
 > Mapping timing : le token `micro` (100ms) convient pour les spinners, `fast` (150ms) pour les transitions de focus, `normal` (250ms) pour les changements de panneau — voir **Read** [`../tokens/motion.md`](../tokens/motion.md)
+
+### Règles TUI
+
+- Toujours afficher les raccourcis disponibles dans la status bar
+- `Ctrl+C` doit toujours quitter proprement — jamais le capturer pour autre chose
+- `q` et `Esc` doivent avoir un comportement prévisible (fermer le contexte courant)
+- Supporter les touches vi-like (`j`/`k`) en plus des flèches pour les utilisateurs avancés
 
 ---
 
@@ -1035,8 +881,6 @@ Le TUI doit se re-rendre correctement quand la fenêtre du terminal est redimens
 | `status` | État courant |
 | `logs` | Logs en streaming |
 
-Ordre des commandes dans `--help` : dans l'ordre du workflow (init → create → list → deploy), pas alphabétique.
-
 ### Flags standards
 
 | Flag | Court | Usage |
@@ -1050,6 +894,8 @@ Ordre des commandes dans `--help` : dans l'ordre du workflow (init → create �
 | `--yes` | `-y` | Confirmer toutes les prompts (indispensable en CI) |
 | `--dry-run` | | Simuler sans exécuter |
 | `--force` | `-f` | Forcer (ignorer les warnings) |
+
+Ordre des commandes dans `--help` : dans l'ordre du workflow (init -> create -> list -> deploy), pas alphabétique.
 
 **Règle :** `--json`, `--quiet` et `--yes` sont les 3 flags critiques pour l'automatisation. Si votre CLI est utilisée en CI, ils sont obligatoires.
 
@@ -1081,10 +927,7 @@ Examples:
 Run `mycli <command> --help` for command-specific help.
 ```
 
-**Règles help text :**
-- Toujours inclure des exemples concrets en bas
-- `--help` disponible sur chaque sous-commande
-- Commandes dans l'ordre du workflow (pas alphabétique)
+**Règles help text :** toujours inclure des exemples concrets en bas, `--help` disponible sur chaque sous-commande, commandes dans l'ordre du workflow (pas alphabétique).
 
 ### Configuration et `.env`
 

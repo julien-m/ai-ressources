@@ -7,7 +7,17 @@
 > Railway, Cloudflare Dashboard, Uptime Kuma.
 > Mis a jour : mars 2026.
 
----
+## References croisees
+
+| Ref | Fichier |
+|-----|---------|
+| [1] | **Read** [`realtime-streams.md`](../components/realtime-streams.md) — streaming, live updates, live mode, auto-refresh |
+| [2] | **Read** [`colors.md`](../tokens/colors.md) — tokens de couleur dark mode, theming |
+| [3] | **Read** [`typography.md`](../tokens/typography.md) — tokens typographiques, tailles, fallback |
+| [4] | **Read** [`cli-patterns.md`](../systems/cli-patterns.md) — query/command input, layout outils CLI, raccourcis clavier |
+| [5] | **Read** [`data-visualization.md`](../components/data-visualization.md) — graphes, histogrammes, metric cards, sparklines, flame graphs, dependances |
+| [6] | **Read** [`motion.md`](../tokens/motion.md) — timings animation pulsante, transitions, indicateurs animes |
+| [7] | **Read** [`log-viewer.md`](../components/log-viewer.md) — filtrage, expansion, performance du log viewer |
 
 ## Philosophie fondatrice des DevTools UI
 
@@ -15,34 +25,126 @@ Les DevTools UI ont des contraintes radicalement differentes des SaaS produit gr
 
 **1. La densite est une feature, pas un defaut.** Un ingenieur qui regarde son dashboard veut voir 20 metriques simultanement, pas 4. L'espace blanc genereux est une erreur dans ce contexte.
 
-**2. L'information temps reel prime sur l'esthetique.** Les donnees qui changent chaque seconde doivent etre visibles sans rechargement. Le streaming, le live tail, les sparklines temps reel sont des attentes, pas des bonus. **Read** [`realtime-streams.md`](../components/realtime-streams.md) pour les patterns de streaming et live updates.
+**2. L'information temps reel prime sur l'esthetique.** Les donnees qui changent chaque seconde doivent etre visibles sans rechargement. Le streaming, le live tail, les sparklines temps reel sont des attentes, pas des bonus [1].
 
-**3. Dark mode obligatoire.** Les ingenieurs travaillent souvent en environnement de faible luminosite, sur plusieurs ecrans, pendant de longues sessions. Le dark mode n'est pas un choix — c'est le mode par defaut de toutes les references du panel. **Read** [`colors.md`](../tokens/colors.md) pour les tokens de couleur dark mode.
+**3. Dark mode obligatoire.** Les ingenieurs travaillent souvent en environnement de faible luminosite, sur plusieurs ecrans, pendant de longues sessions. Le dark mode n'est pas un choix — c'est le mode par defaut de toutes les references du panel [2].
 
 **4. Les erreurs sont des urgences.** Contrairement au SaaS produit, une erreur dans un DevTool signifie souvent qu'un service est down. La couleur rouge doit declencher une reaction immediate.
 
-**5. La lisibilite a haute densite.** Inter a 13px sur un fond sombre avec des lignes de separation tres subtiles. Pas de padding genereux. Chaque pixel compte. **Read** [`typography.md`](../tokens/typography.md) pour les tokens typographiques de reference.
-
----
+**5. La lisibilite a haute densite.** Inter a 13px sur un fond sombre avec des lignes de separation tres subtiles. Pas de padding genereux. Chaque pixel compte [3].
 
 ## Les references et ce qu'elles font mieux que les autres
 
 ### Axiom
-
 Axiom est la reference moderne du log management et de l'analytics de donnees en temps reel.
 
-**Ce qui est exemplaire :**
-- **Query builder visuel** : APL avec auto-completion, syntax highlighting, resultats qui s'actualisent en live pendant la frappe. **Read** [`cli-patterns.md`](../systems/cli-patterns.md) pour les conventions de query/command input.
-- **Stream view** : log tail temps reel avec highlight des termes recherches, JSON inline collapsible, filtres rapides par clic sur n'importe quelle valeur. **Read** [`realtime-streams.md`](../components/realtime-streams.md) pour les patterns de streaming.
-- **Histogram au-dessus du log viewer** : distribution temporelle des evenements en barres — voir les pics d'erreurs sans lire les logs. **Read** [`data-visualization.md`](../components/data-visualization.md) pour les conventions de graphes et histogrammes.
-- **Dataset switcher** : passage instantane entre sources de donnees depuis la sidebar.
+**Exemplaire :**
+- **Query builder visuel** : APL avec auto-completion, syntax highlighting, resultats qui s'actualisent en live pendant la frappe [4]
+- **Stream view** : log tail temps reel avec highlight des termes recherches, JSON inline collapsible, filtres rapides par clic sur n'importe quelle valeur [1]
+- **Histogram au-dessus du log viewer** : distribution temporelle des evenements en barres — voir les pics d'erreurs sans lire les logs [5]
+- **Dataset switcher** : passage instantane entre sources de donnees depuis la sidebar
 
-**Palette Axiom :**
+### Better Stack (Logtail)
+Le log management le plus accessible, concu pour les equipes sans expertise ELK/Splunk.
+
+**Exemplaire :**
+- **Log level badges pill colores** (pas juste du texte) — ERROR rouge, WARN orange, INFO bleu, DEBUG gris
+- **Contextual sidebar** : clic sur un log → panel droit avec JSON expande + logs adjacents + actions
+- **Time range picker** : presets (15min, 1h, 24h, 7d) + range custom. Standard absolu
+- **Live tail toggle** : bouton "Live" avec point rouge pulsant quand actif [6]
+- **Search avec operateurs** : `level:error host:prod-1` — syntax claire, documentee inline
+
+### Grafana
+Standard de l'industrie pour les dashboards de metriques. Open source, extensible.
+
+**Exemplaire :**
+- **Grid layout de panels libres** : chaque dashboard = grille de panels independants (datasource, requete, type de visualisation propres)
+- **Panel types** : Time series, Stat (grande valeur), Gauge, Bar chart, Pie, Table, Heatmap, Flame Graph, Log panel, Geomap [5]
+- **Variables de dashboard** : dropdowns qui filtrent tous les panels simultanement (env prod/staging/dev)
+- **Alerting** : regles definies directement sur les panels, preview temps reel
+- **Annotations** : marqueurs verticaux sur les graphes (deploiements, incidents)
+
+### Datadog
+La solution la plus complete : APM, logs, infrastructure, RUM, synthetics, security.
+
+**Exemplaire :**
+- **Service Map** : graphe de dependances entre services avec etat de sante colore
+- **Flame Graph APM** : waterfall de spans colores par service — identifier ou le temps est passe [5]
+- **Faceted search** : sidebar gauche avec facettes (hostname, service, env, level) + compteurs — clic = filtre instantane
+- **Monitors** : alerting le plus avance du panel (conditions composites, anomaly detection, forecasting)
+- **Dashboard templates** : bibliotheque pre-configuree pour chaque techno (Kubernetes, Redis, PostgreSQL...)
+
+Fond `#1b2134` (bleu-nuit sombre), accent purple `#7C3AED`. Densite maximale assumee — concu pour experts.
+
+### Portainer
+Reference UI pour la gestion de containers Docker/Kubernetes. Standard de l'auto-hebergement.
+
+**Exemplaire :**
+- **Container list** : tableau dense — Status badge, Name monospace, Image, CPU%, Memory + mini-bar. Actions au hover
+- **Container logs** : viewer integre avec live tail, ANSI colors preservees, search, download [7]
+- **Stack management** : upload ou edition inline du docker-compose.yml, deploiement en 1 clic
+
+### Coolify
+Alternative open source a Heroku/Render, tres bien designee pour l'auto-hebergement.
+
+**Exemplaire :**
+- **Application card** : status indicator anime + URL + derniere version + resource usage [6]
+- **Deploy log stream** : logs en streaming avec ANSI colors, collapsibles par etape (clone, build, deploy) [1]
+- **Env vars editor** : masquage par defaut, revelation par clic, import .env, groupement par prefixe
+- **Resource monitoring** : CPU/RAM/Disk temps reel avec graphes temporels simples
+
+### Railway
+La deploy platform la plus designee visuellement. Rend l'infrastructure accessible.
+
+**Exemplaire :**
+- **Canvas de services** : graphe ou chaque service est un node, les connexions (DB, Redis) sont des aretes [5]
+- **Deployment timeline** : historique avec statuts visuels (vert/rouge/anime) + durees
+- **Variable references** : `${{postgres.DATABASE_URL}}` auto-completees et linkees entre services
+
+### Cloudflare Dashboard
+Couvre DNS, Workers, Pages, R2, D1, KV, Analytics, Zero Trust.
+
+**Exemplaire :**
+- **Analytics zone** : graphes trafic (requests, bandwidth, threats) avec selecteur de periode + legende interactive [5]
+- **Workers analytics** : requests/sec, CPU time, errors — sparklines temps reel par worker
+- **DNS editor** : tableau de records avec inline editing, type selector, TTL, proxy toggle (cloud orange on/off). Le plus intuitif du marche
+- **Firewall rules** : visual builder (conditions + actions) + expression editor pour power users
+
+### Uptime Kuma
+Reference du monitoring de statut open source. Design epure, self-hosted.
+
+**Exemplaire :**
+- **Monitor list** : cards avec statut (Up/Down/Pending), uptime %, response time, historique 24h en segments colores
+- **Uptime history bar** : 90 segments de ~16min chacun, vert=up, rouge=down, tooltip au hover
+- **Status page publique** : genere une page type status.io depuis les monitors configures
+- **Incident history** : timeline des incidents avec duree et cause
+
+## Palettes de reference
+
+### Palette comparative principale
+
+| Element | Axiom | Grafana dark | Portainer | Railway |
+|---------|-------|-------------|-----------|---------|
+| Background | `#0d0d0d` | `#111217` | `#1b2a3b` | `#0b0d0f` |
+| Surface 1 | `#161616` | `#181b1f` (panels) | `#253749` | `#161b22` |
+| Surface 2 | — | `#1f2329` (headers) | — | — |
+| Border | `rgba(255,255,255,0.08)` | `#2c3235` | — | — |
+| Accent | Violet `#7C3AED` | Orange `#ff780a` | Bleu `#0db7f2` (Docker) | Violet `#7c3aed` → gradient rose |
+| Success | — | Vert `#3d9970` | Vert `#23ae89` | Vert `#22c55e` |
+| Warning | — | Orange `#ff9830` | Orange `#f0a30a` | — |
+| Error | Rouge `#EF4444` | Rouge `#f2495c` | Rouge `#ef4444` | Rouge `#ef4444` |
+| Building | — | — | — | Amber `#f59e0b` (anime) |
+
+### Palette Grafana dark — tokens supplementaires
+
 ```
-Background principal  : #0d0d0d
-Surface               : #161616
-Border                : rgba(255,255,255,0.08)
-Accent                : Violet #7C3AED
+Texte primaire        : #d8d9da
+Texte secondaire      : #9fa7b3
+```
+
+### Palette Axiom — tokens supplementaires
+
+```
 Log ERROR             : Rouge #EF4444
 Log WARN              : Amber #F59E0B
 Log INFO              : Bleu #3B82F6
@@ -54,183 +156,29 @@ JSON boolean          : Bleu #60A5FA
 JSON null             : Gris #6B7280
 ```
 
----
-
-### Better Stack (Logtail)
-
-Le log management le plus accessible, concu pour les equipes sans expertise ELK/Splunk.
-
-**Ce qui est exemplaire :**
-- **Log level badges pill colores** (pas juste du texte) — ERROR rouge, WARN orange, INFO bleu, DEBUG gris.
-- **Contextual sidebar** : clic sur un log → panel droit avec JSON expande + logs adjacents + actions.
-- **Time range picker** : presets (15min, 1h, 24h, 7d) + range custom. Standard absolu.
-- **Live tail toggle** : bouton "Live" avec point rouge pulsant quand actif. **Read** [`motion.md`](../tokens/motion.md) pour les timings d'animation pulsante.
-- **Search avec operateurs** : `level:error host:prod-1` — syntax claire, documentee inline.
-
----
-
-### Grafana
-
-Standard de l'industrie pour les dashboards de metriques. Open source, extensible.
-
-**Ce qui est exemplaire :**
-- **Grid layout de panels libres** : chaque dashboard = grille de panels independants (datasource, requete, type de visualisation propres).
-- **Panel types** : Time series, Stat (grande valeur), Gauge, Bar chart, Pie, Table, Heatmap, Flame Graph, Log panel, Geomap. **Read** [`data-visualization.md`](../components/data-visualization.md) pour les conventions de chaque type de visualisation.
-- **Variables de dashboard** : dropdowns qui filtrent tous les panels simultanement (env prod/staging/dev).
-- **Alerting** : regles definies directement sur les panels, preview temps reel.
-- **Annotations** : marqueurs verticaux sur les graphes (deploiements, incidents).
-
-**Palette Grafana dark :**
-```
-Background          : #111217
-Surface niveau 1    : #181b1f (panels)
-Surface niveau 2    : #1f2329 (headers panel)
-Border              : #2c3235
-Texte primaire      : #d8d9da
-Texte secondaire    : #9fa7b3
-Accent              : Orange #ff780a
-Success             : Vert #3d9970
-Warning             : Orange #ff9830
-Error               : Rouge #f2495c
-```
-
----
-
-### Datadog
-
-La solution la plus complete : APM, logs, infrastructure, RUM, synthetics, security.
-
-**Ce qui est exemplaire :**
-- **Service Map** : graphe de dependances entre services avec etat de sante colore.
-- **Flame Graph APM** : waterfall de spans colores par service — identifier ou le temps est passe. **Read** [`data-visualization.md`](../components/data-visualization.md) pour les patterns de visualisation de performance.
-- **Faceted search** : sidebar gauche avec facettes (hostname, service, env, level) + compteurs — clic = filtre instantane.
-- **Monitors** : alerting le plus avance du panel (conditions composites, anomaly detection, forecasting).
-- **Dashboard templates** : bibliotheque pre-configuree pour chaque techno (Kubernetes, Redis, PostgreSQL...).
-
-Fond `#1b2134` (bleu-nuit sombre), accent purple `#7C3AED`. Densite maximale assumee — concu pour experts.
-
----
-
-### Portainer
-
-Reference UI pour la gestion de containers Docker/Kubernetes. Standard de l'auto-hebergement.
-
-**Ce qui est exemplaire :**
-- **Container list** : tableau dense — Status badge, Name monospace, Image, CPU%, Memory + mini-bar. Actions au hover.
-- **Container logs** : viewer integre avec live tail, ANSI colors preservees, search, download. **Read** [`log-viewer.md`](../components/log-viewer.md) pour les conventions detaillees du composant log viewer.
-- **Stack management** : upload ou edition inline du docker-compose.yml, deploiement en 1 clic.
-
-**Palette :**
-```
-Background    : #1b2a3b (bleu marine sombre)
-Surface       : #253749
-Accent        : Bleu #0db7f2 (couleur Docker)
-Success       : Vert #23ae89
-Warning       : Orange #f0a30a
-Error         : Rouge #ef4444
-```
-
----
-
-### Coolify
-
-Alternative open source a Heroku/Render, tres bien designee pour l'auto-hebergement.
-
-**Ce qui est exemplaire :**
-- **Application card** : status indicator anime + URL + derniere version + resource usage. **Read** [`motion.md`](../tokens/motion.md) pour les timings d'indicateurs animes.
-- **Deploy log stream** : logs en streaming avec ANSI colors, collapsibles par etape (clone, build, deploy). **Read** [`realtime-streams.md`](../components/realtime-streams.md) pour les patterns de log streaming.
-- **Env vars editor** : masquage par defaut, revelation par clic, import .env, groupement par prefixe.
-- **Resource monitoring** : CPU/RAM/Disk temps reel avec graphes temporels simples.
-
----
-
-### Railway
-
-La deploy platform la plus designee visuellement. Rend l'infrastructure accessible.
-
-**Ce qui est exemplaire :**
-- **Canvas de services** : graphe ou chaque service est un node, les connexions (DB, Redis) sont des aretes. **Read** [`data-visualization.md`](../components/data-visualization.md) pour les conventions de graphes de dependances.
-- **Deployment timeline** : historique avec statuts visuels (vert/rouge/anime) + durees.
-- **Variable references** : `${{postgres.DATABASE_URL}}` auto-completees et linkees entre services.
-
-**Palette :**
-```
-Background    : #0b0d0f
-Surface       : #161b22
-Accent        : Violet #7c3aed → gradient rose
-Success       : Vert #22c55e
-Error         : Rouge #ef4444
-Building      : Amber #f59e0b (anime)
-```
-
----
-
-### Cloudflare Dashboard
-
-Couvre DNS, Workers, Pages, R2, D1, KV, Analytics, Zero Trust.
-
-**Ce qui est exemplaire :**
-- **Analytics zone** : graphes trafic (requests, bandwidth, threats) avec selecteur de periode + legende interactive. **Read** [`data-visualization.md`](../components/data-visualization.md) pour les conventions de graphes temporels.
-- **Workers analytics** : requests/sec, CPU time, errors — sparklines temps reel par worker.
-- **DNS editor** : tableau de records avec inline editing, type selector, TTL, proxy toggle (cloud orange on/off). Le plus intuitif du marche.
-- **Firewall rules** : visual builder (conditions + actions) + expression editor pour power users.
-
----
-
-### Uptime Kuma
-
-Reference du monitoring de statut open source. Design epure, self-hosted.
-
-**Ce qui est exemplaire :**
-- **Monitor list** : cards avec statut (Up/Down/Pending), uptime %, response time, historique 24h en segments colores.
-- **Uptime history bar** : 90 segments de ~16min chacun, vert=up, rouge=down, tooltip au hover.
-- **Status page publique** : genere une page type status.io depuis les monitors configures.
-- **Incident history** : timeline des incidents avec duree et cause.
-
----
+Datadog : fond `#1b2134` (bleu-nuit sombre), accent purple `#7C3AED`.
 
 ## Composants specifiques DevTools
 
-### Metric Card (Stat panel)
-
-**Read** [`data-visualization.md`](../components/data-visualization.md) pour les conventions generales des metric cards et sparklines.
+### Metric Card (Stat panel) [5]
 
 ```
 +-----------------------------------+
 | Requests / sec                    |  <- Label 12px gris
-|                                   |
 | 4,231                             |  <- Valeur 32-48px bold blanc
-|                                   |
 | ^ +12.3% vs last hour    ~~~~    |  <- Variation + sparkline
 +-----------------------------------+
 ```
 
-**Variante alerte (fond colore quand en alerte) :**
-```
-+-----------------------------------+  <- Fond rouge #1a0505
-| Error Rate              ! Alert   |
-|                                   |
-| 4.21%                             |  <- Valeur en rouge
-+-----------------------------------+
-```
+Variante alerte (fond `#1a0505` quand en alerte) : valeur en rouge, badge `! Alert` en haut a droite.
 
-**Regles metric card :**
-- Valeur principale : 32-48px, blanc, toujours lisible en premier. **Read** [`typography.md`](../tokens/typography.md) pour les tokens de taille.
-- Label : 12px, gris secondaire
-- Variation : vert si positive, rouge si negative (ou inverse selon la metrique)
-- Sparkline : 40-60px de hauteur, meme couleur que la variation
-- 4-6 cards max par rangee
+**Regles :** Valeur principale 32-48px, blanc, toujours lisible en premier [3]. Label 12px, gris secondaire. Variation vert si positive, rouge si negative (ou inverse selon la metrique). Sparkline 40-60px de hauteur, meme couleur que la variation. 4-6 cards max par rangee.
 
----
-
-### Time Series Graph
-
-**Read** [`data-visualization.md`](../components/data-visualization.md) pour les conventions generales de graphes temporels.
+### Time Series Graph [5]
 
 ```
 +--------------------------------------------------------+
 | CPU Usage %                          [1h] [6h] [24h]   |
-|                                                         |
 | 80% |                    /--\                           |
 | 60% |              /-----/  \--\                        |
 | 40% |         /----/            \----\                  |
@@ -238,27 +186,14 @@ Reference du monitoring de statut open source. Design epure, self-hosted.
 |  0% |                                                   |
 |     +--------------------------------------------------+
 |     14:00        15:00        16:00        17:00        |
-|                                                         |
 | -- web-1  -- web-2  -- web-3                            |
 +--------------------------------------------------------+
 ```
 
-**Regles :**
-- Axe Y : 4-5 graduations, labels gris secondaire
-- Axe X : HH:MM pour < 24h, DD/MM pour > 24h
-- Lignes : 1.5-2px, anti-aliase
-- Area sous la courbe : 10-15% d'opacite
-- Tooltip au hover : ligne verticale + valeurs de toutes les series
-- Zoom : drag horizontal → reset au double-clic
-- Jamais rouge/amber en premiere serie (reserves aux alertes)
+**Regles :** Axe Y 4-5 graduations, labels gris secondaire. Axe X HH:MM pour < 24h, DD/MM pour > 24h. Lignes 1.5-2px, anti-aliase. Area sous la courbe 10-15% d'opacite. Tooltip au hover : ligne verticale + valeurs de toutes les series. Zoom drag horizontal → reset au double-clic. Jamais rouge/amber en premiere serie (reserves aux alertes).
 
----
+### Log Viewer [7]
 
-### Log Viewer
-
-**Read** [`log-viewer.md`](../components/log-viewer.md) pour les conventions detaillees du composant log viewer (filtrage, expansion, performance).
-
-**Layout standard :**
 ```
 +----------------------------------------------------------+
 | [Search logs...] [Level v] [Service v] [Time v] [*Live]  |
@@ -273,10 +208,7 @@ Reference du monitoring de statut open source. Design epure, self-hosted.
 +----------------------------------------------------------+
 ```
 
-**Couleurs de log levels — standard absolu :**
-
-**Read** [`colors.md`](../tokens/colors.md) pour la reference complete des tokens de couleur.
-
+**Couleurs de log levels — standard absolu [2] :**
 ```
 FATAL / CRITICAL  : Rouge vif #FF4444 + fond rouge tres sombre
 ERROR             : Rouge #EF4444
@@ -286,10 +218,7 @@ DEBUG             : Gris #6B7280
 TRACE             : Gris clair #9CA3AF
 ```
 
-**Etats visuels d'une log line :**
-
-**Read** [`motion.md`](../tokens/motion.md) pour les timings de transition.
-
+**Etats visuels d'une log line [6] :**
 ```
 Normal    : fond transparent
 Hover     : fond rgba(255,255,255,0.04), transition 100ms
@@ -312,13 +241,7 @@ v 14:23:45.123  ERROR  Payment failed: card declined
   }
 ```
 
-**Regles histogram :**
-- Toujours au-dessus du log viewer (jamais en dessous)
-- Hauteur de barre proportionnelle au nombre d'evenements
-- Couleur selon proportion d'erreurs : vert → jaune → rouge
-- Clic sur une barre → filtre l'intervalle de temps
-
----
+**Regles histogram :** Toujours au-dessus du log viewer (jamais en dessous). Hauteur de barre proportionnelle au nombre d'evenements. Couleur selon proportion d'erreurs : vert → jaune → rouge. Clic sur une barre → filtre l'intervalle de temps.
 
 ### Health Indicator
 
@@ -330,30 +253,18 @@ v 14:23:45.123  ERROR  Payment failed: card declined
 * Major Outage      <- Rouge, point pulsant
 * Maintenance       <- Gris, icone wrench
 ```
+Animation pulsante : voir [6].
 
-**Read** [`motion.md`](../tokens/motion.md) pour les timings d'animation pulsante des indicateurs de statut.
-
-**Uptime history bar (style Uptime Kuma) :**
-```
-90 segments x ~16 minutes = 24h
-# Vert  = UP
-# Rouge = DOWN
-# Gris  = No data
-# Amber = Degraded
-Tooltip : date/heure + etat + duree
-```
+**Uptime history bar (style Uptime Kuma) :** 90 segments x ~16 minutes = 24h. Vert = UP, Rouge = DOWN, Gris = No data, Amber = Degraded. Tooltip : date/heure + etat + duree.
 
 **Card de service :**
 ```
 +--------------------------------------------+
 | * payment-api                prod          |
-|                                            |
 | Uptime: 99.97%    Response: 234ms          |
 | ########################   <- History 24h  |
 +--------------------------------------------+
 ```
-
----
 
 ### Environment Variables Editor
 
@@ -366,7 +277,6 @@ Tooltip : date/heure + etat + duree
 | [lock] DATABASE_URL    ****************  [eye] [edit] [x] |
 | [lock] API_KEY         ****************  [eye] [edit] [x] |
 | [lock] STRIPE_SECRET   ****************  [eye] [edit] [x] |
-|                                                           |
 |    NODE_ENV        production         [edit] [x]          |
 |    PORT            3000               [edit] [x]          |
 +----------------------------------------------------------+
@@ -374,16 +284,7 @@ Tooltip : date/heure + etat + duree
 +----------------------------------------------------------+
 ```
 
-**Regles :**
-- Secrets masques par defaut, reveles par clic (jamais auto-reveles)
-- Distinction visuelle secrets (lock) vs variables publiques
-- Validation inline : format URL pour DATABASE_URL, longueur minimale pour keys
-- Import depuis .env : drag-and-drop ou textarea + parse
-- Avertissement de redeploiement si pertinent
-- Copier la valeur sans reveler (clipboard icon separe)
-- Groupement par prefixe si > 10 variables (DB_, STRIPE_, AUTH_...)
-
----
+**Regles :** Secrets masques par defaut, reveles par clic (jamais auto-reveles). Distinction visuelle secrets (lock) vs variables publiques. Validation inline : format URL pour DATABASE_URL, longueur minimale pour keys. Import depuis .env : drag-and-drop ou textarea + parse. Avertissement de redeploiement si pertinent. Copier la valeur sans reveler (clipboard icon separe). Groupement par prefixe si > 10 variables (DB_, STRIPE_, AUTH_...).
 
 ### Container / Service List
 
@@ -401,15 +302,7 @@ Tooltip : date/heure + etat + duree
   * Running  o Stopped  ! Starting  x Error
 ```
 
-**Colonnes standard :**
-- Status : indicator colore (pas de texte — trop large)
-- Name : monospace, cliquable → detail
-- Image : gris secondaire
-- CPU % : barre de progression inline si > 0
-- MEM : valeur + unite (MB/GB)
-- Actions : icones au hover uniquement (reduire le bruit visuel)
-
----
+**Colonnes standard :** Status indicator colore (pas de texte — trop large). Name monospace, cliquable → detail. Image gris secondaire. CPU % barre de progression inline si > 0. MEM valeur + unite (MB/GB). Actions icones au hover uniquement (reduire le bruit visuel).
 
 ### Config Editor
 
@@ -430,16 +323,7 @@ Tooltip : date/heure + etat + duree
 +----------------------------------------------------------+
 ```
 
-**Regles :**
-- Numeros de ligne toujours visibles (gris tres clair)
-- Syntax highlighting adapte au format du fichier
-- Validation en temps reel (debounced 500ms)
-- Erreurs : ligne surlignee + bordure gauche rouge + message en bas
-- Warnings : bordure gauche amber
-- Diff avec version precedente : vert/rouge en marge
-- Ctrl+S pour sauvegarder, Ctrl+Z undo
-
----
+**Regles :** Numeros de ligne toujours visibles (gris tres clair). Syntax highlighting adapte au format du fichier. Validation en temps reel (debounced 500ms). Erreurs : ligne surlignee + bordure gauche rouge + message en bas. Warnings : bordure gauche amber. Diff avec version precedente : vert/rouge en marge. Ctrl+S pour sauvegarder, Ctrl+Z undo.
 
 ### Deployment Timeline
 
@@ -451,29 +335,21 @@ Tooltip : date/heure + etat + duree
 +----------------------------------------------------------+
 ```
 
-**Log stream d'un deploiement (clic) :**
-
-**Read** [`realtime-streams.md`](../components/realtime-streams.md) pour les patterns de log streaming en temps reel.
-
+**Log stream d'un deploiement (clic) [1] :**
 ```
 v Clone repository                    ok 2s
   Cloning from github.com/user/repo
   ok Cloned branch main (abc1234)
-
 v Install dependencies                ok 18s
   Running: bun install
   142 packages installed
-
 v Build                               ok 23s
   Running: bun run build
   ok Build completed
-
 v Deploy                              ok 2s
   ok Container started
   ok Health check passed
 ```
-
----
 
 ### Alerting Rules
 
@@ -493,29 +369,22 @@ v Deploy                              ok 2s
 +----------------------------------------------------------+
 ```
 
----
-
 ## Structure et layout
 
-### Layout global standard
-
-**Read** [`cli-patterns.md`](../systems/cli-patterns.md) pour les conventions de layout d'outils en ligne de commande.
+### Layout global standard [4]
 
 ```
 +----------------------------------------------------------+
 | Logo  App Name         [Search Cmd+K]      Avatar  gear    |  <- Topbar 56px
 +--------+-------------------------------------------------+
-|        |                                                  |
 |Sidebar |  [Breadcrumb]                                    |
-| 220px  |                                                  |
-|        |  Zone de contenu principale                      |
+| 220px  |  Zone de contenu principale                      |
 |Overview|                                                  |
 |Metrics |                                                  |
 |Logs    |                                                  |
 |Servers |                                                  |
 |Config  |                                                  |
 |Alerts  |                                                  |
-|        |                                                  |
 |Settings|                                                  |
 +--------+-------------------------------------------------+
 ```
@@ -524,13 +393,9 @@ v Deploy                              ok 2s
 
 ```
 [Time range v]  [Refresh]  [Auto-refresh: 30s v]
-
 [Metric Card]  [Metric Card]  [Metric Card]  [Metric Card]   <- KPIs
-
 [Time Series Graph — Requests/sec — full width]              <- Main graph
-
 [Time Series — CPU]          [Time Series — Memory]          <- 2 colonnes
-
 [Services Status List]       [Recent Logs (20 dernieres)]    <- 2 colonnes
 ```
 
@@ -538,11 +403,8 @@ v Deploy                              ok 2s
 
 ```
 [Toolbar: Search | Level | Service | Time range | * Live]
-
 [Histogram de distribution — 60px hauteur]
-
 [Log stream — monospace 13px, dense]
-  timestamp  [LEVEL]  message
   timestamp  [LEVEL]  message
   ...
 ```
@@ -551,9 +413,7 @@ v Deploy                              ok 2s
 
 ```
 [Filter v]  [+ Add]
-
 [Container list — table dense]
-
 -> [Panel detail (slide depuis droite ou page dediee)]
      Name, Status, Image, Ports
      [CPU graph 30min]  [Memory graph 30min]
@@ -564,14 +424,10 @@ v Deploy                              ok 2s
 
 ```
 [Tabs: App Config | Environment | Secrets | Domains]
-
 [Config Editor ou Env Vars Editor selon le tab actif]
-
 [Save]  [Discard changes]
 [! These changes will trigger a redeploy]
 ```
-
----
 
 ## Conventions de densite
 
@@ -595,11 +451,7 @@ v Deploy                              ok 2s
 - **Vue formulaire** (config, env vars) : densite normale — inputs lisibles
 - **Vue overview** : densite medium — compromis vue globale / lisibilite
 
----
-
-## Systeme de couleurs DevTools
-
-**Read** [`colors.md`](../tokens/colors.md) pour la reference complete des tokens de couleur et les conventions de theming.
+## Systeme de couleurs DevTools [2]
 
 ### Palette universelle dark mode
 
@@ -640,11 +492,7 @@ Serie 8  : Lime   #84cc16
 
 Jamais rouge/amber en premieres series — reserves aux alertes.
 
----
-
-## Typographie DevTools
-
-**Read** [`typography.md`](../tokens/typography.md) pour les tokens typographiques de reference et les regles de fallback.
+## Typographie DevTools [3]
 
 ### Stack standard
 
@@ -658,22 +506,9 @@ Valeurs metriques    : Inter Bold — 28-48px
 
 ### Monospace — regle d'usage
 
-```
-TOUJOURS monospace :
-- Log lines (timestamps, messages, valeurs)
-- IDs de ressources (container ID, trace ID, request ID)
-- Chemins de fichiers (/var/log/nginx/error.log)
-- Commandes et code
-- Valeurs d'environnement variables
-- IP addresses, ports, hashes, UUIDs
+TOUJOURS monospace : log lines (timestamps, messages, valeurs), IDs de ressources (container ID, trace ID, request ID), chemins de fichiers (/var/log/nginx/error.log), commandes et code, valeurs d'environnement variables, IP addresses, ports, hashes, UUIDs.
 
-JAMAIS monospace :
-- Labels d'interface (boutons, titres, nav)
-- Texte explicatif
-- Valeurs metriques (CPU 23%, 1.2GB)
-```
-
----
+JAMAIS monospace : labels d'interface (boutons, titres, nav), texte explicatif, valeurs metriques (CPU 23%, 1.2GB).
 
 ## Patterns d'interaction DevTools
 
@@ -689,33 +524,23 @@ JAMAIS monospace :
 |                          [Apply]
 ```
 
-### Live mode
-
-**Read** [`realtime-streams.md`](../components/realtime-streams.md) pour les patterns complets de live mode et auto-refresh.
+### Live mode [1]
 
 ```
 Inactif : [o Live]   <- Outline, gris
 Actif   : [* Live]   <- Fond vert, point qui pulse
 ```
-
 Quand Live actif : time range glissant, log viewer auto-scroll, graphes s'etendent en temps reel.
 
 ### Filtre par clic sur une valeur (faceted search)
 
 ```
-Clic sur "payment-api" dans un log
--> Ajoute [service:payment-api x] dans la toolbar
-
-Clic sur "ERROR" dans le level
--> Ajoute [level:error x]
-
-Shift+clic -> exclusion
--> Ajoute [NOT service:payment-api x]
+Clic sur "payment-api" dans un log -> Ajoute [service:payment-api x] dans la toolbar
+Clic sur "ERROR" dans le level     -> Ajoute [level:error x]
+Shift+clic -> exclusion            -> Ajoute [NOT service:payment-api x]
 ```
 
-### Keyboard shortcuts DevTools
-
-**Read** [`cli-patterns.md`](../systems/cli-patterns.md) pour les conventions de raccourcis clavier dans les outils developeur.
+### Keyboard shortcuts DevTools [4]
 
 ```
 /           Focus search
@@ -726,8 +551,6 @@ R           Refresh
 L           Toggle Live mode
 Escape      Fermer panel / deselect
 ```
-
----
 
 ## Checklist DevTools UI
 
