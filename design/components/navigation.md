@@ -4,19 +4,21 @@ Sidebar, action menus, tabs, bottom nav, breadcrumbs, and product tour patterns 
 
 ---
 
-## Sidebar — Responsive Behavior
+## Responsive Breakpoint Matrix
 
-### Desktop (>=1024px)
+| Component | Desktop (>=1024px) | Tablet (768–1023px) | Mobile (<768px) |
+|-----------|-------------------|---------------------|-----------------|
+| **Sidebar** | Always visible, expanded (200–240px), fixed left, full height | Icon-only rail (56–64px) OR icon+condensed label (120–140px) — pick once, apply consistently | Hidden by default; hamburger trigger (top-left, 44x44px min); overlay drawer (slide-left, 80%/280px max, z-overlay 30) |
+| **Action menu** | All actions as individual buttons in toolbar | Primary action visible + overflow `...` | Primary CTA visible + bottom sheet overflow (48–56px items) |
+| **Tabs** | Standard horizontal, scrollable if overflow | Same as desktop | 2–3: full-width equal; 4+: scrollable horizontal with fade/dots; swipe between panels |
+| **Breadcrumbs** | Full path with separator (`/` or `>`) | Same as desktop | Hide entirely OR back arrow + parent name only |
+| **Bottom nav** | NEVER use on web desktop — mobile-only | N/A | 3–5 items (4 ideal); iOS: 49pt+safe area; Android: 80dp |
 
-| Property | Value | Notes |
-|----------|-------|-------|
-| Visibility | Always visible, expanded | Icons + labels |
-| Width | 200–240px | Convention from Linear, Vercel, Stripe, Notion |
-| Position | Fixed left | Full viewport height |
-| Active item | Accent background or colored text | Never both simultaneously |
-| Hover | Subtle background elevation | 4–8% opacity tint |
+---
 
-#### Sidebar Structure
+## Sidebar
+
+### Desktop Structure
 
 ```
 ┌──────────────────────┐
@@ -39,11 +41,11 @@ Sidebar, action menus, tabs, bottom nav, breadcrumbs, and product tour patterns 
 
 - Workspace switcher and search stay pinned at top (sticky)
 - Section groups are collapsible with a disclosure chevron
-- Content: workspace switcher (top), search/Cmd+K, nav items, section groups
+- Active item: accent background or colored text — NEVER both simultaneously
+- Hover: subtle background elevation (4–8% opacity tint)
+- Width convention: 200–240px (Linear, Vercel, Stripe, Notion)
 
-### Tablet (768–1023px)
-
-Two options — project decides once, applies consistently:
+### Tablet Options
 
 | Option | Width | Content | Expand behavior |
 |--------|-------|---------|-----------------|
@@ -51,85 +53,55 @@ Two options — project decides once, applies consistently:
 | **Icon + condensed label** | 120–140px | Small labels under or beside icons | No expand needed |
 
 - Transition: smooth width animation (250ms ease-in-out)
-- User can toggle between collapsed/expanded (persist preference via localStorage or user settings)
+- User can toggle collapsed/expanded (persist preference via localStorage or user settings)
 
-### Mobile (<768px)
-
-- **Hidden by default** — zero footprint when closed, not visible on initial page load
-
-#### Trigger Button
-
-| Property | Value | Notes |
-|----------|-------|-------|
-| Icon | Hamburger (three lines) or menu icon | Most common convention |
-| Position | Top-left in header bar | Linear, GitHub, Notion pattern |
-| Tap target | 44x44px minimum | Must have dedicated space, never overlapping other elements |
-
-Alternative: top-right (less common, used by some apps).
-
-#### Overlay Drawer
+### Mobile Drawer
 
 | Property | Value |
 |----------|-------|
-| Direction | Slides in from the left |
+| Trigger | Hamburger icon, top-left header (alt: top-right, less common) |
+| Tap target | 44x44px minimum, dedicated space, NEVER overlapping other elements |
+| Direction | Slides in from left |
 | Z-index | `z-overlay` (30) — above content, below modals |
 | Backdrop | `rgba(0,0,0,0.5)` covering content area |
 | Width | 80% of screen or 280px max |
-| Open animation | Slide-in 250ms ease-out |
-| Close animation | Slide-out 200ms ease-in |
+| Open/Close | Slide-in 250ms ease-out / Slide-out 200ms ease-in |
 
-#### Dismiss Triggers
+**Dismiss triggers**: tap nav item (navigates+closes), tap backdrop, swipe left, press Escape (keyboard).
 
-- User taps a navigation item (navigates + closes)
-- User taps the backdrop (outside the sidebar)
-- User swipes left on the sidebar
-- User presses Escape (if keyboard attached)
+### Scroll Behavior
 
-### Sidebar Scroll
-
-- If nav items exceed viewport height, sidebar scrolls independently (`overflow-y: auto`)
-- Workspace switcher and search stay pinned at top (`position: sticky`)
-- Custom scrollbar styling optional: thin (4–6px), only visible on hover (WebKit: `::-webkit-scrollbar`)
+- If nav items exceed viewport height: independent scroll (`overflow-y: auto`)
+- Workspace switcher and search stay pinned (`position: sticky`)
+- Custom scrollbar optional: thin (4–6px), visible on hover (WebKit: `::-webkit-scrollbar`)
 
 ---
 
 ## Action Menu — Responsive Collapse
 
-### Wide Viewport (Desktop)
-
-Actions displayed as individual buttons in the header/toolbar:
-
-```
-[Filter v]  [Sort v]  [+ New item]  [Export]  [Settings]
-```
-
-### Narrow Viewport (Tablet/Mobile)
-
-Primary action stays visible, secondary actions collapse into overflow menu:
-
-```
-[+ New item]  [...]
-```
+**Desktop**: `[Filter v]  [Sort v]  [+ New item]  [Export]  [Settings]`
+**Mobile**: `[+ New item]  [...]`
 
 | Property | Desktop/Tablet | Mobile |
 |----------|---------------|--------|
 | Overflow button | `...` (three dots) or `kebab` icon | Same |
-| Menu type | Dropdown, right-aligned to button | Bottom sheet (action sheet pattern) |
+| Menu type | Dropdown, right-aligned | Bottom sheet (action sheet) |
 | Item height | 36–40px | 48–56px (thumb-friendly) |
 | Max items visible | 8–10 | 6–8 (scrollable beyond) |
 
 ### Collapse Priority
 
-Define which actions remain visible (most important first) and which collapse. Use CSS container queries or media queries.
+Define which actions remain visible (most important first) and which collapse into the overflow menu.
 
-- **Rule**: the primary CTA (e.g., "+ New item") must NEVER be hidden in the overflow menu — it stays visible at all breakpoints
-- Destructive actions (delete, archive) go inside overflow — never exposed as bare buttons on narrow screens
+- Primary CTA (e.g., "+ New item") MUST NEVER be hidden in the overflow — visible at all breakpoints
+- Destructive actions (delete, archive) always inside overflow — NEVER exposed as bare buttons on narrow screens
+- Use CSS container queries or media queries to control collapse
 
 ---
 
 ## Tabs — Horizontal
 
-### Tab Anatomy
+### Anatomy
 
 ```
 [Tab 1]  [Tab 2]  [Tab 3]                    [Optional action]
@@ -139,25 +111,16 @@ Define which actions remain visible (most important first) and which collapse. U
 
 | Property | Value | Notes |
 |----------|-------|-------|
-| Tab height | 40–48px | Consistent with header heights |
-| Active indicator | 2px bottom border (accent) or filled pill background | Pick one style per project |
+| Height | 40–48px | Consistent with header heights |
+| Active indicator | 2px bottom border (accent) or filled pill background | Pick one per project |
 | Active text | Bold or accent color | Not both — pick one |
 | Inactive text | Secondary color | From color tokens |
-| Hover | Subtle background on the tab | 4–8% opacity tint |
+| Hover | Subtle background (4–8% opacity tint) | |
 
-- **Scrollable tabs**: if too many tabs for the container, horizontal scroll with fade edges (no wrapping)
-- **Badge on tab**: notification count (e.g., "Issues (12)") — use secondary badge token
-- **Icon + label** or **label only** — never icon-only for tabs (too ambiguous)
-
-### Mobile Tabs
-
-| Tab count | Behavior |
-|-----------|----------|
-| 2–3 tabs | Full-width, equal distribution |
-| 4+ tabs | Scrollable horizontal with scroll indicator (fade edges or dots) |
-
-- Swipe between tab panels on mobile (gesture navigation)
-- Active indicator must move with the swipe (animated underline)
+- **Scrollable tabs**: horizontal scroll with fade edges if overflow (no wrapping)
+- **Badge**: notification count (e.g., "Issues (12)") — secondary badge token
+- **Icon + label** or **label only** — NEVER icon-only for tabs (too ambiguous)
+- Mobile swipe: active indicator MUST move with the swipe (animated underline)
 
 ---
 
@@ -172,8 +135,6 @@ Define which actions remain visible (most important first) and which collapse. U
 | Active state | Accent color icon + label | Accent color icon + label (M3: indicator pill) |
 | Inactive state | Gray icon + label | Gray icon + label |
 
-### Standard Item Pattern
-
 ```
 ┌──────────────────────────────────────────┐
 │  [Home]  [Search]  [+Add]  [Notif]  [Me]│
@@ -181,19 +142,16 @@ Define which actions remain visible (most important first) and which collapse. U
 ```
 
 - Center item (Create/Add) optionally emphasized (larger icon, FAB-style)
-- **Never use on web desktop** — bottom nav is mobile-only
+- **NEVER use on web desktop** — bottom nav is mobile-only
 - Badge: small dot (unread) or count (up to "99+") on icon
 
 ---
 
 ## Breadcrumbs
 
-### Anatomy
-
 ```
 Home  /  Projects  /  my-app  /  Settings
-                                  ^^^^^^^^
-                                  current (not a link)
+                                  ^^^^^^^^ current (not a link)
 ```
 
 | Property | Value | Notes |
@@ -204,20 +162,8 @@ Home  /  Projects  /  my-app  /  Settings
 | Height | 32–40px | |
 | Font size | 13–14px | Smaller than body text |
 
-### Truncation
-
-If depth exceeds available width:
-
-```
-Home  /  ...  /  Parent  /  Current
-```
-
-Show first item + `...` + last 2 levels.
-
-### Mobile
-
-- Hide breadcrumbs entirely, or show only a back arrow + parent name
-- Breadcrumbs are a desktop/tablet pattern — on mobile, rely on back navigation
+**Truncation** (depth exceeds width): `Home  /  ...  /  Parent  /  Current` — show first item + `...` + last 2 levels.
+**Mobile**: hide breadcrumbs entirely, or show only back arrow + parent name. Breadcrumbs are a desktop/tablet pattern.
 
 ---
 
@@ -237,15 +183,13 @@ Show first item + `...` + last 2 levels.
       └─────────────────────────────┘
               v
       ┌──────────────────────┐
-      │                      │  <- Spotlight overlay
-      │  HIGHLIGHTED ELEMENT │     on target element
-      │                      │
+      │  HIGHLIGHTED ELEMENT │  ← Spotlight overlay
       └──────────────────────┘
 ```
 
 | Property | Value |
 |----------|-------|
-| Spotlight | Dark overlay (rest of page), cut-out around target element, optional glow/pulse |
+| Spotlight | Dark overlay, cut-out around target, optional glow/pulse |
 | Tooltip position | Auto: prefer top, fallback bottom/left/right |
 | Progress | "Step X of Y" or dot indicator |
 | Controls | "Next" (primary), "Skip" (ghost/text, always available), optional "Back" |
@@ -254,7 +198,7 @@ Show first item + `...` + last 2 levels.
 | Step transition | Spotlight moves with 300ms ease-in-out |
 | Dismiss | Click outside or press Escape skips the tour |
 
-- Never block interaction with highlighted element — user can click it to try it
+- NEVER block interaction with highlighted element — user can click it to try it
 - Store completion state per tour (users may have multiple tours for different features)
 
 ### Coachmarks (Lightweight Alternative)
@@ -280,12 +224,12 @@ Use for: feature announcements, new UI elements, subtle guidance.
 
 | Rule | Detail |
 |------|--------|
-| Responsive is mandatory | Web: mobile + tablet + desktop (3 breakpoints min). Native: phone + tablet (2 min). Exception: pure phone-only apps (rare, must be justified) |
-| Sidebar position | Always LEFT — universal SaaS convention, do not innovate here |
-| Active state | Always clearly visible — the user must know where they are at all times |
+| Responsive is mandatory | Web: mobile+tablet+desktop (3 breakpoints min). Native: phone+tablet (2 min). Exception: pure phone-only apps (rare, must be justified) |
+| Sidebar position | ALWAYS LEFT — universal SaaS convention, do not innovate here |
+| Active state | ALWAYS clearly visible — user MUST know where they are at all times |
 | Breakpoint transitions | Smooth, no layout jump. Use CSS transitions on width changes |
 | Persist preferences | Collapsed sidebar, selected tab, layout mode — remember via localStorage or user settings |
-| Keyboard navigation | All nav items reachable via Tab key. Active item via Enter/Space. Sidebar toggle via keyboard shortcut (e.g., `[` or `Cmd+\`) |
+| Keyboard navigation | All nav items reachable via Tab. Active item via Enter/Space. Sidebar toggle via shortcut (e.g., `[` or `Cmd+\`) |
 
 ### Cross-Platform Comparison
 

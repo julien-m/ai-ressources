@@ -9,7 +9,6 @@ Patterns de visualisation de donnees cross-platform : terminal (ASCII) et web. M
 Carte affichant une valeur unique avec contexte : label, valeur, indicateur de tendance, delta.
 
 ### Structure
-
 ```
 ┌──────────────┐
 │ Label        │  ← texte 13px gris (web) / secondaryLabel (natif)
@@ -18,8 +17,7 @@ Carte affichant une valeur unique avec contexte : label, valeur, indicateur de t
 └──────────────┘
 ```
 
-### Rangee de 4 metric cards (layout standard)
-
+Rangee de 4 metric cards (layout standard) :
 ```
 ┌──────────────┐ ┌──────────────┐ ┌──────────────┐ ┌──────────────┐
 │ Revenue      │ │ Users        │ │ Conv. rate   │ │ Errors       │
@@ -39,7 +37,6 @@ Carte affichant une valeur unique avec contexte : label, valeur, indicateur de t
 Le sens de la couleur depend de la semantique de la metrique : pour "Revenue", hausse = vert ; pour "Errors", hausse = rouge.
 
 ### Delta
-
 - Pourcentage : `+12.3%`, `-3.1%`, `0.0%`
 - Absolu (optionnel) : `+1,234`, `-89`
 - Periode de comparaison : toujours afficher "vs 7j" ou "vs mois precedent"
@@ -59,23 +56,46 @@ Voir **Read** [`../references/app-views.md`](../references/app-views.md) (sectio
 
 ---
 
+## Chart Anatomy (regles communes)
+
+### Couleurs semantiques
+
+| Statut | Couleur | Usage |
+|--------|---------|-------|
+| Sain / succes | Vert (#10B981) / ANSI vert | Valeurs dans les seuils normaux |
+| Attention | Jaune (#F59E0B) / ANSI jaune | Seuil approche, degradation legere |
+| Critique / erreur | Rouge (#EF4444) / ANSI rouge | Seuil depasse, erreur, incident |
+| Neutre / inactif | Gris (#9CA3AF) / ANSI gris | Pas de donnees, desactive |
+
+**Accessibilite :** ne pas s'appuyer uniquement sur la couleur — ajouter un pattern (hachures, pointilles), une forme (carre, cercle, triangle) ou un indicateur textuel. Ratio de contraste minimum 3:1 entre series adjacentes. Tester avec simulateur daltonisme (protanopie, deuteranopie).
+
+Voir **Read** [`../tokens/colors.md`](../tokens/colors.md) pour la palette complete.
+
+### Responsive (regles communes)
+
+| Breakpoint | Layout charts | Legende | Interactions |
+|------------|--------------|---------|--------------|
+| < 640px | Pleine largeur, empiles | En dessous du chart | Touch: tap pour tooltip |
+| 640-1024px | Principal 12/12, secondaires 6/12 | A droite si peu d'items (2 series max pour layout chart + legende cote a cote) | Touch + hover |
+| > 1024px | Grid 2-3 colonnes, layout complet | Position libre | Hover + click |
+
+**Regles mobile :** hauteur minimum du chart 200px, touch targets minimum 44x44px, simplifier les labels d'axe (moins de graduations), desactiver le drag-to-zoom si le chart est dans un scroll vertical.
+
+### Animations
+- Entree : draw progressif des lignes (300-500ms, ease-out)
+- Transition entre etats : morph des barres/points (200-300ms)
+- Pas d'animation au survol (reaction instantanee)
+
+Voir **Read** [`../tokens/motion.md`](../tokens/motion.md) pour les courbes et durees standard.
+
+---
+
 ## Terminal — Visualisation
 
 ### Sparklines
+Mini-graphiques inline en caracteres Unicode block elements. Usage principal : inline dans les tableaux, a cote des valeurs de metriques.
 
-Mini-graphiques inline en caracteres Unicode block elements.
-
-**Jeu de caracteres :**
-
-```
-▁ ▂ ▃ ▄ ▅ ▆ ▇ █
-```
-
-Chaque caractere represente un niveau relatif dans la plage min–max de la serie.
-
-**Usage :** inline dans les tableaux, a cote des valeurs de metriques.
-
-**Exemple :**
+**Jeu de caracteres :** `▁ ▂ ▃ ▄ ▅ ▆ ▇ █` — chaque caractere represente un niveau relatif dans la plage min–max de la serie.
 
 ```
   Metrique            Valeur    Tendance 7j
@@ -86,16 +106,10 @@ Chaque caractere represente un niveau relatif dans la plage min–max de la seri
   Memory              78%       ▅▅▅▆▆▇▇▇  ↑ +5%
 ```
 
-**Regles :**
-- Minimum 5 points pour un sparkline lisible
-- Maximum 20 caracteres de large
-- Normaliser sur le min–max local de la serie (pas global)
-- Utiliser dans les contextes ou un vrai graphique n'est pas possible (CLI, logs, emails texte)
+**Regles :** minimum 5 points, maximum 20 caracteres de large, normaliser sur le min–max local (pas global). Utiliser dans les contextes sans rendu graphique (CLI, logs, emails texte).
 
 ### Bar charts ASCII
-
 #### Barres horizontales
-
 ```
 Requests   ████████████████████████ 2,431
 Errors     ██░░░░░░░░░░░░░░░░░░░░    89
@@ -103,13 +117,9 @@ Latency    ███████████░░░░░░░░░░░   
 Uptime     ████████████████████████ 99.9%
 ```
 
-- `█` = valeur remplie, `░` = espace restant jusqu'au max
-- Largeur fixe de la barre : 24 caracteres
-- Label aligne a gauche, valeur alignee a droite
-- Trier par valeur decroissante sauf si l'ordre a un sens metier
+`█` = valeur remplie, `░` = espace restant jusqu'au max. Largeur fixe 24 caracteres. Label a gauche, valeur a droite. Trier par valeur decroissante sauf si l'ordre a un sens metier.
 
 #### Barres verticales (histogrammes)
-
 ```
     █
     █ █
@@ -120,14 +130,9 @@ Uptime     ███████████████████████
   L  M  M  J  V
 ```
 
-- Moins courant en terminal, reserver aux distributions simples
-- Maximum 10-12 colonnes
-- Toujours afficher les labels d'axe X
+Moins courant en terminal, reserver aux distributions simples. Maximum 10-12 colonnes. Toujours afficher les labels d'axe X.
 
 ### Tableaux de metriques
-
-Colonnes alignees avec unites et comparaison.
-
 ```
   Metrique        Actuel     Precedent    Delta
   ──────────────────────────────────────────────
@@ -138,30 +143,19 @@ Colonnes alignees avec unites et comparaison.
   Memoire           78%       72%         ↑ +8.3%
 ```
 
-**Regles de formatage :**
-- Aligner les nombres a droite dans chaque colonne
-- Aligner les unites entre elles (ms avec ms, % avec %)
-- Coloration conditionnelle (si le terminal supporte ANSI) :
-  - Vert : valeur saine / amelioration
-  - Rouge : valeur critique / degradation
-  - Jaune : valeur en zone d'attention (seuil approche)
-- Separateur de ligne : `─` (tiret horizontal Unicode)
+**Regles de formatage :** aligner les nombres a droite, aligner les unites entre elles (ms avec ms, % avec %). Coloration ANSI conditionnelle (voir couleurs semantiques ci-dessus). Separateur de ligne : `─`.
 
 ### Gauges / indicateurs
-
 #### Barre de progression
-
 ```
 CPU    [████████░░░░░░░░░░░░] 40%
 Memory [████████████████░░░░] 78%
 Disk   [██████████████████░░] 91%  ← WARN
 ```
 
-- 20 caracteres de large entre crochets
-- Ajouter un indicateur textuel si le seuil d'alerte est depasse
+20 caracteres de large entre crochets. Ajouter un indicateur textuel si le seuil d'alerte est depasse.
 
 #### Indicateurs de statut
-
 ```
 ● API Gateway     OK       23ms
 ● Database        OK       12ms
@@ -170,8 +164,7 @@ Disk   [██████████████████░░] 91%  ← W
 ○ Scheduler       DOWN     —
 ```
 
-- `●` (plein) = service actif, `○` (vide) = service inactif
-- Couleur ANSI : vert=OK, jaune=WARN, rouge=CRIT, gris=DOWN
+`●` (plein) = service actif, `○` (vide) = service inactif. Couleur ANSI selon couleurs semantiques ci-dessus.
 
 ---
 
@@ -192,11 +185,7 @@ Disk   [██████████████████░░] 91%  ← W
 **Regle absolue :** pas de pie chart sur les dashboards principaux (voir [`../references/app-views.md`](../references/app-views.md)). Preferer les bar charts pour les comparaisons de proportions.
 
 ### Axes et labels
-
-**Axe Y :**
-- Toujours commencer a 0 (sauf si la variation est << au range, ex: temperature corporelle 36-40)
-- Afficher 4-6 graduations horizontales
-- Unites dans le label d'axe, pas repetees sur chaque graduation
+**Axe Y :** toujours commencer a 0 (sauf si la variation est << au range, ex: temperature corporelle 36-40). Afficher 4-6 graduations horizontales. Unites dans le label d'axe, pas repetees sur chaque graduation.
 
 **Axe X temporel — grain adaptatif :**
 
@@ -209,80 +198,23 @@ Disk   [██████████████████░░] 91%  ← W
 | 3-12 mois | 1 mois | `Mar` |
 | > 1 an | 1 trimestre | `Q1 2026` |
 
-**Labels :**
-- Pas de rotation > 45 degres
-- Tronquer avec `...` si le label depasse la largeur de colonne
-- Afficher 1 label sur 2 si les labels se chevauchent
-- Grid lines : trait leger (#E5E7EB / opacity 0.15), pas de fond colore
+**Labels :** pas de rotation > 45 degres. Tronquer avec `...` si le label depasse la largeur de colonne. Afficher 1 label sur 2 si chevauchement. Grid lines : trait leger (#E5E7EB / opacity 0.15), pas de fond colore.
 
 ### Couleurs
+**Palette sequentielle (une serie) :** du clair au fonce dans une meme teinte (ex: bleu-100 → bleu-300 → bleu-500 → bleu-700).
 
-**Palette sequentielle (une serie) :**
-- Du clair au fonce dans une meme teinte
-- Exemple : bleu-100 → bleu-300 → bleu-500 → bleu-700
+**Palette categorielle (multi-series) :** maximum 6 couleurs distinctes. Si > 6 series : regrouper les moins significatives dans "Autres". Couleurs suffisamment contrastees entre elles.
 
-**Palette categorielle (multi-series) :**
-- Maximum 6 couleurs distinctes
-- Si > 6 series : regrouper les moins significatives dans "Autres"
-- Couleurs suffisamment contrastees entre elles
-
-**Couleurs semantiques :**
-
-| Statut | Couleur | Usage |
-|--------|---------|-------|
-| Sain / succes | Vert (#10B981) | Valeurs dans les seuils normaux |
-| Attention | Jaune (#F59E0B) | Seuil approche, degradation legere |
-| Critique / erreur | Rouge (#EF4444) | Seuil depasse, erreur, incident |
-| Neutre / inactif | Gris (#9CA3AF) | Pas de donnees, desactive |
-
-**Accessibilite :**
-- Ne pas s'appuyer uniquement sur la couleur : ajouter un pattern (hachures, pointilles) ou une forme (carre, cercle, triangle)
-- Ratio de contraste minimum 3:1 entre series adjacentes
-- Tester avec simulateur daltonisme (protanopie, deuteranopie)
-
-Voir **Read** [`../tokens/colors.md`](../tokens/colors.md) pour la palette complete.
+Couleurs semantiques et accessibilite : voir section **Chart Anatomy** ci-dessus.
 
 ### Tooltips et interactions
+**Hover (desktop) :** tooltip avec valeur exacte + date/heure formatee, ligne verticale (crosshair) sur les line/area charts, highlight de la serie survolee avec dimming des autres.
 
-**Hover (desktop) :**
-- Tooltip avec valeur exacte + date/heure formatee
-- Ligne verticale (crosshair) sur les line/area charts
-- Highlight de la serie survolee, dimming des autres
+**Click :** drill-down vers une vue detaillee (ex: clic sur un jour → vue horaire). Filtrer les donnees (ex: clic sur une legende → toggle serie).
 
-**Click :**
-- Drill-down vers une vue detaillee (ex: clic sur un jour → vue horaire)
-- Filtrer les donnees (ex: clic sur une legende → toggle serie)
+**Drag :** selection de plage temporelle pour zoom, brush horizontal sur l'axe X.
 
-**Drag :**
-- Selection de plage temporelle pour zoom
-- Brush horizontal sur l'axe X
-
-**Mobile (touch) :**
-- Tap = equivalent hover (affiche tooltip)
-- Long press = equivalent click (drill-down)
-- Pinch = zoom / dezoom
-- Swipe horizontal = defilement temporel
-
-**Animations :**
-- Entree : draw progressif des lignes (300-500ms, ease-out)
-- Transition entre etats : morph des barres/points (200-300ms)
-- Pas d'animation au survol (reaction instantanee)
-
-Voir **Read** [`../tokens/motion.md`](../tokens/motion.md) pour les courbes et durees standard.
-
-### Responsive
-
-| Breakpoint | Layout | Legende | Interactions |
-|------------|--------|---------|--------------|
-| < 640px | Chart pleine largeur | En dessous du chart | Touch: tap pour tooltip |
-| 640-1024px | Chart + legende cote a cote (2 series max) | A droite si peu d'items | Touch + hover |
-| > 1024px | Grid de charts (2-3 colonnes) | Position libre | Hover + click |
-
-**Regles mobile :**
-- Hauteur minimum du chart : 200px
-- Touch targets des points/barres : minimum 44x44px
-- Simplifier les labels d'axe (moins de graduations)
-- Desactiver le drag-to-zoom si le chart est dans un scroll vertical
+**Mobile (touch) :** tap = hover (tooltip), long press = click (drill-down), pinch = zoom/dezoom, swipe horizontal = defilement temporel.
 
 ### Empty states
 
@@ -290,18 +222,16 @@ Voir **Read** [`../tokens/motion.md`](../tokens/motion.md) pour les courbes et d
 |------|-----------|--------|
 | No data | Illustration + "Aucune donnee disponible" | CTA : "Connectez une source de donnees" |
 | Error loading | Icone erreur + "Impossible de charger les donnees" | Bouton "Reessayer" |
-| Partial data | Afficher les donnees disponibles + indicateur zones manquantes | Message : "Donnees partielles — certaines sources sont indisponibles" |
+| Partial data | Donnees disponibles + indicateur zones manquantes | Message : "Donnees partielles — certaines sources sont indisponibles" |
 | Filtered to empty | "Aucun resultat pour ces filtres" | Bouton "Reinitialiser les filtres" |
 
-- Toujours conserver la structure du layout (metric cards, charts) meme en etat vide
-- Ne jamais afficher une page blanche
+Toujours conserver la structure du layout (metric cards, charts) meme en etat vide. Ne jamais afficher une page blanche.
 
 ---
 
 ## Dashboard layout
 
 ### Structure standard
-
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │ Dashboard                         [7 jours ▾] [Exporter]     │
@@ -387,11 +317,7 @@ Voir **Read** [`../tokens/motion.md`](../tokens/motion.md) pour les courbes et d
 | 1 MB - 999 MB | Megabytes | `3.4 MB` |
 | 1 GB+ | Gigabytes | `1.2 GB` |
 
-**Regles :**
-- Toujours 1 decimale pour les notations abregees (sauf si `.0`)
-- Aligner les unites dans les colonnes de tableaux
-- Utiliser l'espace insecable entre la valeur et l'unite
-- Separateur de milliers : `,` (en contexte anglophone) ou ` ` (espace fine en contexte francophone)
+**Regles :** toujours 1 decimale pour les notations abregees (sauf si `.0`). Aligner les unites dans les colonnes de tableaux. Utiliser l'espace insecable entre la valeur et l'unite. Separateur de milliers : `,` (anglophone) ou ` ` (espace fine, francophone).
 
 ---
 
@@ -407,31 +333,21 @@ Voir **Read** [`../tokens/motion.md`](../tokens/motion.md) pour les courbes et d
 | Rapport | Manuel (bouton refresh) | Pas d'auto-refresh |
 
 ### Transition entre valeurs
-
-- Animer le changement de valeur numerique (compteur qui defile)
-- Duree : 300ms, ease-out
-- Flash subtil (background pulse) pour attirer l'attention sur un changement significatif
-- Ne pas animer les sparklines a chaque update (redessin direct)
+Animer le changement de valeur numerique (compteur qui defile), 300ms ease-out. Flash subtil (background pulse) pour changement significatif. Ne pas animer les sparklines a chaque update (redessin direct).
 
 Voir **Read** [`../tokens/motion.md`](../tokens/motion.md) pour les courbes et durees standard.
 
 ### Indicateur de fraicheur
-
 ```
 Derniere mise a jour : il y a 5s        ● Live
 Derniere mise a jour : il y a 2min       ● Live
 Derniere mise a jour : il y a 15min      ○ Pause (onglet inactif)
 ```
 
-- Afficher le timestamp relatif en bas ou en haut du dashboard
-- Pastille verte `●` si l'auto-refresh est actif
-- Pastille grise `○` si pause (onglet inactif, perte de connexion)
-- Pause automatique de l'auto-refresh quand l'onglet est en arriere-plan (Page Visibility API)
-- Reprendre l'auto-refresh avec un refresh immediat quand l'onglet redevient actif
+Afficher le timestamp relatif en bas ou en haut du dashboard. Pastille verte `●` si auto-refresh actif, pastille grise `○` si pause (onglet inactif, perte de connexion). Pause automatique quand l'onglet est en arriere-plan (Page Visibility API). Reprendre avec un refresh immediat quand l'onglet redevient actif.
 
 ### Gestion des erreurs temps reel
-
-- Si une source de donnees echoue : afficher la derniere valeur connue + indicateur "stale"
+- Si une source echoue : afficher la derniere valeur connue + indicateur "stale"
 - Apres 3 echecs consecutifs : afficher un bandeau d'avertissement
 - Ne jamais afficher `0` ou une valeur vide a cause d'une erreur reseau
 
