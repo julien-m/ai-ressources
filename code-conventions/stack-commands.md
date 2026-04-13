@@ -16,7 +16,9 @@ Used by `/conventions.init` Phase 7 (pre-commit hook) and Phase 8 (CI workflows)
 | TypeScript | tsconfig.json | `npx tsc --noEmit` | ci-node | javascript-typescript |
 | Rust | Cargo.toml | `cargo check`, `cargo clippy -- -D warnings` | ci-rust | rust |
 | Go | go.mod | `go build ./...`, `go vet ./...` | ci-go | go |
-| Python | pyproject.toml \| setup.py | `ruff check .`, `mypy .` | ci-python | python |
+| Python + pyright | pyproject.toml + [tool.pyright] | `ruff check .`, `pyright` | ci-python | python |
+| Python + mypy | pyproject.toml + (mypy.ini \| .mypy.ini \| [tool.mypy]) | `ruff check .`, `mypy .` | ci-python | python |
+| Python | pyproject.toml \| setup.py | `ruff check .` | ci-python | python |
 | Delphi | *.dproj \| *.dpr | `dcc32 {dpr_file} -Q -W` | — | — |
 | C/C++ (CMake) | CMakeLists.txt | `cmake --build . --target all` | — | — |
 | .NET / C# | *.sln \| *.csproj | `dotnet build --no-restore` | ci-dotnet | csharp |
@@ -40,6 +42,12 @@ For CI file naming: the first family in table order whose markers are found. Tab
 1. `biome.json` or `biome.jsonc` → Biome
 2. `.eslintrc`, `.eslintrc.js`, `.eslintrc.cjs`, `.eslintrc.json`, `eslint.config.js`, `eslint.config.mjs` → ESLint
 3. Neither → TypeScript only (no linter command)
+
+### Type checker sub-detection (Python)
+
+1. `[tool.pyright]` section in `pyproject.toml` → pyright
+2. `mypy.ini`, `.mypy.ini`, or `[tool.mypy]` section in `pyproject.toml` → mypy
+3. Neither → Python only (no type checker command)
 
 ### Tool existence guards
 
