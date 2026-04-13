@@ -35,28 +35,24 @@ Durées, easing, et conventions d'animation cross-platform (iOS, Android, Web).
 ## Easing Functions
 
 ### Entrée (élément qui apparaît)
-
 | Token | CSS | iOS (SwiftUI) | Android (Compose) | Usage |
 |-------|-----|---------------|-------------------|-------|
 | `ease-out` | `cubic-bezier(0.0, 0.0, 0.2, 1.0)` | `.easeOut` | `FastOutSlowInEasing` | **Default pour les entrées.** Départ rapide, arrivée douce |
 | `decelerate` | `cubic-bezier(0.0, 0.0, 0.0, 1.0)` | `.easeOut(duration:)` | `LinearOutSlowInEasing` | Entrée depuis l'extérieur de l'écran (slide-in) |
 
 ### Sortie (élément qui disparaît)
-
 | Token | CSS | iOS (SwiftUI) | Android (Compose) | Usage |
 |-------|-----|---------------|-------------------|-------|
 | `ease-in` | `cubic-bezier(0.4, 0.0, 1.0, 1.0)` | `.easeIn` | `FastOutLinearInEasing` | **Default pour les sorties.** Départ progressif, accélération vers la fin |
 | `accelerate` | `cubic-bezier(0.4, 0.0, 1.0, 1.0)` | `.easeIn(duration:)` | `FastOutLinearInEasing` | Sortie vers l'extérieur de l'écran (slide-out) |
 
 ### Changement d'état (même élément qui change)
-
 | Token | CSS | iOS (SwiftUI) | Android (Compose) | Usage |
 |-------|-----|---------------|-------------------|-------|
 | `ease-in-out` | `cubic-bezier(0.4, 0.0, 0.2, 1.0)` | `.easeInOut` | `FastOutSlowInEasing` | **Default pour les state changes.** Resize, move, color change |
 | `linear` | `linear` | `.linear` | `LinearEasing` | Progress bar, loading indicator, timer — mouvement constant |
 
 ### Spring (rebond naturel)
-
 | Token | CSS (Framer Motion) | iOS (SwiftUI) | Android (Compose) | Usage |
 |-------|---------------------|---------------|-------------------|-------|
 | `spring-gentle` | `{ type: "spring", stiffness: 120, damping: 14 }` | `.spring(response: 0.5, dampingFraction: 0.7)` | `spring(dampingRatio = 0.7, stiffness = 120f)` | Boutons, toggles, feedback doux |
@@ -70,7 +66,6 @@ Durées, easing, et conventions d'animation cross-platform (iOS, Android, Web).
 ## Transitions par contexte
 
 ### Entrées / Sorties de composants
-
 | Composant | Durée | Easing | Propriétés animées | Notes |
 |-----------|-------|--------|-------------------|-------|
 | Modal / Dialog | `normal` (250ms) | `ease-out` in / `ease-in` out | opacity + scale(0.95→1) | Scale from center |
@@ -82,7 +77,6 @@ Durées, easing, et conventions d'animation cross-platform (iOS, Android, Web).
 | Accordion | `normal` (250ms) | `ease-in-out` | height + opacity | Content reveal |
 
 ### Feedback d'interaction
-
 | Interaction | Durée | Easing | Propriétés animées | Notes |
 |-------------|-------|--------|-------------------|-------|
 | Button press | `micro` (100ms) | `spring-gentle` | scale(0.97) | Scale down subtil au press |
@@ -93,7 +87,6 @@ Durées, easing, et conventions d'animation cross-platform (iOS, Android, Web).
 | Ripple (Material) | `normal` (250ms) | `decelerate` | scale + opacity | Expand from touch point |
 
 ### Transitions de contenu
-
 | Transition | Durée | Easing | Propriétés animées | Notes |
 |------------|-------|--------|-------------------|-------|
 | Page/route | `slow` (400ms) | `ease-in-out` | opacity + translateX | Slide horizontal entre pages |
@@ -106,7 +99,6 @@ Durées, easing, et conventions d'animation cross-platform (iOS, Android, Web).
 | Number counter | `slow` (400ms) | `ease-out` | valeur numérique | Counting up/down animation |
 
 ### Feedback émotionnel
-
 | Feedback | Durée | Easing | Notes |
 |----------|-------|--------|-------|
 | Success check | `normal` (250ms) | `spring-bouncy` | Check mark draws then bounces |
@@ -151,7 +143,6 @@ Obligation légale (WCAG 2.1 SC 2.3.3) et nécessité UX pour les utilisateurs s
 ```swift
 // iOS (SwiftUI)
 @Environment(\.accessibilityReduceMotion) var reduceMotion
-
 withAnimation(reduceMotion ? .none : .spring()) {
     // ...
 }

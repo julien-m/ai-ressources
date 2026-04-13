@@ -19,7 +19,6 @@ Email rendering relies on the **Word HTML engine** in Outlook desktop, which ign
 | `<table>` layout | Yes | Yes | Yes | Yes |
 
 ### Width constraints
-
 | Context | Width | Technique |
 |---------|-------|-----------|
 | Desktop | 600px max | `<table width="600">` + `max-width: 600px` |
@@ -27,7 +26,6 @@ Email rendering relies on the **Word HTML engine** in Outlook desktop, which ign
 | Sidebar preview | ~320px | Same as mobile rules |
 
 ### Hybrid coding
-
 Combine `<table>` for Outlook with `<div>` for modern clients using conditional comments:
 
 ```html
@@ -47,7 +45,6 @@ Combine `<table>` for Outlook with `<div>` for modern clients using conditional 
 Modern clients ignore the conditional comments and use the `<div>`. Outlook ignores the `<div>` and uses the `<table>`.
 
 ### Tooling
-
 | Tool | Approach | Output |
 |------|----------|--------|
 | MJML | Custom markup | Production-ready tables |
@@ -62,25 +59,22 @@ Modern clients ignore the conditional comments and use the `<div>`. Outlook igno
 Email responsive design is **inverted** from web: write mobile-first inline styles, then use `@media` queries to override for desktop. Many clients strip `<style>` blocks, so inline styles must be the mobile-friendly baseline.
 
 ### Column stacking
-
 Desktop: side-by-side columns via `<table>` cells or `display: inline-block` divs.
 Mobile: stack to single column via `display: block !important; width: 100% !important`.
 
 ```
-Desktop (600px)              Mobile (<480px)
-┌─────────┬─────────┐       ┌───────────────────┐
-│  Col 1  │  Col 2  │  →    │      Col 1        │
-└─────────┴─────────┘       ├───────────────────┤
-                             │      Col 2        │
-                             └───────────────────┘
+Desktop (600px)         Mobile (<480px)
+┌────────┬────────┐    ┌──────────────────┐
+│ Col 1  │ Col 2  │ →  │     Col 1        │
+└────────┴────────┘    ├──────────────────┤
+                       │     Col 2        │
+                       └──────────────────┘
 ```
 
 ### Fluid images
-
 Always set `max-width: 100%; height: auto; display: block;` in CSS. Set `width` attribute on `<img>` for Outlook, which ignores CSS `max-width`.
 
 ### Font sizing
-
 | Element | Desktop | Mobile minimum |
 |---------|---------|----------------|
 | Body text | 14-16px | 14px |
@@ -91,7 +85,6 @@ Always set `max-width: 100%; height: auto; display: block;` in CSS. Set `width` 
 Below 14px, mobile clients may auto-resize text, breaking layout.
 
 ### CTA buttons
-
 | Property | Desktop | Mobile |
 |----------|---------|--------|
 | Min height | 44px | 44px |
@@ -106,7 +99,6 @@ Below 14px, mobile clients may auto-resize text, breaking layout.
 ## 3. Dark Mode
 
 ### Client behaviors
-
 | Behavior | Clients | What happens |
 |----------|---------|--------------|
 | Auto-invert | Apple Mail, Outlook.com | Swaps light/dark automatically |
@@ -114,11 +106,9 @@ Below 14px, mobile clients may auto-resize text, breaking layout.
 | None | Outlook 2019+ desktop, Yahoo, Thunderbird | Renders as authored |
 
 ### CSS support
-
 Use `<meta name="color-scheme" content="light dark">` and `@media (prefers-color-scheme: dark)` to override colors. Supported in Apple Mail, Outlook.com, Hey. Not in Gmail or Outlook desktop.
 
 ### Images in dark mode
-
 | Image type | Problem | Solution |
 |------------|---------|----------|
 | Transparent PNG (logo) | Background turns dark, logo disappears | Add light border or background color on `<img>` |
@@ -132,32 +122,16 @@ Provide two logo variants (light + dark). Swap via `@media (prefers-color-scheme
 
 ## 4. Components
 
-### Header
-
-Logo (max 200px wide, always include `alt` text) + nav links (max 3-4, plain text, hide on mobile if needed). Height: 60-80px.
-
-### Hero
-
-Full-width image or gradient background (use VML for Outlook), headline (24-32px, bold, one line), short supporting copy, single high-contrast CTA button. Always provide image `alt` text.
-
-### Content block
-
-Icon (48-64px, left-aligned desktop, stacked mobile) + title + description (2-3 lines max, 14-16px body).
+| Component | Specs | Notes |
+|-----------|-------|-------|
+| Header | Logo max 200px wide, always include `alt` text, 3-4 nav links (plain text, hide on mobile if needed), height 60-80px | — |
+| Hero | Full-width image or gradient bg (VML for Outlook), headline 24-32px bold one line, short copy, single high-contrast CTA, always provide image `alt` text | — |
+| Content block | Icon 48-64px (left-aligned desktop, stacked mobile) + title + description 2-3 lines max, 14-16px body | — |
+| Footer | Unsubscribe link **must be functional** (required CAN-SPAM, GDPR, one-click preferred), physical address (CAN-SPAM), social icons 24-32px **link to profiles**, font 12px muted color | — |
+| Divider | `<hr>` inside `<table role="presentation">` cell with vertical padding | Always `role="presentation"` on layout tables for accessibility |
 
 ### CTA Button (bulletproof)
-
 Outlook ignores `border-radius` and `padding` on `<a>` tags. Use VML (`<v:roundrect>`) inside `<!--[if mso]>` conditional for Outlook, and a styled `<a>` with `background-color`, `border-radius`, `line-height`, and `display: inline-block` for other clients.
-
-### Footer
-
-- **Unsubscribe link**: required by CAN-SPAM, GDPR. Must be functional, one-click preferred.
-- Physical address: required by CAN-SPAM.
-- Social icons: 24-32px. Link to profiles.
-- Font size: 12px, muted color.
-
-### Divider
-
-Use `<hr>` inside a `<table role="presentation">` cell with vertical padding. Always use `role="presentation"` on layout tables for accessibility.
 
 ---
 
@@ -174,7 +148,6 @@ Use `<hr>` inside a `<table role="presentation">` cell with vertical padding. Al
 | Thunderbird | Good | Via extension | Auto-load | Standards-compliant. Small market share. |
 
 ### Key implications
-
 - **Gmail**: all styles must be inlined. No `<style>` block, no `@media`, no hover states.
 - **Outlook desktop**: test every email. VML required for rounded corners, background images, and bulletproof buttons.
 - **Images blocked**: Outlook desktop blocks images by default. Always provide descriptive `alt` text and styled `alt` fallbacks (font, color, size on `<img>`).
@@ -194,11 +167,9 @@ Use `<hr>` inside a `<table role="presentation">` cell with vertical padding. Al
 | Examples | Password reset, receipt, shipping | Newsletter, product launch, re-engagement |
 
 ### Shared base template
-
 Both types share a base layout (header, content area, footer) for brand consistency. Transactional strips to essentials: logo, content, footer. Marketing extends with hero, multiple content blocks, and social links.
 
 ### Frequency guidelines
-
 | Email type | Cadence |
 |------------|---------|
 | Transactional | As needed (event-driven) |
@@ -212,7 +183,6 @@ Both types share a base layout (header, content area, footer) for brand consiste
 ## 7. Testing
 
 ### Tools
-
 | Tool | Type | Strength |
 |------|------|----------|
 | Litmus | Cloud | 90+ client previews, analytics, spam testing |
@@ -221,7 +191,6 @@ Both types share a base layout (header, content area, footer) for brand consiste
 | Manual testing | Local | Send test emails to real accounts |
 
 ### Pre-send checklist
-
 | Check | Method |
 |-------|--------|
 | All links functional | Click-through in preview |
@@ -244,25 +213,16 @@ RTL language support is out of scope for this reference.
 
 ## 8. Anti-patterns
 
-### Image-only emails
+| Anti-pattern | Problem | Fix |
+|-------------|---------|-----|
+| Image-only emails | Fails when images blocked (Outlook default), invisible to screen readers, kills deliverability | Use live text for all content. Images supplement, never replace |
+| Tiny text (<14px mobile) | Triggers auto-resize in iOS Mail, breaking layout | Minimum 14px body, 22px headings on mobile |
+| Too many CTAs | Multiple competing calls-to-action dilute click-through rate | 1 email = 1 primary CTA. Secondary actions as text links only, visually subordinate |
+| No plain-text fallback | HTML-only emails penalized by some clients and spam filters | Always generate a plain-text version. Most ESPs do this automatically; verify it exists and is readable |
+| Broken preview text | Empty preview causes clients to pull first body text ("View in browser", logo alt text) | Set explicit preview text via hidden `<span>` (see below) |
+| Missing `role="presentation"` | Layout tables announced as data tables by screen readers | Add `role="presentation"` to every layout `<table>`. Only omit for actual data tables |
 
-Entire email as a single image or image slices. Fails when images are blocked (Outlook default), invisible to screen readers, kills deliverability score. **Fix**: use live text for all content. Images supplement, never replace.
-
-### Tiny text
-
-Body text below 14px on mobile triggers auto-resize in iOS Mail, breaking layout unpredictably. **Fix**: minimum 14px body, 22px headings on mobile.
-
-### Too many CTAs
-
-Multiple competing calls-to-action dilute click-through rate. **Fix**: 1 email = 1 primary CTA. Secondary actions as text links only, visually subordinate.
-
-### No plain-text fallback
-
-HTML-only emails with no `text/plain` MIME part. Some clients and spam filters penalize this. **Fix**: always generate a plain-text version. Most ESPs do this automatically; verify it exists and is readable.
-
-### Broken preview text
-
-Leaving preview text empty causes clients to pull the first text in the email body ("View in browser", logo alt text). **Fix**: set explicit preview text via a hidden `<span>`:
+### Preview text technique
 
 ```html
 <span style="display:none;max-height:0;overflow:hidden;">
@@ -272,7 +232,3 @@ Leaving preview text empty causes clients to pull the first text in the email bo
 ```
 
 The `&zwnj;` (zero-width non-joiner) and `&nbsp;` padding prevents the client from pulling additional body text into the preview.
-
-### Missing `role="presentation"` on tables
-
-Layout tables without `role="presentation"` are announced as data tables by screen readers, creating a confusing experience for visually impaired users. **Fix**: add `role="presentation"` to every `<table>` used for layout. Only omit it for actual data tables (like the client quirks comparison in section 5).

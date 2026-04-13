@@ -16,7 +16,6 @@ Tailwind-aligned defaults. Mobile-first: use `min-width` media queries.
 | `lg` | 768–1023 | Tablet / small laptop | `lg:` |
 | `xl` | 1024–1279 | Laptop / desktop | `xl:` |
 | `2xl` | 1280+ | Large desktop | `2xl:` |
-
 - **Design for `xs` first**, enhance upward
 - Container max-widths: 640, 768, 1024, 1280px (or custom per project)
 - Avoid device-specific breakpoints — size classes are more resilient
@@ -31,21 +30,13 @@ Tailwind-aligned defaults. Mobile-first: use `min-width` media queries.
 | lg (768–1023) | 24–32 | 768px | Comfortable reading |
 | xl (1024–1279) | 32–40 | 960–1024px | Centered container |
 | 2xl (1280+) | auto | 1120–1280px | Max-width + auto margins |
-
 - Reading text: max **65–75 characters per line** (~640–720px at 16px body)
 - Use `max-width` + `margin: 0 auto` — never stretch text to full viewport
-
-## Touch Targets
-
-- Minimum: **48 × 48px** (WCAG 2.5.8 Target Size)
-- Applies to: buttons, links, form controls, interactive icons
-- Adjacent targets: minimum **8px** gap
-- On desktop, smaller targets acceptable if hover state provides feedback
+- Touch targets: minimum **48 × 48px** (WCAG 2.5.8). Adjacent targets: min **8px** gap. Desktop: smaller OK if hover feedback exists
 
 ## Spacing Scale
 
 Base unit: **4px**. Matches Tailwind default scale.
-
 | Token | Value (px) | Tailwind class | Use case |
 |-------|-----------|----------------|----------|
 | `0.5` | 2 | `gap-0.5` | Hairline |
@@ -62,7 +53,6 @@ Base unit: **4px**. Matches Tailwind default scale.
 ## Typography
 
 ### Web Type Scale
-
 | Role | Size (px) | Weight | Line height | Use case |
 |------|----------|--------|-------------|----------|
 | Display | 48–64 | Bold | 1.1–1.2 | Hero headlines |
@@ -75,20 +65,15 @@ Base unit: **4px**. Matches Tailwind default scale.
 | Body S | 14 | Regular | 1.45 | Secondary text |
 | Label | 14 | Medium | 1.4 | Buttons, form labels |
 | Caption | 12 | Regular | 1.4 | Helper text, timestamps |
-
 ### System Font Stacks
-
 ```css
 /* Sans-serif (default) */
 font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
-
 /* Monospace */
 font-family: ui-monospace, SFMono-Regular, "SF Mono", Menlo, Consolas, "Liberation Mono", monospace;
-
 /* Serif */
 font-family: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, serif;
 ```
-
 - Use `rem` units for font sizes — respects user browser settings
 - Base: `1rem = 16px` (browser default)
 - Minimum readable text: **12px** (0.75rem)
@@ -96,7 +81,6 @@ font-family: "Iowan Old Style", "Palatino Linotype", "URW Palladio L", P052, ser
 ## Z-Index Scale
 
 Standardized layers prevent z-index wars.
-
 | Token | Value | Use case |
 |-------|-------|----------|
 | `z-base` | 0 | Default content |
@@ -107,26 +91,22 @@ Standardized layers prevent z-index wars.
 | `z-toast` | 50 | Toasts, snackbars |
 | `z-tooltip` | 60 | Tooltips |
 | `z-max` | 9999 | Emergency override only |
-
 - **Never use arbitrary z-index values** — always use the scale
 - Stacking contexts reset z-index — `isolation: isolate` to create explicit contexts
 
 ## Performance Budgets (Core Web Vitals)
-
 | Metric | Good | Needs improvement | Poor |
 |--------|------|-------------------|------|
 | **LCP** (Largest Contentful Paint) | ≤ 2.5s | ≤ 4.0s | > 4.0s |
 | **INP** (Interaction to Next Paint) | ≤ 200ms | ≤ 500ms | > 500ms |
 | **CLS** (Cumulative Layout Shift) | ≤ 0.1 | ≤ 0.25 | > 0.25 |
 | **TTFB** (Time to First Byte) | ≤ 800ms | ≤ 1.8s | > 1.8s |
-
 - Reserve space for images/embeds to prevent CLS (`aspect-ratio` or explicit dimensions)
 - Lazy load below-the-fold images: `loading="lazy"`
 - Preload critical fonts and LCP images
 - See [../quality/ui-rules.md](../quality/ui-rules.md) for visual non-regression rules
 
 ## PWA Considerations
-
 - `theme-color` meta tag for browser chrome coloring
 - `viewport-fit=cover` + `env(safe-area-inset-*)` for notch/island handling
 - `display: standalone` in manifest for app-like experience
@@ -135,7 +115,6 @@ Standardized layers prevent z-index wars.
 - Web Share API (`navigator.share()`) for native-like sharing on mobile
 
 ## Cross-References
-
 - Spacing tokens: [../tokens/spacing.md](../tokens/spacing.md)
 - Typography tokens: [../tokens/typography.md](../tokens/typography.md)
 - Color tokens: [../tokens/colors.md](../tokens/colors.md)

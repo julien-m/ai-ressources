@@ -14,7 +14,6 @@ Quick reference for iOS/iPadOS/macOS layout, typography, color, and component sp
 | iPad Mini | 744 | 20 | Compact tablet |
 | iPad Air / Pro 11" | 820 | 20 | Standard tablet |
 | iPad Pro 12.9" | 1024 | 20 | Large tablet |
-
 - No fixed column grid — Apple uses flexible spacing with system margins
 - `layoutMargins` in UIKit / `.padding(.horizontal)` in SwiftUI handle device-appropriate margins
 - Readable content width: max **672pt** for text-heavy content on iPad
@@ -26,7 +25,6 @@ Quick reference for iOS/iPadOS/macOS layout, typography, color, and component sp
 | Top | 44pt | 59pt | 24pt | Status bar + notch/island |
 | Bottom | 34pt | 34pt | 20pt | Home indicator |
 | Left/Right | 0pt (portrait) | 0pt (portrait) | 0pt | 44pt in landscape for notch devices |
-
 - **Always respect safe areas** — never place interactive content behind insets
 - Dynamic Island: avoid placing content that competes with the island's live activities
 - Use `safeAreaInset` in SwiftUI, `safeAreaLayoutGuide` in UIKit
@@ -38,7 +36,7 @@ Quick reference for iOS/iPadOS/macOS layout, typography, color, and component sp
 - Spacing between targets: minimum **8pt** to prevent mis-taps
 - Small visual elements (icons) can be smaller if the tappable area meets 44pt
 
-## Spacing Scale
+## Spacing Scale & Bar Heights
 
 Apple doesn't publish a formal token scale, but these are the most common values in HIG components:
 
@@ -51,8 +49,6 @@ Apple doesn't publish a formal token scale, but these are the most common values
 | 20pt | Grouped table section spacing |
 | 24pt | Large section gaps |
 | 32pt | Major section separation |
-
-### Standard Bar Heights
 
 | Element | Height (pt) |
 |---------|------------|
@@ -78,7 +74,6 @@ Apple doesn't publish a formal token scale, but these are the most common values
 | Footnote | 13 | Regular | 18 |
 | Caption 1 | 12 | Regular | 16 |
 | Caption 2 | 11 | Regular | 13 |
-
 - These are **default** sizes — Dynamic Type scales them based on user preference
 - SF Pro Display is used automatically above 20pt, SF Pro Text below
 - Always use `UIFont.preferredFont(forTextStyle:)` or SwiftUI `.font(.body)` — never hardcoded sizes
@@ -86,11 +81,8 @@ Apple doesn't publish a formal token scale, but these are the most common values
 ## Color
 
 ### System Colors (adapt to light/dark automatically)
-
 `systemRed`, `systemOrange`, `systemYellow`, `systemGreen`, `systemMint`, `systemTeal`, `systemCyan`, `systemBlue`, `systemIndigo`, `systemPurple`, `systemPink`, `systemBrown`
-
 ### Semantic Colors
-
 | Role | UIColor | Notes |
 |------|---------|-------|
 | Primary text | `.label` | Adapts to both modes |
@@ -101,7 +93,6 @@ Apple doesn't publish a formal token scale, but these are the most common values
 | Grouped background | `.systemGroupedBackground` | Table/settings background |
 | Separator | `.separator` | Standard divider |
 | Tint | `.tintColor` | App accent |
-
 - **Always use semantic colors** — never hardcode hex values for standard UI
 - See [../tokens/colors.md](../tokens/colors.md) for the cross-platform color system
 
