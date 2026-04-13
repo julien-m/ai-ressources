@@ -6,73 +6,114 @@ argument-hint: "[--full]"
 
 # /conventions.refresh — Refresh Materialized Conventions
 
-Check if `.conventions/conventions.md` is up to date with `~/projects/ai-ressources/`, and regenerate stale category sections.
+Check if `.conventions/` is up to date with `~/projects/ai-ressources/`, and regenerate stale domain files incrementally.
 
 ## Prerequisites
 
-- `.conventions/conventions.md` must exist in the current project
+- `.conventions/` directory must exist in the current project (or use `--full` to create)
 - `~/projects/ai-ressources/` must exist
 
 ## Procedure
 
-### Default mode (date check)
+### Default mode (hash-based staleness detection)
 
-1. **Read** the `generated` date from the YAML frontmatter of `.conventions/conventions.md`
-2. **Read** `~/projects/ai-ressources/.last-updated` to get the last modification date of the knowledge base
-3. **Read** the `updated` date from `.specs/stacks/_default.md` YAML frontmatter (if the file exists)
-4. **Compare** (in priority order):
-   - If `.specs/stacks/_default.md` exists AND has an `updated` field AND `generated` < `updated` → conventions are stale (stack changed), proceed to **full** regeneration (re-detect domains, same as `--full` mode)
-   - If `generated` < `.last-updated` → conventions are stale (rules changed), proceed to regeneration (same categories)
-   - Otherwise → conventions are up to date, stop
+1. **Check for manifest** — look for `.conventions/conventions.manifest.json`
 
-Note: If `.specs/stacks/_default.md` does not exist or has no `updated` frontmatter, skip the stack comparison and fall back to the ai-ressources date check only.
+   **If manifest does not exist:**
+   - Auto-full mode: Run `/conventions.init` Phases 1-4 to initialize `.conventions/` from scratch (transparent migration for old projects)
+   - This ensures projects without a manifest get set up correctly
 
-#### Regeneration
+   **If manifest exists:**
+   - Proceed to incremental refresh (step 2)
 
-When stale, re-synthesize all categories **without re-detecting the project**:
+2. **Detect current stack** — re-run Phase 1 of `/conventions.init` (dependencies, file extensions, project context) to build a current stack profile
 
-1. **Rebuild project context** — same as `/conventions.init` Phase 4.0 (project type, vision, constraints, domain terms, exclusions). This ensures refreshed conventions maintain project-specific contextualization and budget weighting
-2. Read the `categories` list from the frontmatter of `.conventions/conventions.md`
-3. For each category, dispatch an `ai-res-librarian` agent with the same synthesis prompts as `/conventions.init` Phase 4.1 (including context block and weighted budget)
-4. Reassemble the file with updated content and set `generated` to today's date
-5. The categories stay the same — only the synthesized content is refreshed
+3. **For each domain in manifest.domains:**
+   
+   a. **Get current source hashes** — compute SHA256 hashes for all source files listed in `manifest.domains[domain].sources`
+   
+   b. **Compare to manifest** — check if computed hashes match `manifest.domains[domain].hashes`
+      - **Match**: Domain is fresh, skip
+      - **Mismatch**: Domain is stale, rebuild (step 3c)
+   
+   c. **Rebuild stale domain** — call build-conventions.ts for this domain only:
+      ```bash
+      bun run ~/projects/ai-ressources/scripts/build-conventions.ts \
+        "$(pwd)" \
+        '{"<domain>":["<file1>","<file2>"]}'
+      ```
+      This regenerates `.conventions/<domain>.md` and updates the manifest entry for this domain.
 
-### `--full` mode (re-detection)
+4. **Update manifest** — after all domains are checked/rebuilt:
+   - Recompute all hashes
+   - Update `generated` date to today
+   - Save `.conventions/conventions.manifest.json`
 
-Re-run the full `/conventions.init` workflow (Phases 1-4):
-- Re-detect domains from scratch (new dependencies, new file types)
-- Compare with existing categories
-- Add new categories, remove irrelevant ones
-- Regenerate the entire file
+5. **Regenerate index** — update `.conventions/index.md` with the latest domain hints and availability
 
-Useful when the project has evolved significantly (new packages, new languages, changed project type).
+### Output — default mode
 
-### Output
-
-Default mode (stale):
+**All fresh:**
 ```
-Conventions refreshed — 5 categories regenerated
-```
-
-Default mode (fresh):
-```
-Conventions up to date (generated: 2026-03-25, ai-ressources: 2026-03-24)
-```
-
-Full mode:
-```
-Full refresh: 6 categories (was 5), 1 new (copywriting), all regenerated
+Conventions up to date (last checked: 2026-04-13)
 ```
 
-Stack-triggered full refresh:
+**Partial refresh:**
 ```
-Full refresh (stack changed): 6 categories (was 5), 1 new (cloudflare), all regenerated
+Conventions refreshed — 2/4 domains updated (code, legal)
+✓ code.md (rebuilt, +3 sources)
+✓ legal.md (rebuilt, +1 source)
+✓ design.md (no changes)
+✓ pricing.md (no changes)
 ```
+
+**Auto-migrated to manifest:**
+```
+Auto-migrating to new manifest format...
+Conventions initialized from existing structure
+Manifest created: .conventions/conventions.manifest.json
+```
+
+### `--full` mode (re-detection + full rebuild)
+
+Re-run the full `/conventions.init` workflow:
+- **Phase 1-3**: Re-detect domains from scratch (new dependencies, new file types, changed stack)
+- **Phase 4**: Call build-conventions.ts with detected domains
+- **Phase 5**: Update gitignore
+- **Phase 6**: Audit config files
+
+This regenerates the entire `.conventions/` directory and manifest from the current stack.
+
+**Useful when:**
+- Project has evolved significantly (new packages, new languages)
+- Stack declarations have changed (`.specs/stacks/_default.md` updated)
+- User wants guaranteed freshness regardless of hashes
+
+### Output — `--full` mode
+
+```
+Full refresh: 6 domains (was 5), 1 new (copywriting)
+✓ code.md rebuilt (6 sources)
+✓ legal.md rebuilt (2 sources)
+✓ design.md rebuilt (3 sources)
+✓ pricing.md rebuilt (1 source)
+✓ copywriting.md new (1 source)
+Removed: architecture.md (no longer detected)
+Manifest updated
+```
+
+## Edge Cases
+
+- **No manifest, no conventions/** → create from scratch (same as auto-full)
+- **Manifest exists but references missing files** → rebuild domain, update manifest with `"missing"` hash for unreachable files
+- **New sources in extends graph** → include in hash computation, rebuild if different
+- **Domain file deleted from ai-ressources** → warn, rebuild fails gracefully, update manifest with `"missing"`
+- **Empty domain after rebuild** → remove from manifest, remove file, update index
 
 ## Rules
 
-- Never regenerate if `generated` >= `.last-updated`
-- The file must stay under **400 lines** after refresh
-- If `.last-updated` does not exist in ai-ressources, warn and skip (do not fail)
-- When stack staleness is detected (`generated` < `stacks.updated`), use `--full` mode automatically (re-detect domains) because a stack change may add/remove entire convention categories
-- When only ai-ressources staleness is detected, use default mode (same categories, refreshed content)
+- Never regenerate if all source hashes match
+- Manifest is the single source of truth for staleness (not dates)
+- Incremental refresh is fast — only changed domains rebuild
+- `--full` is slower but guarantees detection of new conventions
+- The project directory is never modified except `.conventions/`

@@ -1,14 +1,14 @@
 ---
 name: conventions.init
-description: "Analyze a project's stack and generate .conventions/conventions.md — a single synthesized file with all relevant conventions from ai-ressources. Use when setting up conventions for a new or existing project."
+description: "Analyze a project's stack and generate .conventions/ directory with per-domain convention files. Use when setting up conventions for a new or existing project."
 argument-hint: ""
 ---
 
 # /conventions.init — Materialize Project Conventions
 
-Analyze the current project's stack, detect relevant domains, and generate a single `.conventions/conventions.md` file containing synthesized conventions from `~/projects/ai-ressources/`.
+Analyze the current project's stack, detect relevant domains, and generate `.conventions/` directory containing compiled convention files from `~/projects/ai-ressources/`.
 
-The output is equivalent to what the `ai-res-librarian` agent would return — but materialized locally so every agent and subagent has instant access without calling `/ai-res`.
+The compilation is **deterministic** (no LLM synthesis): the build script reads source files, resolves dependency graphs, concatenates content, and outputs clean per-domain files. Every agent and subagent has instant access without calling `/ai-res`.
 
 ## Prerequisites
 
@@ -170,121 +170,77 @@ Confirm? (or add/remove domains)
 
 **Wait for user confirmation.** The user can add or remove domains before generation.
 
-### Phase 4: Generate `.conventions/conventions.md`
+### Phase 4: Generate `.conventions/` directory via build-conventions.ts
 
-This is the core step. The goal is to produce a **single, compact, synthesized file** — NOT a dump of source files.
+This phase uses a **deterministic compilation script** to resolve dependency graphs and concatenate conventions without LLM synthesis.
 
-#### 4.0 Build project context for synthesis
+#### 4.0 Construct domains JSON
 
-Before dispatching agents, build a **project context block** that will be injected into every librarian prompt:
+Build a JSON object mapping category names to detected files. Use the domains detected in Phase 2-3, organized by category:
 
-1. **Project type** — from Phase 1.4 (e.g., "CLI", "web app", "API", "library")
-2. **One-line vision** — from `.specs/project.md` if exists (first sentence of the Vision section), or from CLAUDE.md, or inferred from Phase 1
-3. **Constraints** — from `.specs/project.md` or `.specs/constitution.md` if exists. Extract:
-   - Scale signals: "single-user", "multi-tenant", "high-traffic", etc.
-   - Boundary signals: "local-only", "no auth", "no cloud", "no server", etc.
-   - Dependency signals: "minimal deps", "zero deps", etc.
-4. **Domain terms** — from `.specs/project.md`, `.specs/roadmap.md`, or CLAUDE.md. Extract 3-6 domain nouns that represent the project's core concepts (e.g., `Task`, `CronExpression`, `History` for a cron manager)
-5. **Exclusions** — derive from constraints:
-
-| Constraint | Exclude from architecture |
-|---|---|
-| "single-user", "local-only" | `multi-tenant`, `rate-limiting` |
-| "no auth", "no login" | `auth-flows` |
-| "no server", "no cloud" | cloud-specific patterns |
-| "no database", "flat file" | `database-migrations` (unless file contains migration logic) |
-
-Exclusions remove patterns from the architecture agent's scope. They do NOT prevent detection — if a pattern was detected in Phase 2, the exclusion overrides it at synthesis time.
-
-The context block format injected into each agent prompt (omit empty lines):
-
-```
-Project: {name} — {project type}
-Vision: {one-line vision}                              ← from specs/CLAUDE.md, omit if unavailable
-Constraints: {comma-separated constraints}             ← from specs, omit if unavailable
-Exclude: {comma-separated excluded architecture patterns} ← derived from constraints, omit if none
-Domain terms: {comma-separated terms for examples}     ← from specs/roadmap, omit if unavailable
+```json
+{
+  "code": [
+    "nextjs",
+    "drizzle",
+    "tailwind",
+    "testing",
+    "logging",
+    "architecture"
+  ],
+  "legal": [
+    "cgu-saas-type",
+    "rgpd-obligations"
+  ],
+  "design": [
+    "web-standards",
+    "forms",
+    "colors"
+  ]
+}
 ```
 
-#### 4.1 Dispatch ai-res-librarian agents per category
+**Mapping from Phase 2-3 to domains JSON:**
 
-Dispatch one `ai-res-librarian` agent per detected category, **in parallel**. Each agent reads the relevant source files and produces a **synthesized section** — not a copy.
+- **code domain**: All detected language/framework files (javascript, react, nextjs, drizzle, prisma, tailwind, etc.) PLUS any transversal files explicitly mentioned (testing, logging, architecture, runtime-configs). `general` and `database` are **excluded** from the domains array — they are auto-resolved by the build script via the `extends` graph in each file's frontmatter.
+- **legal domain**: Architecture or legal files detected in Phase 2 (from `architecture/`, `conventions/`)
+- **design domain**: Design-related files detected in Phase 2 (from `design/`)
+- **pricing domain**: Pricing model files if detected (from `pricing-models/`)
+- **architecture domain**: Not a separate domain — include in code if `architecture.md` was detected
 
-| Category | Agent prompt | Sources read by agent |
-|---|---|---|
-| code | "Synthesize coding conventions for a [language] project. {context block}. Extract only essential rules: naming, types, imports, error handling, async, testing, logging, architecture layers, security. When providing do/don't examples, use domain terms from this project (e.g., {domain terms}). Format: imperative rules, no prose, do/don't examples only when ambiguous. Budget: {N} lines ({primary\|secondary})." | `code-conventions/*.md` (language deltas: general, architecture, logging, testing, javascript, etc.) |
-| frameworks | "Synthesize framework conventions for: [detected frameworks]. {context block}. Extract key rules, anti-patterns, composition patterns, and critical configuration. Format: imperative rules per framework, do/don't examples for non-obvious rules. Budget: {N} lines ({primary\|secondary})." | `code-conventions/*.md` (framework deltas: react, nextjs, shadcn, tailwind, cloudflare, tanstack, drizzle, prisma, remotion — only detected ones) |
-| architecture | "Synthesize architecture patterns for: [detected patterns]. {context block}. Exclude these patterns (not relevant to project constraints): {exclusions}. Extract key rules, constraints, and patterns for remaining items only. Format: imperative rules per pattern. Budget: {N} lines ({primary\|secondary})." | `architecture/*.md` (matched ones, minus excluded) |
-| stack | "Synthesize stack reference for: [detected stack]. {context block}. Extract essential setup, gotchas, and best practices for each. Format: imperative rules. Budget: {N} lines ({primary\|secondary})." | `stack-ref/**/*.md` (matched ones) |
-| design | "Synthesize design conventions for a [project type]. {context block}. Extract key rules: spacing, typography, colors, component patterns, accessibility. Format: imperative rules. Budget: {N} lines ({primary\|secondary})." | `design/**/*.md` (relevant ones) |
-| copywriting | "Synthesize copywriting conventions for: [detected needs]. {context block}. Format: imperative rules. Budget: {N} lines ({primary\|secondary})." | `copywriting/*.md` (relevant ones) |
-| config | "Extract expected configuration defaults for a {runtime} {language} project. {context block}. Include: compiler/runtime config (tsconfig, bunfig, etc.), package manager expectations, editor config, gitignore patterns. Format: imperative rules grouped by config file. Budget: {N} lines (secondary)." | `code-conventions/runtime-configs.md` |
-| diagrams | "Synthesize diagram conventions. {context block}. Format: imperative rules. Budget: {N} lines (secondary)." | `conventions/diagrams.md` |
+**Examples:**
 
-**Agent instructions for synthesis quality:**
-- Produce output equivalent to what `ai-res-librarian` would return for the same question
-- Rules in imperative form: "Use X", "Never Y", "Prefer Z over W"
-- No prose, no explanations of why — just the rules
-- `do:`/`don't:` inline examples only when the rule is ambiguous — use project domain terms from the context block
-- Each `##` section must start with a `> Covers:` line listing keywords
-- The entire file must stay under **400 lines** (hard limit)
+- Detected: TypeScript, React, Next.js, Drizzle → `code: ["nextjs", "drizzle"]` (general + javascript + react are inherited via extends)
+- Detected: TypeScript, testing, logging → `code: ["javascript", "testing", "logging"]` (general inherited)
+- Greenfield project, no code → `code: []` (omit or empty array)
 
-#### Budget allocation
+#### 4.1 Invoke build-conventions.ts
 
-Each category is classified as **primary** or **secondary** based on the project type detected in Phase 1.4:
+Call the build script with the project directory and domains JSON:
 
-| Project type | Primary categories (60-100 lines) | Secondary categories (15-40 lines) |
-|---|---|---|
-| CLI | code, design | architecture, stack, config, diagrams |
-| Web app | code, design, frameworks | architecture, stack, config, diagrams |
-| API / backend | code, architecture | stack, frameworks, config, diagrams |
-| Library / SDK | code | architecture, config, diagrams |
-| Dashboard / admin | code, design, frameworks | architecture, stack, config, diagrams |
-| Default | code | all others |
-
-- **Primary**: 60-100 lines — full rules, examples for ambiguous cases, do/don't blocks
-- **Secondary**: 15-40 lines — essential rules only, no examples unless critical
-- A category with 0 detected files gets 0 lines (omitted entirely)
-- If the sum exceeds 400 lines, compress secondary categories first
-- Include the budget in each agent prompt: "Budget: {N} lines (primary)" or "Budget: {N} lines (secondary)"
-
-#### 4.2 Assemble the single file
-
-Combine all agent outputs into `.conventions/conventions.md` with this structure:
-
-```yaml
----
-project: {directory name}
-generated: {ISO 8601 date YYYY-MM-DD}
-source: ~/projects/ai-ressources
-categories:
-  - code
-  - frameworks
-  - architecture
-  - stack
-  - design
-  - config
-  - diagrams
----
-
-# Conventions — {project name}
-
-{output of code agent}
-
-{output of frameworks agent}
-
-{output of architecture agent}
-
-{output of stack agent}
-
-{output of design agent}
-
-{output of config agent}
-
-{output of diagrams agent}
+```bash
+bun run ~/projects/ai-ressources/scripts/build-conventions.ts "$(pwd)" '{"code":["nextjs","drizzle"],"legal":[],"design":[]}'
 ```
 
-Each category section uses `##` headings. Subsections use `###`. The `> Covers:` line on each `##` enables fast scanning.
+**Script behavior:**
+
+- Reads from `~/projects/ai-ressources/code-conventions/*.md` (and other domain directories)
+- Resolves the `extends` graph for code domain (post-order DFS, deduplication)
+- Concatenates files with separators: `\n\n---\n<!-- source: path -->\n---\n\n`
+- Outputs:
+  - `.conventions/code.md` (if code domain has files)
+  - `.conventions/legal.md`, `.conventions/design.md`, etc. (if domains have files)
+  - `.conventions/index.md` (table of contents with domain hints)
+  - `.conventions/conventions.manifest.json` (SHA256 hashes + metadata)
+- Creates `.conventions/` directory if it does not exist
+- Exits with status 0 (warnings non-fatal)
+
+**Edge cases handled by script:**
+
+- **Cycle in extends**: warns, skips the cyclic file, continues
+- **Missing source file**: warns with hash `"missing"`, continues
+- **Empty code domain**: skips code.md, does not add to index
+- **No domains**: creates only index.md (no domain files)
 
 ### Phase 5: Gitignore
 
@@ -343,9 +299,17 @@ Apply? (y/n, or list items to skip)
 
 Display:
 ```
-.conventions/conventions.md generated — {N} categories, {L} lines
+.conventions/ generated — {N} domains, {L} total lines
+  ✓ code.md ({L1} lines, {S} sources)
+  ✓ legal.md ({L2} lines, {S} sources)
+  ✓ design.md ({L3} lines, {S} sources)
+  ✓ index.md
+  ✓ conventions.manifest.json
+
 Config audit: {X} fixed, {Y} created, {Z} skipped
 ```
+
+The manifest tracks file hashes for staleness detection in `/conventions.refresh`.
 
 ## Rules
 
