@@ -1,3 +1,7 @@
+---
+extends: []
+---
+
 # Database Rules
 
 > Language-agnostic and ORM-agnostic. Apply regardless of stack.

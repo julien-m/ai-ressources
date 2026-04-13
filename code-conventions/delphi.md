@@ -1,3 +1,7 @@
+---
+extends: [general]
+---
+
 # Delphi Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Documentation rules 23-30 from [`general.md`](general.md) apply; only Delphi-specific doc formats are listed here.

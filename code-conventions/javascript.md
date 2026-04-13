@@ -1,3 +1,7 @@
+---
+extends: [general]
+---
+
 # TypeScript Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Only TypeScript/JavaScript-specific conventions are listed here.

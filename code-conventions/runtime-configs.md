@@ -1,3 +1,7 @@
+---
+extends: []
+---
+
 # Runtime Configurations
 
 Expected configuration defaults per runtime and language. Used by `/conventions.init` Phase 6 (Config Audit).

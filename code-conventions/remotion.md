@@ -1,3 +1,7 @@
+---
+extends: [react]
+---
+
 # Remotion Rules (Delta)
 
 > These rules complement [`react.md`](react.md) and [`javascript.md`](javascript.md). Only Remotion-specific conventions are listed here.

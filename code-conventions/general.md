@@ -1,3 +1,7 @@
+---
+extends: []
+---
+
 # General Rules (All Languages)
 
 > These rules apply to **every language**. Language-specific files add deltas on top of these.

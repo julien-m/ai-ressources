@@ -1,3 +1,7 @@
+---
+extends: [javascript, database]
+---
+
 # Prisma Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md) and [`database.md`](database.md). Only Prisma-specific conventions are listed here.

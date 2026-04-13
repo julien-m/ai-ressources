@@ -1,3 +1,7 @@
+---
+extends: [javascript]
+---
+
 # Tailwind CSS v4 Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md). Only Tailwind v4-specific conventions are listed here.

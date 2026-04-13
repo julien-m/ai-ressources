@@ -1,3 +1,7 @@
+---
+extends: [javascript]
+---
+
 # Astro Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md). Only Astro-specific conventions are listed here. When using React islands, [`react.md`](react.md) rules apply inside those components.

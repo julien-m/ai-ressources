@@ -1,3 +1,7 @@
+---
+extends: [react, tailwind]
+---
+
 # shadcn/ui Rules (Delta)
 
 > These rules complement [`react.md`](react.md) and [`tailwind.md`](tailwind.md). Only shadcn/ui-specific conventions are listed here.

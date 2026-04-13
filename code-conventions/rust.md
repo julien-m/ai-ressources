@@ -1,3 +1,7 @@
+---
+extends: [general]
+---
+
 # Rust Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Only Rust-specific conventions are listed here.

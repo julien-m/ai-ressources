@@ -1,3 +1,7 @@
+---
+extends: [javascript]
+---
+
 # React Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md). Only React-specific conventions are listed here.

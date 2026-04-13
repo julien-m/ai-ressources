@@ -1,3 +1,7 @@
+---
+extends: [react]
+---
+
 # TanStack Rules (Delta)
 
 > These rules complement [`react.md`](react.md) and [`javascript.md`](javascript.md). Covers TanStack Query v5, Router, and Start.

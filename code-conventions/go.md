@@ -1,3 +1,7 @@
+---
+extends: [general]
+---
+
 # Go Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Only Go-specific conventions are listed here.

@@ -1,3 +1,7 @@
+---
+extends: [general]
+---
+
 # Swift & Kotlin Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Shared when conventions align, language-specific where they diverge.

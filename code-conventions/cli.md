@@ -1,3 +1,7 @@
+---
+extends: [javascript]
+---
+
 # TypeScript CLI Conventions (Delta)
 
 > Delta on [`javascript.md`](javascript.md). Load after it when building a Node.js/Bun CLI application.

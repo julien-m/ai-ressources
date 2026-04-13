@@ -1,3 +1,7 @@
+---
+extends: [javascript, database]
+---
+
 # Drizzle ORM Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md) and [`database.md`](database.md). Only Drizzle-specific conventions are listed here.

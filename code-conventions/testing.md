@@ -1,3 +1,7 @@
+---
+extends: []
+---
+
 # Testing Rules (Cross-Cutting)
 
 > These rules complement [`general.md`](general.md) §9 (Testing), §8 (Async) and [`architecture.md`](architecture.md) §26 (Testing Boundaries).

@@ -1,3 +1,7 @@
+---
+extends: [javascript]
+---
+
 # Cloudflare Workers Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md). Covers Workers, D1, R2, KV, and Hono framework.

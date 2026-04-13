@@ -1,3 +1,7 @@
+---
+extends: [react]
+---
+
 # Next.js Rules (Delta)
 
 > These rules complement [`react.md`](react.md) and [`javascript.md`](javascript.md). Only Next.js App Router conventions are listed here.

@@ -1,3 +1,7 @@
+---
+extends: [general]
+---
+
 # Python Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Only Python-specific conventions are listed here.

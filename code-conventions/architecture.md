@@ -1,3 +1,7 @@
+---
+extends: []
+---
+
 # Architecture Rules (Delta)
 
 > These rules define **how the system is structured**: layers, boundaries, dependency direction, responsibilities, and cross-domain interactions.
