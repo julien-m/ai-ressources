@@ -104,3 +104,41 @@ properties:
     minProperties: 1
     additionalProperties:
       $ref: "#/$defs/section"
+
+  sub_domains:
+    type: object
+    description: Named sub-domain groupings used by build-conventions to generate granular manifest entries. Keys must use the format "<domain>-<name>" (e.g., design-tokens).
+    minProperties: 1
+    propertyNames:
+      type: string
+      pattern: "^[a-z0-9]+-[a-z0-9][a-z0-9-]*$"
+    additionalProperties:
+      type: object
+      required: [label, keywords, sources]
+      additionalProperties: false
+      properties:
+        label:
+          type: string
+          minLength: 1
+        keywords:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+        sources:
+          type: array
+          items:
+            type: string
+            minLength: 1
+          minItems: 1
+        exclude_columns:
+          type: array
+          items:
+            type: string
+            minLength: 1
+        exclude_sections:
+          type: array
+          items:
+            type: string
+            minLength: 1

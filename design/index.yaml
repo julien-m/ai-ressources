@@ -146,3 +146,54 @@ sections:
         description: "UI visual non-regression rules: alignment, spacing, overflow checks"
       - file: quality/accessibility.md
         description: "Accessibility patterns: WCAG 2.2 AA, ARIA, keyboard nav, focus management, screen readers"
+
+sub_domains:
+  design-tokens:
+    label: "Design tokens — colors, spacing, typography, motion"
+    keywords: [CSS, colors, couleurs, spacing, typography, typo, motion, gradients, shadows, "CSS variables", border-radius, palette, "dark mode", "color scale"]
+    sources:
+      - tokens/colors.md
+      - tokens/spacing.md
+      - tokens/typography.md
+      - tokens/motion.md
+    exclude_columns: ["iOS (pt)", "Android (dp)", "Native (sp)"]
+
+  design-components:
+    label: "UI components — buttons, inputs, forms, modals, nav, toasts, lists"
+    keywords: [button, input, form, toast, badge, modal, nav, sidebar, dropdown, avatar, list, feedback, alert, banner, skeleton, "empty state", navigation, breadcrumb, tabs, "icon button", "button group"]
+    sources:
+      - references/app-ui.md
+      - components/buttons.md
+      - components/forms.md
+      - components/feedback.md
+      - components/navigation.md
+      - components/modals.md
+      - components/lists.md
+
+  design-views:
+    label: "Pages & layouts — SaaS views, dashboard, settings, auth, mockup specs"
+    keywords: [page, vue, layout, dashboard, settings, auth, SaaS, mockup, wireframe, "landing page", "app shell", "sidebar layout", "standard views", "view composition", "settings page", "activity log", "user management"]
+    sources:
+      - references/app-views.md
+      - references/app-views-catalog.md
+      - references/mockup-specs.md
+      - systems/web-standards.md
+
+  design-quality:
+    label: "Quality & accessibility — a11y, WCAG, audit, UI rules, non-regression"
+    keywords: [accessibilité, a11y, WCAG, audit, "keyboard nav", "screen reader", focus, ARIA, contrast, "color blind", "reduced motion", "non-regression", overflow, alignment, "visual QA"]
+    sources:
+      - quality/accessibility.md
+      - quality/ui-rules.md
+
+  design-dataviz:
+    label: "Data visualization — charts, metrics, KPIs, dashboard, sparklines"
+    keywords: [chart, graphe, metrics, dashboard, sparkline, KPI, "line chart", "bar chart", "area chart", histogram, "pie chart", "donut chart", "number formatting", "metric card", recharts, d3, tremor]
+    sources:
+      - components/data-visualization.md
+
+  design-realtime:
+    label: "Real-time UI — WebSocket, SSE, streaming LLM, token streaming"
+    keywords: [WebSocket, SSE, "real-time", "temps réel", streaming, LLM, "token streaming", reconnect, "optimistic updates", "live updates", "chat UI", buffering, "socket.io", ably, pusher]
+    sources:
+      - components/realtime-streams.md
