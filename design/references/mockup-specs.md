@@ -55,25 +55,21 @@
 | Full | 90vw / max 960px | Éditeur plein écran, prévisualisation |
 
 ### Anatomy d'un modal
-
 ```
-┌────────────────────────────────────────────┐
-│ Header: padding 20–24px                    │
-│   Titre (16px semibold) + Sous-titre       │
-│                                  [X close] │
-├────────────────────────────────────────────┤
-│ Body: padding 24px, vertical gap 16px      │
-│   [Contenu du formulaire / message]        │
-├────────────────────────────────────────────┤
-│ Footer: padding 16–24px, border-top 1px    │
-│                      [Cancel]  [Primary]   │
-│                       ↑ justify end, gap 8 │
-└────────────────────────────────────────────┘
+┌──────────────────────────────────────┐
+│ Header: padding 20–24px             │
+│  Titre (16px semibold) + Sous-titre │
+│                            [X close]│
+├──────────────────────────────────────┤
+│ Body: padding 24px, gap vertical 16 │
+│  [Contenu du formulaire / message]  │
+├──────────────────────────────────────┤
+│ Footer: padding 16–24px, border-top 1px │
+│                [Cancel]  [Primary]  │
+│                 justify end, gap 8  │
+└──────────────────────────────────────┘
 ```
-
-- **Scrim** : fond noir 50–60% opacité derrière le modal
-- **Corner radius** : radius-lg (8px) sur le modal
-- **Bouton close** : 32x32px, icône 16px, coin top-right du header
+- **Scrim** : fond noir 50–60% opacité — **Corner radius** : radius-lg (8px) — **Bouton close** : 32x32px, icône 16px, coin top-right du header
 
 ---
 
@@ -91,21 +87,20 @@
 | Tooltip on hover | Pas de tooltip | Le hover n'existe pas sur mobile |
 
 ### Bottom sheet anatomy (mobile)
-
 ```
-┌────────────────────────────────────────┐
-│         [━━━━━━━━━━] handle 40x4px     │  24px height
-├────────────────────────────────────────┤
-│ Titre (17px semibold)                  │
-│ Sous-titre (14px muted)               │  padding 0 20px 16px
-├────────────────────────────────────────┤
-│ Body: padding 0 20px, gap 16px        │
-│   [Contenu du formulaire]             │
-├────────────────────────────────────────┤
-│ Footer: padding 16px 20px 32px 20px   │
-│   [Cancel full-width] [Primary full]  │  gap 12px
-│         ↑ safe area bottom = 32px     │
-└────────────────────────────────────────┘
+┌──────────────────────────────────────┐
+│       [━━━━━━━━━━] handle 40x4px    │ 24px height
+├──────────────────────────────────────┤
+│ Titre (17px semibold)               │
+│ Sous-titre (14px muted)             │ padding 0 20px 16px
+├──────────────────────────────────────┤
+│ Body: padding 0 20px, gap 16px      │
+│  [Contenu du formulaire]            │
+├──────────────────────────────────────┤
+│ Footer: padding 16px 20px 32px 20px │
+│  [Cancel full-width] [Primary full] │ gap 12px
+│       safe area bottom = 32px       │
+└──────────────────────────────────────┘
 ```
 
 ---
@@ -114,7 +109,7 @@
 
 | Contexte | Opacité | Couleur | Notes |
 |---|---|---|---|
-| Modal scrim | 50–60% | noir | Le contenu derrière doit être visible mais pas lisible |
+| Modal scrim | 50–60% | noir | Contenu derrière visible mais pas lisible |
 | Drawer backdrop | 50% | noir | Même principe que modal |
 | Drag-and-drop overlay | 5–8% | accent (bleu) | Subtil, signale la zone de drop sans masquer |
 | Image/card hover overlay | 5–10% | noir | Révèle des actions inline |
@@ -167,7 +162,6 @@
 ---
 
 ## Boutons — Anatomy complète
-
 ### Variantes et dimensions
 
 | Variante | Fill | Text | Border | Usage |
@@ -180,16 +174,13 @@
 | Icon-only | transparent | — | aucune ou 1px | Toolbar actions |
 
 ### Structure interne
-
 ```
-┌─ Button ──────────────────────────────┐
-│  [padding-h]  [icon 14px]  [gap 6–8]  [label]  [padding-h]  │
-│               ↑ optionnel                                     │
-└───────────────────────────────────────┘
+┌─ Button ────────────────────────────────────────────┐
+│ [padding-h] [icon 14px] [gap 6–8] [label] [pad-h]  │
+│              ↑ optionnel                             │
+└─────────────────────────────────────────────────────┘
 ```
-
-- Icon-only button : carré (32x32, 36x36, 44x44), icône centrée
-- Corner radius : radius-md (6px) par défaut, radius-pill pour certains styles
+- Icon-only : carré (32x32, 36x36, 44x44), icône centrée — Corner radius : radius-md (6px), radius-pill pour certains styles
 
 ### États visuels
 
@@ -205,19 +196,17 @@
 ---
 
 ## Inputs — Anatomy complète
-
 ### Structure
-
 ```
-┌─ Field Group ─────────────────────────┐
-│ Label (13–14px medium)         [gap 6] │
-│ ┌─ Input ───────────────────────────┐ │
-│ │ [padding-h] [placeholder/value]   │ │
-│ │             14–15px regular       │ │
-│ └───────────────────────────────────┘ │
-│ Helper text (12px muted)       [gap 4] │
-│ Error text (12px destructive)          │
-└────────────────────────────────────────┘
+┌─ Field Group ────────────────────────┐
+│ Label (13–14px medium)       [gap 6] │
+│ ┌─ Input ──────────────────────────┐ │
+│ │ [padding-h] [placeholder/value]  │ │
+│ │             14–15px regular      │ │
+│ └──────────────────────────────────┘ │
+│ Helper text (12px muted)     [gap 4] │
+│ Error text (12px destructive)        │
+└──────────────────────────────────────┘
 ```
 
 | Propriété | Valeur |
@@ -244,9 +233,7 @@
 | Info | info bg 10% | info text | pill | idem | idem |
 | Outline | transparent | `--foreground` | pill | idem, + border 1px | idem |
 
-- Font size : 11–12px, medium weight
-- Icône optionnelle : 12px, avant le label, gap 4px
-- Status dot optionnel : 6–8px cercle coloré, avant le label
+Font size : 11–12px, medium weight — Icône optionnelle : 12px, avant le label, gap 4px — Status dot optionnel : 6–8px cercle coloré, avant le label
 
 ---
 
@@ -267,15 +254,13 @@
 ---
 
 ## Toasts / Notifications
-
 ### Anatomy
-
 ```
-┌─ Toast ──────────────────────────────────────┐
-│ [icon 16px]  [gap 12]  Title (14px medium)   │
-│                         Description (13px)    │
-│                                     [X close] │
-└──────────────────────────────────────────────┘
+┌─ Toast ────────────────────────────────────┐
+│ [icon 16px] [gap 12] Title (14px medium)   │
+│                       Description (13px)   │
+│                                   [X close]│
+└────────────────────────────────────────────┘
 ```
 
 | Propriété | Valeur |
@@ -290,8 +275,6 @@
 | Empilage | Max 3 visibles, les plus anciens disparaissent |
 | Animation | Slide-in depuis la droite/le bas, fade-out |
 
-### Variantes
-
 | Variante | Icône | Couleur icône |
 |---|---|---|
 | Default | info circle | `--foreground` |
@@ -303,23 +286,21 @@
 ---
 
 ## Dropdowns / Menus
-
 ### Anatomy
-
 ```
-┌─ Dropdown ────────────────────────┐
-│ [Search input]          optionnel │  padding 8px
-├───────────────────────────────────┤
-│ Section Title (11–12px uppercase) │  padding 8px 12px
-│ ┌─ Item ────────────────────────┐ │
-│ │ [icon 14px] [label 13px]     │ │  height 32–36px
-│ │                   [shortcut] │ │  padding 8–12px horizontal
-│ └───────────────────────────────┘ │
-│ ─────── Divider ─────────────── │  1px --border, margin 4px 0
-│ ┌─ Item (destructive) ─────────┐ │
-│ │ [trash icon] [Delete]        │ │  text --destructive
-│ └───────────────────────────────┘ │
-└───────────────────────────────────┘
+┌─ Dropdown ──────────────────────┐
+│ [Search input]        optionnel │ padding 8px
+├─────────────────────────────────┤
+│ Section Title (11–12px upper)   │ padding 8px 12px
+│ ┌─ Item ──────────────────────┐ │
+│ │ [icon 14px] [label 13px]   │ │ height 32–36px
+│ │                 [shortcut]  │ │ padding 8–12px h
+│ └─────────────────────────────┘ │
+│ ────── Divider ─────────────── │ 1px --border, margin 4px 0
+│ ┌─ Item (destructive) ───────┐ │
+│ │ [trash icon] [Delete]      │ │ text --destructive
+│ └─────────────────────────────┘ │
+└─────────────────────────────────┘
 ```
 
 | Propriété | Valeur |
@@ -348,15 +329,11 @@
 | lg | 48–56px | Page profil, settings | 18–20px |
 | xl | 64–80px | Hero profil, onboarding | 24–28px |
 
-- Forme : cercle (`border-radius: 50%`)
-- Fallback : initiales sur fond `--muted`, texte `--muted-foreground`
-- Border : optionnelle, 2px `--background` (pour superposition sur fond coloré)
-- Groupe d'avatars : overlap de -8px, z-index croissant, max 4 visibles + "+3" badge
+Forme : cercle (`border-radius: 50%`) — Fallback : initiales sur fond `--muted`, texte `--muted-foreground` — Border : optionnelle, 2px `--background` (superposition sur fond coloré) — Groupe : overlap -8px, z-index croissant, max 4 visibles + "+3" badge
 
 ---
 
 ## Progress / Loading
-
 ### Linear progress bar
 
 | Propriété | Valeur |
@@ -365,7 +342,7 @@
 | Background (track) | `--muted` |
 | Fill (progress) | `--primary` |
 | Corner radius | pill (9999px) |
-| Animation indéterminée | Barre qui translate left→right en boucle, 1.5s |
+| Animation indéterminée | Barre translate left→right en boucle, 1.5s |
 
 ### Spinner
 
@@ -376,9 +353,7 @@
 | lg | 32–40px | Page loading, empty state |
 | xl | 48–64px | Full page loader |
 
-- Couleur : `--primary` ou `--muted-foreground` selon le contexte
-- Stroke width : 2px (sm/md), 3px (lg/xl)
-- Animation : rotation 360° en 0.75s linear infinite
+Couleur : `--primary` ou `--muted-foreground` selon le contexte — Stroke width : 2px (sm/md), 3px (lg/xl) — Animation : rotation 360° en 0.75s linear infinite
 
 ### Skeleton
 
@@ -401,73 +376,24 @@
 | Bordure dashed | `border: 2px dashed var(--border)` | Drop zone, placeholder, zone d'upload |
 | Bordure accent dashed | `border: 2px dashed var(--ring)` | Drop zone active (état drag hover) |
 
-**Règles** :
-- Toujours **1px** pour les séparateurs structurels — jamais plus épais
-- Toujours un **token couleur** (`--border`), jamais un hex en dur
-- Préférer l'espace (gap/padding) à la bordure quand la séparation est claire sans ligne
-- Les bordures sont **inside** (ne débordent pas du composant)
-- Les bordures dashed = **2px**, réservées aux zones interactives (drop, upload, placeholder)
+**Règle** : Toujours **1px** pour les séparateurs structurels, jamais plus épais. Toujours un **token couleur** (`--border`), jamais un hex en dur. Préférer l'espace (gap/padding) à la bordure quand la séparation est claire sans ligne. Les bordures sont **inside** (ne débordent pas). Les bordures dashed = **2px**, réservées aux zones interactives (drop, upload, placeholder).
 
 ---
 
 ## Patterns de composition layout
 
-Patterns flexbox récurrents pour les layouts SaaS. Chaque pattern décrit l'axe, l'alignement et le sizing.
+Patterns flexbox récurrents pour les layouts SaaS (~90% des cas).
 
-**Sidebar + Contenu** (layout principal)
-```
-Parent:  horizontal
-Sidebar: width fixe (200–240px), height fill
-Contenu: width fill, height fill
-```
-
-**Header bar** (titre + actions)
-```
-Parent:  horizontal, justify space-between, align center
-Gauche:  fit-content (titre, breadcrumb, icône)
-Droite:  fit-content (boutons, actions)
-```
-
-**Empty state** (centré dans la zone)
-```
-Parent:  vertical, justify center, align center
-Enfant:  fit-content, vertical, align center, gap 16–24px
-```
-
-**Card grid** (métriques, cards)
-```
-Parent:  horizontal, gap 16px
-Enfants: width fill (distribution égale)
-```
-
-**Form layout** (champs empilés)
-```
-Parent:  vertical, gap 16px
-Enfants: width fill
-Ligne:   horizontal, gap 16px (pour 2 champs côte à côte)
-```
-
-**Modal footer** (boutons d'action)
-```
-Parent:  horizontal, justify end, gap 8–12px
-Enfants: fit-content
-Border:  top 1px (séparateur de section)
-```
-
-**List avec actions inline**
-```
-Parent:  vertical, gap 0–2px
-Item:    horizontal, justify space-between, align center, height 32–48px
-         Gauche: fit-content (icône, label, metadata)
-         Droite: fit-content (actions, chevron) — visible on hover ou toujours
-```
-
-**Split panel** (liste + détail)
-```
-Parent:  horizontal
-Liste:   width fixe (320–400px), height fill, border-right
-Détail:  width fill, height fill
-```
+| Pattern | Axe | Sizing | Notes |
+|---|---|---|---|
+| **Sidebar + Contenu** | horizontal | Sidebar: fixe 200–240px, fill height. Contenu: fill both | Layout principal |
+| **Header bar** | horizontal, space-between, align center | Gauche: fit (titre, breadcrumb). Droite: fit (actions) | Titre + actions |
+| **Empty state** | vertical, center both | Enfant: fit, vertical, align center, gap 16–24px | Centré dans la zone |
+| **Card grid** | horizontal, gap 16px | Enfants: fill equal | Métriques, cards |
+| **Form layout** | vertical, gap 16px | Enfants: fill. Ligne: horizontal gap 16px | Champs empilés |
+| **Modal footer** | horizontal, justify end, gap 8–12px | Enfants: fit. Border: top 1px | Boutons d'action |
+| **List + actions** | vertical, gap 0–2px | Item: horizontal, space-between, align center, h 32–48px. G: fit (icône, metadata, label). D: fit (chevron, actions) — hover ou permanent | |
+| **Split panel** | horizontal | Liste: fixe 320–400px, fill h, border-right. Détail: fill both | Liste + détail |
 
 **Règle** : Ces patterns couvrent ~90% des layouts SaaS. Si un layout ne rentre dans aucun de ces patterns, c'est un signe de complexité excessive.
 

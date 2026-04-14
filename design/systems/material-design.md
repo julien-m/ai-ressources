@@ -8,8 +8,6 @@ Quick reference for Android layout, typography, color, elevation, shape, and com
 
 Base unit: **4dp**. All spacing and sizing should be multiples of 4.
 
-### Breakpoints & Grid
-
 | Breakpoint | Width (dp) | Columns | Margins (dp) | Gutters (dp) |
 |------------|-----------|---------|--------------|--------------|
 | Compact | 0–599 | 4 | 16 | 8 |
@@ -17,18 +15,11 @@ Base unit: **4dp**. All spacing and sizing should be multiples of 4.
 | Expanded | 840–1199 | 12 | 24 | 24 |
 | Large | 1200–1599 | 12 | 24 | 24 |
 | Extra-large | 1600+ | 12 | 24 | 24 |
-
 - Use `WindowSizeClass` in Jetpack Compose for responsive layouts
 - Compact = phone, Medium = foldable/small tablet, Expanded = tablet/desktop
-
-## Tap Targets
-
-- Minimum touch target: **48 × 48dp** — Material 3 requirement
-- Visual element can be smaller (e.g., 24dp icon) if touch area is 48dp
-- Minimum spacing between touch targets: **8dp**
+- Minimum touch target: **48 × 48dp** (visual can be smaller if touch area is 48dp). Min spacing: **8dp**
 
 ## Spacing Tokens
-
 | Value (dp) | Use case |
 |-----------|----------|
 | 4 | Tight inline gaps |
@@ -42,8 +33,7 @@ Base unit: **4dp**. All spacing and sizing should be multiples of 4.
 
 ## Typography — M3 Type Scale
 
-All sizes in sp (scale-independent pixels). Font: Roboto (default) or custom via `MaterialTheme.typography`.
-
+All sizes in sp. Font: Roboto (default) or custom via `MaterialTheme.typography`.
 | Role | Size (sp) | Weight | Line height (sp) | Tracking (sp) |
 |------|----------|--------|------------------|---------------|
 | Display Large | 57 | Regular | 64 | −0.25 |
@@ -61,14 +51,12 @@ All sizes in sp (scale-independent pixels). Font: Roboto (default) or custom via
 | Label Large | 14 | Medium | 20 | 0.1 |
 | Label Medium | 12 | Medium | 16 | 0.5 |
 | Label Small | 11 | Medium | 16 | 0.5 |
-
 - Always use `MaterialTheme.typography.bodyMedium` etc. — never hardcode sizes
 - Font scaling: Android respects system font size settings via sp units
 
 ## Dynamic Color & Color Scheme
 
 Material 3 defines **29 color roles** in a scheme. Key roles:
-
 | Role | Purpose |
 |------|---------|
 | `primary` | Key actions, FABs, active states |
@@ -85,16 +73,14 @@ Material 3 defines **29 color roles** in a scheme. Key roles:
 | `outlineVariant` | Subtle borders |
 | `inverseSurface` | Snackbar, tooltip backgrounds |
 | `scrim` | Modal overlay |
-
 - **Dynamic Color** (Android 12+): scheme generated from user's wallpaper
 - Always provide a fallback baseline scheme for older devices
 - Use `dynamicColorScheme()` in Compose with `MaterialTheme(colorScheme = ...)`
 - See [../tokens/colors.md](../tokens/colors.md) for the cross-platform color system
 
-## Elevation & Surfaces
+## Elevation, Surfaces & Shape
 
 Material 3 uses **tonal elevation** (surface color shifts) instead of shadows.
-
 | Level | Elevation (dp) | Use case |
 |-------|---------------|----------|
 | 0 | 0 | Background |
@@ -103,11 +89,8 @@ Material 3 uses **tonal elevation** (surface color shifts) instead of shadows.
 | 3 | 6 | Top app bar (scrolled), bottom sheets |
 | 4 | 8 | Navigation drawer |
 | 5 | 12 | Dialogs, menus |
-
 - Higher elevation = lighter tint on surface color (in dark theme especially)
 - Shadows still exist but are secondary to tonal shifts
-
-## Shape Scale
 
 | Category | Corner radius (dp) | Components |
 |----------|-------------------|------------|
@@ -120,7 +103,6 @@ Material 3 uses **tonal elevation** (surface color shifts) instead of shadows.
 | Full | 50% | Badges, circular icons |
 
 ## Component Specs — Quick Reference
-
 | Component | Height (dp) | Notes |
 |-----------|------------|-------|
 | Top app bar (small) | 64 | Standard |
@@ -141,7 +123,6 @@ Material 3 uses **tonal elevation** (surface color shifts) instead of shadows.
 | Bottom sheet | — | Drag handle: 4dp × 32dp |
 
 ## Cross-References
-
 - Spacing tokens: [../tokens/spacing.md](../tokens/spacing.md)
 - Typography tokens: [../tokens/typography.md](../tokens/typography.md)
 - Platform comparison: [../tokens/cross-platform.md](../tokens/cross-platform.md)

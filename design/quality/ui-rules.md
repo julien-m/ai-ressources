@@ -5,7 +5,6 @@ Rules to catch before every deploy. If any of these break, it's a bug.
 ---
 
 ## Text
-
 - Never truncate text unintentionally (`text-overflow: ellipsis` must be a deliberate choice, not a band-aid)
 - Never let text overflow its container
 - Never place text on a same-color or low-contrast background (WCAG minimum contrast ratio: **4.5:1**)
@@ -13,7 +12,6 @@ Rules to catch before every deploy. If any of these break, it's a bug.
 - Always handle long content: a 40-character username, a product title with no spaces
 
 ## Layout / Overlap
-
 - Never let two elements overlap unintentionally
 - Never make a button or link unreachable (hidden behind another element, broken z-index)
 - Never let an element escape the viewport horizontally
@@ -22,7 +20,6 @@ Rules to catch before every deploy. If any of these break, it's a bug.
 ## Missing States
 
 What we rarely code but always happens:
-
 - **Empty state** — empty list, no results, first-time use
 - **Loading state** — skeleton or spinner, never a blank screen
 - **Error state** — network down, API failure
@@ -30,59 +27,50 @@ What we rarely code but always happens:
 - **Extreme content** — 1 character vs 500 characters in the same component
 
 ## Images
-
 - Never render an image without a fallback if it fails to load
 - Preserve aspect ratio (no stretched or squashed images)
 - Alt text always present
 
 ## Responsive / Mobile
-
 - Never use a tap target smaller than **44pt** (iOS) / **48dp** (Android)
 - Content must remain usable with the virtual keyboard open (inputs not hidden behind it)
 - Respect safe areas (no content under the notch or home bar)
 - Side margins on mobile (text must never touch the screen edge)
 
 ## Forms
-
 - Label always visible (not just a placeholder that disappears on focus)
 - Focus state always visible (outline, border — never invisible)
 - Error message specific and positioned next to the relevant field
 - Submit button disabled during submission (prevent double-submit)
 
 ## Animations / Motion
-
 - Respect `prefers-reduced-motion` (disable or reduce animations)
 - Never let an animation block interaction (button unreachable during a transition)
 - No layout shift after load (CLS — content that "jumps")
 
 ## Dark Mode
-
 - Never hardcode colors that break in dark mode (white background on a dark container)
 - Shadows, borders and dividers must adapt to both themes
 - Images and icons must remain legible in both modes (black logo on black background)
 
 ## Accessibility Beyond Contrast
-
 - Never rely on hover-only interactions (tooltip, menu) — must work with touch and keyboard
 - Logical focus order (tab order follows visual flow)
 - Never use an icon alone without an accessible label (`aria-label` or tooltip)
 - Respect `prefers-color-scheme` and `prefers-contrast`
 
 ## Modals / Dialogs
-
 - Focus trap active (tab must not escape the modal)
 - Body scroll locked while modal is open
 - Closeable via Escape and backdrop click
 - Focus restored to the trigger element on close
 
 ## Perceived Performance
-
 - No content layout shift after load (reserve space for images, embeds, fonts)
 - Page transitions without a white flash between routes
 - Optimistic UI on frequent actions (like, toggle, save)
 
 ## Internationalization
-
 - Layouts must hold when text expands 30–50% in translation (German is unforgiving)
 - RTL support if applicable
 - Localized date and number formats
@@ -90,7 +78,6 @@ What we rarely code but always happens:
 ## Mockup Fidelity
 
 When a visual mockup or reference image exists (AI-generated or user-provided), treat it as an implementation spec — not inspiration.
-
 - **Save mockups** in the repo (`docs/mockups/` or equivalent) as source of truth
 - **Extract exact values** before coding: colors (hex), spacing (px), font sizes, font weights, line-heights, border radii, shadow values. Don't approximate — measure from the mockup
 - **Describe layout precisely** when delegating CSS work: positions in px, sizes, colors, effects — not vague terms like "timeline with photos"
@@ -104,7 +91,6 @@ When a visual mockup or reference image exists (AI-generated or user-provided), 
 ## Responsive — Mandatory Rule
 
 Responsiveness is NOT optional. Every application must support multiple form factors:
-
 - **Web applications**: mobile (< 768px) + tablet (768–1023px) + desktop (≥ 1024px) — minimum 3 breakpoints
 - **Native mobile applications**: phone + tablet — minimum 2 form factors
 - **Exception**: phone-only apps (must be explicitly justified — rare in 2026)

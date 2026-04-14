@@ -24,19 +24,14 @@ Patterns UI pour les flux temps reel : WebSocket, SSE, polling. Reconnexion, buf
 ```mermaid
 stateDiagram-v2
     [*] --> Connecting
-
     Connecting --> Connected : success
     Connecting --> Disconnected : failure
-
     Connected --> Disconnected : error / timeout
     Connected --> Connected : message recu
-
     Disconnected --> Reconnecting : auto (si retries restants)
     Disconnected --> [*] : abandon (max retries atteint)
-
     Reconnecting --> Connected : success
     Reconnecting --> Disconnected : echec (retry suivant)
-
     Disconnected --> Connecting : reconnexion manuelle
 ```
 
@@ -54,7 +49,6 @@ stateDiagram-v2
 - Couleurs semantiques : **Read** [`../tokens/colors.md`](../tokens/colors.md) pour les tokens `success`, `error`, `warning`
 
 ### Reconnexion
-
 - Exponential backoff : 1s -> 2s -> 4s -> 8s -> 16s -> 30s (cap)
 - Jitter : +/-20% pour eviter le thundering herd
 - Max retries : 10, puis basculer en polling degrade ou demander action manuelle
@@ -67,7 +61,6 @@ stateDiagram-v2
 ## Buffering et rendu
 
 ### Strategies de buffering
-
 | Strategie | Description | Cas d'usage |
 |-----------|-------------|-------------|
 | Immediate | Rendu a chaque message | Chat, notifications (faible volume) |
@@ -78,7 +71,6 @@ stateDiagram-v2
 **Regle** : pour les flux > 10 msg/s, toujours batcher. 60fps = rendu toutes les 16ms, mais un rendu toutes les 100-200ms suffit pour des logs.
 
 ### Seuils recommandes
-
 | Volume | Strategie | Intervalle de rendu |
 |--------|-----------|---------------------|
 | < 1 msg/s | Immediate | Chaque message |
@@ -87,7 +79,6 @@ stateDiagram-v2
 | > 100 msg/s | Virtual + Throttled | 100ms, viewport only |
 
 ### Auto-scroll
-
 - Comportement par defaut : auto-scroll active (suivre les nouveaux messages)
 - Desactivation : des que l'utilisateur scroll manuellement vers le haut
 - Reactivation : quand l'utilisateur scroll jusqu'en bas, OU clic sur le bouton "Nouveaux messages"
@@ -96,7 +87,6 @@ stateDiagram-v2
 - Seuil de detection "en bas" : 50px du fond (tolerant aux petits ecarts)
 
 ### Retention cote client
-
 - Buffer circulaire : garder les N derniers messages (1000-10000 selon le cas)
 - Au-dela : supprimer les plus anciens silencieusement
 - Indicateur optionnel : "Affichage des 1000 derniers logs"
@@ -107,8 +97,7 @@ stateDiagram-v2
 
 ## Optimistic Updates
 
-- Pattern : appliquer immediatement cote client, confirmer ou rollback cote serveur
-- Etats visuels :
+Pattern : appliquer immediatement cote client, confirmer ou rollback cote serveur.
 
 | Etat | Apparence | Comportement |
 |------|-----------|-------------|
@@ -127,7 +116,6 @@ stateDiagram-v2
 
 - Afficher token par token avec curseur clignotant
 - Curseur : barre verticale fine, clignotement `ease-in-out` cycle / 1000ms (voir **Read** [`../tokens/motion.md`](../tokens/motion.md))
-- Pas de scroll automatique entre les tokens — l'utilisateur lit le texte au fur et a mesure
 - Auto-scroll uniquement si l'utilisateur est deja en bas du conteneur
 - Indicateur "En train de repondre..." pendant le stream
 - Bouton "Stop" visible pendant la generation — arrete le stream immediatement
@@ -136,7 +124,6 @@ stateDiagram-v2
 - Delai avant affichage du premier token : appliquer la regle des 200ms (voir **Read** [`../tokens/motion.md`](../tokens/motion.md), section Loading States)
 
 ### Markdown streaming
-
 - Parser le Markdown incrementalement (ne pas attendre la fin du stream)
 - Les blocs de code incomplets restent ouverts visuellement jusqu'a la fermeture du bloc
 - Eviter le re-layout brutal quand un bloc de code apparait — reserver l'espace verticalement
@@ -173,7 +160,6 @@ stateDiagram-v2
 ## Gestion de la bande passante
 
 ### Degradation gracieuse
-
 | Condition | Action |
 |-----------|--------|
 | Connexion lente detectee | Reduire la frequence d'envoi (serveur) |
@@ -181,7 +167,6 @@ stateDiagram-v2
 | Buffer overflow cote client | Dropper les messages les plus anciens du batch |
 
 ### Compression
-
 | Transport | Methode | Notes |
 |-----------|---------|-------|
 | SSE | gzip (via HTTP) | Transparent, supporte par tous les serveurs |
@@ -189,7 +174,6 @@ stateDiagram-v2
 | Long Polling | gzip (via HTTP) | Standard |
 
 ### Filtrage cote serveur
-
 - Subscription model : le client s'abonne uniquement aux channels/topics necessaires
 - Ne pas envoyer ce que le client ne regarde pas (onglet inactif, section collapsed)
 - Permettre au client de changer ses subscriptions a chaud sans reconnexion
@@ -204,7 +188,7 @@ stateDiagram-v2
 - Batcher le rendu pour les flux haute frequence — ne pas re-render a chaque message au-dela de 10 msg/s
 - Respecter l'intention de scroll de l'utilisateur — ne jamais forcer l'auto-scroll si l'utilisateur a scrolle vers le haut
 - Appliquer les optimistic updates uniquement pour les actions non-destructives et frequemment reussies
-- Le token streaming LLM n'a pas besoin de loading state — le flux de tokens est son propre indicateur
+- Le token streaming LLM n'a pas besoin de loading state — le flux de tokens est son propre indicateur. Pas de scroll automatique entre les tokens — l'utilisateur lit le texte au fur et a mesure
 - Buffer circulaire cote client — ne jamais stocker un historique illimite en memoire
 - Tester avec des connexions lentes et instables — la degradation gracieuse est aussi importante que le happy path
 - **Read** [`../tokens/motion.md`](../tokens/motion.md) pour tous les timings d'animation (loading states, scroll, transitions)

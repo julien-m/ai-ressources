@@ -9,31 +9,24 @@ Complète forms.md avec les conventions spécifiques au paiement.
 
 ```
 ┌──────────────────────────────────────────────┐
-│                                              │
 │ EXPRESS CHECKOUT                             │
 │ ┌────────────────┐ ┌────────────────┐       │
 │ │   Apple Pay    │ │  Google Pay    │       │
 │ └────────────────┘ └────────────────┘       │
-│                                              │
 │ ─────────── or pay with card ───────────    │
-│                                              │
 │ Card number                                  │
 │ ┌──────────────────────────────────────┐    │
 │ │ 4242 4242 4242 4242          [Visa]  │    │
 │ └──────────────────────────────────────┘    │
-│                                              │
 │ Expiry              CVC                      │
 │ ┌────────────┐     ┌─────────────┐          │
 │ │ MM / YY    │     │ 123      🔒 │          │
 │ └────────────┘     └─────────────┘          │
-│                                              │
 │ Name on card                                 │
 │ ┌──────────────────────────────────────┐    │
 │ │ Jane Doe                             │    │
 │ └──────────────────────────────────────┘    │
-│                                              │
 │ 🔒 Secured by Stripe                        │
-│                                              │
 └──────────────────────────────────────────────┘
 ```
 
@@ -54,119 +47,71 @@ Complète forms.md avec les conventions spécifiques au paiement.
 
 ---
 
+## Règles communes à tous les flows
+
+Les conventions suivantes s'appliquent à chaque flow de paiement sauf mention contraire :
+
+- **Montant total visible** à chaque étape, affiché dans le bouton de paiement ("Pay $53.90")
+- **Express pay en priorité absolue** — placé avant le formulaire carte (one-tap = conversion maximale)
+- **Bouton désactivé** pendant le processing (spinner + "Processing...")
+- **Pas de double charge** possible (idempotency)
+- **3D Secure** supporté avec message "don't close" (voir section dédiée)
+
+---
+
 ## Flow 1 : Tip / Donation
 
 Pattern Ko-fi, Buy Me a Coffee — friction minimale, émotion maximale.
 
-### Étapes
-
 ```
-┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
-│ Montant │ →  │ Message │ →  │ Paiement│ →  │ Merci   │
-│ (requis)│    │(optionl)│    │ (requis)│    │         │
-└─────────┘    └─────────┘    └─────────┘    └─────────┘
+[Montant (requis)] → [Message (optionnel)] → [Paiement (requis)] → [Merci]
 ```
 
-### Étape 1 : Sélection du montant
+| Étape | Détail | Règles clés |
+|---|---|---|
+| 1. Montant | 4 presets (correspondant aux montants les plus choisis par les supporters du créateur) + 1 custom ; preset médian pré-sélectionné (ancrage psychologique) | Custom : champ numérique, min. affiché ("min. $1") ; quantity multiplier optionnel (BMC pattern "Buy X coffees") ; total recalculé en temps réel, toujours visible |
+| 2. Message | Textarea 280 chars + toggle public/privé + nom affiché au créateur + email pour reçu | Pas de création de compte forcée — tip sans inscription ; compteur de caractères restants (pas de compteur progressif) |
+| 3. Paiement | Formulaire standard (voir anatomie) | Montant affiché en grand ("You're sending $5") ; pas de page "review" intermédiaire ; express pay en priorité absolue |
+| 4. Merci | Check animé + confetti léger (moment émotionnel) | Récap : montant + destinataire + email reçu ; share buttons (amplification organique) ; pas de upsell — le moment de gratitude est sacré |
 
+### Wireframes tip
+
+**Sélection du montant :**
 ```
 ┌──────────────────────────────────────────────┐
-│                                              │
 │ Support [Creator Name]                       │
-│                                              │
-│ ┌────┐  ┌────┐  ┌────┐  ┌────┐  ┌───────┐ │
-│ │ $3 │  │ $5 │  │$10 │  │$25 │  │Custom │ │
-│ └────┘  └────┘  └────┘  └────┘  └───────┘ │
-│                                              │
+│ [$3] [$5] [$10] [$25] [Custom]              │
 │ ┌──────────────────────────────────────┐    │
-│ │ $ [       ]                          │    │
+│ │ $ [       ]  ← si "Custom"          │    │
 │ └──────────────────────────────────────┘    │
-│ ← Apparaît si "Custom" sélectionné         │
-│                                              │
-│ Quantity                                     │
-│ [- ]  1 coffee  [+ ]     = $5.00            │
-│                                              │
+│ Quantity: [- ] 1 coffee [+ ]  = $5.00       │
 └──────────────────────────────────────────────┘
 ```
 
-**Conventions montant :**
-- 4 presets + 1 custom — les presets sont les montants les plus choisis par les supporters du créateur
-- Le preset médian est pré-sélectionné (pas le plus bas — ancrage psychologique)
-- Custom : champ numérique, montant minimum affiché ("min. $1")
-- Quantity multiplier optionnel (BMC pattern : "Buy X coffees")
-- Le total est recalculé en temps réel et toujours visible
-
-### Étape 2 : Message (optionnel)
-
+**Message (optionnel) :**
 ```
 ┌──────────────────────────────────────────────┐
-│                                              │
 │ Leave a message (optional)                   │
 │ ┌──────────────────────────────────────┐    │
 │ │ Great work on the latest video!      │    │
-│ │                                      │    │
-│ │                                      │    │
 │ └──────────────────────────────────────┘    │
 │ 280 characters remaining                     │
-│                                              │
 │ ☐ Make this a private message                │
-│                                              │
-│ Your name (shown to creator)                 │
-│ ┌──────────────────────────────────────┐    │
-│ │ Jane Doe                             │    │
-│ └──────────────────────────────────────┘    │
-│                                              │
-│ Email (for receipt)                           │
-│ ┌──────────────────────────────────────┐    │
-│ │ jane@example.com                     │    │
-│ └──────────────────────────────────────┘    │
-│                                              │
+│ Your name: [Jane Doe]                        │
+│ Email (for receipt): [jane@example.com]      │
 └──────────────────────────────────────────────┘
 ```
 
-**Conventions :**
-- Toggle public/privé pour le message
-- Nom affiché au créateur (pas forcément un compte — tip sans inscription)
-- Email pour le reçu uniquement — pas de création de compte forcée
-- Compteur de caractères restants (pas de compteur progressif)
-
-### Étape 3 : Paiement
-
-Utilise le formulaire de paiement standard (voir anatomie ci-dessus).
-
-**Spécificités tip :**
-- Montant affiché en grand au-dessus du formulaire ("You're sending $5")
-- Pas de page intermédiaire de "review" — le montant est visible, c'est suffisant
-- Express pay en priorité absolue (one-tap = conversion maximale)
-
-### Étape 4 : Confirmation / Merci
-
+**Confirmation :**
 ```
 ┌──────────────────────────────────────────────┐
-│                                              │
-│              ✓                               │
-│                                              │
-│     Thank you for your support!              │
-│                                              │
-│     $5 sent to [Creator Name]               │
-│                                              │
-│     A receipt has been sent to               │
-│     jane@example.com                         │
-│                                              │
-│     ┌──────────────────────────────────┐    │
-│     │        Share your support         │    │
-│     └──────────────────────────────────┘    │
-│                                              │
-│     [Twitter]  [Copy link]  [Close]          │
-│                                              │
+│ ✓ Thank you for your support!               │
+│ $5 sent to [Creator Name]                   │
+│ Receipt sent to jane@example.com            │
+│ [Share your support]                         │
+│ [Twitter]  [Copy link]  [Close]              │
 └──────────────────────────────────────────────┘
 ```
-
-**Conventions confirmation :**
-- Animation de succès (check animé, confetti léger — le tip est un moment émotionnel)
-- Récapitulatif : montant + destinataire + email du reçu
-- Share buttons : amplification organique, le supporter partage qu'il a soutenu
-- Pas de upsell immédiat — le moment de gratitude est sacré
 
 ---
 
@@ -174,13 +119,8 @@ Utilise le formulaire de paiement standard (voir anatomie ci-dessus).
 
 Pattern Patreon, Stripe Billing — engagement récurrent.
 
-### Étapes
-
 ```
-┌─────────┐    ┌─────────┐    ┌─────────┐    ┌─────────┐
-│ Plan    │ →  │ Paiement│ →  │ Review  │ →  │ Welcome │
-│ (choix) │    │ (requis)│    │(confirm)│    │         │
-└─────────┘    └─────────┘    └─────────┘    └─────────┘
+[Plan (choix)] → [Paiement (requis)] → [Review (confirm)] → [Welcome]
 ```
 
 ### Sélection du plan
@@ -188,22 +128,15 @@ Pattern Patreon, Stripe Billing — engagement récurrent.
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │ Choose your plan                  [Monthly ◉] [Yearly ○]    │
-│                                                              │
 │ ┌────────────┐  ┌────────────────┐  ┌────────────┐         │
-│ │ Free       │  │ ★ Pro          │  │ Business   │         │
-│ │            │  │   POPULAR      │  │            │         │
-│ │ $0/mo      │  │ $29/mo         │  │ $99/mo     │         │
-│ │            │  │ $290/yr (save  │  │ $990/yr    │         │
-│ │ ✓ Feature  │  │  17%)          │  │            │         │
-│ │ ✓ Feature  │  │                │  │ Everything │         │
-│ │ ✗ Feature  │  │ ✓ Everything   │  │ in Pro +   │         │
-│ │ ✗ Feature  │  │   in Free +   │  │            │         │
-│ │            │  │ ✓ Feature      │  │ ✓ Feature  │         │
-│ │            │  │ ✓ Feature      │  │ ✓ Feature  │         │
-│ │            │  │ ✓ Feature      │  │ ✓ Priority │         │
-│ │            │  │                │  │   support  │         │
-│ │ [Current]  │  │ [Upgrade]      │  │ [Upgrade]  │         │
-│ └────────────┘  └────────────────┘  └────────────┘         │
+│ │ Free $0/mo │  │ ★ Pro POPULAR  │  │ Business   │         │
+│ │ ✓ Feature  │  │ $29/mo         │  │ $99/mo     │         │
+│ │ ✓ Feature  │  │ $290/yr (save  │  │ $990/yr    │         │
+│ │ ✗ Feature  │  │  17%)          │  │ Everything │         │
+│ │ ✗ Feature  │  │ ✓ All Free +   │  │ in Pro +   │         │
+│ │ [Current]  │  │ ✓ Feature      │  │ ✓ Priority │         │
+│ └────────────┘  │ [Upgrade]      │  │ [Upgrade]  │         │
+│                  └────────────────┘  └────────────┘         │
 └──────────────────────────────────────────────────────────────┘
 ```
 
@@ -220,24 +153,12 @@ Pattern Patreon, Stripe Billing — engagement récurrent.
 ```
 ┌───────────────────────────────────────────┐
 │ Review your subscription                  │
-│                                           │
-│ Plan          Pro (Monthly)               │
-│ Price         $29.00/mo                   │
-│ Starts        Today                       │
-│ Renewal       Apr 21, 2026               │
-│                                           │
-│ Payment       Visa ****4242               │
-│                                    [Edit] │
-│                                           │
-│ By confirming, you agree to the           │
-│ Terms of Service. You can cancel          │
-│ anytime from Settings.                    │
-│                                           │
-│ ┌───────────────────────────────────┐    │
-│ │     Confirm subscription          │    │
-│ └───────────────────────────────────┘    │
-│                                           │
-│ [← Back to plans]                         │
+│ Plan: Pro (Monthly)  Price: $29.00/mo     │
+│ Starts: Today  Renewal: Apr 21, 2026     │
+│ Payment: Visa ****4242            [Edit]  │
+│ By confirming, you agree to the Terms.    │
+│ You can cancel anytime from Settings.     │
+│ [Confirm subscription]  [← Back to plans] │
 └───────────────────────────────────────────┘
 ```
 
@@ -249,13 +170,9 @@ Pattern Patreon, Stripe Billing — engagement récurrent.
 
 ### Gestion post-subscription
 
-**Upgrade** : changement immédiat, prorata calculé automatiquement, affiché avant confirmation
-**Downgrade** : effectif à la fin du cycle en cours, accès maintenu jusque-là
-**Cancel** : flow multi-étapes :
-1. "Why are you cancelling?" (optionnel, pour le feedback produit)
-2. Récapitulatif de ce qui sera perdu ("You'll lose access to X, Y, Z on [date]")
-3. Offre de rétention optionnelle ("Stay on Pro with 20% off for 3 months?")
-4. Confirmation finale
+- **Upgrade** : changement immédiat, prorata calculé automatiquement, affiché avant confirmation
+- **Downgrade** : effectif à la fin du cycle en cours, accès maintenu jusque-là
+- **Cancel** : flow multi-étapes — 1) "Why are you cancelling?" (optionnel, feedback produit) → 2) Récapitulatif de ce qui sera perdu ("You'll lose access to X, Y, Z on [date]") → 3) Offre de rétention optionnelle ("Stay on Pro with 20% off for 3 months?") → 4) Confirmation finale
 
 ---
 
@@ -263,36 +180,27 @@ Pattern Patreon, Stripe Billing — engagement récurrent.
 
 Pattern Gumroad, Shopify checkout — achat unique, digital ou physique.
 
-### Checkout one-page
-
 ```
 ┌──────────────────────────────────────────────────────────────┐
 │ ┌──────────────────────────┐  ┌────────────────────────┐    │
-│ │                          │  │ ORDER SUMMARY          │    │
-│ │ EXPRESS CHECKOUT         │  │                        │    │
+│ │ EXPRESS CHECKOUT         │  │ ORDER SUMMARY          │    │
 │ │ [Apple Pay] [Google Pay] │  │ Product Name     $49   │    │
-│ │                          │  │ ┌──────┐              │    │
-│ │ ─── or pay with card ─── │  │ │ img  │  Description │    │
-│ │                          │  │ └──────┘              │    │
-│ │ Email                    │  │                        │    │
-│ │ ┌──────────────────────┐│  │ Subtotal       $49.00 │    │
-│ │ │                      ││  │ Tax             $4.90 │    │
-│ │ └──────────────────────┘│  │ ──────────────────── │    │
-│ │                          │  │ Total          $53.90 │    │
-│ │ Card number              │  │                        │    │
-│ │ ┌──────────────────────┐│  │                        │    │
+│ │ ─── or pay with card ─── │  │ ┌──────┐              │    │
+│ │ Email                    │  │ │ img  │  Description │    │
+│ │ ┌──────────────────────┐│  │ └──────┘              │    │
+│ │ │                      ││  │ Subtotal       $49.00 │    │
+│ │ └──────────────────────┘│  │ Tax             $4.90 │    │
+│ │ Card number              │  │ ──────────────────── │    │
+│ │ ┌──────────────────────┐│  │ Total          $53.90 │    │
 │ │ │                      ││  │                        │    │
 │ │ └──────────────────────┘│  │                        │    │
-│ │                          │  │                        │    │
 │ │ Expiry       CVC        │  │                        │    │
 │ │ ┌──────┐   ┌──────┐    │  │                        │    │
 │ │ │      │   │      │    │  │                        │    │
 │ │ └──────┘   └──────┘    │  │                        │    │
-│ │                          │  │                        │    │
 │ │ ┌──────────────────────┐│  │                        │    │
 │ │ │    Pay $53.90        ││  │                        │    │
 │ │ └──────────────────────┘│  │                        │    │
-│ │                          │  │                        │    │
 │ │ 🔒 Secured by Stripe    │  │                        │    │
 │ └──────────────────────────┘  └────────────────────────┘    │
 └──────────────────────────────────────────────────────────────┘
@@ -313,14 +221,8 @@ Pattern Gumroad, Shopify checkout — achat unique, digital ou physique.
 
 Paiement en un tap — Apple Pay, Google Pay, Shop Pay.
 
-### Flow
-
 ```
-┌─────────┐    ┌─────────────────┐    ┌─────────┐
-│ Bouton  │ →  │ Sheet native    │ →  │ Confirm │
-│ Express │    │ (OS gère le     │    │         │
-│         │    │  paiement)      │    │         │
-└─────────┘    └─────────────────┘    └─────────┘
+[Bouton Express] → [Sheet native (OS gère le paiement)] → [Confirm]
 ```
 
 **Conventions :**
@@ -340,61 +242,45 @@ Paiement en un tap — Apple Pay, Google Pay, Shop Pay.
 ## États transactionnels
 
 ### Processing
-
 ```
 ┌───────────────────────────────────────────┐
-│                                           │
 │              ◌ Processing...              │
-│                                           │
 │       Please don't close this page.       │
-│                                           │
 └───────────────────────────────────────────┘
 ```
-
 - Spinner + message "Processing..." — jamais un écran vide
 - Bouton de paiement désactivé et transformé en spinner
 - Message "Don't close this page" — critique pour les 3D Secure
 
 ### Success
-
 ```
 ┌───────────────────────────────────────────┐
-│                                           │
 │              ✓ Payment complete            │
-│                                           │
 │     $53.90 charged to Visa ****4242      │
 │     Receipt sent to jane@example.com      │
-│                                           │
 │     ┌───────────────────────────────┐    │
 │     │        Continue               │    │
 │     └───────────────────────────────┘    │
-│                                           │
 └───────────────────────────────────────────┘
 ```
-
 - Check animé (scale-in + fade)
 - Récapitulatif : montant + moyen de paiement + email reçu
 - CTA contextuel : "Continue" (vers le produit), "Download" (digital), "Track order" (physique)
 
 ### Failure
-
 ```
 ┌───────────────────────────────────────────┐
-│                                           │
 │              ✗ Payment failed              │
-│                                           │
 │     Your card was declined.               │
 │     Please try a different card            │
 │     or contact your bank.                  │
-│                                           │
 │     ┌───────────────────────────────┐    │
 │     │        Try again               │    │
 │     └───────────────────────────────┘    │
-│                                           │
 └───────────────────────────────────────────┘
 ```
 
-**Messages d'erreur spécifiques :**
+**Messages d'erreur et conventions :**
 
 | Code provider | Message utilisateur |
 |---|---|
@@ -406,7 +292,6 @@ Paiement en un tap — Apple Pay, Google Pay, Shop Pay.
 | 3ds_failed | "Authentication failed. Please try again or use a different card." |
 | rate_limit | "Too many attempts. Please wait a moment and try again." |
 
-**Conventions erreur :**
 - Ne jamais afficher les codes techniques du provider (pas de "err_charge_declined")
 - Le bouton "Try again" ramène au formulaire pré-rempli (sauf carte — le CVC est vidé)
 - Après 3 échecs consécutifs, suggérer un autre moyen de paiement ou le support
@@ -418,17 +303,11 @@ Paiement en un tap — Apple Pay, Google Pay, Shop Pay.
 
 ```
 ┌───────────────────────────────────────────┐
-│                                           │
 │   ┌───────────────────────────────────┐  │
-│   │                                   │  │
 │   │  [Iframe / Redirect banque]       │  │
-│   │                                   │  │
 │   │  Authentification en cours...     │  │
-│   │                                   │  │
 │   └───────────────────────────────────┘  │
-│                                           │
 │   ⚠ Don't close this window.             │
-│                                           │
 └───────────────────────────────────────────┘
 ```
 

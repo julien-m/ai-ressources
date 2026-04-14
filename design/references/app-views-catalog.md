@@ -29,67 +29,23 @@
 
 Traits are reusable bundles of views and blocks. When a trait applies, its views and blocks are added to any template.
 
-### Trait: Auth
-
-When the app has user accounts.
-
-**Views added:** Login, Signup, Password Reset, User Profile, Settings Security, Onboarding.
-
-**Blocks used:** Login Form, Signup Form, Password Reset, OTP Input, Social Auth Buttons, Avatar Upload.
-
-**SSO variant (Internal Tools):** When auth is SSO/LDAP-only, Login and Signup views are replaced by a single SSO redirect page. Password Reset and OTP are not applicable. Social Auth Buttons are replaced by SSO provider buttons (Okta, Azure AD, Google Workspace).
-
-### Trait: Billing
-
-When the app has paid plans or payments.
-
-**Views added:** Settings Billing, Billing Upgrade Flow.
-
-**Blocks used:** Plan Selector, Invoice Table, Payment Widget, Usage Meter, Payout Dashboard (if creator/marketplace).
-
-### Trait: Team
-
-When the app has multi-user organizations.
-
-**Views added:** Settings Team.
-
-**Blocks used:** Permission Matrix, Toggle Matrix (notification preferences).
-
-### Trait: API
-
-When the app exposes an API to developers.
-
-**Views added:** Settings API Tokens.
-
-**Blocks used:** CRUD Table (tokens), Audit/Event Row (API logs).
-
-### Trait: Notifications
-
-When the app needs an in-app notification system.
-
-**Views added:** Notifications Inbox, Settings Notifications.
-
-**Blocks used:** Notifications Panel, Toggle Matrix.
-
-### Trait: Integrations
-
-When the app connects to third-party services.
-
-**Views added:** Settings Integrations.
-
-**Blocks used:** Integration Card, Modal/Drawer Form.
-
-### Trait: Audit
-
-When the app requires compliance or audit trail.
-
-**Views added:** Activity Log (mandatory, not optional).
-
-**Blocks used:** Audit/Event Row, Filter/Facet Bar, Data Table.
+| Trait | When | Views Added | Blocks Used | Notes |
+|-------|------|-------------|-------------|-------|
+| Auth | When the app has user accounts. | Login, Signup, Password Reset, User Profile, Settings Security, Onboarding | Login Form, Signup Form, Password Reset, OTP Input, Social Auth Buttons, Avatar Upload | **SSO variant (Internal Tools):** Login+Signup replaced by single SSO redirect page. Password Reset and OTP N/A. Social Auth Buttons replaced by SSO provider buttons (Okta, Azure AD, Google Workspace). |
+| Billing | When the app has paid plans or payments. | Settings Billing, Billing Upgrade Flow | Plan Selector, Invoice Table, Payment Widget, Usage Meter, Payout Dashboard (if creator/marketplace) | |
+| Team | When the app has multi-user organizations. | Settings Team | Permission Matrix, Toggle Matrix (notification preferences) | |
+| API | When the app exposes an API to developers. | Settings API Tokens | CRUD Table (tokens), Audit/Event Row (API logs) | |
+| Notifications | When the app needs an in-app notification system. | Notifications Inbox, Settings Notifications | Notifications Panel, Toggle Matrix | |
+| Integrations | When the app connects to third-party services. | Settings Integrations | Integration Card, Modal/Drawer Form | |
+| Audit | When the app requires compliance or audit trail. | Activity Log (mandatory, not optional) | Audit/Event Row, Filter/Facet Bar, Data Table | |
 
 ---
 
 ## View types — Compositions
+
+Wireframe references use these shorthands:
+- **[AV]** = see [`app-views.md`](app-views.md)
+- **[AU]** = see [`app-ui.md`](app-ui.md)
 
 ### Dashboard
 
@@ -101,7 +57,7 @@ When the app requires compliance or audit trail.
 
 **Mobile:** KPI Row becomes horizontal scroll. Chart Panel simplified (no tooltip). Activity Feed becomes primary content.
 
-**Wireframe detail:** see [`app-views.md`](app-views.md) > Dashboard / Overview.
+**Wireframe:** [AV] > Dashboard / Overview.
 
 ### List+Detail
 
@@ -113,7 +69,7 @@ When the app requires compliance or audit trail.
 
 **Mobile:** Full-screen list, tap navigates to full-screen detail (push navigation). No split.
 
-**Wireframe detail:** see [`app-ui.md`](app-ui.md) > Structure and layout > Variante avec panneau de detail.
+**Wireframe:** [AU] > Structure and layout > Variante avec panneau de detail.
 
 ### CRUD Manager
 
@@ -145,7 +101,7 @@ When the app requires compliance or audit trail.
 
 **Mobile:** Full-width editor, toolbar becomes bottom sheet.
 
-**Wireframe detail:** see [`app-ui.md`](app-ui.md) > Vues types > Document editor.
+**Wireframe:** [AU] > Vues types > Document editor.
 
 ### User Profile
 
@@ -157,7 +113,7 @@ When the app requires compliance or audit trail.
 
 **Mobile:** Same layout, full-width.
 
-**Wireframe detail:** see [`app-views.md`](app-views.md) > Settings -- Profile.
+**Wireframe:** [AV] > Settings -- Profile.
 
 ### Login
 
@@ -199,7 +155,7 @@ When the app requires compliance or audit trail.
 
 **Mobile:** Settings Sidebar becomes top menu/tabs. Form full-width.
 
-**Wireframe detail:** see [`app-views.md`](app-views.md) > Settings -- General.
+**Wireframe:** [AV] > Settings -- General.
 
 ### Settings Security
 
@@ -209,7 +165,7 @@ When the app requires compliance or audit trail.
 
 **Layout:** Sections stacked vertically. Within Settings layout.
 
-**Wireframe detail:** see [`app-views.md`](app-views.md) > Settings -- Security.
+**Wireframe:** [AV] > Settings -- Security.
 
 ### Settings Billing
 
@@ -219,7 +175,7 @@ When the app requires compliance or audit trail.
 
 **Layout:** Plan card full-width top, Payment method below, Invoice table underneath.
 
-**Wireframe detail:** see [`app-views.md`](app-views.md) > Settings -- Billing.
+**Wireframe:** [AV] > Settings -- Billing.
 
 ### Settings Team
 
@@ -229,7 +185,7 @@ When the app requires compliance or audit trail.
 
 **Layout:** Members table, Pending invites section below, Invite modal on action.
 
-**Wireframe detail:** see [`app-views.md`](app-views.md) > Settings -- Team / Members.
+**Wireframe:** [AV] > Settings -- Team / Members.
 
 ### Settings Notifications
 
@@ -239,7 +195,7 @@ When the app requires compliance or audit trail.
 
 **Layout:** Single section, full-width matrix.
 
-**Wireframe detail:** see [`app-views.md`](app-views.md) > Settings -- Notifications.
+**Wireframe:** [AV] > Settings -- Notifications.
 
 ### Settings API Tokens
 
@@ -249,7 +205,7 @@ When the app requires compliance or audit trail.
 
 **Layout:** Table with "New token" button in header. Modal for creation.
 
-**Wireframe detail:** see [`app-views.md`](app-views.md) > Settings -- API Tokens.
+**Wireframe:** [AV] > Settings -- API Tokens.
 
 ### Public Page
 
@@ -299,7 +255,7 @@ When the app requires compliance or audit trail.
 
 **Mobile:** Single column visible at a time, swipe between columns. Or fallback to list view.
 
-**Wireframe detail:** see [`app-ui.md`](app-ui.md) > PM / Issue tracker > Vue Board.
+**Wireframe:** [AU] > PM / Issue tracker > Vue Board.
 
 ### Calendar
 
@@ -329,7 +285,7 @@ When the app requires compliance or audit trail.
 
 **Layout:** Grid of Integration Cards, grouped: "Connected" (top) + "Available" (below).
 
-**Wireframe detail:** see [`app-views.md`](app-views.md) > Settings sections.
+**Wireframe:** [AV] > Settings sections.
 
 ### Media Library
 
@@ -351,7 +307,7 @@ When the app requires compliance or audit trail.
 
 **Mobile:** Sidebar hidden (hamburger menu). Full-screen chat. Input composer sticky bottom with attachment and voice buttons.
 
-**Wireframe detail:** see [`app-ui.md`](app-ui.md) > AI conversationnel section.
+**Wireframe:** [AU] > AI conversationnel section.
 
 ### Billing Upgrade Flow
 
@@ -379,207 +335,86 @@ When the app requires compliance or audit trail.
 
 The most common pattern for B2B applications. Dashboard-centric with CRUD operations and team management.
 
-**Views:**
-- Dashboard
-- CRUD Manager (primary entity)
-- List+Detail (secondary entities)
-- Analytics
-- Activity Log
-- Settings General, Settings Billing, Settings Team, Settings Notifications
-
+**Views:** Dashboard, CRUD Manager (primary entity), List+Detail (secondary entities), Analytics, Activity Log, Settings General, Settings Billing, Settings Team, Settings Notifications.
 **Traits:** Auth + Billing + Team + API
-
 **Navigation:** App Sidebar (expanded, with section groups)
-
-**Shorthand:**
-```
-"App Pattern SaaS B2B for [product name]"
-"App Pattern SaaS B2B without API trait"
-"App Pattern SaaS B2B with extra Content Editor view"
-```
+**Shorthand:** `"App Pattern SaaS B2B for [product name]"` | `"… without API trait"` | `"… with extra Content Editor view"`
 
 ### Pattern 2: Creator Platform
 
 For platforms where creators publish content, receive payments, and manage their audience.
 
-**Views:**
-- Dashboard (revenue-focused: earnings chart, recent supporters, payout status)
-- Content Editor
-- CRUD Manager (products/tiers)
-- List+Detail (supporters/customers)
-- Public Page (creator profile)
-- Analytics (traffic, conversion, churn)
-- Settings General, Settings Billing
-
+**Views:** Dashboard (revenue-focused: earnings chart, recent supporters, payout status), Content Editor, CRUD Manager (products/tiers), List+Detail (supporters/customers), Public Page (creator profile), Analytics (traffic, conversion, churn), Settings General, Settings Billing.
 **Traits:** Auth + Billing
-
 **Navigation:** App Sidebar (compact, creator-focused sections: Content / Audience / Earnings / Settings)
-
-**Shorthand:**
-```
-"App Pattern Creator Platform for [product name]"
-"App Pattern Creator Platform with Team trait"
-```
+**Shorthand:** `"App Pattern Creator Platform for [product name]"` | `"… with Team trait"`
 
 ### Pattern 3: AI Conversational
 
 For AI chat interfaces with conversation history.
 
-**Views:**
-- Chat View
-- Settings General, Settings Security
-
+**Views:** Chat View, Settings General, Settings Security.
 **Traits:** Auth
-
 **Navigation:** App Sidebar (conversation history as nav items, "New chat" at top)
-
-**Note:** Chat View is now a standard view type defined in this catalog. Follows conventions from [`app-ui.md`](app-ui.md) > AI conversationnel section.
-
-**Shorthand:**
-```
-"App Pattern AI Chat for [product name]"
-"App Pattern AI Chat with Billing trait"
-```
+**Note:** Chat View is a standard view type defined in this catalog. Follows conventions from [AU] > AI conversationnel section.
+**Shorthand:** `"App Pattern AI Chat for [product name]"` | `"… with Billing trait"`
 
 ### Pattern 4: DevTool
 
 For developer-facing tools: monitoring, deployments, logs.
 
-**Views:**
-- Dashboard (deployments, uptime, error rate)
-- Activity Log (deployment events, errors)
-- List+Detail (projects/services)
-- Analytics (performance metrics, usage)
-- Settings General, Settings API Tokens, Settings Team
-
+**Views:** Dashboard (deployments, uptime, error rate), Activity Log (deployment events, errors), List+Detail (projects/services), Analytics (performance metrics, usage), Settings General, Settings API Tokens, Settings Team.
 **Traits:** Auth + Team + API
-
 **Navigation:** App Sidebar (project switcher at top, deployment-focused sections)
-
-**Shorthand:**
-```
-"App Pattern DevTool for [product name]"
-"App Pattern DevTool with Billing trait"
-```
+**Shorthand:** `"App Pattern DevTool for [product name]"` | `"… with Billing trait"`
 
 ### Pattern 5: CRM
 
 For managing contacts, deals, and sales pipeline.
 
-**Views:**
-- Dashboard (pipeline value, deal velocity, win rate)
-- List+Detail (Contacts — with filter/facet heavy)
-- List+Detail (Deals — with pipeline/kanban view option)
-- Board (Pipeline — deals as cards by stage)
-- Activity Log (per contact/deal)
-- CRUD Manager (companies)
-- Analytics (sales funnel, revenue forecast)
-- Settings General, Settings Team
-
+**Views:** Dashboard (pipeline value, deal velocity, win rate), List+Detail (Contacts — filter/facet heavy), List+Detail (Deals — with pipeline/kanban view option), Board (Pipeline — deals as cards by stage), Activity Log (per contact/deal), CRUD Manager (companies), Analytics (sales funnel, revenue forecast), Settings General, Settings Team.
 **Traits:** Auth + Team
-
 **Navigation:** App Sidebar (Contacts / Deals / Companies / Reports / Settings)
-
-**Shorthand:**
-```
-"App Pattern CRM for [product name]"
-"App Pattern CRM with API trait"
-```
+**Shorthand:** `"App Pattern CRM for [product name]"` | `"… with API trait"`
 
 ### Pattern 6: E-commerce Admin
 
 For managing an online store: products, orders, customers, analytics.
 
-**Views:**
-- Dashboard (revenue, orders today, conversion rate, top products)
-- CRUD Manager (Products — with image upload, variants, pricing)
-- List+Detail (Orders — with status workflow: pending, processing, shipped, delivered)
-- List+Detail (Customers — with order history in detail panel)
-- Analytics (sales by period, by product, by channel)
-- Activity Log
-- Settings General, Settings Billing
-
+**Views:** Dashboard (revenue, orders today, conversion rate, top products), CRUD Manager (Products — with image upload, variants, pricing), List+Detail (Orders — status workflow: pending, processing, shipped, delivered), List+Detail (Customers — order history in detail panel), Analytics (sales by period, by product, by channel), Activity Log, Settings General, Settings Billing.
 **Traits:** Auth + Team
-
 **Navigation:** App Sidebar (Products / Orders / Customers / Analytics / Settings)
-
-**Shorthand:**
-```
-"App Pattern E-commerce Admin for [product name]"
-"App Pattern E-commerce Admin with API trait"
-```
+**Shorthand:** `"App Pattern E-commerce Admin for [product name]"` | `"… with API trait"`
 
 ### Pattern 7: Mobile Consumer
 
 For consumer-facing mobile apps with feed-based content consumption.
 
-**Views:**
-- Feed (custom — scrollable content cards, pull-to-refresh, infinite scroll)
-- Search Results (with discovery/explore features)
-- User Profile (own + others)
-- Settings General, Settings Notifications
-
+**Views:** Feed (custom — scrollable content cards, pull-to-refresh, infinite scroll), Search Results (with discovery/explore features), User Profile (own + others), Settings General, Settings Notifications.
 **Traits:** Auth
-
 **Navigation:** Bottom Tab Bar (4-5 tabs: Home / Search / [Action] / Notifications / Profile)
-
-**Note:** Feed is a specialized view. Follows conventions from [`app-ui.md`](app-ui.md) > Responsive et mobile section.
-
-**Shorthand:**
-```
-"App Pattern Mobile Consumer for [product name]"
-"App Pattern Mobile Consumer with Billing trait"
-"App Pattern Mobile Consumer with extra Content Editor"
-```
+**Note:** Feed is a specialized view. Follows conventions from [AU] > Responsive et mobile section.
+**Shorthand:** `"App Pattern Mobile Consumer for [product name]"` | `"… with Billing trait"` | `"… with extra Content Editor"`
 
 ### Pattern 8: Project / Issue Tracker
 
 For team productivity tools with issue tracking, sprints, and project management (Linear, Jira, Asana pattern).
 
-**Views:**
-- Dashboard (sprint progress, velocity, burndown)
-- Board (Kanban — primary view, Todo/In Progress/Done)
-- List+Detail (Issues — with grouping by status, priority, assignee)
-- Activity Log (per issue and global)
-- Analytics (velocity, cycle time, bug rate)
-- Settings General, Settings Team, Settings Notifications
-
+**Views:** Dashboard (sprint progress, velocity, burndown), Board (Kanban — primary view, Todo/In Progress/Done), List+Detail (Issues — grouping by status, priority, assignee), Activity Log (per issue and global), Analytics (velocity, cycle time, bug rate), Settings General, Settings Team, Settings Notifications.
 **Traits:** Auth + Team + Notifications
-
 **Navigation:** App Sidebar (project switcher at top, Views section: Board / List / Calendar, then Settings)
-
-**Note:** The Board and List+Detail views should be switchable via View Switcher in the App Header. Follows conventions from [`app-ui.md`](app-ui.md) > PM / Issue tracker section.
-
-**Shorthand:**
-```
-"App Pattern Project Tracker for [product name]"
-"App Pattern Project Tracker with API trait"
-"App Pattern Project Tracker with Calendar view"
-```
+**Note:** Board and List+Detail views should be switchable via View Switcher in the App Header. Follows conventions from [AU] > PM / Issue tracker section.
+**Shorthand:** `"App Pattern Project Tracker for [product name]"` | `"… with API trait"` | `"… with Calendar view"`
 
 ### Pattern 9: Internal Tool / Admin Panel
 
 For restricted-access admin interfaces, back-office tools, and internal dashboards (Retool, Django Admin, Metabase pattern).
 
-**Views:**
-- Dashboard (system health, key metrics, recent activity)
-- CRUD Manager (primary entities — users, records, config)
-- List+Detail (secondary entities)
-- Activity Log (mandatory — audit trail)
-- Settings General, Settings Team, Settings Integrations
-
+**Views:** Dashboard (system health, key metrics, recent activity), CRUD Manager (primary entities — users, records, config), List+Detail (secondary entities), Activity Log (mandatory — audit trail), Settings General, Settings Team, Settings Integrations.
 **Traits:** Auth (SSO/LDAP variant — no public signup) + Team + Audit
-
 **Navigation:** App Sidebar (flat structure, admin-focused sections: Overview / Data / Users / System / Audit)
-
 **Note:** No public signup — access is invite-only or SSO/LDAP. Permission Matrix is heavily used. Billing trait rarely applies (internal tools are not billed per-user). Follows a more utilitarian design — dense tables, minimal marketing elements.
-
-**Shorthand:**
-```
-"App Pattern Internal Tool for [product name]"
-"App Pattern Internal Tool with API trait"
-"App Pattern Internal Tool with Integrations trait"
-```
+**Shorthand:** `"App Pattern Internal Tool for [product name]"` | `"… with API trait"` | `"… with Integrations trait"`
 
 ---
 

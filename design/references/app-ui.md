@@ -151,7 +151,6 @@ Variante avec panneau de détail (Linear, style) :
 Deux approches :
 
 1. **Topbar globale** (Stripe, Loom, Notion) : breadcrumb, account switcher, notifications, avatar. Constante sur toutes les vues.
-
 2. **Header contextuel par vue** (Linear, Vercel) : chaque vue a son propre header avec ses filtres et actions. Pas de topbar globale — plus d'espace vertical pour le contenu.
 
 **Recommandation** : Header contextuel pour les apps denses (PM tools, devtools). Topbar globale pour les apps avec navigation account/org complexe (fintech, collaboration).
@@ -213,8 +212,7 @@ Pattern Stripe/Vercel :
 ```
 
 - Background : surface légèrement surélevée (`--color-background-secondary`)
-- Pas de border (ou border très subtile)
-- 4 max par rangée horizontale
+- Pas de border (ou border très subtile), 4 max par rangée horizontale
 - Toujours inclure la variation % avec couleur (vert/rouge)
 
 ### Panel de détail
@@ -251,8 +249,7 @@ Pattern Stripe/Vercel :
 │   cus_xxxx...      [copy]
 ```
 
-- Points colorés (vert/gris/rouge selon type)
-- IDs en monospace avec bouton copy
+- Points colorés (vert/gris/rouge selon type), IDs en monospace avec bouton copy
 - Timestamps précis (pas relatifs pour les événements financiers)
 - Actions par événement en hover
 
@@ -262,66 +259,31 @@ Pattern Stripe/Vercel :
 
 ### PM / Issue tracker (Linear pattern)
 
-**Vues obligatoires** :
-- Liste d'issues avec groupement par statut
-- Vue Board (Kanban) avec colonnes Todo/In Progress/Done
-- Détail d'une issue (éditeur + propriétés + activité)
-- Settings workspace
+**Vues obligatoires** : Liste d'issues (groupement par statut), Vue Board Kanban (Todo/In Progress/Done), Détail issue (éditeur + propriétés + activité), Settings workspace.
 
-**Conventions spécifiques** :
-- Identifiants en monospace (ENG-xxx, PRJ-xxx)
-- Priority indicators (bar chart icons 3 niveaux)
-- Groupement de rows par statut sans règle de séparation lourde — juste un header de groupe
-- Cycles/sprints visibles dans les propriétés
+**Conventions** : Identifiants en monospace (ENG-xxx, PRJ-xxx). Priority indicators (bar chart icons 3 niveaux). Groupement de rows par statut sans règle de séparation lourde — juste un header de groupe. Cycles/sprints visibles dans les propriétés.
 
 ### Dashboard analytics (Stripe/Vercel pattern)
 
-**Vues obligatoires** :
-- Overview avec metric cards + graphiques
-- Vue liste des transactions/événements
-- Détail d'un item
-- Settings
+**Vues obligatoires** : Overview (metric cards + graphiques), Liste transactions/événements, Détail d'un item, Settings.
 
-**Conventions spécifiques** :
-- Metric cards avec sparklines et variations %
-- Sélecteur de période (7 days / 30 days / 3 months / custom)
-- Status badges pill pour chaque état possible
-- Graphiques : ligne ou barre, pas de pie charts
-- Export CSV visible mais discret
+**Conventions** : Metric cards avec sparklines et variations %. Sélecteur de période (7d / 30d / 3m / custom). Status badges pill pour chaque état. Graphiques : ligne ou barre, pas de pie charts. Export CSV visible mais discret.
 
 ### Document editor (Notion pattern)
 
-**Vues obligatoires** :
-- Arbre de pages dans la sidebar (hiérarchique, collapsible)
-- Éditeur de blocs pleine largeur (~700px centré)
-- Vue Database (Board/List/Gallery/Timeline)
-- Settings workspace + members
+**Vues obligatoires** : Arbre de pages sidebar (hiérarchique, collapsible), Éditeur de blocs pleine largeur (~700px centré), Vue Database (Board/List/Gallery/Timeline), Settings workspace + members.
 
-**Conventions spécifiques** :
-- Icône de page (emoji) au-dessus du titre H1
-- Slash command `/` pour insérer des blocs
-- Properties au-dessus du contenu dans le détail
-- Width centré avec marges généreuses
+**Conventions** : Icône de page (emoji) au-dessus du titre H1. Slash command `/` pour insérer des blocs. Properties au-dessus du contenu dans le détail. Width centré avec marges généreuses.
 
 ### Library / Media (Loom pattern)
 
-**Vues obligatoires** :
-- Grille de cards avec thumbnails (4–6 colonnes)
-- Breadcrumb dossier
-- Player/viewer de l'item
-- Partage et permissions
+**Vues obligatoires** : Grille de cards avec thumbnails (4–6 colonnes), Breadcrumb dossier, Player/viewer de l'item, Partage et permissions.
 
-**Conventions spécifiques** :
-- Cards : thumbnail + duration badge + title + author avatar + date
-- Hover sur card : play button + sélection checkbox
-- Player : contrôles standard + feature signature (Loom : face-cam bubble)
-- Sections My / Team / Shared
+**Conventions** : Cards = thumbnail + duration badge + title + author avatar + date. Hover sur card : play button + sélection checkbox. Player : contrôles standard + feature signature (Loom : face-cam bubble). Sections My / Team / Shared.
 
 ---
 
 ## Onboarding
-
-### Philosophies observées
 
 | App | Philosophie | Temps to value |
 |---|---|---|
@@ -331,19 +293,11 @@ Pattern Stripe/Vercel :
 | Loom | Record-first — enregistrer immédiatement | < 1min |
 | Stripe | Code-first — la doc est l'onboarding | Variable |
 
-### Principes onboarding
-
-1. **Minimiser les étapes** : chaque étape qui ne mène pas à la valeur est une friction inutile
-2. **"Skip possible"** : toujours laisser passer l'onboarding — forcer crée de la frustration
-3. **Montrer, pas expliquer** : une démo interactive vaut mieux qu'un slide de features
-4. **Célébrer le premier succès** : confettis, animation, message — le moment où l'utilisateur réussit sa première action doit être remarquable
-5. **Empty state = invitation** : quand c'est vide, expliquer ce qui sera là + CTA direct
+**Principes** : (1) Minimiser les étapes — chaque étape hors valeur = friction inutile. (2) "Skip possible" — toujours laisser passer l'onboarding. (3) Montrer, pas expliquer — démo interactive > slide de features. (4) Célébrer le premier succès — confettis, animation, message remarquable. (5) Empty state = invitation — quand c'est vide, expliquer ce qui sera là + CTA direct.
 
 ---
 
-## Settings
-
-### Structure universelle
+## Settings — Structure universelle
 
 ```
 ┌──────────────────┬──────────────────────────────┐
@@ -357,17 +311,11 @@ Pattern Stripe/Vercel :
 └──────────────────┴──────────────────────────────┘
 ```
 
-- Sidebar interne de settings (reproduit la sidebar principale)
-- Sections en groupes logiques (Account / Workspace / Billing / Security)
-- Inputs et toggles consistent avec le design system global
-- Bouton "Save" : soit sticky en bas, soit inline sur chaque section
-- Danger zone : toujours en bas, séparée, rouge discret
+Sidebar interne reproduisant la sidebar principale. Sections en groupes logiques (Account / Workspace / Billing / Security). Inputs et toggles consistent avec le design system global. Bouton "Save" : sticky en bas ou inline par section. Danger zone : toujours en bas, séparée, rouge discret.
 
 ---
 
 ## Responsive et mobile
-
-### Comportements observés
 
 | App | Mobile behavior |
 |---|---|
@@ -377,17 +325,11 @@ Pattern Stripe/Vercel :
 | Loom | App mobile dédiée (Record button central) |
 | Notion | App mobile (édition limitée, databases en liste) |
 
-### Règle générale
-
-Les outils B2B pour power users (Linear, Vercel) sont **desktop-first** — le mobile est un fallback pour consulter, pas pour travailler. Les outils de création de contenu ou consumer (Loom, Notion) ont des apps mobile dédiées et optimisées.
-
-**Adapter en conséquence** : Si l'audience principale travaille sur desktop, ne pas sacrifier la densité desktop pour le mobile.
+**Règle** : Les outils B2B pour power users (Linear, Vercel) sont **desktop-first** — le mobile est un fallback pour consulter, pas pour travailler. Les outils de création de contenu ou consumer (Loom, Notion) ont des apps mobile dédiées et optimisées. Si l'audience principale travaille sur desktop, ne pas sacrifier la densité desktop pour le mobile.
 
 ---
 
 ## Checklist interface app
-
-Avant de livrer une interface applicative :
 
 **Structure**
 - [ ] Sidebar gauche avec workspace switcher en haut
@@ -426,86 +368,37 @@ Avant de livrer une interface applicative :
 
 ### Plateformes créateurs — patterns UI
 
-**Page créateur publique :**
-- Layout 2 colonnes desktop : identité créateur (gauche) + widget de support sticky (droite)
-- Widget de paiement intégré directement (pas de clic supplémentaire pour accéder au form)
-- Avatar circulaire débordant de la bannière — pattern très répandu
-- Tabs horizontaux : About / Gallery / Posts / Services
+**Page créateur publique :** Layout 2 colonnes desktop : identité créateur (gauche) + widget de support sticky (droite). Widget de paiement intégré directement (pas de clic supplémentaire). Avatar circulaire débordant de la bannière — pattern très répandu. Tabs horizontaux : About / Gallery / Posts / Services.
 
-**Checkout / paiement :**
-- Friction maximale acceptable : formulaire overlay modal (pas de redirection)
-- One-tap checkout sans inscription = référence BMC
-- Form intégré directement sur la page = référence Ko-fi
-- Workflow contrat = acceptable seulement pour le B2B (Contra)
+**Checkout / paiement :** Friction maximale acceptable : formulaire overlay modal (pas de redirection). One-tap checkout sans inscription = référence BMC. Form intégré directement sur la page = référence Ko-fi. Workflow contrat = acceptable seulement pour le B2B (Contra).
 
-**Dashboard créateur :**
-- Revenus en priorité absolue (graphe mensuel, total)
-- Liste des supporters/clients exportable
-- Analytics de croissance (churn, nouveaux, actifs)
-- Gestion des tiers/produits
-- Éditeur de posts/contenus
+**Dashboard créateur :** Revenus en priorité absolue (graphe mensuel, total). Liste des supporters/clients exportable. Analytics de croissance (churn, nouveaux, actifs). Gestion des tiers/produits. Éditeur de posts/contenus.
 
 ---
 
 ### Fintech mobile — patterns UI
 
-**Dashboard home :**
-- Solde total en très grand format centré (40–52px bold) — information n°1
-- Actions rapides sous forme de boutons circulaires iconifiés (Envoyer, Recevoir, Échanger)
-- Transactions récentes (5 items max dans le viewport initial)
-- Cards multi-devises scrollables horizontalement (si multi-wallet)
+**Dashboard home :** Solde total en très grand format centré (40–52px bold) — information n°1. Actions rapides sous forme de boutons circulaires iconifiés (Envoyer, Recevoir, Échanger). Transactions récentes (5 items max dans le viewport initial). Cards multi-devises scrollables horizontalement (si multi-wallet).
 
-**Historique transactions :**
-- Découpage chronologique (Aujourd'hui / Hier / Cette semaine)
-- Merchant logo en haute résolution + nom + montant + devise + catégorie
-- Catégories avec couleur + icône (double encodage)
-- Montants : alignés à droite, vert (entrant) / rouge (sortant) — universel
+**Historique transactions :** Découpage chronologique (Aujourd'hui / Hier / Cette semaine). Merchant logo haute résolution + nom + montant + devise + catégorie. Catégories avec couleur + icône (double encodage). Montants alignés à droite, vert (entrant) / rouge (sortant) — universel.
 
-**Card management :**
-- Carte rendue en 3D ou flat avec le vrai design personnalisé
-- Freeze/unfreeze animé instantané — feature de confiance signature
-- Toggle par type de paiement (en ligne, étranger, contactless, DAB)
-- Numéro de carte masqué → biométrie pour révéler
+**Card management :** Carte rendue en 3D ou flat avec le vrai design personnalisé. Freeze/unfreeze animé instantané — feature de confiance signature. Toggle par type de paiement (en ligne, étranger, contactless, DAB). Numéro de carte masqué → biométrie pour révéler.
 
-**Onboarding KYC :**
-- Une action par écran (principe absolu)
-- Message rassurant sur chaque étape KYC ("Ça prend 2 minutes")
-- Scan document + selfie liveness = séquence universelle
-- Dark mode pour Revolut, light mode pour Wise/Monzo
+**Onboarding KYC :** Une action par écran (principe absolu). Message rassurant sur chaque étape KYC ("Ça prend 2 minutes"). Scan document + selfie liveness = séquence universelle. Dark mode pour Revolut, light mode pour Wise/Monzo.
 
-**Navigation :**
-- Bottom tabs × 4–5 — standard absolu du fintech mobile
-- Pas de sidebar (contrairement aux apps desktop)
-- Hub central pour les super-apps (Revolut : "Hub")
+**Navigation :** Bottom tabs × 4–5 — standard absolu du fintech mobile. Pas de sidebar (contrairement aux apps desktop). Hub central pour les super-apps (Revolut : "Hub").
 
 ---
 
 ### Santé — patterns UI
 
-**Onboarding santé :**
-- Ne jamais demander les données médicales en premier — commencer par email/téléphone
-- Collecter les données médicales de façon progressive et contextuelle
-- Expliquer pourquoi chaque donnée est demandée (réglementation, personnalisation)
-- Illustrations légères à chaque étape pour réduire l'anxiété cognitive (Alan : pingouin)
+**Onboarding santé :** Ne jamais demander les données médicales en premier — commencer par email/téléphone. Collecter les données médicales de façon progressive et contextuelle. Expliquer pourquoi chaque donnée est demandée (réglementation, personnalisation). Illustrations légères à chaque étape pour réduire l'anxiété cognitive (Alan : pingouin).
 
-**Vue principale :**
-- Accès à la fonctionnalité principale en 1 tap (Doctolib : recherche, Alan : Clinique, Withings : mesures)
-- Prochain rendez-vous visible immédiatement
-- Section prévention/coaching (nouvelle norme 2025)
-- Bottom tabs clairs avec labels texte (pas icônes seules — accessibilité seniors)
+**Vue principale :** Accès à la fonctionnalité principale en 1 tap (Doctolib : recherche, Alan : Clinique, Withings : mesures). Prochain rendez-vous visible immédiatement. Section prévention/coaching (nouvelle norme 2025). Bottom tabs clairs avec labels texte (pas icônes seules — accessibilité seniors).
 
-**Accessibilité santé (standards stricts) :**
-- WCAG AA minimum — 4.5:1 pour texte, 3:1 pour composants
-- Corps ≥16px minimum
-- Zones tactiles ≥44px
-- Triple encodage pour les états critiques : couleur + icône + texte
-- Pas de micro-texte, pas d'interfaces surchargées
+**Accessibilité santé (standards stricts) :** WCAG AA minimum — 4.5:1 pour texte, 3:1 pour composants. Corps ≥16px minimum. Zones tactiles ≥44px. Triple encodage pour les états critiques : couleur + icône + texte. Pas de micro-texte, pas d'interfaces surchargées.
 
-**Confidentialité des données :**
-- Page "Mes données" accessible depuis le profil (pas seulement dans les CGU)
-- Explication claire de qui voit quoi (soignants désignés, employeur = jamais individuel)
-- Suppression du compte en self-service visible
-- Consentement opt-in explicite pour le partage avec tiers
+**Confidentialité des données :** Page "Mes données" accessible depuis le profil (pas seulement dans les CGU). Explication claire de qui voit quoi (soignants désignés, employeur = jamais individuel). Suppression du compte en self-service visible. Consentement opt-in explicite pour le partage avec tiers.
 
 ---
 
@@ -516,43 +409,21 @@ Avant de livrer une interface applicative :
 ┌──────────┬────────────────────────────────┐
 │          │ [Modèle actif] ↓   Partager   │
 │ Sidebar  ├────────────────────────────────┤
-│          │                                │
 │ Nouveau  │ Zone de chat                   │
-│ Projets  │                                │
-│ Histoire │ [Message utilisateur]          │
-│          │ [Réponse AI — markdown riche]  │
-│ Profil   │                                │
-│ Plan     ├────────────────────────────────┤
-│          │ [Input multimodal] [Modèle] [▶]│
+│ Projets  │ [Message utilisateur]          │
+│ Histoire │ [Réponse AI — markdown riche]  │
+│ Profil   ├────────────────────────────────┤
+│ Plan     │ [Input multimodal] [Modèle] [▶]│
 └──────────┴────────────────────────────────┘
 ```
 
-**Empty state AI :**
-- Salutation personnalisée avec le prénom (universel)
-- Élément de brand signature (étoile Claude, logo OpenAI)
-- Pills de catégories de démarrage (Code, Créer, Écrire…)
-- Centré dans la page, très aéré
+**Empty state AI :** Salutation personnalisée avec le prénom (universel). Élément de brand signature (étoile Claude, logo OpenAI). Pills de catégories de démarrage (Code, Créer, Écrire…). Centré dans la page, très aéré.
 
-**Input multimodal standard :**
-- Attachement de fichiers (icône +)
-- Audio/dictée
-- Sélecteur de modèle visible et accessible
-- Taille dynamique (grandit avec le texte)
-- Envoi par Enter, nouvelle ligne par Shift+Enter
+**Input multimodal standard :** Attachement de fichiers (icône +). Audio/dictée. Sélecteur de modèle visible et accessible. Taille dynamique (grandit avec le texte). Envoi par Enter, nouvelle ligne par Shift+Enter.
 
-**Rendu markdown — critères de qualité :**
-- Headers (`#`, `##`) rendus avec hiérarchie visuelle
-- Bold et italic
-- Blocs de code avec label de langage + bouton copier
-- Listes à puces et numérotées
-- Tableaux comparatifs
-- Séparateurs horizontaux
+**Rendu markdown — critères de qualité :** Headers (`#`, `##`) rendus avec hiérarchie visuelle. Bold et italic. Blocs de code avec label de langage + bouton copier. Listes à puces et numérotées. Tableaux comparatifs. Séparateurs horizontaux.
 
-**Différenciation émotionnelle par interface :**
-- Claude : chaleur (serif, terracotta, crème institutionnel)
-- ChatGPT : puissance (noir, sans-serif, densité sidebar)
-- Perplexity : vérifiabilité (teal, citations numérotées, icônes focus)
-
+**Différenciation émotionnelle par interface :** Claude : chaleur (serif, terracotta, crème institutionnel). ChatGPT : puissance (noir, sans-serif, densité sidebar). Perplexity : vérifiabilité (teal, citations numérotées, icônes focus).
 
 ---
 
@@ -580,13 +451,7 @@ Avant de livrer une interface applicative :
 [Badge urgence / Top vendeur]
 ```
 
-**Page produit — anatomie standard :**
-- Galerie gauche : image principale + miniatures cliquables, zoom hover desktop, swipe mobile
-- Sidebar droite sticky : titre H1, prix, variantes, quantité, CTA principal
-- CTA principal : pleine largeur, ~52px hauteur, couleur accent
-- Signaux de confiance : date livraison précise, politique retour, programme protection
-- Section avis : note globale + sous-scores + filtres + liste
-- Produits similaires / même boutique en bas
+**Page produit — anatomie standard :** Galerie gauche (image principale + miniatures cliquables, zoom hover desktop, swipe mobile). Sidebar droite sticky : titre H1, prix, variantes, quantité, CTA principal. CTA principal : pleine largeur, ~52px hauteur, couleur accent. Signaux de confiance : date livraison précise, politique retour, programme protection. Section avis : note globale + sous-scores + filtres + liste. Produits similaires / même boutique en bas.
 
 **Checkout — hiérarchie de friction :**
 1. **Meilleur** : Shop Pay / Apple Pay / Google Pay en tête (avant le formulaire) → 1 tap
@@ -599,10 +464,4 @@ Avant de livrer une interface applicative :
 - **Artisan (Etsy)** : métriques de base + gestion fiches. Navigation horizontale simple.
 - **Marchand (Shopify)** : sidebar complète, analytics avancés, live view, marketing, multi-canal.
 
-**Mobile e-commerce — conventions absolues :**
-- CTA "Ajouter au panier" ou "Acheter" sticky en bas de la page produit
-- Galerie produit fullscreen swipeable avec dots de position
-- Bottom navigation × 5 onglets pour les apps natives (Accueil / Recherche / Vendre / Messages / Profil)
-- Recherche visuelle par photo (standard émergent 2024–2026)
-- Paiement biométrique (Face ID / Touch ID) via Shop Pay ou équivalent
-
+**Mobile e-commerce — conventions absolues :** CTA "Ajouter au panier" ou "Acheter" sticky en bas de la page produit. Galerie produit fullscreen swipeable avec dots de position. Bottom navigation × 5 onglets pour les apps natives (Accueil / Recherche / Vendre / Messages / Profil). Recherche visuelle par photo (standard émergent 2024–2026). Paiement biométrique (Face ID / Touch ID) via Shop Pay ou équivalent.
