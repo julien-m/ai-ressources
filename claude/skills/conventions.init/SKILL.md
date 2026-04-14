@@ -1,14 +1,14 @@
 ---
 name: conventions.init
-description: "Analyze a project's stack and generate .conventions/ directory with per-domain convention files. Use when setting up conventions for a new or existing project."
+description: "Analyze a project's stack and generate a .conventions/ manifest + index. Use when setting up conventions for a new or existing project."
 argument-hint: ""
 ---
 
-# /conventions.init — Materialize Project Conventions
+# /conventions.init — Initialize Project Conventions
 
-Analyze the current project's stack, detect relevant domains, and generate `.conventions/` directory containing compiled convention files from `~/projects/ai-ressources/`.
+Analyze the current project's stack, detect relevant domains, and generate a `.conventions/` directory that points to source files in `~/projects/ai-ressources/`.
 
-The compilation is **deterministic** (no LLM synthesis): the build script reads source files, resolves dependency graphs, concatenates content, and outputs clean per-domain files. Every agent and subagent has instant access without calling `/ai-res`.
+The generation is **deterministic** (no LLM synthesis): the build script resolves source paths and writes `manifest.yaml` plus a lightweight `index.md`. Agents read the source files directly from ai-ressources without calling `/ai-res`.
 
 ## Prerequisites
 
@@ -239,7 +239,7 @@ bun run ~/projects/ai-ressources/scripts/build-conventions.ts "$(pwd)" '{"code":
 - Resolves the `extends` graph for code domain (post-order DFS, deduplication)
 - For `design-*` domains: reads source paths from `design/index.yaml sub_domains` (ignores caller's empty arrays)
 - Outputs:
-  - `.conventions/manifest.yaml` (SHA256 hashes, source paths, metadata per domain)
+  - `.conventions/manifest.yaml` (source paths, exclusions, metadata per domain)
   - `.conventions/index.md` (table of contents with domain hints)
 - Does NOT output per-domain `.md` files (`code.md`, `design.md`, etc.) — manifest-based system only
 - Creates `.conventions/` directory if it does not exist
@@ -261,8 +261,8 @@ bun run ~/projects/ai-ressources/scripts/build-conventions.ts "$(pwd)" '{"code":
 **Edge cases handled by script:**
 
 - **Cycle in extends**: warns, skips the cyclic file, continues
-- **Missing source file**: warns with hash `"missing"`, continues
-- **Empty code domain**: skips code entry in manifest, does not add to index
+- **Missing source file**: warns, continues
+- **Empty code domain**: emits a `code` entry with zero sources if `code: []` was requested
 - **No domains**: creates only `manifest.yaml` + `index.md` (no domain entries in manifest)
 
 ### Phase 5: Gitignore
@@ -466,7 +466,7 @@ CI workflows generated:
   ✓ .github/dependabot.yml (npm)
 ```
 
-`manifest.yaml` tracks source file hashes for staleness detection in `/conventions.refresh`, and the detected stack for hook/CI refresh.
+`manifest.yaml` tracks source paths, exclusions, and the detected stack for `/conventions.refresh` plus hook/CI refresh.
 
 ## Rules
 

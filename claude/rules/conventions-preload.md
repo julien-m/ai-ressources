@@ -47,7 +47,7 @@ The directory prefix on each `→` line applies to ALL filenames listed on that 
 | Pricing page, billing tiers | `pricing` |
 | Marketing copy, landing page | `copywriting` |
 
-**Sub-domain not in index?** Not configured for this project. Use `/ai-res` for ad-hoc, or re-run `/conventions.init` to add it.
+**Sub-domain not in index?** Not configured for this project. Use `/ai-res` for ad-hoc, or re-run `/conventions.refresh --full` or `/conventions.init` to re-detect it.
 
 ## Overrides
 
