@@ -1,10 +1,13 @@
 #!/usr/bin/env bun
 /**
- * build-conventions.ts — Generate .conventions/ for a target project.
+ * build-conventions.ts — Generate .conventions/ manifest for a target project.
  *
- * Reads domain convention files from ai-ressources, resolves code-convention
- * dependency chains (extends), and writes per-domain .md files plus an index
- * and manifest into <project-dir>/.conventions/.
+ * Reads domain indexes from ai-ressources, resolves code-convention dependency
+ * chains (extends), and writes a manifest.yaml (source references) plus a
+ * lightweight index.md (routing table) into <project-dir>/.conventions/.
+ *
+ * No compiled content is written. Claude reads source files directly from
+ * ai-ressources using the paths listed in manifest.yaml.
  *
  * Usage: bun run scripts/build-conventions.ts <project-dir> <domains-json>
  *
@@ -12,12 +15,11 @@
  *   AI_RESOURCES_PATH — path to ai-ressources repo (default: parent of scripts/)
  *
  * domains-json example:
- *   {"code":["nextjs","drizzle"],"legal":["cgu-saas-type","rgpd-obligations"]}
+ *   {"code":["nextjs","drizzle"],"design-tokens":[],"legal":["cgu-saas-type"]}
  */
 
 import { readFileSync, existsSync, writeFileSync, mkdirSync } from "node:fs";
 import { join, basename, dirname } from "node:path";
-import { createHash } from "node:crypto";
 import { parse as parseYaml } from "yaml";
 
 // ── Constants ─────────────────────────────────────────────────────────────────
@@ -29,7 +31,6 @@ const AI_RESOURCES_PATH = process.env.AI_RESOURCES_PATH ?? dirname(SCRIPT_DIR);
 const DOMAIN_DIRS: Record<string, string> = {
   legal: "legal",
   pricing: "pricing-models",
-  design: "design",
   architecture: "architecture",
   stack: "stack-ref",
   copywriting: "copywriting",
@@ -37,29 +38,32 @@ const DOMAIN_DIRS: Record<string, string> = {
   conventions: "conventions",
 };
 
-/** Loading hints for index.md */
-const DOMAIN_HINTS: Record<string, string> = {
-  code: "Écrire du code, nommage, types, tests, logging, architecture",
-  legal: "Pages CGU, RGPD, politique cookies, mentions légales",
-  pricing: "Page pricing, modèles de facturation, tiers",
-  design: "Composants UI, design tokens, layout, accessibilité",
-  architecture: "Patterns d'architecture, auth, caching, webhooks",
-  stack: "Choix de stack, comparaisons de vendors",
-  copywriting: "Landing page, séquences email, taglines",
-  seo: "SEO, Core Web Vitals, pages programmatiques",
-};
+// ── Types ─────────────────────────────────────────────────────────────────────
+
+interface SubDomainDef {
+  label: string;
+  keywords: string[];
+  sources: string[];
+  exclude_columns?: string[];
+  exclude_sections?: string[];
+}
+
+interface ManifestDomain {
+  label: string;
+  keywords: string[];
+  sources: string[];
+  exclude_columns?: string[];
+  exclude_sections?: string[];
+}
+
+interface Manifest {
+  ai_resources_path: string;
+  generated: string;
+  project: string;
+  domains: Record<string, ManifestDomain>;
+}
 
 // ── Utilities ─────────────────────────────────────────────────────────────────
-
-/** SHA256, truncated to 16 hex chars */
-function sha256Short(content: string): string {
-  return createHash("sha256").update(content).digest("hex").slice(0, 16);
-}
-
-/** Strip YAML frontmatter (--- ... ---) from a markdown string */
-function stripFrontmatter(content: string): string {
-  return content.replace(/^---[\s\S]*?---\n?/, "");
-}
 
 /** Parse extends list from YAML frontmatter */
 function parseExtends(content: string): string[] {
@@ -73,11 +77,6 @@ function parseExtends(content: string): string[] {
     // ignore parse errors
   }
   return [];
-}
-
-/** Separator comment between concatenated files */
-function separator(rel: string): string {
-  return `\n---\n<!-- source: ${rel} -->\n---\n\n`;
 }
 
 // ── Code domain: post-order DFS with dedup + cycle detection ─────────────────
@@ -132,62 +131,106 @@ function resolveCodeChain(
   return { order, warnings };
 }
 
-/** Build code.md content and collect source paths */
-function buildCodeDomain(
-  names: string[],
-  aiResPath: string
-): { content: string; sources: string[]; warnings: string[] } {
-  const dir = join(aiResPath, "code-conventions");
-  const { order, warnings } = resolveCodeChain(names, dir);
+// ── Domain resolvers ──────────────────────────────────────────────────────────
 
-  const parts: string[] = [];
-  const sources: string[] = [];
-
-  for (const name of order) {
-    const filePath = join(dir, `${name}.md`);
-    if (!existsSync(filePath)) continue;
-    const rel = `code-conventions/${name}.md`;
-    const raw = readFileSync(filePath, "utf-8");
-    parts.push(separator(rel) + stripFrontmatter(raw).trimStart());
-    sources.push(rel);
+function resolveDesignSubDomain(
+  domainKey: string,
+  aiResPath: string,
+  fileNamesIgnored: string[]
+): { domain: ManifestDomain; warnings: string[] } {
+  // Warn if caller passes a file list — design-* keys are resolved from index.yaml, not the caller's list
+  if (fileNamesIgnored.length > 0) {
+    process.stderr.write(`⚠  ${domainKey}: file list is ignored — sub-domain is resolved from design/index.yaml sub_domains\n`);
   }
-
-  return { content: parts.join(""), sources, warnings };
+  const indexPath = join(aiResPath, "design", "index.yaml");
+  if (!existsSync(indexPath)) {
+    return { domain: { label: domainKey, keywords: [], sources: [] }, warnings: [`Missing design/index.yaml`] };
+  }
+  const parsed = parseYaml(readFileSync(indexPath, "utf-8")) as Record<string, unknown>;
+  const subDomains = parsed?.sub_domains as Record<string, SubDomainDef> | undefined;
+  if (!subDomains?.[domainKey]) {
+    return {
+      domain: { label: domainKey, keywords: [], sources: [] },
+      warnings: [`Unknown design sub-domain: ${domainKey} — add it to design/index.yaml sub_domains`],
+    };
+  }
+  const def = subDomains[domainKey];
+  const domain: ManifestDomain = {
+    label: def.label,
+    keywords: def.keywords,
+    sources: def.sources.map((s) => `design/${s}`),
+  };
+  if (def.exclude_columns?.length) domain.exclude_columns = def.exclude_columns;
+  if (def.exclude_sections?.length) domain.exclude_sections = def.exclude_sections;
+  const warnings: string[] = [];
+  for (const src of domain.sources) {
+    if (!existsSync(join(aiResPath, src))) warnings.push(`Missing source: ${src}`);
+  }
+  return { domain, warnings };
 }
 
-/** Build a flat domain's content and collect source paths */
-function buildFlatDomain(
+function resolveCodeDomain(
+  names: string[],
+  aiResPath: string
+): { domain: ManifestDomain; warnings: string[] } {
+  const dir = join(aiResPath, "code-conventions");
+  const { order, warnings } = resolveCodeChain(names, dir);
+  return {
+    domain: {
+      label: `Code conventions — ${names.join(", ")}`,
+      keywords: ["code", "tests", "logging", "naming", "TypeScript", "imports", "architecture"],
+      sources: order
+        .filter((n) => existsSync(join(dir, `${n}.md`)))
+        .map((n) => `code-conventions/${n}.md`),
+    },
+    warnings,
+  };
+}
+
+function resolveFlatDomain(
   domainKey: string,
   fileNames: string[],
   aiResPath: string
-): { content: string; sources: string[]; warnings: string[] } {
+): { domain: ManifestDomain; warnings: string[] } {
   const subDir = DOMAIN_DIRS[domainKey];
   if (!subDir) {
-    return {
-      content: "",
-      sources: [],
-      warnings: [`Unknown flat domain: ${domainKey}`],
-    };
+    return { domain: { label: domainKey, keywords: [], sources: [] }, warnings: [`Unknown flat domain: ${domainKey}`] };
   }
-
-  const dir = join(aiResPath, subDir);
-  const parts: string[] = [];
-  const sources: string[] = [];
   const warnings: string[] = [];
-
+  const sources: string[] = [];
   for (const name of fileNames) {
-    const filePath = join(dir, `${name}.md`);
-    if (!existsSync(filePath)) {
-      warnings.push(`Missing file: ${subDir}/${name}.md`);
-      continue;
-    }
     const rel = `${subDir}/${name}.md`;
-    const raw = readFileSync(filePath, "utf-8");
-    parts.push(separator(rel) + stripFrontmatter(raw).trimStart());
-    sources.push(rel);
+    if (!existsSync(join(aiResPath, rel))) warnings.push(`Missing file: ${rel}`);
+    else sources.push(rel);
   }
+  // Note: flat domains emit empty keywords — routing for these domains relies on the index.md quick reference table
+  return { domain: { label: `${domainKey} conventions`, keywords: [], sources }, warnings };
+}
 
-  return { content: parts.join(""), sources, warnings };
+// ── Index entry builder ───────────────────────────────────────────────────────
+
+function buildIndexEntry(domainKey: string, domain: ManifestDomain): string {
+  const kwLine = `## ${domainKey} [${domain.keywords.join(", ")}]`;
+
+  // Group sources by directory. The directory prefix on each → line applies to ALL filenames on that line.
+  // Files from different directories appear on separate → lines.
+  const byDir = new Map<string, string[]>();
+  for (const src of domain.sources) {
+    const slash = src.lastIndexOf("/");
+    const dir = slash >= 0 ? src.slice(0, slash) : ".";
+    const file = slash >= 0 ? src.slice(slash + 1) : src;
+    if (!byDir.has(dir)) byDir.set(dir, []);
+    byDir.get(dir)!.push(file);
+  }
+  const sourceLines = [...byDir.entries()]
+    .map(([dir, files]) => `→ $AIRESOURCES/${dir}/${files.join(", ")}`)
+    .join("\n");
+
+  const exclusions: string[] = [];
+  if (domain.exclude_columns?.length) exclusions.push(`⊘ colonnes: ${domain.exclude_columns.join(", ")}`);
+  if (domain.exclude_sections?.length) exclusions.push(`⊘ sections: ${domain.exclude_sections.map((s) => `"${s}"`).join(", ")}`);
+
+  return [kwLine, sourceLines, ...exclusions].join("\n");
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
@@ -213,99 +256,42 @@ mkdirSync(conventionsDir, { recursive: true });
 const projectName = basename(projectDirArg);
 const today = new Date().toISOString().slice(0, 10);
 
-interface DomainManifestEntry {
-  file: string;
-  sources: string[];
-  hashes: Record<string, string>;
-  outputHash: string;
-}
-
-const manifest: {
-  generated: string;
-  project: string;
-  aiResourcesPath: string;
-  domains: Record<string, DomainManifestEntry>;
-} = {
+const manifest: Manifest = {
+  ai_resources_path: AI_RESOURCES_PATH,
   generated: today,
   project: projectName,
-  aiResourcesPath: AI_RESOURCES_PATH,
   domains: {},
 };
 
-const indexRows: Array<{ domain: string; file: string; hint: string }> = [];
-
 for (const [domainKey, fileNames] of Object.entries(domainsInput)) {
-  let content: string;
-  let sources: string[];
+  let domain: ManifestDomain;
   let warnings: string[];
 
   if (domainKey === "code") {
-    ({ content, sources, warnings } = buildCodeDomain(fileNames, AI_RESOURCES_PATH));
+    ({ domain, warnings } = resolveCodeDomain(fileNames, AI_RESOURCES_PATH));
+  } else if (domainKey.startsWith("design-")) {
+    ({ domain, warnings } = resolveDesignSubDomain(domainKey, AI_RESOURCES_PATH, fileNames));
   } else {
-    ({ content, sources, warnings } = buildFlatDomain(domainKey, fileNames, AI_RESOURCES_PATH));
+    ({ domain, warnings } = resolveFlatDomain(domainKey, fileNames, AI_RESOURCES_PATH));
   }
 
-  // Emit warnings to stderr
-  for (const w of warnings) {
-    process.stderr.write(`⚠ ${w}\n`);
-  }
-
-  const outputFile = `${domainKey}.md`;
-  const outputPath = join(conventionsDir, outputFile);
-  writeFileSync(outputPath, content, "utf-8");
-
-  // Build hashes
-  const hashes: Record<string, string> = {};
-  for (const rel of sources) {
-    const fullPath = join(AI_RESOURCES_PATH, rel);
-    if (existsSync(fullPath)) {
-      hashes[rel] = sha256Short(readFileSync(fullPath, "utf-8"));
-    }
-  }
-
-  manifest.domains[domainKey] = {
-    file: `.conventions/${outputFile}`,
-    sources,
-    hashes,
-    outputHash: sha256Short(content),
-  };
-
-  indexRows.push({
-    domain: domainKey,
-    file: outputFile,
-    hint: DOMAIN_HINTS[domainKey] ?? "",
-  });
-
-  console.log(`✓ .conventions/${outputFile} (${sources.length} source(s))`);
+  for (const w of warnings) process.stderr.write(`⚠  ${w}\n`);
+  manifest.domains[domainKey] = domain;
+  console.log(`✓ ${domainKey} (${domain.sources.length} source(s))`);
 }
 
-// ── Write manifest ────────────────────────────────────────────────────────────
+// Write manifest.yaml
+const { stringify: yamlStringify } = await import("yaml");
+const manifestPath = join(conventionsDir, "manifest.yaml");
+writeFileSync(manifestPath, yamlStringify(manifest, { lineWidth: 100 }), "utf-8");
+console.log("✓ .conventions/manifest.yaml");
 
-const manifestPath = join(conventionsDir, "conventions.manifest.json");
-writeFileSync(manifestPath, JSON.stringify(manifest, null, 2), "utf-8");
-console.log("✓ .conventions/conventions.manifest.json");
+// Write index.md
+const domainEntries = Object.entries(manifest.domains)
+  .map(([key, domain]) => buildIndexEntry(key, domain))
+  .join("\n\n");
 
-// ── Write index.md ────────────────────────────────────────────────────────────
-
-const tableRows = indexRows
-  .map((r) => `| ${r.domain} | [${r.file}](${r.file}) | ${r.hint} |`)
-  .join("\n");
-
-const indexMd = `---
-generated: ${today}
-project: ${projectName}
----
-
-# Conventions — ${projectName}
-
-| Domaine | Fichier | Charger quand |
-|---------|---------|---------------|
-${tableRows}
-
-## Règle de priorité
-Dans \`code.md\` : la règle du fichier fils prime sur celle du parent.
-Ordre de concaténation : de la racine vers les feuilles (left-to-right dans \`extends\`).
-`;
+const indexMd = `# Conventions · ${projectName}\n\n> Match your task to domain keywords → **Read** the listed files from ai-ressources. Apply ⊘ exclusions mentally.\n> \`$AIRESOURCES\` = \`${AI_RESOURCES_PATH}\`\n\n${domainEntries}\n`;
 
 writeFileSync(join(conventionsDir, "index.md"), indexMd, "utf-8");
 console.log("✓ .conventions/index.md");
