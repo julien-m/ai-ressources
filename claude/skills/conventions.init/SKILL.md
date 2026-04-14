@@ -82,10 +82,11 @@ If no signals are provided by the caller, proceed with Channels 1-3 as before (b
 | `.swift`, `.kt` | code | `general.md` + `architecture.md` + `logging.md` + `testing.md` + `swift-kotlin.md` |
 | `.pas`, `.dfm`, `.dproj` | code | `general.md` + `architecture.md` + `logging.md` + `testing.md` + `delphi.md` |
 | `.sql`, `migration`/`schema` in path | code | `database.md` |
-| `.css`, `.scss` | design | `design/systems/web-standards.md` + `design/tokens/*.md` |
-| `.swift` with UI, `.xib`, `.storyboard` | design | `design/systems/apple-hig.md` + `design/tokens/*.md` |
-| `.kt` with UI, layout XML | design | `design/systems/material-design.md` + `design/tokens/*.md` |
-| `.pen` | design | `design/references/mockup-specs.md` |
+| `.css`, `.scss` | design-tokens | `design/tokens/*.md` |
+| `.tsx`, `.jsx`, `.svelte`, `.vue` | design-components | `design/components/*.md` |
+| `.swift` with UI, `.xib`, `.storyboard` | design-tokens | `design/systems/apple-hig.md` + `design/tokens/*.md` |
+| `.kt` with UI, layout XML | design-tokens | `design/systems/material-design.md` + `design/tokens/*.md` |
+| `.pen` | design-components | `design/references/mockup-specs.md` |
 | `.md` with mermaid/gherkin | diagrams | `conventions/diagrams.md` |
 | `.specs/` directory exists | diagrams | `conventions/diagrams.md` |
 
@@ -127,9 +128,24 @@ Match extracted package names against **Read** [`references/package-mapping.md`]
 
 For architecture patterns, grep the project codebase for signals from **Read** [`references/architecture-signals.md`](references/architecture-signals.md).
 
-#### Channel 3: Project type → design, copywriting, quality
+#### Channel 2b: Dependencies → design sub-domains
 
-Use **Read** [`references/project-type-signals.md`](references/project-type-signals.md).
+Detect design sub-domains from `package.json` dependencies and project structure:
+
+| Signal | Sub-domain(s) detected |
+|--------|------------------------|
+| Any other design sub-domain detected | `design-tokens` (always include — transversal, small) |
+| `react`, `vue`, `svelte`, `solid-js`, `@shadcn/ui`, `radix-ui`, `@radix-ui/*`, `@headlessui/*`, `@mantine/*`; OR `.tsx`/`.jsx`/`.svelte`/`.vue` files exist | `design-components` |
+| `next`, `nuxt`, `@sveltejs/kit`, `@remix-run/*`, `astro`; OR `pages/`, `app/`, `routes/` directory exists | `design-views` |
+| `design-components` or `design-views` detected | `design-quality` (accessibility is a default for any web UI) |
+| `recharts`, `chart.js`, `d3`, `victory`, `@tremor/*`, `plotly.js`, `nivo`, `@visx/*`; OR source files contain `dashboard`/`metrics`/`analytics` | `design-dataviz` |
+| `ws`, `socket.io`, `ably`, `pusher-js`, `partysocket`; OR source files contain `WebSocket`/`EventSource`/`SSE`/`useWebSocket` | `design-realtime` |
+
+`design` is NOT a valid standalone domain key — always use the `design-*` sub-domains above.
+
+#### Channel 3: Project type → design sub-domains, copywriting, quality
+
+Use **Read** [`references/project-type-signals.md`](references/project-type-signals.md). Map project type signals to the appropriate `design-*` sub-domains using Channel 2b rules above.
 
 ### Phase 3: Confirm with user
 
@@ -155,9 +171,12 @@ Stack:
   ✓ databases/turso, auth/better-auth, platforms/cloudflare
 
 Design:
-  ✓ web (web-standards + tokens)
-  ✓ quality (accessibility + ui-rules)
-  ✓ components: forms, modals, navigation
+  ✓ design-tokens [CSS, colors, spacing, typo, motion]
+  ✓ design-components [button, form, modal, nav, toast]
+  ✓ design-views [page, layout, dashboard, settings, auth]
+  ✓ design-quality [a11y, WCAG, audit]
+  (design-dataviz not detected — add if needed)
+  (design-realtime not detected — add if needed)
 
 Copywriting:
   (none detected)
@@ -180,31 +199,22 @@ Build a JSON object mapping category names to detected files. Use the domains de
 
 ```json
 {
-  "code": [
-    "nextjs",
-    "drizzle",
-    "tailwind",
-    "testing",
-    "logging",
-    "architecture"
-  ],
-  "legal": [
-    "cgu-saas-type",
-    "rgpd-obligations"
-  ],
-  "design": [
-    "web-standards",
-    "forms",
-    "colors"
-  ]
+  "code": ["nextjs", "drizzle"],
+  "design-tokens": [],
+  "design-components": [],
+  "design-views": [],
+  "design-quality": [],
+  "legal": []
 }
 ```
+
+**Note:** `design-*` keys always pass `[]` — the build script reads source paths from `design/index.yaml sub_domains`, not from the caller's file list.
 
 **Mapping from Phase 2-3 to domains JSON:**
 
 - **code domain**: All detected language/framework files (javascript, react, nextjs, drizzle, prisma, tailwind, etc.) PLUS any transversal files explicitly mentioned (testing, logging, architecture, runtime-configs). `general` and `database` are **excluded** from the domains array — they are auto-resolved by the build script via the `extends` graph in each file's frontmatter.
 - **legal domain**: Architecture or legal files detected in Phase 2 (from `architecture/`, `conventions/`)
-- **design domain**: Design-related files detected in Phase 2 (from `design/`)
+- **design-\* domains**: Each detected `design-*` sub-domain gets its own key with an empty array (`[]`). Never use a bare `"design"` key.
 - **pricing domain**: Pricing model files if detected (from `pricing-models/`)
 - **architecture domain**: Not a separate domain — include in code if `architecture.md` was detected
 
@@ -213,34 +223,47 @@ Build a JSON object mapping category names to detected files. Use the domains de
 - Detected: TypeScript, React, Next.js, Drizzle → `code: ["nextjs", "drizzle"]` (general + javascript + react are inherited via extends)
 - Detected: TypeScript, testing, logging → `code: ["javascript", "testing", "logging"]` (general inherited)
 - Greenfield project, no code → `code: []` (omit or empty array)
+- Detected: React + Next.js → `"design-tokens": [], "design-components": [], "design-views": [], "design-quality": []`
 
 #### 4.1 Invoke build-conventions.ts
 
 Call the build script with the project directory and domains JSON:
 
 ```bash
-bun run ~/projects/ai-ressources/scripts/build-conventions.ts "$(pwd)" '{"code":["nextjs","drizzle"],"legal":[],"design":[]}'
+bun run ~/projects/ai-ressources/scripts/build-conventions.ts "$(pwd)" '{"code":["nextjs","drizzle"],"design-tokens":[],"design-components":[],"design-views":[],"design-quality":[],"legal":[]}'
 ```
 
 **Script behavior:**
 
 - Reads from `~/projects/ai-ressources/code-conventions/*.md` (and other domain directories)
 - Resolves the `extends` graph for code domain (post-order DFS, deduplication)
-- Concatenates files with separators: `\n\n---\n<!-- source: path -->\n---\n\n`
+- For `design-*` domains: reads source paths from `design/index.yaml sub_domains` (ignores caller's empty arrays)
 - Outputs:
-  - `.conventions/code.md` (if code domain has files)
-  - `.conventions/legal.md`, `.conventions/design.md`, etc. (if domains have files)
+  - `.conventions/manifest.yaml` (SHA256 hashes, source paths, metadata per domain)
   - `.conventions/index.md` (table of contents with domain hints)
-  - `.conventions/conventions.manifest.json` (SHA256 hashes + metadata)
+- Does NOT output per-domain `.md` files (`code.md`, `design.md`, etc.) — manifest-based system only
 - Creates `.conventions/` directory if it does not exist
 - Exits with status 0 (warnings non-fatal)
+
+**Expected output:**
+```
+✓ code (5 source(s))
+✓ design-tokens (4 source(s))
+✓ design-components (7 source(s))
+✓ design-views (4 source(s))
+✓ design-quality (2 source(s))
+✓ .conventions/manifest.yaml
+✓ .conventions/index.md
+```
+
+**Verify output:** `.conventions/` must contain ONLY `manifest.yaml` and `index.md`. It must NOT contain `design.md`, `code.md`, `conventions.manifest.json`, or any other per-domain `.md` files.
 
 **Edge cases handled by script:**
 
 - **Cycle in extends**: warns, skips the cyclic file, continues
 - **Missing source file**: warns with hash `"missing"`, continues
-- **Empty code domain**: skips code.md, does not add to index
-- **No domains**: creates only index.md (no domain files)
+- **Empty code domain**: skips code entry in manifest, does not add to index
+- **No domains**: creates only `manifest.yaml` + `index.md` (no domain entries in manifest)
 
 ### Phase 5: Gitignore
 
@@ -399,16 +422,20 @@ Pre-commit hook installed:
 
 ### Manifest Update
 
-After Phase 8, append the `stack` field to `.conventions/conventions.manifest.json`:
+After Phase 8, append the `stack` field to `.conventions/manifest.yaml`:
 
-```json
-"stack": {
-  "labels": ["TypeScript + Biome"],
-  "markers": ["tsconfig.json", "biome.json"],
-  "hookGenerated": true,
-  "ciGenerated": ["ci.yml", "security.yml"],
-  "dependabotGenerated": true
-}
+```yaml
+stack:
+  labels:
+    - "TypeScript + Biome"
+  markers:
+    - tsconfig.json
+    - biome.json
+  hookGenerated: true
+  ciGenerated:
+    - ci.yml
+    - security.yml
+  dependabotGenerated: true
 ```
 
 This is written by the skill (not `build-conventions.ts`), after Phase 4 generates the manifest.
@@ -417,12 +444,14 @@ This is written by the skill (not `build-conventions.ts`), after Phase 4 generat
 
 Display:
 ```
-.conventions/ generated — {N} domains, {L} total lines
-  ✓ code.md ({L1} lines, {S} sources)
-  ✓ legal.md ({L2} lines, {S} sources)
-  ✓ design.md ({L3} lines, {S} sources)
+.conventions/ generated — {N} domains
+  ✓ code ({S} source(s))
+  ✓ design-tokens ({S} source(s))
+  ✓ design-components ({S} source(s))
+  ✓ design-views ({S} source(s))
+  ✓ design-quality ({S} source(s))
+  ✓ manifest.yaml
   ✓ index.md
-  ✓ conventions.manifest.json
 
 Config audit: {X} fixed, {Y} created, {Z} skipped
 
@@ -437,7 +466,7 @@ CI workflows generated:
   ✓ .github/dependabot.yml (npm)
 ```
 
-The manifest tracks file hashes for staleness detection in `/conventions.refresh`, and the detected stack for hook/CI refresh.
+`manifest.yaml` tracks source file hashes for staleness detection in `/conventions.refresh`, and the detected stack for hook/CI refresh.
 
 ## Rules
 
