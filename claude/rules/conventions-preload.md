@@ -4,79 +4,74 @@
 
 ## What it is
 
-`.conventions/` contains domain-specific convention files compiled from `~/projects/ai-ressources/`. It replaces runtime calls to `/ai-res` for conventions.
+`.conventions/` contains two files only:
+- `index.md` — routing table (~30–60 lines): domain keywords + direct ai-ressources file paths
+- `manifest.yaml` — machine-readable: exact source paths + exclusion filters per sub-domain
 
-Structure:
-- `.conventions/index.md` — table of contents with domain hints
-- `.conventions/code.md` — coding conventions (language, framework, testing, logging, architecture)
-- `.conventions/legal.md`, `.conventions/design.md`, etc. — domain-specific conventions
-- `.conventions/conventions.manifest.json` — metadata and staleness hashes
+No compiled content. Source files live in ai-ressources and are read directly.
 
 ## Loading
 
 **Before coding, designing, or producing anything covered by conventions:**
 
-1. **Read** `.conventions/index.md` to understand which domain applies to your task
-2. **Read** the relevant domain file (e.g., `.conventions/code.md` for coding tasks, `.conventions/legal.md` for legal content)
+1. **Read** `.conventions/index.md` — scan domain keywords to identify your sub-domain
+2. **Read** the source files listed for that sub-domain (`→` lines), directly from the `$AIRESOURCES` path shown in the index header
+3. Apply `⊘` exclusions mentally when reading (e.g., ignore iOS/Android columns in token tables)
 
-**No routing needed.** The index tells you which file to read. Load only what you need.
+Load only the sub-domain(s) that match your task. Do not pre-load all sub-domains.
 
-### Domain hints
+### Reading the index
 
-| Task type | Load |
-|-----------|------|
-| Writing code, implementing features, testing, debugging | `.conventions/code.md` |
-| Creating legal content (ToS, privacy, policies) | `.conventions/legal.md` |
-| Designing UI, components, layouts, visual systems | `.conventions/design.md` |
-| Writing marketing copy, homepage, pricing | `.conventions/copywriting.md` |
-| Configuring pricing tiers, payment models | `.conventions/pricing.md` |
-| Creating diagrams, flowcharts, flows | `.conventions/diagrams.md` |
+Each entry in `index.md`:
+```
+## domain-name [kw1, kw2, kw3, ...]
+→ $AIRESOURCES/dir/file1.md, file2.md
+→ $AIRESOURCES/dir/file3.md
+⊘ exclusion note  ← apply mentally when reading
+```
 
-**Not found?** The domain is not materialized for this project. Use `/ai-res` for ad-hoc queries, or suggest `/conventions.refresh --full` to detect additional domains.
+The directory prefix on each `→` line applies to ALL filenames listed on that line.
+
+### Sub-domain quick reference
+
+| Task | Sub-domain |
+|------|-----------|
+| CSS, colors, spacing, typography, motion, dark mode | `design-tokens` |
+| Button, input, form, toast, modal, nav, list, badge | `design-components` |
+| Page layout, dashboard, settings, auth, mockup specs | `design-views` |
+| a11y audit, WCAG, keyboard nav, ARIA, visual QA | `design-quality` |
+| Charts, metrics, KPIs, data visualization | `design-dataviz` |
+| WebSocket, SSE, streaming, LLM token output, real-time | `design-realtime` |
+| Code, tests, logging, naming, imports, architecture | `code` |
+| Legal pages, ToS, RGPD, cookies | `legal` |
+| Pricing page, billing tiers | `pricing` |
+| Marketing copy, landing page | `copywriting` |
+
+**Sub-domain not in index?** Not configured for this project. Use `/ai-res` for ad-hoc, or re-run `/conventions.init` to add it.
 
 ## Overrides
 
 When `.conventions/` exists:
-
-- **Replaces `/ai-res`** for all materialized domains. Do NOT call `/ai-res` for topics covered by a domain file.
-- **Replaces individual convention files** — do not read `code-conventions/*.md` or `design/*.md` directly from `~/projects/ai-ressources/`. The compiled domain files already contain the relevant rules.
-- `/ai-res` remains usable for ad-hoc queries **outside** the materialized scope (e.g., a domain not detected in this project).
+- Do NOT call `/ai-res` for topics covered by the manifest
+- Do NOT read ai-ressources source files directly without checking the index first — the manifest may declare `⊘` exclusions
+- `/ai-res` remains valid for topics outside the manifest scope
 
 ## Subagents
 
-When dispatching a subagent that will code, design, or produce content:
+When dispatching a subagent that will code or design:
+1. Read `.conventions/index.md`
+2. Identify the relevant sub-domain(s)
+3. Read the source files for those sub-domains directly from ai-ressources (paths from `→` lines in index)
+4. Include the content in the subagent prompt under `## Conventions`
 
-1. **Identify the relevant domain** for the subagent's task
-2. **Read** the corresponding `.conventions/<domain>.md` file
-3. **Include the file content directly in the subagent's prompt** under a `## Conventions` section
-
-Example:
-```
-You are implementing a feature for a React project.
-
-## Conventions
-{content of .conventions/code.md}
-
-## Task
-Implement X by following the conventions above.
-```
-
-The subagent does NOT need to load conventions itself — you provide the exact rules it needs.
-
-## Audit
-
-When `.conventions/` exists, `/audit` reads only the relevant domain file (based on the file type being audited) instead of calling `/ai-res`. Domain auditors receive the conventions in their prompt.
+The subagent does NOT need to load conventions itself — the dispatching agent reads and includes the content.
 
 ## Freshness
 
-At the start of each session (optional reminder):
+Conventions are always fresh — they reference ai-ressources source files directly. No hash comparison needed.
 
-1. Check if `.conventions/conventions.manifest.json` exists
-2. If not found → suggest `/conventions.refresh --full` once (transparent migration for old projects)
-3. If found → conventions are materialized and up to date (manifest tracks staleness)
-
-Do not block — this is a gentle reminder only.
+Check `.conventions/manifest.yaml` exists. If not found, or if `.conventions/` contains compiled `.md` domain files (e.g., `design.md`, `code.md` — old format), suggest `/conventions.refresh --full` once to migrate. Do not block.
 
 ## Initialization
 
-If `.conventions/` does **not** exist and the project contains code or design files, suggest `/conventions.init` once at the start of the session. Do not block.
+If `.conventions/` does not exist and the project has code or design files, suggest `/conventions.init` once. Do not block.
