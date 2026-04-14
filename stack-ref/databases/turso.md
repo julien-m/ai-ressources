@@ -12,13 +12,11 @@ free_tier: true
 > _SQLite à l'edge — latence microseconde, multi-tenant, réplication globale._
 
 ## Ce que c'est
-
 Turso est un service de base de données managé basé sur **libSQL** (fork open-source de SQLite par Turso). Architecture diskless sur S3 Express + multi-tenant massif. Idéal pour le pattern "1 DB par tenant". Fondé par Glauber Costa (ex-ScyllaDB). Infrastructure basée sur AWS, migré depuis Fly.io en 2024.
 
 **libSQL** est un fork compatible SQLite avec extensions : writes concurrents, HTTP API, réplication.
 
 ## Free Tier
-
 | Métrique | Limite |
 |---|---|
 | Databases | 100 (actives) |
@@ -32,11 +30,8 @@ Turso est un service de base de données managé basé sur **libSQL** (fork open
 > Pas de carte bancaire requise pour le free tier.
 
 ## Pricing
-
 ### Free — $0/mois
-
 ### Developer — $4.99/mois _(ou $3.99/mois annuel)_
-
 | Métrique | Inclus | Overage |
 |---|---|---|
 | Active DBs | 500 | +$0.20/DB/mois |
@@ -47,7 +42,6 @@ Turso est un service de base de données managé basé sur **libSQL** (fork open
 | PITR | 10 jours | — |
 
 ### Scaler — $24.92/mois _(ou ~$19.99/mois annuel)_
-
 | Métrique | Inclus | Overage |
 |---|---|---|
 | Active DBs | 2 500 | +$0.05/DB/mois |
@@ -58,17 +52,14 @@ Turso est un service de base de données managé basé sur **libSQL** (fork open
 | PITR | 30 jours | — |
 
 ### Pro — $416.58/mois
-
 Pour les workloads massifs : 250B rows lus inclus, SSO, BYOK, HIPAA, SOC2.
 
 ### 💡 Exemples de calcul
-
 - **Side-project, 10 users, DB active 3h/jour** → Free tier suffit
 - **App multi-tenant 200 tenants, ~1GB data** → Developer $4.99/mo
 - **SaaS 2000 tenants, 10GB data, usage modéré** → Scaler ~$25/mo
 
 ## 📊 Coût estimé par palier d'utilisateurs
-
 > **Hypothèses** : app SaaS · 20% MAU · ~100 req DB/utilisateur actif/jour · 80% lectures / 20% écritures
 
 | Palier | MAU | Req/mois | Coût estimé | Plan | Notes |
@@ -83,46 +74,35 @@ Pour les workloads massifs : 250B rows lus inclus, SSO, BYOK, HIPAA, SOC2.
 > 🏆 **Rapport qualité/prix exceptionnel** : Turso est l'option SQL la moins chère à toutes les échelles grâce au billing par rows et non par compute. À 1M users, ~$40/mo là où Neon ou Supabase dépassent $300-500/mo.
 
 ## Performances
-
 | Métrique | Valeur |
 |---|---|
 | Latence (même région) | < 1ms |
 | Latence (replica edge) | 1–10ms |
 | Pas de cold start | ✅ (architecture multi-tenant) |
 | Réplication | 3 à 6+ régions selon plan |
-
 ## ✅ Quand utiliser
-
 - Architecture **database-per-tenant** (1 SQLite = 1 client)
 - App mobile avec embedded replica (offline writes)
 - Edge computing nécessitant du SQL
 - Prototype nécessitant SQLite en prod managée
 - Données géographiquement distribuées (faible latence par région)
-
 ## ❌ Quand ne PAS utiliser
-
 - Workloads PostgreSQL complexes (pas de full SQL compatibility)
 - Requêtes analytiques lourdes / JOIN complexes
 - Besoin de Postgres extensions (pgvector, PostGIS, etc.)
 - Équipe déjà experte en Postgres → préférer Neon/Supabase
-
 ## Combinaisons stack optimales
-
 - **SaaS multi-tenant edge** → `Turso + Cloudflare Workers + Drizzle ORM`
 - **App mobile local-first** → `Turso embedded replica + libSQL`
 - **Side-project solo** → `Turso free + Bun + Hono`
-
 ## Alternatives directes
-
 | Alternative | Différence clé |
 |---|---|
 | Cloudflare D1 | SQLite dans Workers, mais lié à Cloudflare |
 | SQLite self-hosted | Gratuit mais pas de réplication managée |
 | Neon | PostgreSQL, plus de features SQL, scale-to-zero |
 | Supabase | BaaS complet, Postgres, plus cher |
-
 ## Ressources
-
 - [Documentation](https://docs.turso.tech)
 - [Pricing officiel](https://turso.tech/pricing)
 - [libSQL GitHub](https://github.com/tursodatabase/libsql)

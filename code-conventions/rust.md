@@ -1,11 +1,9 @@
 ---
 extends: [general]
 ---
-
 # Rust Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Only Rust-specific conventions are listed here.
-
 ## Stack
 - Build: **Cargo**, edition **2021** minimum (prefer latest stable)
 - Async runtime: **Tokio** (default)
@@ -43,19 +41,11 @@ pub use service::UserService;
 - No `#[allow(unused)]` without justification
 - `cargo audit` for dependency security
 
-```bash
-cargo fmt --check && cargo clippy -- -D warnings && cargo test && cargo build
-```
-
 ## Pre-commit Validation
-
-Before committing, all of these must pass with zero errors/warnings:
+All must pass with zero errors/warnings:
 
 ```bash
-cargo check                       # type/borrow checking
-cargo clippy -- -D warnings       # linting (warnings as errors)
-cargo fmt --check                 # formatting
-cargo test                        # tests
+cargo check && cargo clippy -- -D warnings && cargo fmt --check && cargo test
 ```
 
 ## Naming
@@ -135,11 +125,8 @@ Implement `From<T>` / `Into<T>` for conversions between layers (DB model → dom
 - Include `# Arguments`, `# Errors`, `# Examples` sections
 - Doc examples are compiled and tested by `cargo test`
 - Document all `Result` error variants
-
 ### Inline Comment Triggers
-All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments.
-
-Additionally for Rust:
+All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments. Additionally for Rust:
 - **`unsafe` blocks** — require a `// SAFETY:` comment explaining why the invariants hold
 - **`#[allow(...)]`** attributes — explain why the lint is suppressed
 - **`mem::transmute`, `ptr::read`, raw pointer dereference** — explain the memory safety argument

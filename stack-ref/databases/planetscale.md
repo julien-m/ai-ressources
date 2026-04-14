@@ -12,21 +12,17 @@ free_tier: false
 > _MySQL serverless ultra-scalable basé sur Vitess — l'engine qui propulse YouTube et Slack._
 
 ## Ce que c'est
-
 PlanetScale est une plateforme de base de données MySQL managée construite sur **Vitess**, le système de sharding horizontal créé par YouTube chez Google (open-source). Conçu pour le scale horizontal sans modification de l'application. Support du branching de schéma (comme git pour les migrations). Fondé en 2018.
 
 ⚠️ En 2024, PlanetScale a supprimé son free tier (Hobby plan). Plans payants uniquement désormais.
 
 ## Free Tier
-
 **❌ Pas de free tier depuis mars 2024.** Plan Scaler démarre à $39/mois.
 
 > Alternative gratuite pour MySQL managé : Planetscale propose PlanetScale for open source projects (à demander).
 
 ## Pricing
-
 ### Scaler — $39/mois
-
 | Métrique | Inclus |
 |---|---|
 | Stockage | 10 GB |
@@ -38,7 +34,6 @@ PlanetScale est une plateforme de base de données MySQL managée construite sur
 > Overage : $1.50/GB stockage, $1.50/10M lectures, $1.50/M écritures
 
 ### Scaler Pro — $99/mois
-
 | Métrique | Inclus |
 |---|---|
 | Stockage | 10 GB |
@@ -47,14 +42,11 @@ PlanetScale est une plateforme de base de données MySQL managée construite sur
 | Multi-régions | En option (prix additionnel) |
 
 ### Enterprise — sur devis (plusieurs régions, SLA, compliance)
-
 ### 💡 Exemples de calcul
-
 - **Petit SaaS, 5GB, usage modéré** → Scaler : $39/mo
 - **SaaS moyen, 30GB, 500M lectures** → Scaler Pro + overage : ~$150+/mo
 
 ## 📊 Coût estimé par palier d'utilisateurs
-
 > **Hypothèses** : app SaaS · 20% MAU · ~100 req DB/utilisateur actif/jour · 80% lectures / 20% écritures · Scaler $39/mo comme plan de base
 
 | Palier | MAU | Lectures/mois | Écritures/mois | Coût estimé | Notes |
@@ -69,43 +61,32 @@ PlanetScale est une plateforme de base de données MySQL managée construite sur
 > ⚠️ **Coût minimum élevé** : $39/mo dès le premier palier — PlanetScale n'est pas adapté aux projets bootstrapped à faible volume. Le vrai avantage arrive à **500k–1M users** où le branching, la scalabilité MySQL et l'absence de downtime justifient le coût. Pour un side-project, Turso ($5) ou Supabase ($25) sont meilleurs choix.
 
 ## Performances
-
 | Métrique | Valeur |
 |---|---|
 | Vitess sharding | Horizontal scale transparent |
 | Latence | 1–10ms (même région) |
 | Connexions | Pool de connexions natif (Vitess) |
 | Scale horizontal | Sans downtime ni resharding manuel |
-
 ## ✅ Quand utiliser
-
 - App MySQL existante à scaler massivement sans re-architecture
 - Besoin de Vitess sans gérer soi-même l'infra Vitess
 - Branching de schéma pour migrations sécurisées
 - Équipe habituée à MySQL en production
-
 ## ❌ Quand ne PAS utiliser
-
 - Budget limité (pas de free tier, $39/mo minimum)
 - Besoin de PostgreSQL et ses extensions
 - Multi-région actif-actif natif sans coût supplémentaire
 - Petit projet ou prototype
-
 ## Combinaisons stack optimales
-
 - **SaaS existant MySQL → scale** → `PlanetScale + Prisma`
 - **App Laravel / Rails MySQL** → `PlanetScale + framework ORM natif`
-
 ## Alternatives directes
-
 | Alternative | Différence clé |
 |---|---|
 | Neon | PostgreSQL, free tier, scale-to-zero |
 | Supabase | BaaS Postgres, free tier |
 | CockroachDB | Multi-région natif, Postgres-compatible |
 | MySQL self-hosted | Gratuit mais gestion manuelle |
-
 ## Ressources
-
 - [Documentation](https://planetscale.com/docs)
 - [Pricing officiel](https://planetscale.com/pricing)

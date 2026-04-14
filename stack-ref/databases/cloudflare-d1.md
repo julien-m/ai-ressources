@@ -12,11 +12,9 @@ free_tier: true
 > _SQLite à l'edge dans Cloudflare Workers — zéro latence pour vos Workers._
 
 ## Ce que c'est
-
 Cloudflare D1 est un service de base de données SQLite distribué, accessible uniquement depuis les Cloudflare Workers. Basé sur SQLite, répliqué sur le réseau Cloudflare (200+ PoP). Pensé pour être l'état persistant natif des Workers. Pas de connexion TCP externe possible — bind uniquement via `env.DB`.
 
 ## Free Tier (inclus dans Workers Free)
-
 | Métrique | Limite |
 |---|---|
 | Stockage | 5 GB |
@@ -25,7 +23,6 @@ Cloudflare D1 est un service de base de données SQLite distribué, accessible u
 | Bases | illimité |
 
 ## Pricing (Workers Paid — $5/mois)
-
 | Métrique | Inclus | Overage |
 |---|---|---|
 | Stockage | 5 GB | $0.75/GB-mois |
@@ -33,12 +30,10 @@ Cloudflare D1 est un service de base de données SQLite distribué, accessible u
 | Écritures | 50M rows/mois | $1.00/M rows |
 
 ### 💡 Exemples de calcul
-
 - **App Workers small (100K req/jour, CRUD)** → Workers Paid $5/mo couvre tout
 - **App Workers medium (1M req/jour)** → $5 + overage lecture ~$5-10/mo
 
 ## 📊 Coût estimé par palier d'utilisateurs
-
 > **Hypothèses** : app SaaS sur Cloudflare Workers · 20% MAU · ~100 req DB/utilisateur actif/jour · 80% lectures / 20% écritures
 
 | Palier | MAU | Lectures/mois | Écritures/mois | Coût estimé | Notes |
@@ -53,7 +48,6 @@ Cloudflare D1 est un service de base de données SQLite distribué, accessible u
 > ⚠️ **Attention aux écritures à 1M users** : D1 est optimisé lecture. Le coût des écritures ($1/M rows) devient le facteur limitant à grande échelle. Si ton app est write-heavy (ex: logging, feed), anticiper ce coût ou envisager Turso en parallèle.
 
 ## Performances
-
 | Métrique | Valeur |
 |---|---|
 | Latence (Worker local) | < 1ms (même PoP) |
@@ -61,27 +55,19 @@ Cloudflare D1 est un service de base de données SQLite distribué, accessible u
 | Écritures | Centralisées (une région primaire) |
 
 > ⚠️ Les écritures sont routées vers une région primaire. Les lectures sont locales. Si votre app est write-heavy depuis plusieurs régions, la latence d'écriture peut être élevée.
-
 ## ✅ Quand utiliser
-
 - State persistant pour un Cloudflare Worker
 - API CRUD simple entièrement dans Workers
 - Cache SQL structuré à l'edge
 - App entièrement dans l'écosystème Cloudflare
-
 ## ❌ Quand ne PAS utiliser
-
 - Accès depuis une autre plateforme que Workers (impossible en direct)
 - Workloads SQL complexes (SQLite < Postgres features)
 - Writes haute fréquence depuis plusieurs régions (latence primaire)
 - Besoin de Postgres extensions
-
 ## Combinaisons stack optimales
-
 - **Full Cloudflare** → `Workers + D1 + R2 + KV + Drizzle ORM`
 - **API REST edge** → `Hono + D1 + Cloudflare Pages`
-
 ## Ressources
-
 - [Documentation D1](https://developers.cloudflare.com/d1/)
 - [Pricing Cloudflare](https://www.cloudflare.com/plans/)

@@ -1,15 +1,12 @@
 ---
 extends: [javascript]
 ---
-
 # TypeScript CLI Conventions (Delta)
 
 > Delta on [`javascript.md`](javascript.md). Load after it when building a Node.js/Bun CLI application.
 > For visual/UX patterns (colors, spinners, tables, prompts), see [`../design/systems/cli-patterns.md`](../design/systems/cli-patterns.md).
 > For runtime/language choice, see [`../stack-ref/frontend/cli.md`](../stack-ref/frontend/cli.md).
-
 ## Entry Point Architecture
-
 Split every CLI entry point into a **fast path** and a **full path**:
 
 ```ts
@@ -27,7 +24,6 @@ await run();
 - `--version` and `--help` must be instant
 
 ## Command Registration (Commander.js)
-
 - Use **Commander.js** for argument parsing — never `switch` on `process.argv` manually
 - Use `InvalidArgumentError` for argument validation, not manual `process.exit`
 - Use `.parseAsync()` not `.parse()` — async commands need it
@@ -35,30 +31,22 @@ await run();
 - Every command that returns data **must** support `--json` for scripting
 
 ## Stdin Input
-
 Commands accepting variable-length text input (prompts, messages, content bodies) **must** also accept stdin when the positional argument is omitted. This enables piping from files, other commands, and scripts.
-
 ### Priority order
-
 1. **Positional argument** — if provided, use it (explicit over implicit)
 2. **stdin** — if `!process.stdin.isTTY` (piped input detected), read stdin
 3. **Error** — no input available, throw with a usage hint
-
 ### Rules
-
 - **isTTY guard is mandatory** — never read stdin without checking `!process.stdin.isTTY` first, or the command hangs waiting for terminal input
 - stdin is consumed as **UTF-8 text** — binary input is out of scope
 - **Scope:** applies to arguments where a user might pipe content from a file. Does not apply to short structured args (IDs, paths, enum values)
-
 ### Pattern
-
-Place `resolveInput()` in `services/` (services own all I/O):
+Place `resolveInput()` in `services/` (services own all I/O). Register the positional argument as optional (`[text]`):
 
 ```ts
 // services/input.ts — resolve text input from arg or stdin
 export async function resolveInput(arg: string | undefined): Promise<string> {
   if (arg !== undefined) return arg.trim();
-
   if (!process.stdin.isTTY) {
     const chunks: Buffer[] = [];
     for await (const chunk of process.stdin) chunks.push(chunk);
@@ -66,25 +54,18 @@ export async function resolveInput(arg: string | undefined): Promise<string> {
     if (!input) throw new Error("Stdin was empty. Provide input via argument or non-empty pipe.");
     return input;
   }
-
   throw new Error("No input provided. Pass text as argument or pipe via stdin.");
 }
 ```
 
-Register the positional argument as optional with Commander.js (`[text]` = optional):
-
 ```ts
 program
   .command("ask [text]")
-  .description("Ask a question")
   .action(async (text: string | undefined) => {
     const input = await resolveInput(text);
-    // ...
   });
 ```
-
 ### Usage
-
 ```bash
 my-cli ask "direct question"           # positional arg
 echo "question" | my-cli ask           # piped string
@@ -93,7 +74,6 @@ my-cli ask                             # error: no input provided
 ```
 
 ## Module Structure
-
 ```
 src/
   cli.ts          # Entry point — fast path + dynamic import of app
@@ -108,7 +88,6 @@ src/
 - `commands/` must not contain business logic — delegate to `services/`
 
 ## Build Pipeline
-
 - **esbuild** for distributable CLIs — bundle to single ESM output
 - **`bun build --compile`** for internal/dev tools — self-contained binary
 - Always include `bin` field in `package.json` for installable CLIs
@@ -117,7 +96,6 @@ src/
 - Use esbuild `define` for build-time feature gates (dead-code elimination)
 
 ## Startup Optimization
-
 Parallelize all I/O at startup — but only after fast-path exits (`--version`, `--help`):
 
 ```ts
@@ -132,14 +110,10 @@ const [config, credentials] = await Promise.all([configPromise, credentialsPromi
 - Use `Promise.all` not sequential `await` for independent I/O operations
 
 ## Error Handling
-
 ### Custom Error Classes
-
 - One error class per category — always set `this.name` explicitly (survives minification)
 - Use dual detection: `instanceof` (dev) + `.name` check (minified prod builds)
-
 ### CLI Error Boundary
-
 Top-level boundary catches and formats errors with actionable next steps:
 
 ```ts
@@ -162,27 +136,19 @@ try {
 - Never swallow errors silently
 
 ## Terminal Output
-
 ### stdout vs stderr
-
 - **stdout**: command data (JSON `--json` output, values)
-- **stderr**: status messages, errors, warnings, progress, spinners
-
-Separating channels allows `my-cli get | jq .` to work without pollution.
-
+- **stderr**: status messages, errors, warnings, progress, spinners (separating channels allows `my-cli get | jq .` without pollution)
 ### Colors and Spinners
-
 - `chalk` for colors — respects `NO_COLOR` automatically
 - `ora` for spinners — always `succeed()`, `fail()`, or `stop()`, never leave running
 
 ## Interactive TUI (Ink)
-
 - Use **Ink** (React for terminal) only for continuously-updating interactive UI — not for simple one-shot commands
 - Always guard with `process.stdout.isTTY` — provide non-interactive fallback
 - tsconfig: `"jsx": "react-jsx"`, `"jsxImportSource": "react"`
 
 ## ESM Imports
-
 Use `.js` extension for local imports even in `.ts` files — Node.js ESM requires it:
 
 ```ts
@@ -192,20 +158,17 @@ import type { Config } from "./types/config.js";
 ```
 
 ## Environment Variables
-
 - Validate env vars with Zod when the selected command needs them — not globally at startup (keeps `--help` and offline commands working)
 - Respect `NO_COLOR` and `XDG_CONFIG_HOME`
 - Document every env var in `--help` output or README
 
 ## Testing
-
 - Mock the service layer — commands should have no business logic to test directly
 - Use `vi.spyOn(process, "exit")` to assert exit codes without actually exiting
 - Test `--json` output paths separately to verify JSON structure
 - Never test against real network/filesystem in unit tests
 
 ## Anti-Patterns
-
 | Anti-pattern | Correct approach |
 |---|---|
 | `strict: false` in tsconfig | `strict: true` always |
@@ -218,7 +181,6 @@ import type { Config } from "./types/config.js";
 | Required positional for text input, no stdin | Optional `[arg]` + `resolveInput()` from stdin |
 
 ## Inline Comment Triggers (CLI-Specific)
-
 All triggers from `general.md §25` apply. Additionally for CLI code:
 
 - **Dynamic `import()`** at entry point — explain which fast-path this enables

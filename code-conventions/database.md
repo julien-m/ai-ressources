@@ -1,11 +1,9 @@
 ---
 extends: []
 ---
-
 # Database Rules
 
 > Language-agnostic and ORM-agnostic. Apply regardless of stack.
-
 ## 1. Core Principles
 - Model for **correctness first**, performance second
 - Schema must be explicit, predictable, and stable
@@ -155,59 +153,31 @@ Before shipping: tenant scope enforced? filter indexed? pagination applied? colu
 Efficient query = index seek → read small subset → return. Avoid: scan large table → filter → sort → discard.
 
 ## 31. Input Normalization, Validation & Parameter Safety
-
 External inputs must **never** reach the database layer without normalization, validation, authorization checks and safe parameterization.
-
 ### Processing Pipeline
-
 ```
 input → schema validate/normalize → authz/tenant scope check → whitelist-map query params → parameterized query
 ```
-
 ### Schema-Based Validation
-
-- All external inputs through a **schema-based validation framework** before DB layer
-- Handles: structure, types, normalization, transformation, constraint enforcement, early error detection
-- Frameworks by ecosystem:
-  - **JS/TS**: Zod (preferred), Yup, Valibot, Superstruct
-  - **Python**: Pydantic
-  - **Kotlin/JVM**: Jakarta Bean Validation, Hibernate Validator
-  - **Swift**: Vapor Validations, Swift Validator, Validations (Swift Package)
-  - **Go**: go-playground/validator, ozzo-validation
-  - **Delphi**: DelphiMVCFramework validation, Spring4D validation
-- `schema.parse(input)` → **ready-to-use object** (validated + normalized + structurally correct). No scattered post-validation sanitization
-
+All external inputs through a **schema-based validation framework** before DB layer. `schema.parse(input)` → ready-to-use object (validated + normalized). No scattered post-validation sanitization.
+Frameworks: JS/TS: Zod (preferred), Yup, Valibot — Python: Pydantic — Kotlin/JVM: Jakarta Bean Validation — Swift: Vapor Validations — Go: go-playground/validator — Delphi: DelphiMVCFramework validation.
 ### Normalization (Inside Schema)
-
-- Operations: trim whitespace, collapse repeated spaces, case normalize, parse numbers/dates, format identifiers/slugs, remove invisible chars
-- Example: `" Julien "` / `"julien"` / `"Julien"` → `julien`
-- Align validation rules with DB constraints: max lengths match column limits, enums match allowed values, required fields match DB requirements, identifier formats enforced early
-
+- Operations: trim whitespace, collapse spaces, case normalize, parse numbers/dates, format slugs, remove invisible chars. Example: `" Julien "` / `"julien"` → `julien`
+- Align validation rules with DB constraints: max lengths match column limits, enums match allowed values, identifier formats enforced early
 ### Parameterized Queries (Mandatory)
-
 - All external values via **bind parameters** — never string interpolation
 - Bad: `WHERE username = '${input}'` — Good: `WHERE username = ?` (bound value)
 - Normalization/sanitization **does not replace** parameterized queries — only parameterized queries prevent SQL injection
-
 ### Non-Parameterizable Elements
-
 - Column names, table names, sort directions, operators, dynamic clauses **cannot** be parameterized
 - Must come from **strict internal whitelists**, never from raw input
 - Map: `input.sort="createdAt"` → `"created_at"`, `input.direction="desc"` → whitelist `DESC`
 - Never: `ORDER BY ${userInput}`
-
 ### Pre-Query Input Validation
-
 - Before building any query: validate type correctness, allowed values, format, length limits, numeric bounds, enum membership, tenant ownership
 - Example: `limit` between 1–100, `status` one of `active|disabled|archived`
 - Pagination/batch params (`limit`, `offset`, `batchSize`, `pageSize`): always clamped — `clamp(limit, 1, 100)`
-
 ### Text Search Safety
-
 - Normalize search input (trim, case) for consistency
 - Wildcards added to **bound parameter value**, never to SQL string
 - Bad: `WHERE name LIKE '%${input}%'` — Good: `WHERE name LIKE ?` with value `%julien%`
-
-### Principle
-
-External input must **never influence SQL structure** — only bound parameter values, after normalization and validation. SQL structure remains **fully controlled by application code**.

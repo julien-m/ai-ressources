@@ -166,24 +166,13 @@ Implementation rules:
 | CLI | OS keychain (macOS Keychain, libsecret, Windows Credential Manager) | Never store tokens in plaintext config files |
 | React Native | react-native-keychain | Wraps platform keychain on both iOS and Android |
 
-Rules:
-- **Never store tokens in localStorage** -- vulnerable to XSS
-- **Never store tokens in URLs** -- logged in server logs, browser history, referrer headers
-- Cookie flags are non-negotiable: `HttpOnly`, `Secure`, `SameSite=Strict` (or `Lax` if cross-site navigation is required)
+- **Never store tokens in localStorage** (XSS risk) or **URLs** (logged in server logs, browser history)
+- Cookie flags non-negotiable: `HttpOnly`, `Secure`, `SameSite=Strict` (or `Lax` if cross-site navigation required)
 - For SPAs using cookie-based auth: implement CSRF protection (double-submit cookie or synchronizer token)
 
 ## Session Management
 
-### Session lifecycle
-
-```
-create → active → refresh (on activity) → idle timeout → destroy
-                                        → absolute timeout → destroy
-                                        → explicit logout → destroy
-                                        → remote revocation → destroy
-```
-
-### Timeout rules
+**Lifecycle:** `create → active → refresh (on activity) → idle timeout / absolute timeout / explicit logout / remote revocation → destroy`
 
 | Timeout | Value | Behavior |
 |---------|-------|----------|
@@ -191,36 +180,24 @@ create → active → refresh (on activity) → idle timeout → destroy
 | Absolute timeout | 24 hours | Force re-authentication regardless of activity |
 | Remember me | 30 days | Extended idle timeout, still subject to absolute limit |
 
-### Concurrent session management
-
-- Configurable limit per user (default: 5 active sessions)
-- When limit is reached: reject new login, or revoke oldest session
-- Session listing: expose active sessions to the user with device, IP/location, and last active timestamp
-- Remote revocation: allow users to terminate any session from their security settings
-- On password change: invalidate all other sessions
+**Concurrent sessions:** default limit of 5 per user; when reached: reject new login or revoke oldest. Session listing exposes device, IP/location, last active. Remote revocation from security settings. On password change: invalidate all other sessions.
 
 ## Social Login / Federation
 
 Common providers: Google, GitHub, Apple, Microsoft.
 
-### Implementation rules
-
+**Implementation rules:**
 - Use OpenID Connect (OIDC) on top of OAuth 2.0 -- the `id_token` provides verified identity claims
 - Always request the `email` scope and verify the email is confirmed by the provider
 - Never trust unverified emails from providers -- a malicious provider could claim any email
+- Validate `id_token` signature and claims (`iss`, `aud`, `exp`) server-side; use `nonce` to prevent replay attacks
+- Apple Sign In: handle the "hide my email" relay feature
 
-### Account linking
-
+**Account linking:**
 - **First login with social provider:** create account, populate profile from provider claims (name, avatar)
 - **Existing account with same email:** prompt user to link accounts (do not auto-merge without verification)
 - **Multiple social providers:** allow linking additional providers from account settings
 - Store provider ID + provider user ID for each linked account (not the access token)
-
-### Security considerations
-
-- Validate `id_token` signature and claims (`iss`, `aud`, `exp`) server-side
-- Use `nonce` parameter to prevent replay attacks
-- Apple Sign In: handle the "hide my email" relay feature
 
 ## Multi-Factor Authentication (MFA)
 
@@ -272,54 +249,33 @@ sequenceDiagram
 
 ## Role-Based Access Control (RBAC)
 
-### Standard role hierarchy
+**Standard hierarchy:** `owner > admin > member > viewer`
 
 ```
-owner > admin > member > viewer
-```
-
-### Permission model
-
-```
-Role → Permissions → Resources
 member → [read, create, update] → [projects, documents]
 admin → [read, create, update, delete, manage_members] → [projects, documents, team]
 owner → [all permissions] → [all resources, billing, danger zone]
 ```
 
-### Enforcement rules
-
+**Enforcement rules:**
 - **Server-side enforcement is mandatory** -- every API endpoint checks permissions before executing
-- **Middleware pattern:** extract user from token, load permissions, check against required permission for the route
-- **Frontend hides UI elements** based on permissions for UX, but this is cosmetic only -- never rely on frontend for security
 - **Deny by default:** if no explicit permission grants access, deny
-- **Resource-level checks:** beyond role, verify the user has access to the specific resource (e.g., belongs to the same organization)
+- **Frontend hides UI** based on permissions for UX only -- never rely on frontend for security
+- **Resource-level checks:** verify the user has access to the specific resource (e.g., belongs to the same organization)
 
 ## API Authentication
 
-### Bearer tokens
+**Bearer tokens:** Standard approach: `Authorization: Bearer <token>`.
 
-Standard approach for API access: `Authorization: Bearer <token>`.
-
-### API keys
-
-For server-to-server integrations managed by end users:
-
-- Prefix keys with an identifier: `sk_live_`, `sk_test_`, `pk_live_` (secret vs publishable, live vs test)
-- Hash API keys before storage (SHA-256 is sufficient -- they are high-entropy random strings)
+**API keys** (for server-to-server integrations managed by end users):
+- Prefix keys: `sk_live_`, `sk_test_`, `pk_live_` (secret vs publishable, live vs test)
+- Hash before storage (SHA-256 is sufficient — they are high-entropy random strings)
 - Show the full key only once at creation, then display only the last 4 characters
 - Support multiple active keys per user/organization for zero-downtime rotation
-- Scope keys to specific permissions and resources
-- Include creation date, last used date, and optional expiration
+- Scope to specific permissions and resources; include creation date, last used date, optional expiration
 - Rate limit per key independently
 
-### Key rotation procedure
-
-1. User creates a new API key
-2. User updates their integration to use the new key
-3. Both keys work during the transition period
-4. User revokes the old key
-5. Log key creation and revocation events
+**Key rotation:** create new key → update integration → both keys work → revoke old key → log events
 
 ## Security Checklist
 

@@ -1,13 +1,10 @@
 ---
 extends: [javascript]
 ---
-
 # Tailwind CSS v4 Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md). Only Tailwind v4-specific conventions are listed here.
-
 ## v4 Configuration
-
 - No `tailwind.config.ts` — v4 uses CSS-first configuration
 - Use `@tailwindcss/vite` plugin (not PostCSS) for Vite projects
 - Start CSS with `@import "tailwindcss";`
@@ -15,7 +12,6 @@ extends: [javascript]
 - `@apply` is deprecated in v4 — use utility classes directly
 
 ## CSS Variables & Theming
-
 Define CSS variables at `:root` and `.dark`, then map to Tailwind via `@theme inline`:
 
 ```css
@@ -52,7 +48,6 @@ Define CSS variables at `:root` and `.dark`, then map to Tailwind via `@theme in
 ```
 
 ## Critical Rules
-
 - Wrap color values with `hsl()` only in `:root` / `.dark` declarations
 - Never double-wrap: `hsl(var(--color))` is wrong — use `var(--color)` directly in utilities
 - Never put `:root` or `.dark` inside `@layer base` blocks
@@ -60,33 +55,28 @@ Define CSS variables at `:root` and `.dark`, then map to Tailwind via `@theme in
 - Never define theme colors in `tailwind.config.ts` — use CSS variables
 
 ## Layout
-
 - Use `flex gap-*` instead of `space-x-*` / `space-y-*` (gap works with wrapping)
 - Use `size-*` for equal width/height (e.g., `size-10` instead of `w-10 h-10`)
 - Mobile-first: write base styles for mobile, add responsive modifiers (`md:`, `lg:`)
 - Use `container mx-auto px-4` for page-level containers
 
 ## Utilities
-
 - `truncate` instead of `overflow-hidden text-ellipsis whitespace-nowrap`
 - `cn()` (from shadcn) for conditional class merging — never string concatenation
 - Prefer `text-foreground/50` opacity syntax over separate opacity utilities
 - Use `ring-*` for focus indicators, not `outline-*`
 
 ## Dark Mode
-
 - Automatic via CSS variables — no manual `dark:` prefixes needed when using semantic tokens
 - Only use `dark:` for cases not covered by CSS variables (e.g., images, media)
 - Never hardcode color values — always reference semantic tokens
 
 ## Responsive Design
-
 - Breakpoints: `sm` (640px), `md` (768px), `lg` (1024px), `xl` (1280px), `2xl` (1536px)
 - Always mobile-first — base classes are mobile, modifiers add desktop overrides
 - Use `max-*` breakpoints sparingly — prefer min-width approach
 
 ## Anti-Patterns
-
 - No `@apply` in v4 — compose utilities in JSX
 - No `tailwind.config.ts` for theme — use `@theme inline` in CSS
 - No raw color values (`bg-blue-500`) — use semantic tokens (`bg-primary`)

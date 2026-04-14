@@ -30,19 +30,9 @@ Webhook delivery and consumption patterns for SaaS: reliability, signatures, ide
 }
 ```
 
-- `id` — globally unique, used for idempotency on the consumer side
-- `type` — dot-separated event name identifying what happened
-- `created_at` — ISO 8601 timestamp of when the event was generated
-- `data` — the full resource snapshot at the time of the event
-- `api_version` — the schema version this payload conforms to
+Fields: `id` (globally unique, idempotency key), `type` (dot-separated past-tense event name), `created_at` (ISO 8601), `data` (full resource snapshot), `api_version` (schema version consumers can pin to).
 
-### Naming Convention
-
-- Dot-separated hierarchy: `resource.action`
-- Actions: `created`, `updated`, `deleted`, `completed`, `failed`, `expired`
-- Examples: `payment.completed`, `subscription.renewed`, `user.created`, `invoice.payment_failed`
-- Use past tense: the event describes something that **already happened**
-- Nest deeper for sub-resources: `subscription.invoice.payment_failed`
+**Naming:** dot-separated hierarchy `resource.action` in past tense. Examples: `payment.completed`, `subscription.renewed`, `invoice.payment_failed`. Nest for sub-resources: `subscription.invoice.payment_failed`.
 
 ### Payload Guidelines
 
@@ -177,20 +167,7 @@ sequenceDiagram
 
 ## Idempotency (Consumer Side)
 
-### The Problem
-
-- Network timeout: provider did not receive the 200, retries, consumer processes twice
-- Retry storm: same event delivered 3x in rapid succession
-- Worker restart: provider re-delivers events that were already processed
-- Duplicate events are not a bug — they are a guarantee of at-least-once delivery
-
-### Solution
-
-- Store processed event IDs in a set or table
-- Before processing: check if `event.id` was already seen
-- If yes: return 200 (acknowledge receipt) without re-processing
-- If no: process the event, then store the event ID
-- Retention: keep event IDs for 7-30 days (match the provider's retry window)
+Duplicate events are not a bug — they are a guarantee of at-least-once delivery (network timeouts, retry storms, worker restarts). Store processed event IDs; before processing, check if `event.id` was already seen; if yes, return 200 without re-processing. Keep event IDs for 7-30 days (match the provider's retry window).
 
 ### Implementation Pattern
 
@@ -216,8 +193,7 @@ flowchart TD
 
 ### Subscription Management
 
-- Provide a CRUD API for webhook subscriptions
-- Subscription fields:
+Provide a CRUD API for webhook subscriptions:
 
 | Field | Type | Description |
 |-------|------|-------------|
@@ -243,31 +219,13 @@ flowchart TD
 
 ## Ordering
 
-### The Reality
+Webhooks are **NOT ordered** — network latency, retries, and parallel delivery workers destroy ordering. Do not build systems that depend on webhook arrival order.
 
-- Webhooks are **NOT ordered** — network latency, retries, and parallel delivery workers destroy ordering
-- Events 1, 2, 3 may arrive as 2, 1, 3 or even 1, 3, 2, 1 (with duplicates)
-- Do not build systems that depend on webhook arrival order
-
-### Mitigation Strategies
-
-- Include `created_at` timestamp — consumer can sort events if needed
-- Include a `sequence` number per resource — consumer can detect gaps and out-of-order delivery
-- For state changes: include the full current state in the payload (not a delta) — last-write-wins is safe regardless of arrival order
-- For critical ordering requirements: consumer should poll the API to get the authoritative state after receiving the webhook as a trigger
-- Consider including a `previous_state` field for state-machine transitions so consumers can detect conflicts
+**Mitigation:** include `created_at` timestamp (consumer can sort), a `sequence` number per resource (consumer can detect gaps), full current state in payload (last-write-wins is safe regardless of order), and optionally `previous_state` for state-machine transitions. For critical ordering: consumer polls the API for authoritative state after receiving the webhook as a trigger.
 
 ## Local Development & Testing
 
-### Tools
-
-| Tool | Usage | Works With | Free Tier |
-|------|-------|------------|-----------|
-| ngrok | Tunnel to localhost for receiving webhooks | Any provider | Yes |
-| Stripe CLI | `stripe listen --forward-to localhost:3000/webhook` | Stripe | Yes |
-| Svix Play | Webhook testing and inspection UI | Svix | Yes |
-| webhook.site | Inspect incoming payloads in browser | Any provider | Yes |
-| localtunnel | Open-source alternative to ngrok | Any provider | Yes |
+**Tools:** ngrok (tunnel to localhost), Stripe CLI (`stripe listen --forward-to localhost:3000/webhook`), Svix Play (inspection UI), webhook.site (payload inspector), localtunnel (open-source ngrok alternative).
 
 ### Testing Checklist
 

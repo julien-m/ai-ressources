@@ -1,20 +1,16 @@
 ---
 extends: [react]
 ---
-
 # Remotion Rules (Delta)
 
 > These rules complement [`react.md`](react.md) and [`javascript.md`](javascript.md). Only Remotion-specific conventions are listed here.
-
 ## Project Structure
-
 - Compositions defined in `src/Root.tsx` — entry point for all videos
 - Each video scene in its own component: `src/scenes/Intro.tsx`, `src/scenes/Outro.tsx`
 - Shared assets in `public/` — accessed via `staticFile()`
 - Config in `remotion.config.ts`
 
 ## Compositions
-
 ```tsx
 import { Composition } from 'remotion';
 
@@ -36,7 +32,6 @@ export const RemotionRoot = () => (
 - Composition `id` must be unique and URL-safe
 
 ## Animation Fundamentals
-
 ```tsx
 import { useCurrentFrame, interpolate, spring } from 'remotion';
 
@@ -59,7 +54,6 @@ const MyScene = () => {
 - Prefer `Easing` functions from `remotion` for custom curves
 
 ## Sequencing
-
 ```tsx
 import { Sequence, AbsoluteFill } from 'remotion';
 
@@ -83,7 +77,6 @@ const MyVideo = () => (
 - Use `<Series>` for sequential scenes without manual `from` calculation
 
 ## Assets
-
 - `staticFile('image.png')` for bundled assets — never relative paths
 - `<Img>` from `remotion` instead of `<img>` — handles loading states
 - `<Video>` and `<Audio>` from `remotion` — never native HTML elements
@@ -91,20 +84,17 @@ const MyVideo = () => (
 - Use `getVideoMetadata()` / `getAudioDurationInSeconds()` for dynamic duration
 
 ## Audio
-
 - `<Audio volume={0.5} />` for constant volume
 - Use callback for volume automation: `volume={(f) => interpolate(f, [0, 30], [0, 1])}`
 - `startFrom` and `endAt` for trimming (in frames)
 - `playbackRate` for speed changes
 
 ## Fonts
-
 - Load via `@remotion/google-fonts` or `staticFile()` for local fonts
 - Always `loadFont()` before using — fonts must be loaded at render time
 - Use `fontFamily` from the loaded font object
 
 ## Rendering
-
 ```bash
 npx remotion render MyVideo out/video.mp4   # render specific composition
 npx remotion preview                         # local preview with controls
@@ -116,14 +106,12 @@ npx remotion lambda render                   # cloud rendering via AWS Lambda
 - `--concurrency` to control parallel frame rendering
 
 ## Performance
-
 - Avoid re-renders: memoize heavy calculations, use `useMemo` for complex interpolations
 - Use `<OffthreadVideo>` instead of `<Video>` for multi-video compositions
 - Precompute data outside components when possible
 - Use `delayRender()` / `continueRender()` for async data loading
 
 ## Anti-Patterns
-
 - No native `<img>`, `<video>`, `<audio>` — use Remotion equivalents
 - No `setTimeout` / `setInterval` — use frame-based logic
 - No CSS animations — use `interpolate()` and `spring()`

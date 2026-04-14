@@ -12,11 +12,9 @@ free_tier: true
 > _Edge computing mondial — Workers, Pages, R2, D1, KV, AI, Zero Trust en un seul écosystème._
 
 ## Ce que c'est
-
 Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF), compute (Workers), storage (R2, D1, KV), et IA. Réseau de 300+ PoPs dans le monde. Modèle edge-first : le code s'exécute au plus proche de l'utilisateur. Idéal pour les apps sans cold starts, globalement distribuées.
 
 ## Produits / Features clés
-
 - **Workers** — Serverless JS/TS/Wasm à l'edge (V8 isolates, pas Node.js)
 - **Pages** — Déploiement frontend + Pages Functions (Workers derrière)
 - **R2** — Object storage S3-compatible, **sans frais d'egress**
@@ -30,7 +28,6 @@ Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF),
 - **Email Routing** — Redirection email + Email Workers
 
 ## Free Tier (Workers Free)
-
 | Produit | Limite |
 |---|---|
 | Workers requests | 100 000/jour |
@@ -42,9 +39,7 @@ Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF),
 | AI (Workers AI) | 10K neurons/jour |
 
 ## Pricing
-
 ### Workers Paid — $5/mois
-
 | Produit | Inclus | Overage |
 |---|---|---|
 | Workers requests | 10M/mois | $0.30/M |
@@ -61,15 +56,12 @@ Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF),
 | Queues | 1M messages | $0.40/M |
 
 ### Workers Enterprise — sur devis (SLA, support, limites custom)
-
 ### 💡 Exemples de calcul
-
 - **App Workers 1M req/mois + 5GB R2** → $5/mo (tout dans l'inclus)
 - **App Workers 50M req/mois + 50GB R2** → $5 + 40M × $0.30/M + 40GB × $0.015 = $5 + $12 + $0.60 = ~$18/mo
 - **API + storage S3** → R2 remplace S3 sans egress fees : économies massives si fort egress
 
 ## Performances
-
 | Métrique | Valeur |
 |---|---|
 | Latence Workers | 0–5ms (edge, pas de cold start) |
@@ -79,7 +71,6 @@ Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF),
 | Mémoire Workers | 128 MB |
 
 ## 📊 Coût estimé par palier d'utilisateurs
-
 > **Hypothèses** : Workers + D1 + KV + R2 · app SaaS standard · ~10 req Workers/user actif/jour
 
 | Palier | Users | Req Workers/mois | Plan | Coût estimé | Notes |
@@ -93,18 +84,14 @@ Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF),
 > 💡 **Avantage structurel CF** : pas de coût à l'idle, pas de cold start, egress R2 gratuit, D1 reads quasi-gratuits. Le stack CF est le moins cher à grande échelle pour les apps edge-native.
 >
 > ⚠️ **D1 limites** : 10 GB storage max sur Paid, 50k writes/jour sur Free. Au-delà de 10 GB, envisager Turso ou Neon.
-
 ## ✅ Quand utiliser
-
 - API edge avec latence ultra-faible mondiale
 - Stack entièrement Cloudflare (Workers + R2 + D1 + KV)
 - Object storage sans frais d'egress (R2 = remplacement S3 moins cher)
 - Auth/tunnel Zero Trust pour exposer des services privés
 - CDN + sécurité pour app existante
 - Cron jobs légers dans un environnement Workers
-
 ## ❌ Quand ne PAS utiliser
-
 - Besoin de Node.js APIs non disponibles (Workers ≠ Node.js)
 - Workloads CPU > 50ms par requête (limites Workers)
 - Base de données PostgreSQL native (D1 est SQLite seulement)
@@ -112,7 +99,6 @@ Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF),
 - Long-running processes (Workers max 30s sur les requêtes HTTP)
 
 ## Stack Cloudflare complète recommandée
-
 ```
 Frontend  : Cloudflare Pages (Next.js SSR ou SvelteKit)
 API       : Cloudflare Workers (Hono framework)
@@ -124,7 +110,6 @@ Cache     : Upstash Redis (si TTL avancé nécessaire)
 ```
 
 ## Comparaison R2 vs S3
-
 | | R2 | AWS S3 |
 |---|---|---|
 | Stockage | $0.015/GB | $0.023/GB |
@@ -134,9 +119,7 @@ Cache     : Upstash Redis (si TTL avancé nécessaire)
 | Versioning | ✅ | ✅ |
 
 > 💰 Pour les apps avec beaucoup d'egress (vidéos, gros fichiers), R2 est souvent 10× moins cher que S3.
-
 ## Ressources
-
 - [Documentation Workers](https://developers.cloudflare.com/workers/)
 - [Documentation R2](https://developers.cloudflare.com/r2/)
 - [Pricing Workers](https://workers.cloudflare.com/#plans)

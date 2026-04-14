@@ -12,18 +12,15 @@ free_tier: true
 > _Object storage S3-compatible sans frais d'egress — le meilleur rapport qualité/prix pour les blobs._
 
 ## Ce que c'est
-
 Object storage compatible API S3 de Cloudflare. Le différenciateur majeur : **zéro frais d'egress** (lire un fichier ne coûte rien, contrairement à AWS S3 ou GCS). Accessible depuis Workers directement ou via URL publique.
 
 ## Free tier
-
 - **10 GB stockage/mois**
 - **1 million opérations Class A** (écriture) / mois
 - **10 millions opérations Class B** (lecture) / mois
 - **Egress : toujours gratuit**
 
 ## Pricing
-
 | Ressource | Prix |
 |-----------|------|
 | Stockage | $0.015/GB/mois |
@@ -37,30 +34,23 @@ Object storage compatible API S3 de Cloudflare. Le différenciateur majeur : **z
 - Équivalent AWS S3 : ~$15–20/mois (avec egress)
 
 ## Features clés
-
 - API S3-compatible (libs AWS SDK fonctionnent)
 - Accès direct depuis Workers (binding natif)
 - URL publique optionnelle (custom domain)
 - Multipart upload
 - Lifecycle policies (expiration objets)
 - Intégration avec CF Images et CF Stream
-
 ## ✅ Quand utiliser
-
 - Tout projet qui stocke des fichiers : avatars, uploads users, assets, exports
 - Stack Cloudflare Workers → binding natif, zéro latence
 - Alternative S3 à moindre coût (pas d'egress)
 - Assets servis publiquement (CDN CF automatique)
-
 ## ❌ Quand ne PAS utiliser
-
 - Besoin de requêtes S3 Select (requêtes SQL sur données) → S3
 - Compliance spécifique (HIPAA certifié, etc.) → vérifier CF compliance
-
 ## Combinaisons stack
 - `R2 + CF Workers` → binding natif, accès direct sans HTTP
 - `R2 + Uploadthing` → upload frontend vers R2
 - `R2 + Backblaze B2` → R2 comme CDN devant B2 (egress gratuit)
-
 ## Ressources
 - [developers.cloudflare.com/r2](https://developers.cloudflare.com/r2/)

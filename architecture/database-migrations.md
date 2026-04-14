@@ -34,18 +34,8 @@ These patterns follow the SQL conventions defined in **Read** [`code-conventions
 
 ```
 <version>_<description>.<direction>.sql
-
-# Examples — timestamp-based
-20260322140000_create_users_table.up.sql
-20260322140000_create_users_table.down.sql
-20260322143000_add_email_verified_column.up.sql
-20260322143000_add_email_verified_column.down.sql
-
-# Examples — sequential
-001_create_users_table.up.sql
-001_create_users_table.down.sql
-002_add_email_verified_column.up.sql
-002_add_email_verified_column.down.sql
+# Timestamp: 20260322140000_create_users_table.up.sql
+# Sequential: 001_create_users_table.up.sql
 ```
 
 ### Migration ledger
@@ -153,12 +143,7 @@ ORDER BY id
 LIMIT 1000;
 ```
 
-**Background job** — for millions of rows, run backfill as an async job:
-
-1. Enqueue a backfill job with batch size and cursor
-2. Each job iteration processes one batch, then enqueues the next
-3. Track progress in a separate `migration_progress` table
-4. New code handles both migrated and unmigrated rows during backfill
+**Background job** — for millions of rows: enqueue a backfill job with batch size and cursor; each iteration processes one batch then enqueues the next; track progress in a `migration_progress` table; new code handles both migrated and unmigrated rows during backfill.
 
 ### Large table considerations
 
@@ -193,14 +178,7 @@ After every data migration, verify integrity:
 
 **Default stance:** Write reversible migrations for additive changes (add column, add table, add index). Use forward-only for data migrations and destructive changes — a down migration that "un-drops" a column cannot restore lost data.
 
-### Down migration limitations
-
-Down migrations cannot:
-- Restore dropped data (the data is gone after DROP COLUMN)
-- Reverse a data transform without storing the original values
-- Safely undo a migration that other migrations depend on
-
-**Rule:** If a down migration cannot fully restore the previous state, do not write one. Use a forward migration instead.
+**Down migration limitations:** cannot restore dropped data, reverse a data transform without stored originals, or safely undo a migration other migrations depend on. **Rule:** if a down migration cannot fully restore the previous state, do not write one — use a forward migration instead.
 
 ### Feature flags as a safety net
 
@@ -231,20 +209,7 @@ For tenant isolation strategies and their impact on migrations, see **Read** [`m
 | Schema per tenant | Iterate over each tenant schema, apply migration per schema |
 | Database per tenant | Iterate over each tenant database, apply migration per database |
 
-### Per-tenant schema migrations
-
-For schema-per-tenant or database-per-tenant architectures:
-
-```
-1. List all tenant schemas/databases
-2. For each tenant:
-   a. Begin transaction
-   b. Apply migration
-   c. Record result (success/failure) in central ledger
-   d. Commit or rollback
-3. On failure: halt or continue (configurable)
-4. Log affected tenants for manual remediation
-```
+**Per-tenant schema migrations:** list all schemas/databases → for each: begin transaction, apply migration, record result in central ledger, commit or rollback → on failure: halt or continue (configurable), log affected tenants.
 
 ### Canary migrations
 
@@ -278,38 +243,11 @@ flowchart TD
 
 ## 7. Anti-Patterns
 
-### Mixing DDL and DML in one migration
-
-**Problem:** A single migration that creates a column and backfills data. If the backfill fails mid-way, the schema change may be committed but data is partially migrated.
-
-**Fix:** Separate into two migrations. Schema change first, data backfill second.
-
-### Non-reversible operations without backup
-
-**Problem:** Dropping a column or table without verifying that no code references it and without a data backup.
-
-**Fix:** Before any DROP: verify zero code references, take a logical backup of the affected data, deploy the contract migration only after a stabilization period.
-
-### Long-running locks
-
-**Problem:** Running `ALTER TABLE ... ADD COLUMN ... DEFAULT ...` on older Postgres (< 11) or `CREATE INDEX` without CONCURRENTLY. Locks the table for the duration, blocking all reads/writes.
-
-**Fix:** Use `CREATE INDEX CONCURRENTLY`. On older Postgres, add columns as nullable first, then backfill. For `ADD CONSTRAINT`, use `NOT VALID` + separate `VALIDATE`.
-
-### Deploying code before migration completes
-
-**Problem:** New code expects a column or table that does not yet exist. Application errors until migration finishes.
-
-**Fix:** Always run migrations before deploying code that depends on them. In the expand/contract pattern, the expand migration runs first — code is deployed only after the schema supports it.
-
-### Running migrations without a lock
-
-**Problem:** Two deployment instances run the same migration simultaneously, causing duplicate DDL or data corruption.
-
-**Fix:** Use advisory locks or migration tool built-in locking (`pg_advisory_lock`). Most migration tools handle this automatically.
-
-### Manual schema changes in production
-
-**Problem:** Applying ad-hoc ALTER TABLE statements directly, bypassing the migration system. The ledger becomes out of sync with the actual schema.
-
-**Fix:** All schema changes go through migration files — no exceptions. If an emergency fix is applied manually, immediately create a matching migration file and mark it as applied in the ledger.
+| Anti-Pattern | Problem | Fix |
+|-------------|---------|-----|
+| Mixing DDL and DML in one migration | Backfill failure leaves schema changed but data partially migrated | Separate into two migrations: schema first, data second |
+| Non-reversible operations without backup | DROP column/table loses data irreversibly | Verify zero code references, take logical backup, deploy contract only after stabilization |
+| Long-running locks | ALTER TABLE / CREATE INDEX without CONCURRENTLY blocks all reads/writes | Use `CREATE INDEX CONCURRENTLY`; for constraints use `NOT VALID` + separate `VALIDATE` |
+| Deploying code before migration completes | New code expects column/table that does not yet exist | Always run migrations before deploying dependent code |
+| Running migrations without a lock | Two instances run same migration simultaneously, causing corruption | Use advisory locks or migration tool built-in locking (`pg_advisory_lock`) |
+| Manual schema changes in production | Ledger becomes out of sync with actual schema | All schema changes via migration files — no exceptions; if emergency fix applied manually, create matching migration file immediately |

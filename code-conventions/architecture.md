@@ -1,12 +1,10 @@
 ---
 extends: []
 ---
-
 # Architecture Rules (Delta)
 
 > These rules define **how the system is structured**: layers, boundaries, dependency direction, responsibilities, and cross-domain interactions.
 > They complement [`general.md`](general.md) (§3 structure, §13 DTOs, §15 DI, §16 separation, §17 idempotency) and [`database.md`](database.md) (§1 triggers, §7 multi-tenant, §19 transactions). Only the architectural dimension is added here.
-
 ## 1. Core Principles
 - Optimize for: correctness, maintainability, explicit boundaries, predictable change
 - Business logic must be easy to locate
@@ -15,7 +13,6 @@ extends: []
 - Hidden side effects and cross-layer shortcuts are forbidden
 
 ## 2. Dependency Direction
-
 ```text
 entry points → handlers/controllers → services/use cases → repositories/gateways → external systems
 ```
@@ -27,34 +24,14 @@ Dependencies must always point **inward** (toward business logic) or **downward*
 Forbidden: repository → controller, controller → database directly, service → UI framework, domain → HTTP transport, handler containing business rules, external SDK objects leaking into domain.
 
 ## 3. Layer Responsibilities
-
-### 3.1 Entry Points
-Bootstrap only: initialize app, wire dependencies, load config, start transports/workers, register routes/jobs/commands.
-Examples: HTTP server, CLI main, worker startup, cron runner, mobile/desktop app entry.
-Forbidden: business logic, SQL, direct provider calls.
-
-### 3.2 Handlers / Controllers / Transport Adapters
-Thin translation layer between outside world and application. Parse input, validate transport payload, authenticate/authorize, call service, map result to response.
-Examples: HTTP controllers, RPC handlers, CLI commands, queue consumers, event subscribers.
-Forbidden: business orchestration, SQL, provider logic, stateful workflows.
-
-### 3.3 Services / Use Cases
-All business logic lives here: orchestration, invariant enforcement, workflow definition, cross-repository coordination.
-Examples: create signature request, capture payment, issue refund, rotate token, generate invoice.
-Forbidden: transport concerns, framework request/response objects, raw SQL, direct filesystem/API code (unless gateway abstraction), UI rendering.
-
-### 3.4 Repositories
-Persistence boundary only: query/save aggregates, transaction participation, map persistence ↔ domain models.
-Forbidden: business decisions, emails, unrelated external API calls, transport formatting, cross-domain orchestration.
-
-### 3.5 Gateways / Clients / Adapters
-Wrap external systems: isolate SDKs, define stable internal interfaces, convert provider payloads → internal models, centralize retries/timeouts/error mapping.
-Examples: payment gateway, email sender, SMS provider, PDF service, cloud storage, HTTP API client.
-Forbidden: business workflow decisions, cross-domain orchestration.
-
-### 3.6 Mappers
-Transform data between layers only. No business logic, no side effects, no I/O.
-Examples: DB row → domain model, provider response → DTO, service result → API response.
+| Layer | Responsibility | Forbidden |
+|---|---|---|
+| **Entry Points** | Bootstrap: init app, wire deps, load config, start transports/workers. Examples: HTTP server, CLI main, worker startup. | Business logic, SQL, direct provider calls |
+| **Handlers / Controllers** | Thin translation: parse input, validate payload, auth, call service, map result. Examples: HTTP controllers, CLI commands, queue consumers. | Business orchestration, SQL, provider logic, stateful workflows |
+| **Services / Use Cases** | All business logic: orchestration, invariants, workflow, cross-repo coordination. Examples: create signature request, capture payment, issue refund. | Transport concerns, framework objects, raw SQL, direct FS/API code, UI rendering |
+| **Repositories** | Persistence boundary: query/save aggregates, transaction participation, map persistence ↔ domain. | Business decisions, emails, unrelated external calls, transport formatting |
+| **Gateways / Clients** | Wrap external systems: isolate SDKs, stable interfaces, convert payloads → internal models, centralize retries/timeouts. Examples: payment gateway, email sender, PDF service. | Business workflow decisions, cross-domain orchestration |
+| **Mappers** | Transform data between layers. No business logic, no side effects, no I/O. Examples: DB row → domain, provider response → DTO. | — |
 
 ## 4. Domain Boundaries
 Organize by business domain (extends general §3). Each domain owns: its types, business rules, use cases, repository contracts, transport mappings.
@@ -73,9 +50,7 @@ Forbidden: HTTP request objects in business logic, DB rows as API responses, ORM
 Every layer speaks its own language — explicit transformations at boundaries.
 
 ## 7. DTO / Model Separation
-Always separate: transport DTOs, domain models, persistence models, provider models.
-Example: `CreateUserRequestDTO` → `CreateUserInput` → `UserEntity` → `StripeCustomerResponse` → `UserResponseDTO`.
-A model designed for one layer must not automatically become the model for another.
+Always separate: transport DTOs, domain models, persistence models, provider models. Example: `CreateUserRequestDTO` → `CreateUserInput` → `UserEntity` → `StripeCustomerResponse` → `UserResponseDTO`. A model for one layer must not become the model for another.
 
 ## 8. Orchestration vs Domain Logic
 - **Domain logic**: pure business rules (can document be signed? is payment refundable? can user access resource?)
@@ -83,13 +58,10 @@ A model designed for one layer must not automatically become the model for anoth
 - Keep pure business rules isolated from workflow glue whenever possible
 
 ## 9. Business Logic Forbidden Locations
-Business rules must not live in: controllers/handlers, forms/UI views, route files, ORM hooks, model lifecycle callbacks, database triggers, migration scripts, utility files, build scripts.
-Business logic belongs in services/use cases/domain modules only.
+Business rules must not live in: controllers/handlers, forms/UI views, route files, ORM hooks, model lifecycle callbacks, database triggers, migration scripts, utility files, build scripts. Always use services/use cases/domain modules.
 
 ## 10. Database Triggers
-Extends database §1. Forbidden trigger use: changing billing state, updating balances, creating business records, enforcing workflow transitions, sending notifications.
-Allowed only for strictly technical purposes: audit metadata, internal replication, low-level bookkeeping.
-Reason: triggers create hidden behavior, hide dependencies, split logic between app and DB.
+Extends database §1. Forbidden: changing billing state, updating balances, creating business records, enforcing workflow transitions, sending notifications. Allowed only for technical purposes: audit metadata, internal replication. Reason: triggers create hidden behavior and split logic between app and DB.
 
 ## 11. Transactions
 Extends database §19. Transactions belong at the service/use-case level.
@@ -144,20 +116,20 @@ Covers: auth, permissions, tenant isolation, ownership checks, secrets handling.
 - Never trust client-provided ownership/tenant identity without verification
 
 ## 18. Multi-Tenant Isolation
-Extends database §7. Architectural rule, not just convention.
+Architectural rule (extends database §7), not just convention.
 - Every tenant-scoped operation carries explicit tenant context
 - Every repository query includes tenant scope
 - Cross-tenant access impossible by default
 - Tenant filtering must not depend on caller discipline alone
 
 ## 19. Utility Files
-Extends general §3. Avoid: `utils/`, `helpers/`, `common/`, `misc/`.
+Avoid: `utils/`, `helpers/`, `common/`, `misc/` (extends general §3).
 - Helpers must be domain-specific or responsibility-specific
 - Generic utilities must be truly generic and few
 - If a file grows because "many things need it", rethink the architecture
 
 ## 20. Dependency Injection
-Extends general §15. Dependencies must be explicit.
+Dependencies must be explicit (extends general §15).
 - Inject repositories, gateways, services
 - Constructors assign only — no hidden logic
 - No hidden singleton access in business code (unless intentionally centralized and justified)
@@ -165,9 +137,7 @@ Extends general §15. Dependencies must be explicit.
 - Bad: business code instantiates dependencies — Good: startup/wiring layer constructs object graph
 
 ## 21. Object Construction
-Complex construction must be isolated. Use factories, builders, dedicated initialization services.
-When: creating aggregates, composing provider clients, initializing expensive resources, building complex workflows.
-Don't scatter construction rules across random call sites.
+Complex construction must be isolated. Use factories, builders, dedicated initialization services (creating aggregates, composing provider clients, initializing expensive resources). Don't scatter construction logic across random call sites.
 
 ## 22. Circular Dependencies
 Forbidden. If two modules depend on each other, extract a shared contract or redesign boundaries.
@@ -221,7 +191,6 @@ A developer must quickly answer: where does this business rule live? where is th
 If the answer is unclear, the architecture is too implicit.
 
 ## 31. Recommended Default Structure
-
 ```text
 src/
   app/                # startup, dependency wiring, config
@@ -238,7 +207,6 @@ src/
 Structure is optional, separation of concerns is mandatory.
 
 ## 32. Minimal Architecture (Small Projects)
-
 ```text
 src/
   users/

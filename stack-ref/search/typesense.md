@@ -12,11 +12,9 @@ free_tier: true
 > _Moteur de recherche open-source C++, alternative à Algolia. Plus mature en cloud managé que Meilisearch._
 
 ## Ce que c'est
-
 Typesense est un moteur de recherche full-text open-source écrit en C++. Concurrent direct de Meilisearch, avec une emphase sur la recherche instantanée et la tolérance aux erreurs. Le cloud managé (Typesense Cloud) est légèrement plus mature que Meilisearch Cloud.
 
 ## Features clés
-
 - Recherche typo-tolerante instantanée
 - Filtres et facettes
 - Multi-tenant avec clés scopées
@@ -26,16 +24,13 @@ Typesense est un moteur de recherche full-text open-source écrit en C++. Concur
 - Compatible InstantSearch.js (Algolia UI components)
 
 ## Pricing
-
 ### Self-hosted (gratuit)
-
 ```
 Gratuit, illimité.
 Docker image disponible.
 ```
 
 ### Typesense Cloud
-
 | Plan | Prix | Nœuds | RAM |
 |------|------|-------|-----|
 | Hobby | $0 | 1 | 0.5 GB |
@@ -43,7 +38,6 @@ Docker image disponible.
 | Production (HA) | $99/mois | 3 (HA) | 4 GB |
 
 ## Exemple
-
 ```typescript
 import Typesense from 'typesense'
 
@@ -70,7 +64,6 @@ const results = await client.collections('products').documents().search({
 ```
 
 ## Typesense vs Meilisearch
-
 | Critère | Typesense | Meilisearch |
 |---------|-----------|-------------|
 | Performance brute | Légèrement supérieure | Très bonne |
@@ -80,19 +73,13 @@ const results = await client.collections('products').documents().search({
 | License | GPL-3 (self-hosted) | MIT |
 | Geo-search | ✅ natif | ✅ |
 | Vector search | ✅ | ✅ |
-
 ## ✅ Quand utiliser
-
 - Besoin d'un cloud managé robuste (HA dès $99/mois)
 - Geo-search natif important
 - Migration depuis Algolia (API similaire, compatible InstantSearch.js)
-
 ## ❌ Quand ne pas utiliser
-
 - Stack CF Workers → Orama
 - Budget zéro sans serveur → Orama embarqué
-
 ## Ressources
-
 - [Documentation](https://typesense.org/docs)
 - [GitHub](https://github.com/typesense/typesense)

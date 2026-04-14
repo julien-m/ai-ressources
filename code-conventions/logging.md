@@ -1,11 +1,9 @@
 ---
 extends: []
 ---
-
 # Logging & Sensitive Data Rules (Delta)
 
 > These rules complement [`general.md`](general.md) §19 (Logging) and §22 (Security). Only detailed sensitive data, redaction, and compliance rules are listed here.
-
 Logs must never become a secondary database of personal or sensitive information.
 
 ## Never Log in Clear Text

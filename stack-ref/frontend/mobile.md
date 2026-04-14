@@ -8,7 +8,6 @@ type: mobile
 # Mobile Apps
 
 ## React Native + Expo — Recommandation cross-platform
-
 **Le choix par défaut si l'app est simple et ne nécessite pas d'accès hardware avancé.**
 
 - iOS + Android depuis une seule codebase TypeScript/React
@@ -22,10 +21,7 @@ type: mobile
 
 **Limites** : dès que tu as besoin de Bluetooth BLE en profondeur, audio low-level, ARKit/ARCore, ou des APIs OS très récentes → natif obligatoire.
 
----
-
 ## Swift / SwiftUI — iOS natif
-
 Pour les apps **iOS-only nécessitant une intégration hardware ou OS avancée**.
 
 - Bluetooth BLE avancé (CoreBluetooth)
@@ -38,10 +34,7 @@ Pour les apps **iOS-only nécessitant une intégration hardware ou OS avancée**
 
 **Quand l'utiliser** : app IoT avec Bluetooth, app santé avec HealthKit, app AR, jeu avec Metal, tout ce qui nécessite des APIs Apple exclusives.
 
----
-
 ## Kotlin — Android natif
-
 Pour les apps **Android-only nécessitant une intégration hardware ou OS avancée**.
 
 - Bluetooth BLE avancé (Android Bluetooth API)
@@ -53,10 +46,7 @@ Pour les apps **Android-only nécessitant une intégration hardware ou OS avanc�
 
 **Quand l'utiliser** : même cas que Swift mais pour Android. App IoT, app avec background services intensifs, deep Android integration.
 
----
-
 ## Arbre de décision
-
 ```
 App mobile ?
 ├── Simple + cross-platform (iOS + Android)
@@ -69,7 +59,6 @@ App mobile ?
 ```
 
 ## Ce que "hardware avancé" veut dire
-
 | Fonctionnalité | RN+Expo | Swift/Kotlin natif |
 |---------------|---------|-------------------|
 | Push notifications | ✅ | ✅ |
@@ -82,7 +71,6 @@ App mobile ?
 | HealthKit / Health Connect | ⚠️ partiel | ✅ |
 | Background services intensifs | ⚠️ limité | ✅ |
 | Widgets OS | ❌ | ✅ |
-
 ## Combinaisons stack
 - `Expo + Supabase SDK + Stripe` → app SaaS mobile standard
 - `Expo + tRPC + Neon` → app full-stack TypeScript partagé web+mobile

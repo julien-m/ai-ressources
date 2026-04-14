@@ -8,7 +8,6 @@ type: desktop
 # Desktop Apps
 
 ## Tauri (Rust + WebView)
-
 **Le meilleur choix pour distribuer une app desktop multiplateforme** quand on vient d'un stack web.
 
 - Backend : Rust (léger, sécurisé, pas de runtime embarqué)
@@ -22,10 +21,7 @@ type: desktop
 
 **Limite** : Rust côté backend — courbe d'apprentissage si besoin de logique custom. Pour des plugins système avancés, il faut écrire du Rust.
 
----
-
 ## SwiftUI (macOS natif)
-
 Pour les apps **macOS-only** qui doivent se sentir vraiment natives.
 
 - Intégration OS maximale : menubar, Spotlight, iCloud, Shortcuts, widgets
@@ -37,10 +33,7 @@ Pour les apps **macOS-only** qui doivent se sentir vraiment natives.
 
 **Limite** : macOS/iOS uniquement. Pas de Windows/Linux.
 
----
-
 ## Wails (Go + WebView)
-
 Même concept que Tauri mais le backend est en **Go**.
 
 - Pertinent si tu as déjà du code Go à partager (CLI, API)
@@ -49,21 +42,14 @@ Même concept que Tauri mais le backend est en **Go**.
 - Binaire final léger (~8–20 MB)
 
 **Quand l'utiliser** : projet où Go est déjà utilisé côté serveur et que tu veux partager de la logique.
-
----
-
 ## ❌ Electron
-
 À éviter aujourd'hui sauf contrainte forte (équipe existante, plugin spécifique).
 
 - Binaire ~150 MB minimum
 - Mémoire importante (Chromium embarqué)
 - Tauri est supérieur sur tous les critères pour un nouveau projet
 
----
-
 ## Arbre de décision
-
 ```
 App desktop ?
 ├── Multiplateforme (macOS + Windows + Linux)
@@ -73,7 +59,6 @@ App desktop ?
     ├── Intégration OS native maximale → SwiftUI
     └── UI web réutilisée → Tauri (macOS only build)
 ```
-
 ## Combinaisons stack
 - `Tauri + React + shadcn + Rust backend` → app desktop multiplateforme
 - `Tauri + React + DaisyUI` → outil interne léger

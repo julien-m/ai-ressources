@@ -1,23 +1,16 @@
 ---
 extends: []
 ---
-
 # Testing Rules (Cross-Cutting)
 
 > These rules complement [`general.md`](general.md) §9 (Testing), §8 (Async) and [`architecture.md`](architecture.md) §26 (Testing Boundaries).
 > This file supersedes general.md §9 for detailed testing patterns.
 > Language deltas keep their own runner/framework choices — this file covers cross-cutting patterns only.
-
 ## 1. UI Test Identifiers
-
 > Applies only when the project includes a user-facing UI layer. Skip for CLI tools, backend APIs, and libraries.
-
 ### Universal Rule
-
 Every interactive UI element and every observable state must expose a **stable test identifier**, decoupled from styling, layout, and business logic.
-
 ### Platform Mapping
-
 | Platform | Attribute | UI Test Framework |
 |---|---|---|
 | Web (React, Leptos, Yew, any HTML) | `data-testid` | Playwright |
@@ -29,9 +22,7 @@ Every interactive UI element and every observable state must expose a **stable t
 | Tauri, Wails (WebView) | `data-testid` (HTML frontend) | Playwright |
 | Desktop native Rust (egui, iced) | N/A — test logic in pure Rust, UI via screenshot comparison | cargo test |
 | Desktop native Go (Fyne) | N/A — same approach as egui | go test |
-
 ### Naming Convention (all platforms)
-
 ```
 {feature}-{element}-{variant?}
 ```
@@ -42,9 +33,7 @@ Every interactive UI element and every observable state must expose a **stable t
 - Observable states (toasts, modals, loaders) get their own identifier
 
 Examples: `import-modal`, `import-validate-btn`, `import-progress-label`, `artifact-item-42`, `toast-success`, `toast-error`, `dropzone`
-
 ### Code Examples
-
 **Web (React):**
 ```tsx
 <button data-testid="import-validate-btn">Validate</button>
@@ -86,22 +75,11 @@ ElevatedButton(
 **Tauri / Wails:** Apply Web rules (`data-testid`) — the frontend is HTML.
 
 **Desktop native Rust (egui, iced):** No standardized UI test protocol. Separate business logic from UI and test logic in pure Rust. For UI: screenshot pixel comparison via `cargo test`.
-
 ### AI Instructions
-
-When generating or modifying any UI component:
-1. Add the platform-appropriate test identifier to every interactive element
-2. Add test identifiers to every observable state (modals, toasts, lists, loaders)
-3. Follow the naming convention above
-4. Never use styling attributes as test identifiers
-5. Use the Gherkin spec (if present) to determine which elements need identifiers
-
+For every UI component: add platform-appropriate identifiers to every interactive element and observable state, follow the naming convention above, never use styling attributes. Use the Gherkin spec (if present) to determine scope.
 ---
-
 ## 2. Test Structure & Naming
-
 ### Naming Convention
-
 Test names describe **behavior**, not implementation. Reading the name tells you what broke without opening the file.
 
 | Language | Pattern | Example |
@@ -113,57 +91,40 @@ Test names describe **behavior**, not implementation. Reading the name tells you
 | Kotlin | `` fun `should verb when condition`() `` | `` fun `should reject when token expired`() `` |
 | Delphi | `procedure TestVerbConditionExpected` | `procedure TestValidateExpiredTokenReturnsError` |
 | Dart | `test('should verb when condition', ...)` | `test('should reject expired tokens', ...)` |
-
 ### File Organization
-
 Tests live next to the code they test (colocation), except when the language dictates otherwise:
 - **Go**: `_test.go` in the same package (enforced by language)
 - **Rust**: `mod tests` inline for unit tests, `tests/` directory for integration tests
 - **Delphi**: `Tests/` directory with DUnitX test project
 - **Dart**: `test/` directory mirroring `lib/` structure
 - **All others**: `*.test.ts`, `*.test.swift`, `*.test.kt` alongside source files
-
 ---
-
 ## 3. Mocking Boundaries
-
 > Extends [`general.md`](general.md) §9 and [`architecture.md`](architecture.md) §26 with detailed per-layer guidance.
-
 ### What to Mock
-
 | Mock this | Examples | Why |
 |---|---|---|
 | Repositories / DB access | In-memory fake, testcontainer | Isolate business logic |
 | HTTP clients / external APIs | Response stub, local mock server | No network dependency |
 | Filesystem, clock, random | Injected abstractions | Deterministic tests |
-
 ### What to Never Mock
-
 | Never mock this | Why |
 |---|---|
 | The service under test | You're cheating on what you verify |
 | Domain logic (calculations, validations) | That's literally what you're testing |
 | Value objects / DTOs | No side effects, no need |
-
 ### Fakes Over Mocks
-
 Prefer fakes (an `InMemoryUserRepository` implementing the interface) over mocks (`vi.mock()`, `mockk<>()` with `when/thenReturn`). Mocks verify calls were made. Fakes verify behavior works.
 
 **Exception:** Spies are OK to verify a side-effect happened (email sent, event published) — but only on output ports, never on internal logic.
-
 ---
-
 ## 4. Test Data
-
 ### Rules
-
 - Use **factories/builders**, not static JSON fixtures
 - Each test shows only the fields **relevant to the scenario** — everything else is auto-generated with valid defaults
 - Each test builds its **own data** — no shared mutable state between tests
 - **Cleanup explicitly** for integration tests (transaction rollback or truncate)
-
 ### Factory Idioms by Language
-
 | Language | Idiom |
 |---|---|
 | TypeScript | `buildUser(overrides?: Partial<User>)` |
@@ -173,30 +134,19 @@ Prefer fakes (an `InMemoryUserRepository` implementing the interface) over mocks
 | Kotlin | `aUser(role = Role.ADMIN)` |
 | Delphi | `TUserBuilder.Create.WithRole(urAdmin).Build` |
 | Dart | `buildUser(role: Role.admin)` |
-
 ### Anti-Patterns
-
 - 200-line JSON/YAML fixture imported in 15 tests — impossible to tell which field matters for which test
 - Shared data between tests (`beforeAll` creating a user reused everywhere) — coupling, flaky tests, execution order matters
-
 ---
-
 ## 5. Async Testing
-
 > Extends [`general.md`](general.md) §8 (Async) with test-specific patterns.
-
 ### Rule
-
 Never use arbitrary `sleep`. Use explicit polling with condition and timeout.
-
 ### Patterns
-
 - **Polling**: `expect.poll()` (Vitest), `Eventually` (Go testify), `XCTNSPredicateExpectation` (Swift), `awaitility` (Kotlin)
 - **Event-driven**: Await a signal/callback, not a delay
 - **Explicit timeout**: Always bound the wait, fail-fast if exceeded
-
 ### Anti-Patterns
-
 ```typescript
 // ❌ Arbitrary sleep — fragile, slow, flaky
 await sleep(3000)
@@ -206,16 +156,10 @@ expect(getStatus(jobId)).toBe("completed")
 await expect.poll(() => getStatus(jobId), { timeout: 5000 })
   .toBe("completed")
 ```
-
 ---
-
 ## 6. Integration vs Unit Boundaries
-
 > Extends [`architecture.md`](architecture.md) §26 (Testing Boundaries) with explicit layer-to-test-type mapping.
-
 ### Test Type by Layer
-
-Mapped to the layer model from [`architecture.md`](architecture.md):
 
 | Layer | Test type | What to mock |
 |---|---|---|
@@ -223,47 +167,30 @@ Mapped to the layer model from [`architecture.md`](architecture.md):
 | Service | Unit | Repository (injected fake) |
 | Repository | Integration | Real DB (testcontainer or in-memory) |
 | Gateway / Client | Integration | Local mock HTTP server |
-
 ### Rule
-
 Business logic is tested with unit tests. Boundaries (HTTP, DB, filesystem) are tested with integration tests. Never test business logic through an HTTP request.
-
 ---
-
 ## 7. Coverage Philosophy
-
 Prioritize business logic and edge case coverage. Do not chase percentage metrics at the cost of test quality.
 
 - Cover: business rules, validation logic, error paths, boundary conditions
 - Skip: glue code, trivial getters/setters, framework boilerplate, generated code
 - No mandatory coverage threshold — a well-tested 60% is better than a poorly-tested 90%
-
 ---
-
 ## 8. CLI Output Testing
-
 > Applies only when the project is a CLI tool with terminal output (ANSI colors, tables, formatted text).
-
 ### Separate Content from Style
-
 Tests that verify **what** is displayed (text, values, structure) must not depend on **how** it is styled (ANSI codes, colors). Split into two categories:
 
 | Test type | What to assert | Environment dependency |
 |---|---|---|
 | Content test | `expect(output).toContain("Exit code: 1")` | None |
 | Style test | `expect(formatExitCode(1)).toBe("\x1b[31m1\x1b[0m")` | Must inject or force color support |
-
 ### Never Assert ANSI Codes Without Controlling Color Detection
-
-Tests that check for ANSI escape sequences (`\x1b[31m`, `\x1b[32m`, etc.) must ensure the color-detection function returns `true` during the test. Color detection typically depends on multiple signals (`NO_COLOR`, `TERM`, `stdout.isTTY`), not just `NO_COLOR` — unsetting `NO_COLOR` alone is not sufficient in non-TTY environments (CI, piped output, sandboxes).
-
-Two approaches:
-
-1. **Inject a color-support abstraction** (preferred) — pass a `colorEnabled: boolean` parameter or use a `ColorSupport` interface that tests can override. This decouples formatting logic from environment detection entirely.
-2. **Force-color flag** — support a `FORCE_COLOR=1` environment variable that bypasses all other checks (mirrors the `chalk`/`kleur` convention). Tests set `FORCE_COLOR=1` to guarantee ANSI output regardless of TTY state.
-
+Tests must ensure color-detection returns `true`. Color detection depends on `NO_COLOR`, `TERM`, `stdout.isTTY` — unsetting one is not enough in CI/piped environments. Two approaches:
+1. **Inject a color-support abstraction** (preferred) — pass `colorEnabled: boolean` or a `ColorSupport` interface.
+2. **Force-color flag** — support `FORCE_COLOR=1` to bypass all checks. Tests set this to guarantee ANSI output.
 ### Avoid Module-Level Environment Evaluation
-
 ```typescript
 // ❌ Constant evaluated once at import — cannot be changed by tests
 export const SUPPORTS_COLOR = !process.env.NO_COLOR;
@@ -284,11 +211,6 @@ export function ansiRed(): string {
 }
 ```
 
-Module-level `const` from `process.env` is frozen at first import. Tests that manipulate `process.env` after import have no effect — the value is already captured. Use a function or a getter instead.
-
+Module-level `const` from `process.env` is frozen at first import — use a function or getter instead.
 ### Integration Tests for CLI Commands
-
-When testing CLI output end-to-end (spawning the binary), the child process writes to a pipe, not a TTY. Even without `NO_COLOR`, a properly implemented `supportsColor()` will disable colors because `stdout.isTTY` is `false` in the spawned process.
-
-- **Accept plain text** in integration tests (recommended) — do not assert ANSI codes in spawned process output. Verify content only.
-- **Force colors explicitly** if ANSI assertions are needed: `{ env: { ...process.env, FORCE_COLOR: "1" } }`. This requires the CLI to support `FORCE_COLOR` in its color detection (see example above).
+Spawned binaries write to a pipe (not a TTY), so `supportsColor()` returns `false` even without `NO_COLOR`. Prefer asserting plain text content only. Force colors when ANSI assertions are needed: `{ env: { ...process.env, FORCE_COLOR: "1" } }`.

@@ -8,7 +8,6 @@ type: cli
 # CLI Tools
 
 ## Go — Recommandation principale
-
 **Le meilleur choix pour un CLI qui fait des requêtes HTTP, de l'orchestration, ou de la manipulation de fichiers.**
 
 - Compile en binaire statique sans dépendances (`CGO_ENABLED=0`)
@@ -21,7 +20,7 @@ type: cli
   - `viper` — gestion de config (yaml/env/flags)
 - Concurrence native (goroutines) — parfait pour du parallélisme dans un CLI
 
-**Cas d'usage typiques** : CLI qui interroge des APIs, outil de déploiement, CLI de gestion de ressources cloud, outil d'automatisation.
+**Cas d'usage typiques** : CLI APIs, déploiement, gestion ressources cloud, automatisation.
 
 ### Exemple coût binaire final
 | OS | Taille typique |
@@ -30,10 +29,7 @@ type: cli
 | Linux amd64 | ~8–12 MB |
 | Windows amd64 | ~9–13 MB |
 
----
-
 ## Bun / TypeScript — Recommandation si interne ou rapidité
-
 Pertinent quand **le CLI est interne** (pas distribué) ou qu'on veut aller vite dans l'écosystème TypeScript.
 
 - `bun build --compile` → binaire autonome (~60–80 MB, inclut le runtime Bun)
@@ -43,10 +39,7 @@ Pertinent quand **le CLI est interne** (pas distribué) ou qu'on veut aller vite
 
 **Limite pour distribution** : binaire plus lourd, peut dépendre de glibc sur Linux selon la cible. Préférer Go pour une vraie distribution multiplateforme publique.
 
----
-
 ## Rust — Pour les cas extrêmes
-
 Pertinent si le CLI fait du **parsing binaire, manipulation système bas niveau, ou que les performances à l'extrême comptent**.
 
 - Performances maximales, zéro runtime
@@ -57,10 +50,7 @@ Pertinent si le CLI fait du **parsing binaire, manipulation système bas niveau,
 
 **Quand vraiment utiliser** : CLI qui traite de gros volumes de données locales (parsing logs, compression, cryptographie), ou quand Go ne suffit pas (rare).
 
----
-
 ## Arbre de décision
-
 ```
 CLI ?
 ├── Distribution publique multiplateforme → Go
@@ -69,7 +59,6 @@ CLI ?
 ```
 
 ## Comparatif
-
 | Critère | Go | Bun/TS | Rust |
 |---------|----|----|------|
 | Binaire multiplateforme | ✅ trivial | ⚠️ lourd | ✅ possible |
@@ -78,7 +67,6 @@ CLI ?
 | Partage code projet TS | ❌ | ✅ | ❌ |
 | TUI interactif | ✅ bubbletea | ⚠️ libs tierces | ✅ ratatui |
 | Courbe apprentissage | ✅ faible | ✅ nulle | ❌ élevée |
-
 ## Combinaisons stack
 - `Go + cobra + bubbletea` → CLI public distribué avec TUI
 - `Go + cobra + viper` → CLI avec config fichier + env

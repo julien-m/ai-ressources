@@ -12,7 +12,6 @@ free_tier: true
 > _Notion comme backoffice opérationnel early-stage — liste d'attente, leads, questionnaires._
 
 ## Ce que c'est
-
 Utiliser Notion comme base de données opérationnelle pour gérer les premiers utilisateurs, les demandes entrantes, les listes d'attente, et les réponses à des formulaires. Pas un CMS de contenu — un outil de pilotage humain pour les 0 → 500 premiers users.
 
 **Cas d'usage** :
@@ -22,7 +21,6 @@ Utiliser Notion comme base de données opérationnelle pour gérer les premiers 
 - Demandes support ou feedback early adopters
 
 ## Architecture type
-
 ```
 Formulaire (Tally / typeform) ──→ Webhook ──→ n8n ──→ Notion API
 Email entrant                  ──→ n8n parsing ──→ Notion API
@@ -32,7 +30,6 @@ Landing page form              ──→ API route Next.js ──→ Notion API
 Tu ouvres Notion → tu vois tous tes contacts, tu peux filtrer par statut, tagger, commenter, envoyer un email direct.
 
 ## Intégrations recommandées
-
 | Source | Outil intermédiaire | Résultat |
 |--------|--------------------|---------| 
 | Formulaire web | n8n / Zapier | Nouvelle row dans une table Notion |
@@ -41,7 +38,6 @@ Tu ouvres Notion → tu vois tous tes contacts, tu peux filtrer par statut, tagg
 | API route Next.js | Notion SDK direct | Row Notion à la soumission |
 
 ## Notion SDK TypeScript
-
 ```typescript
 import { Client } from '@notionhq/client'
 
@@ -60,39 +56,31 @@ await notion.pages.create({
 ```
 
 ## Free tier / Pricing
-
 - Plan gratuit Notion suffit largement pour un usage solo early-stage
 - API incluse sur tous les plans
 - Limite pratique : ~1000 rows par DB sur le plan gratuit (suffisant pour les premiers 1000 contacts)
-
 ## ✅ Quand utiliser
-
 - 0 → 500 premiers utilisateurs/leads à gérer manuellement
 - Pas envie de builder un backoffice admin custom
 - Tu veux une vue humaine sur tes contacts (pas juste une DB)
 - Déjà utilisateur Notion
 - Questionnaires / formulaires d'onboarding dont tu veux traiter les réponses manuellement
-
 ## ❌ Quand ne PAS utiliser
-
 - > 1000 contacts actifs → migrer vers un vrai CRM (Airtable, HubSpot free, ou DB custom)
 - Besoin d'automatisations complexes CRM (scoring, séquences emails) → HubSpot ou CRM dédié
 - Équipe commerciale → outil CRM dédié
 
 ## Migration quand Notion devient trop petit
-
 ```
 Notion (0–500 users) 
   → Airtable (500–5k, plus puissant, même concept)
   → HubSpot Free (si ventes B2B)
   → Backoffice custom Next.js + Postgres (si volume ou logique complexe)
 ```
-
 ## Combinaisons stack
 - `Notion + n8n + Tally` → formulaire → automatisation → CRM
 - `Notion + n8n + Gmail` → email entrant → parsing → Notion
 - `Notion API + Next.js API route` → formulaire landing page → Notion direct
-
 ## Ressources
 - [developers.notion.com](https://developers.notion.com)
 - [notionhq/client npm](https://www.npmjs.com/package/@notionhq/client)

@@ -78,13 +78,7 @@ Use a structured namespace format to prevent collisions and enable bulk operatio
 {namespace}:{version}:{entity}:{id}
 ```
 
-**Examples:**
-
-```
-catalog:v2:product:8f3a-b1c2
-auth:v1:session:user-uuid
-billing:v1:invoice:inv-2024-001
-```
+Examples: `catalog:v2:product:8f3a-b1c2`, `auth:v1:session:user-uuid`, `billing:v1:invoice:inv-2024-001`
 
 - **namespace** — service or domain boundary
 - **version** — cache schema version (bump to mass-invalidate on schema change)
@@ -105,9 +99,12 @@ For tenant-scoped keys, see **Read** [`multi-tenant.md`](multi-tenant.md) which 
 
 ### Caching Patterns
 
-#### Cache-Aside (Lazy Loading)
-
-The application checks the cache first. On miss, it fetches from the data source, stores in cache, then returns. The cache has no awareness of the data source.
+| Pattern | How It Works | Pros | Cons | When to Use |
+|---------|-------------|------|------|-------------|
+| Cache-Aside (Lazy Loading) | App checks cache first; on miss, fetches from source, stores, returns | Only requested data cached; cache failures non-fatal | Miss penalty; thundering herd on popular keys | **Recommended default** for most SaaS read paths |
+| Read-Through | Cache fetches from source on miss; app always reads from cache | Simpler application code — single read path | Tighter coupling; cache library must support async loaders | When cache library supports async loaders |
+| Write-Through | Written to cache and source synchronously; ack when both succeed | Cache always consistent with source | Higher write latency; caches data that may never be read | Strong consistency requirements |
+| Write-Behind (Write-Back) | Written to cache immediately, flushed to source asynchronously | Lowest write latency; batching reduces DB load | Risk of data loss if cache crashes before flush | High-throughput write paths, eventual consistency acceptable |
 
 ```mermaid
 flowchart TD
@@ -121,32 +118,6 @@ flowchart TD
     style C fill:#9f9,stroke:#333
     style D fill:#ff9,stroke:#333
 ```
-
-**Pros:** Only requested data is cached. Cache failures are non-fatal (fallback to source).
-**Cons:** Cache miss penalty (extra round-trip). Risk of thundering herd on popular keys.
-
-**Recommended default** for most SaaS read paths.
-
-#### Read-Through
-
-The cache itself fetches from the data source on a miss. The application always reads from cache. Requires a cache layer that supports loader functions.
-
-**Pros:** Simpler application code — single read path.
-**Cons:** Tighter coupling between cache and data source. Cache library must support async loaders.
-
-#### Write-Through
-
-Data is written to cache and data source synchronously. The write is only acknowledged when both succeed.
-
-**Pros:** Cache is always consistent with the source.
-**Cons:** Higher write latency (two writes per operation). Caches data that may never be read.
-
-#### Write-Behind (Write-Back)
-
-Data is written to cache immediately, then asynchronously flushed to the data source.
-
-**Pros:** Lowest write latency. Batching reduces DB load.
-**Cons:** Risk of data loss if cache crashes before flush. Eventual consistency only.
 
 ### Stampede Prevention
 
@@ -239,72 +210,21 @@ return response;
 | Near-real-time | < 1 second | Event-driven + pub/sub broadcast | High |
 | Strong | 0 (none) | Write-through + synchronous invalidation | Highest |
 
-### TTL-Based
-
-Set a TTL on every cache entry. Data becomes stale after expiration and is refreshed on next access.
-
-**When to use:** Reference data, product catalogs, configuration that changes infrequently. The simplest strategy — start here unless you have a proven consistency requirement.
-
-### Event-Driven Invalidation
-
-Publish cache invalidation events when data changes. Subscribers (cache nodes, edge workers) delete or refresh affected keys.
-
-```
-OrderService --publish--> "order.updated" { orderId, tenantId }
-CacheInvalidator --subscribe--> delete keys matching "orders:*:{orderId}"
-```
-
-**When to use:** Shopping carts, user profiles, inventory counts — data that changes unpredictably and must reflect quickly.
-
-### Versioned Keys
-
-Include a version number in the cache key. Bump the version to effectively invalidate all old entries without explicit deletion.
-
-```
-config:v3:feature-flags   // current
-config:v2:feature-flags   // stale (will be evicted by LRU/TTL)
-```
-
-**When to use:** Schema changes, bulk data migrations, deploy-time cache busting. Old keys are garbage collected naturally.
-
-### Purge APIs
-
-Programmatic cache clearing via CDN or cache provider APIs.
-
-**When to use:** Content publishing workflows, emergency invalidation after a bad deploy, targeted cleanup of specific resources.
-
-**Warning:** Purge-all operations can cause origin overload (sudden cache miss storm). Always prefer targeted purges over global purges.
+- **TTL-Based:** Set a TTL on every cache entry. Use for reference data, product catalogs, configuration — start here unless you have a proven consistency requirement.
+- **Event-Driven:** Publish invalidation events when data changes; subscribers delete or refresh affected keys. Use for shopping carts, user profiles, inventory counts. Example: `OrderService --publish--> "order.updated" → CacheInvalidator deletes keys matching "orders:*:{orderId}"`
+- **Versioned Keys:** Include a version number in the key; bump to invalidate all old entries without explicit deletion. Use for schema changes, bulk migrations, deploy-time busting. Old keys evicted by LRU/TTL naturally.
+- **Purge APIs:** Programmatic clearing via CDN/cache provider APIs. Use for content publishing, emergency invalidation. **Warning:** always prefer targeted purges over global purges — purge-all causes origin overload (sudden cache miss storm).
 
 ---
 
 ## Cache Key Design
 
-### Namespacing
-
-Every cache key must include enough context to be globally unique and collision-free:
-
-```
-{service}:{version}:{entity}:{id}:{variant}
-```
+Every cache key must be globally unique: `{service}:{version}:{entity}:{id}:{variant}`
 
 **Variant examples:** locale (`en`, `fr`), format (`full`, `summary`), permissions context (`public`, `admin`).
 
-### Tenant Isolation
-
-Cache keys in multi-tenant systems must be scoped to the tenant. See **Read** [`multi-tenant.md`](multi-tenant.md) for the `tenant:{id}:{key}` prefix convention and anti-patterns around sharing cache keys across tenants.
-
-Do not duplicate tenant key logic here — the authoritative pattern lives in the multi-tenant reference.
-
-### Locale and Variant Handling
-
-When the same resource has multiple representations, include the variant in the key:
-
-```
-catalog:v1:product:123:en:full
-catalog:v1:product:123:fr:summary
-```
-
-Always derive variants from a controlled set (enum of locales, known formats). Never from raw user input.
+- Tenant isolation: see **Read** [`multi-tenant.md`](multi-tenant.md) for the `tenant:{id}:{key}` prefix — do not duplicate tenant key logic here
+- Locale/variant: `catalog:v1:product:123:en:full` — always derive from a controlled set (enum of locales, known formats), never from raw user input
 
 ### Anti-Patterns
 

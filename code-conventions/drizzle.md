@@ -1,13 +1,10 @@
 ---
 extends: [javascript, database]
 ---
-
 # Drizzle ORM Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md) and [`database.md`](database.md). Only Drizzle-specific conventions are listed here.
-
 ## Schema Design
-
 - One schema file per domain: `src/db/schema/users.ts`, `src/db/schema/posts.ts`
 - Export barrel: `src/db/schema/index.ts` re-exports all schemas
 - Always export Select and Insert types:
@@ -27,7 +24,6 @@ export type NewUser = typeof users.$inferInsert;
 ```
 
 ## Critical Rules
-
 - **Never change primary key types** — breaks migrations irreversibly
 - **Array syntax**: `text('field').array()` — NOT `array(text(...))`
 - **Timestamps**: use `integer('field', { mode: 'timestamp' })` for SQLite/D1 (no native date type)
@@ -35,7 +31,6 @@ export type NewUser = typeof users.$inferInsert;
 - **Never hardcode credentials** in `drizzle.config.ts`
 
 ## Migrations
-
 ```bash
 npx drizzle-kit generate    # generate migration from schema diff
 npx drizzle-kit migrate     # apply pending migrations
@@ -48,7 +43,6 @@ npx drizzle-kit studio      # visual schema browser
 - Never edit generated migration files after they've been applied
 
 ## Query Patterns
-
 ```ts
 // Select with filter
 const activeUsers = await db.select()
@@ -72,7 +66,6 @@ await db.delete(users).where(eq(users.id, userId));
 ```
 
 ## Relations
-
 ```ts
 import { relations } from 'drizzle-orm';
 
@@ -89,7 +82,6 @@ export const postsRelations = relations(posts, ({ one }) => ({
 - Use `db.query.*` API for relation queries (not raw joins)
 
 ## Transactions
-
 - Use `db.batch()` for D1/SQLite multi-statement operations
 - Never use raw `BEGIN TRANSACTION` SQL with D1
 - For PostgreSQL/MySQL, use `db.transaction()`:
@@ -102,21 +94,18 @@ await db.transaction(async (tx) => {
 ```
 
 ## D1-Specific
-
 - Driver: `d1-http` dialect: `sqlite`
 - D1 binding name in `wrangler.jsonc` must match TypeScript interface property
 - Max database size: 10 GB (paid), 500 MB (free)
 - Use `db.batch()` instead of transactions
 
 ## PostgreSQL-Specific (Neon, Supabase)
-
 - Driver: `@neondatabase/serverless` or `pg`
 - Use `pgTable` from `drizzle-orm/pg-core`
 - Native `timestamp`, `json`, `jsonb`, `uuid` types available
 - Use `drizzle-kit push` for rapid prototyping, `generate` + `migrate` for production
 
 ## Anti-Patterns
-
 - No raw SQL for CRUD — use the query builder
 - No `SELECT *` — always specify columns or use typed select
 - No skipping migration review — always check generated SQL

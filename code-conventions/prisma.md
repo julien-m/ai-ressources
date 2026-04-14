@@ -1,13 +1,10 @@
 ---
 extends: [javascript, database]
 ---
-
 # Prisma Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md) and [`database.md`](database.md). Only Prisma-specific conventions are listed here.
-
 ## v7 Configuration
-
 Prisma v7 uses `prisma.config.ts` — no auto environment loading:
 
 ```ts
@@ -25,7 +22,6 @@ export default defineConfig({
 - MongoDB is NOT supported in v7 — use v6
 
 ## Schema Design
-
 ```prisma
 model User {
   id        String   @id @default(cuid())
@@ -56,7 +52,6 @@ model Post {
 - Optional fields with `?` — never nullable without reason
 
 ## Client Usage
-
 ```ts
 import { PrismaClient } from '@prisma/client';
 
@@ -86,7 +81,6 @@ const user = await prisma.user.create({
 ```
 
 ## Query Patterns
-
 - Use `select` to pick specific fields — never fetch entire rows when unnecessary
 - Use `include` for eager loading relations — be explicit about depth
 - `findUnique` for single record by unique field, `findFirst` for first match
@@ -94,7 +88,6 @@ const user = await prisma.user.create({
 - `count`, `aggregate`, `groupBy` for analytics queries
 
 ## Transactions
-
 ```ts
 // Array transaction (simple, auto-batched)
 const [user, post] = await prisma.$transaction([
@@ -115,7 +108,6 @@ await prisma.$transaction(async (tx) => {
 - Set `timeout` and `maxWait` for long-running transactions
 
 ## Migrations
-
 ```bash
 npx prisma generate          # regenerate client after schema changes
 npx prisma migrate dev       # create + apply migration (dev only)
@@ -132,7 +124,6 @@ npx prisma format            # format schema file
 - Use `db push` only for prototyping — `migrate` for production
 
 ## Raw SQL
-
 ```ts
 // Safe parameterized query
 const users = await prisma.$queryRaw`SELECT * FROM users WHERE id = ${userId}`;
@@ -145,18 +136,15 @@ await prisma.$executeRaw`UPDATE users SET name = ${name} WHERE id = ${id}`;
 - Use `$queryRaw` for reads, `$executeRaw` for writes
 
 ## Bun Runtime
-
 - Use `bunx --bun prisma ...` — prevents fallback to Node.js
 - Applies to all CLI commands: `generate`, `migrate`, `studio`
 
 ## D1 / Cloudflare
-
 - Use `@prisma/adapter-d1` driver adapter
 - Configure in `prisma.config.ts` with D1 binding
 - Refer to [`cloudflare.md`](cloudflare.md) for D1-specific limits
 
 ## Anti-Patterns
-
 - No `findMany` without `take` / pagination — always limit results
 - No raw SQL for standard CRUD — use Prisma Client
 - No `$queryRawUnsafe` / `$executeRawUnsafe` — SQL injection risk

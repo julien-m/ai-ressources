@@ -53,8 +53,8 @@ One event triggers N independent jobs that execute in parallel.
 - Each fan-out target is a separate queue or subscription — one slow consumer does not block others
 - Fan-out is fire-and-forget from the producer's perspective; each branch handles its own retry logic
 - Implement via topic-based pub/sub (SNS + SQS, Cloudflare Pub/Sub) or by enqueueing N jobs from a single handler
-- **Partial failure** — some branches may succeed while others fail; each branch retries independently; the producer does not track individual branch outcomes
-- **Ordering across branches** — not guaranteed; branches may complete in any order; design consumers to be order-independent
+- **Partial failure** — some branches may succeed while others fail; each branch retries independently
+- **Ordering across branches** — not guaranteed; design consumers to be order-independent
 
 ### Workflow / Pipeline
 
@@ -86,7 +86,7 @@ stateDiagram-v2
 Recurring jobs on a fixed schedule, running in a distributed environment.
 
 - **Leader election** — only one instance should trigger the scheduled job; use a distributed lock (Redis `SET NX EX`, database advisory lock, or built-in scheduler leader election)
-- **Clock drift** — do not rely on wall-clock precision across nodes; use the scheduler's internal clock or a centralized time source; tolerate +/-5s drift
+- **Clock drift** — do not rely on wall-clock precision across nodes; tolerate +/-5s drift
 - **Overlap prevention** — if a job run exceeds the cron interval, skip the next invocation rather than stacking concurrent runs
 - **Missed runs** — decide per job: either skip missed runs (dashboards, reports) or catch up (billing, metering); document the policy per job
 - **Jitter** — for jobs running on many tenants (e.g., daily digest emails), add random delay per tenant to avoid thundering herd
@@ -129,7 +129,7 @@ Every job handler must be idempotent. The full idempotency pattern (idempotency 
 | Hard timeout | Worker is killed after a fixed duration | Short jobs with predictable duration (email send, API call) |
 | Heartbeat | Worker periodically extends its lease; missed heartbeat = timeout | Long-running jobs with variable duration (video processing, data export) |
 
-- Hard timeout: set per queue or per job type; typical values: 30s for API calls, 5 min for processing, 30 min for heavy compute
+- Hard timeout: typical values: 30s for API calls, 5 min for processing, 30 min for heavy compute
 - Heartbeat: worker sends a heartbeat every N seconds (e.g., every 30s); if the orchestrator misses 2 consecutive heartbeats, it considers the worker dead and re-enqueues the job
 - Always combine with a max wall-clock timeout as a safety net — even heartbeat-based jobs need an upper bound
 - On timeout: log the timeout event with `jobId`, `jobType`, `durationMs`, and `timeoutType` (hard or heartbeat); re-enqueue if the job is retryable
@@ -154,7 +154,6 @@ Every job handler must be idempotent. The full idempotency pattern (idempotency 
 ### Large Payload Handling
 
 When data exceeds queue size limits:
-
 1. Store the large payload in object storage (R2, S3)
 2. Enqueue a reference: `{ "payloadRef": "s3://bucket/jobs/abc123.json" }`
 3. Worker fetches the payload from storage at processing time
@@ -237,8 +236,7 @@ Required fields per job log:
 
 For detailed vendor comparison, setup guides, and migration paths, **Read** [`stack-ref/jobs/`](../stack-ref/jobs/).
 
-### Selection Criteria
-
+**Selection Criteria:**
 - **Simple fire-and-forget / delayed** — BullMQ or Cloudflare Queues (lightweight, minimal overhead)
 - **Scheduled / cron** — BullMQ (built-in repeatable jobs) or Inngest (managed cron with dashboard)
 - **Multi-step workflows with compensation** — Inngest or Trigger.dev (built-in step functions, retry per step, state persistence)

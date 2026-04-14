@@ -1,13 +1,10 @@
 ---
 extends: [javascript]
 ---
-
 # Cloudflare Workers Rules (Delta)
 
 > These rules complement [`javascript.md`](javascript.md). Covers Workers, D1, R2, KV, and Hono framework.
-
 ## Configuration
-
 - Set `compatibility_date` to current date on new projects
 - Enable `nodejs_compat` in compatibility flags
 - Use JSONC format: `wrangler.jsonc`
@@ -16,7 +13,6 @@ extends: [javascript]
 - Enable observability: `"observability": { "enabled": true, "head_sampling_rate": 1 }`
 
 ## Critical Anti-Patterns
-
 ### Module-level mutable state (request leakage)
 ```ts
 // BAD — state leaks between requests
@@ -30,7 +26,6 @@ export default {
   fetch: (request, env) => { const requestId = generateId(); }
 }
 ```
-
 ### Other forbidden patterns
 - **Floating promises** — every Promise must be `await`ed, `return`ed, `void`ed, or `ctx.waitUntil()`ed
 - **`Math.random()` for tokens** — use `crypto.randomUUID()` or `crypto.getRandomValues()`
@@ -41,13 +36,11 @@ export default {
 - **Direct secret comparison** — use `crypto.subtle.timingSafeEqual()` for timing safety
 
 ## Streaming
-
 - Always stream large/unknown payloads via `TransformStream`
 - Never buffer with `await response.text()` or `await request.arrayBuffer()` for unbounded data
 - Use `pipeTo()` with `preventClose: true` for chaining streams
 
 ## Async Patterns
-
 - `ctx.waitUntil()` for post-response work (analytics, cache writes) — 30s limit
 - Use Queues for single-step async with at-least-once delivery
 - Use Workflows for multi-step processes with step persistence
@@ -55,22 +48,13 @@ export default {
 - Hyperdrive for external PostgreSQL/MySQL connections
 
 ## Cache
-
 > For generic patterns (cache-aside, versioned keys, CDN `Cache-Control` headers), see [`architecture/caching-strategies.md`](../architecture/caching-strategies.md). This section covers Cloudflare-specific implementation via `caches.default` and service bindings.
-
 ### Cache hierarchy
-
 ```
-Request
-  └→ caches.default (Cache API)    ← L-1: free, edge-local, ~1 ms
-       └→ KV (cacheTtl option)     ← L-2: edge-distributed, ~1 ms with cacheTtl
-            └→ D1 / R2             ← source of truth, billable latency
+Request → caches.default (L-1: free, edge-local, ~1ms) → KV with cacheTtl (L-2: ~1ms) → D1/R2 (source of truth, billable)
 ```
-
-Never hit D1 or R2 without checking the upper layers first.
-
+Never hit D1 or R2 without checking upper layers first.
 ### Cache API (`caches.default`)
-
 Use synthetic `Request` objects as cache keys (URL-based).
 
 **R2 objects:**
@@ -116,9 +100,7 @@ async function getQueryCached<T>(
   return result.results;
 }
 ```
-
 ### KV with `cacheTtl`
-
 ```ts
 // Without cacheTtl: ~50 ms round-trip to central KV store
 const value = await env.MY_KV.get('key');
@@ -128,9 +110,7 @@ const value = await env.MY_KV.get('key', { cacheTtl: 300 });
 ```
 
 Always use `cacheTtl` for read-heavy keys (feature flags, config, translations). Not suitable for data that changes more often than the TTL. See **Invalidation strategies** below for keys that need active invalidation.
-
 ### R2 response headers
-
 ```ts
 // Immutable assets (hash in filename): 1-year TTL
 'Cache-Control': 'public, max-age=31536000, immutable'
@@ -141,11 +121,7 @@ Always use `cacheTtl` for read-heavy keys (feature flags, config, translations).
 // Private/user-specific: never cache
 'Cache-Control': 'private, no-store'
 ```
-
 ### Stale-while-revalidate (manual)
-
-Return the cached value immediately, refresh in the background:
-
 ```ts
 const cached = await cache.match(cacheKey);
 if (cached) {
@@ -154,62 +130,36 @@ if (cached) {
 }
 // cache miss — fetch fresh, cache, return
 ```
-
 ### What NOT to cache
-
 - User-specific or sensitive data (unless `private` + client-side only)
 - Mutation responses (`POST`/`PUT`/`DELETE`) — always `Cache-Control: no-store`
 - Tokens, sessions, credentials
-
 ### Invalidation strategies
-
 #### Strategy 1 — Short TTL + stale tolerance (default)
-
-Don't invalidate actively. Choose a TTL short enough that stale is acceptable.
-
-- Lists, counters: 10–30s TTL
-- Reference data: 5–15 min TTL
-- Use when: consistency is not critical
-
+Don't invalidate actively — choose a TTL short enough that stale is acceptable: lists/counters 10–30s, reference data 5–15 min. Use when consistency is not critical.
 #### Strategy 2 — Version tag via KV (global, multi-node)
-
-The safest strategy for Workers (avoids multi-node `cache.delete()` limitations).
+Safest for Workers (avoids multi-node `cache.delete()` limitations). Old entries expire at TTL; KV lookup ~1 ms with `cacheTtl: 5`.
 
 ```ts
 // Read: include version in cache key
 const version = await env.MY_KV.get('cache:version:articles', { cacheTtl: 5 });
 const cacheKey = new Request(`https://d1-cache/articles/${version ?? '0'}`);
-
 // Invalidate: bump version → all old cache keys become orphaned
 await env.MY_KV.put('cache:version:articles', String(Date.now()));
 ```
-
-Old entries expire naturally at their TTL. KV lookup cost: ~1 ms with `cacheTtl: 5`.
-
 #### Strategy 3 — `cache.delete()` (targeted, single-node)
-
-Best for well-identified resources (a specific R2 file, an entity by ID):
+Best for well-identified resources. Limitation: only invalidates on the current edge node — other nodes serve stale until TTL expires.
 
 ```ts
 await cache.delete(new Request(`https://r2-cache/${objectKey}`));
 ```
-
-Limitation: invalidates only on the current edge node. Other nodes serve stale until TTL expires. Acceptable when TTL is short or traffic is low/single-region.
-
 #### Strategy 4 — Durable Objects (advanced)
-
-Use a Durable Object as an L0 cache with coherent in-memory state when:
-- A single object receives very high read traffic
-- Strong consistency is required
+Use when a single object has very high read traffic and strong consistency is required. Use rarely — DOs have single-geography placement and operational cost.
 
 ```
 Worker → Durable Object (in-memory state, refreshes from D1 periodically)
 ```
-
-Use rarely — DOs have single-geography placement and operational cost.
-
 #### Drizzle + D1: multi-table invalidation
-
 When a `db.batch()` touches multiple tables, invalidate **all** affected table version tags — not just the primary table:
 
 ```ts
@@ -223,9 +173,7 @@ await db.batch([
 await env.MY_KV.put('cache:version:articles', String(Date.now()));
 await env.MY_KV.put('cache:version:tags', String(Date.now()));
 ```
-
 ### Decision tree
-
 ```
 Can this data be slightly stale?
   ├─ Yes → TTL short (Strategy 1)
@@ -236,7 +184,6 @@ Can this data be slightly stale?
 ```
 
 ## D1 (SQLite)
-
 - Max 10 GB per database (paid), 500 MB (free)
 - Optimized for per-user/per-tenant patterns
 - Use `db.batch()` for multi-statement operations — never raw `BEGIN TRANSACTION`
@@ -244,20 +191,17 @@ Can this data be slightly stale?
 - Point-in-time recovery via Time Travel (30 days)
 
 ## R2 (Object Storage)
-
 - Use bindings, not S3 API, from Workers
 - Multipart upload for files > 5 MB
 - Set appropriate `Content-Type` and cache headers
 
 ## KV (Key-Value)
-
 - Eventually consistent — not for coordination
 - Best for read-heavy, write-light patterns (config, feature flags)
 - Max value size: 25 MB
 - Use `cacheTtl` for frequently accessed keys — see **Cache** section above for full pattern and decision tree
 
 ## Hono on Workers
-
 - Type bindings: `new Hono<{ Bindings: Env }>()`
 - Access env via `c.env.*` — never `process.env`
 - Inline handlers for type inference — avoid controller pattern unless using `hono/factory`
@@ -276,7 +220,6 @@ app.get('/items', async (c) => {
 ```
 
 ## Security
-
 - Use `crypto.randomUUID()` for secure randomness
 - Hash before comparing secrets with `crypto.subtle.timingSafeEqual()`
 - Never use `any` on `Env` or handler parameters

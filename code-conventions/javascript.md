@@ -1,11 +1,9 @@
 ---
 extends: [general]
 ---
-
 # TypeScript Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Only TypeScript/JavaScript-specific conventions are listed here.
-
 ## Stack
 - Backend runtime: **Node.js** (dev tooling: **Bun** when useful)
 - Frontend: **React**, **Next.js**, **Astro**
@@ -75,23 +73,14 @@ await fetch(url, { signal: controller.signal });
 ```
 
 ## Pre-commit Validation
-
-Before committing, all of these must pass with zero errors/warnings:
-
-```bash
-tsc --noEmit          # type checking (or bunx tsc --noEmit for Bun projects)
-biome check .         # linting + formatting
-vitest run            # tests
-```
+`tsc --noEmit && biome check . && vitest run` — all must pass with zero errors/warnings.
 
 ## Bun Projects (setup only)
-
 When scaffolding a Bun project:
 - devDependency: `@types/bun` (not the deprecated `bun-types`)
 - tsconfig: `skipLibCheck: true`, `moduleResolution: "bundler"`, `target/module: "ESNext"`
 
 ## Magic Strings Pattern
-
 ```ts
 export const SIGNATURE_STATUS = {
 	DRAFT: "draft",
@@ -120,11 +109,8 @@ Public APIs should return typed objects, not anonymous ones: `interface CreateUs
 - `@throws` for every function that can throw, with the error type
 - `@returns` to describe complex return structures (e.g. object shape)
 - Keep documentation in sync with code — outdated JSDoc is worse than none
-
 ### Inline Comment Triggers
-All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments.
-
-Additionally for TypeScript/JavaScript:
+All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments. Additionally for TypeScript/JavaScript:
 - **Type assertions** (`as`, `!`) — explain why the assertion is safe
 - **`// biome-ignore`** directives — explain why the rule is suppressed
 - **Dynamic `import()`** — explain why static import is not possible

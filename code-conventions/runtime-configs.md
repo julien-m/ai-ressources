@@ -1,7 +1,6 @@
 ---
 extends: []
 ---
-
 # Runtime Configurations
 
 Expected configuration defaults per runtime and language. Used by `/conventions.init` Phase 6 (Config Audit).
@@ -9,9 +8,7 @@ Expected configuration defaults per runtime and language. Used by `/conventions.
 Structure: `##` per language, `###` per config file. Each config section specifies expected keys, values, and behavior when the file is missing.
 
 ## TypeScript
-
 ### Runtime detection
-
 First match wins:
 
 | Signal | Runtime |
@@ -24,70 +21,38 @@ First match wins:
 | `package.json` (no lockfile) | Node + npm (fallback) |
 
 No JS/TS files detected = skip TypeScript config audit.
-
 ### Config: tsconfig.json
-
 Create if missing: **confirm**
 
-**All runtimes:**
-
-| Key | Expected |
-|---|---|
-| `compilerOptions.strict` | `true` |
-| `compilerOptions.esModuleInterop` | `true` |
-| `compilerOptions.skipLibCheck` | `true` |
-| `compilerOptions.forceConsistentCasingInImports` | `true` |
-
-**Bun:**
-
-| Key | Expected |
-|---|---|
-| `compilerOptions.moduleResolution` | `"bundler"` |
-| `compilerOptions.target` | `"ESNext"` |
-| `compilerOptions.module` | `"ESNext"` |
-
-**Deno:**
-
-| Key | Expected |
-|---|---|
-| `compilerOptions.lib` | includes `"deno.ns"` |
-
-**Node (npm, pnpm, yarn):**
-
-| Key | Expected |
-|---|---|
-| `compilerOptions.moduleResolution` | `"node16"` or `"nodenext"` |
-| `compilerOptions.target` | `"ES2022"` or higher |
-| `compilerOptions.module` | `"node16"` or `"nodenext"` |
-
-### Config: package.json
-
-Create if missing: **confirm**
-
-**All runtimes:**
-
-| Key | Expected | If missing |
+| Runtime | Key | Expected |
 |---|---|---|
-| `type` | `"module"` | auto |
-| `scripts.typecheck` | exists | auto |
-| `scripts.lint` | exists | signal |
-| `scripts.test` | exists | signal |
+| All | `compilerOptions.strict` | `true` |
+| All | `compilerOptions.esModuleInterop` | `true` |
+| All | `compilerOptions.skipLibCheck` | `true` |
+| All | `compilerOptions.forceConsistentCasingInImports` | `true` |
+| Bun | `compilerOptions.moduleResolution` | `"bundler"` |
+| Bun | `compilerOptions.target` | `"ESNext"` |
+| Bun | `compilerOptions.module` | `"ESNext"` |
+| Deno | `compilerOptions.lib` | includes `"deno.ns"` |
+| Node | `compilerOptions.moduleResolution` | `"node16"` or `"nodenext"` |
+| Node | `compilerOptions.target` | `"ES2022"` or higher |
+| Node | `compilerOptions.module` | `"node16"` or `"nodenext"` |
+### Config: package.json
+Create if missing: **confirm**
 
-**Bun:**
-
-| Key | Expected |
-|---|---|
-| `devDependencies.@types/bun` | present |
-| `scripts.typecheck` | `"bunx tsc --noEmit"` |
-
+| Runtime | Key | Expected | If missing |
+|---|---|---|---|
+| All | `type` | `"module"` | auto |
+| All | `scripts.typecheck` | exists | auto |
+| All | `scripts.lint` | exists | signal |
+| All | `scripts.test` | exists | signal |
+| Bun | `devDependencies.@types/bun` | present | — |
+| Bun | `scripts.typecheck` | `"bunx tsc --noEmit"` | — |
 ### Config: .nvmrc / .node-version
-
 - **Node (all):** create `.nvmrc` with current LTS if missing — auto
 - **Bun:** create `.node-version` if missing — auto
 - **Deno:** skip
-
 ### Config: .editorconfig
-
 Create if missing: **auto**
 
 ```ini
@@ -105,9 +70,7 @@ insert_final_newline = true
 indent_style = space
 indent_size = 2
 ```
-
 ### Config: biome
-
 Create if missing: **auto**
 
 **All runtimes (except Deno):** check `biome.json` or `biome.jsonc` exists.
@@ -130,31 +93,20 @@ Create if missing: **auto**
   }
 }
 ```
-
 ### Config: vitest.config.ts
-
 **All runtimes:** check existence when `vitest` is in devDependencies. If missing — signal only.
-
 ### Config: bunfig.toml
-
 **Bun only:** no required defaults — file presence is enough signal.
-
 ### Config: .npmrc
-
 Create if missing (pnpm only): **auto**
 
 ```ini
 shamefully-hoist=true
 ```
-
 ---
-
 ## .gitignore Patterns
-
 Language-independent. Composed in layers — common first, then per detected language.
-
 ### Layer: common
-
 Always applied:
 
 ```gitignore
@@ -181,9 +133,7 @@ Thumbs.db
 ```
 
 > `.vscode/` is skippable if the user explicitly opts out (team shares VS Code settings).
-
 ### Layer: typescript
-
 ```gitignore
 node_modules/
 dist/
@@ -200,24 +150,18 @@ coverage/
 .yarn/
 .pnpm-store/
 ```
-
 ### Layer: go
-
 ```gitignore
 bin/
 *.exe
 vendor/
 ```
-
 ### Layer: rust
-
 ```gitignore
 target/
 *.pdb
 ```
-
 ### Layer: delphi
-
 ```gitignore
 *.dcu
 *.exe
@@ -231,9 +175,7 @@ __recovery/
 Win32/
 Win64/
 ```
-
 ### Layer: python
-
 ```gitignore
 __pycache__/
 *.pyc
@@ -242,17 +184,13 @@ __pycache__/
 .mypy_cache/
 .ruff_cache/
 ```
-
 ### Layer: swift
-
 ```gitignore
 DerivedData/
 *.xcworkspace
 build/
 ```
-
 ### Layer: kotlin
-
 ```gitignore
 build/
 .gradle/

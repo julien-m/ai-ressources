@@ -8,7 +8,7 @@ These patterns implement the layered architecture defined in **Read** [`code-con
 
 ## 1. Overview
 
-Event-driven architecture (EDA) decouples producers from consumers. Instead of synchronous request/response calls, components communicate by emitting and reacting to events. This enables loose coupling, independent scaling, and temporal decoupling.
+EDA decouples producers from consumers via emitted events, enabling loose coupling, independent scaling, and temporal decoupling.
 
 ### When to Use: Decision Matrix
 
@@ -23,7 +23,7 @@ Event-driven architecture (EDA) decouples producers from consumers. Instead of s
 | Complexity | Lower | Higher (ordering, idempotency, DLQs) | Request/response for simple CRUD |
 | Fan-out | 1:1 calls, N calls for N consumers | 1:N via broker | Event-driven when multiple consumers react to same trigger |
 
-**Decision rule:** start with request/response for simple, synchronous flows. Introduce events when you need decoupling, fan-out, audit trails, or independent scaling. Avoid event-driven for flows that require immediate consistency or are fundamentally request/reply (e.g., "get user profile").
+**Decision rule:** start with request/response. Introduce events when you need decoupling, fan-out, audit trails, or independent scaling. Avoid event-driven for flows requiring immediate consistency or fundamentally request/reply (e.g., "get user profile").
 
 ## 2. Event Design
 
@@ -45,29 +45,11 @@ Reuse the canonical event structure defined in **Read** [`webhook-patterns.md`](
 }
 ```
 
-| Field | Purpose |
-|-------|---------|
-| `id` | Globally unique, used for idempotency and deduplication |
-| `type` | Dot-separated, past tense — describes what happened |
-| `created_at` | ISO 8601 timestamp of when the event occurred |
-| `data` | Domain payload — varies by event type |
-| `api_version` | Schema version for consumer compatibility |
+Fields: `id` (globally unique, idempotency key), `type` (dot-separated past tense), `created_at` (ISO 8601), `data` (domain payload), `api_version` (schema version for consumer compatibility).
 
 ### Naming Conventions
 
-Use dot-separated, past-tense names describing what happened:
-
-| Pattern | Example | Notes |
-|---------|---------|-------|
-| `<resource>.<action>` | `order.completed` | Most common |
-| `<resource>.<sub>.<action>` | `order.item.added` | For nested resources |
-| `<domain>.<resource>.<action>` | `billing.invoice.paid` | For cross-domain clarity |
-
-Rules:
-- Always past tense (`created`, `updated`, `deleted` -- not `create`, `update`, `delete`)
-- Lowercase, dot-separated
-- Nouns for resources, verbs for actions
-- Avoid generic names like `data.changed` -- be specific
+Dot-separated, past-tense: `<resource>.<action>` → `order.completed`; `<resource>.<sub>.<action>` → `order.item.added`; `<domain>.<resource>.<action>` → `billing.invoice.paid`. Always lowercase, nouns for resources, verbs for actions. Avoid generic names like `data.changed` — be specific.
 
 ### Schema Evolution
 
@@ -175,15 +157,7 @@ Key properties:
 
 Instead of storing current state, store the sequence of events that led to that state. Current state is derived by replaying events.
 
-**Use when:**
-- Audit trail is critical (finance, healthcare, legal)
-- Temporal queries ("what was the state at time T?")
-- Complex domain with undo/redo requirements
-
-**Avoid when:**
-- Simple CRUD with no audit requirements
-- High-throughput read-heavy workloads (projections add latency)
-- Team is unfamiliar with the pattern (high learning curve)
+**Use when:** audit trail is critical (finance, healthcare, legal), temporal queries needed, undo/redo required. **Avoid when:** simple CRUD, high-throughput read-heavy workloads (projections add latency), or team unfamiliar with the pattern.
 
 ```
 Events (append-only):
@@ -202,11 +176,7 @@ Current state = replay(events 1..4)
 
 ## 4. CQRS
 
-Command Query Responsibility Segregation separates the write model (commands) from the read model (queries). Often paired with event sourcing but can be used independently.
-
-**Write path:** validates commands, applies business rules, persists events (or state changes).
-
-**Read path:** queries optimized read models (projections) that are eventually consistent with the write model.
+Command Query Responsibility Segregation separates the write model (commands) from the read model (queries). Often paired with event sourcing but can be used independently. **Write path:** validates commands, applies business rules, persists events. **Read path:** queries optimized read models (projections) that are eventually consistent with the write model.
 
 ```mermaid
 flowchart LR
@@ -238,11 +208,7 @@ flowchart LR
 
 ### Eventual Consistency
 
-CQRS introduces eventual consistency between write and read models. Handle this explicitly:
-
-- **UI:** show optimistic updates, indicate "saving..." states
-- **API:** return the command result (e.g., created entity ID) immediately; read model catches up asynchronously
-- **Consistency window:** typically milliseconds to low seconds; monitor projection lag as an SLA metric
+CQRS introduces eventual consistency. Handle explicitly: **UI** shows optimistic updates; **API** returns command result immediately while read model catches up asynchronously; **Consistency window** is typically milliseconds to low seconds — monitor projection lag as an SLA metric.
 
 ## 5. Delivery Guarantees
 
@@ -253,8 +219,6 @@ CQRS introduces eventual consistency between write and read models. Handle this 
 | At-most-once | Fire and forget, no retry | Metrics, logging, non-critical notifications | Publish without ack |
 | At-least-once | Retry until ack, possible duplicates | **Recommended default** -- payments, emails, state changes | Publish + consumer ack + retry |
 | Exactly-once | Each message processed exactly once | Financial transactions, inventory | At-least-once + idempotency (true exactly-once is a distributed systems myth) |
-
-### Why Exactly-Once Is Hard
 
 True exactly-once delivery is impossible in distributed systems (network partitions, crashes between processing and ack). What systems call "exactly-once" is actually at-least-once delivery combined with idempotent processing.
 
@@ -309,8 +273,6 @@ For background jobs, scheduled tasks, and step functions, see **Read** [`stack-r
 
 ### Pub/Sub Brokers
 
-These are platform-level infrastructure, referenced in `stack-ref/platforms/` or `stack-ref/databases/`:
-
 | Broker | Model | Ordering | Persistence | Best For |
 |--------|-------|----------|-------------|----------|
 | Redis Pub/Sub | Fan-out | No ordering guarantees | No (fire-and-forget) | Real-time notifications, cache invalidation |
@@ -329,29 +291,16 @@ These are platform-level infrastructure, referenced in `stack-ref/platforms/` or
 
 ## 7. Anti-Patterns
 
-### Event Storms
+| Anti-Pattern | Problem | Fix |
+|-------------|---------|-----|
+| Event Storms | A single action triggers a cascade of events causing exponential amplification | Introduce circuit breakers, rate-limit event emission, use sagas with explicit compensation steps; monitor event throughput per type |
+| Circular Dependencies | Service A emits X → Service B emits Y → Service A emits X again | Map event flows as a directed graph; break cycles by merging logic into one service or introducing a saga/orchestrator |
+| Oversized Events | Events carry full entity snapshots instead of minimal relevant data | Events carry IDs and changed fields only; consumers fetch full data via API or maintain their own projection; keep payloads under 256 KB |
+| Missing Correlation IDs | No way to trace which events belong to the same business operation | Include `correlation_id` (and optionally `causation_id`) in every event envelope |
+| Shared Mutable State via Events | Using events to synchronize shared mutable state leads to race conditions and lost updates | Each service owns its own data; events notify about facts — never use events as a distributed write-through cache |
+| No Schema Registry | Producers change schemas without consumers knowing, causing silent deserialization failures | Maintain a schema registry (JSON Schema file per event type in the repo); validate at publish time; run consumer contract tests in CI |
 
-**Problem:** a single action triggers a cascade of events that each trigger more events, causing exponential amplification.
-
-**Fix:** introduce circuit breakers, rate-limit event emission, use sagas with explicit compensation steps. Monitor event throughput per type and alert on anomalies.
-
-### Circular Dependencies
-
-**Problem:** Service A emits event X, which Service B handles by emitting event Y, which Service A handles by emitting event X again.
-
-**Fix:** map event flows as a directed graph. If cycles exist, break them by merging the logic into one service or introducing a saga/orchestrator that owns the workflow.
-
-### Oversized Events
-
-**Problem:** events carry full entity snapshots (e.g., entire user object with all relations) instead of minimal relevant data.
-
-**Fix:** events should carry IDs and changed fields only. Consumers that need full data fetch it via API or maintain their own projection. Keep event payloads under 256 KB as a guideline.
-
-### Missing Correlation IDs
-
-**Problem:** when debugging a distributed flow, there is no way to trace which events belong to the same business operation.
-
-**Fix:** include a `correlation_id` (and optionally `causation_id`) in every event envelope:
+**Missing correlation ID example:**
 
 ```json
 {
@@ -364,15 +313,3 @@ These are platform-level infrastructure, referenced in `stack-ref/platforms/` or
   "api_version": "2026-03-01"
 }
 ```
-
-### Shared Mutable State via Events
-
-**Problem:** using events to synchronize shared mutable state across services, leading to race conditions and lost updates.
-
-**Fix:** each service owns its own data. Events notify about facts that happened -- consumers maintain their own local copy/projection. Never use events as a distributed write-through cache.
-
-### No Schema Registry
-
-**Problem:** producers change event schemas without consumers knowing, causing silent deserialization failures.
-
-**Fix:** maintain a schema registry (even a simple JSON Schema file per event type in the repo). Validate events at publish time. Run consumer contract tests in CI.

@@ -1,11 +1,9 @@
 ---
 extends: [general]
 ---
-
 # Python Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Only Python-specific conventions are listed here.
-
 ## Stack
 - Runtime: **CPython 3.12+** (prefer latest stable)
 - Package manager: **uv** (replaces pip/poetry)
@@ -30,7 +28,6 @@ extends: [general]
 - No committed code that fails ruff or pyright
 
 ## Pre-commit Validation
-
 Before committing, all of these must pass with zero errors/warnings:
 
 ```bash
@@ -124,11 +121,8 @@ def create_user(email: str, name: str) -> CreateUserResult:
         DatabaseError: On connection or query failure.
     """
 ```
-
 ### Inline Comment Triggers
-All 15 triggers from [`general.md`](general.md) SS25 apply. Use `#` for inline comments.
-
-Additionally for Python:
+All 15 triggers from [`general.md`](general.md) §25 apply. Use `#` for inline comments. Additionally for Python:
 - **`# type: ignore[code]`** — explain why pyright/mypy is bypassed
 - **`# noqa: CODE`** — explain why the ruff/linter rule is suppressed
 - **`# fmt: skip` / `# fmt: off`** — explain why auto-formatting is disabled
@@ -139,7 +133,6 @@ Additionally for Python:
 - **`asyncio.create_task()` without immediate await** — explain lifecycle: who awaits, who cancels
 
 ## Dangerous Patterns
-
 The following patterns are **not forbidden** but require explicit justification in a comment. Their presence in code review must always be questioned:
 
 - **`eval()` / `exec()`** — explain why dynamic code execution is necessary and how input is sanitized

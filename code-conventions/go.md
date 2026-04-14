@@ -1,11 +1,9 @@
 ---
 extends: [general]
 ---
-
 # Go Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Only Go-specific conventions are listed here.
-
 ## Stack
 - Go **1.22+**, prefer latest stable
 - Web: **stdlib `net/http`** (preferred), **Chi**, **Gin** if justified
@@ -20,7 +18,6 @@ extends: [general]
 - Validate external data at boundaries with struct tags + validation library or manual checks
 
 ## Project Layout
-
 ```
 cmd/api/main.go
 internal/user/{service,repository,handler,model}.go
@@ -37,18 +34,11 @@ pkg/            (shared libraries if needed)
 - No exported symbols without doc comments
 - `go mod tidy` regularly, `govulncheck` for security auditing
 
+## Pre-commit Validation
+All must pass with zero errors/warnings:
+
 ```bash
 gofmt -l . && go vet ./... && golangci-lint run && go test ./...
-```
-
-## Pre-commit Validation
-
-Before committing, all of these must pass with zero errors/warnings:
-
-```bash
-go vet ./...          # static analysis
-golangci-lint run     # linting
-go test ./...         # tests
 ```
 
 ## Naming
@@ -71,7 +61,6 @@ type UserRepository interface {
 ```
 
 ## Service Pattern
-
 ```go
 type UserService struct {
 	repo UserRepository
@@ -146,11 +135,8 @@ for _, tt := range tests {
 - Doc comments start with the symbol name: `// UserService handles user-related operations.`
 - Package comments in `doc.go`: `// Package user provides user management services.`
 - Document error return conditions: `// Returns ErrUserNotFound if no user exists with that ID.`
-
 ### Inline Comment Triggers
-All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments.
-
-Additionally for Go:
+All 15 triggers from [`general.md`](general.md) §25 apply. Use `//` for inline comments. Additionally for Go:
 - **`// nolint:`** directives — explain why the lint rule is suppressed
 - **`go:embed`** directives — explain what is embedded and why
 - **Type switch fallthrough** — explain the routing logic at the top of the switch

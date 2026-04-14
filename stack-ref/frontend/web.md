@@ -8,7 +8,6 @@ type: framework
 # Web Frontend
 
 ## Next.js + shadcn/ui
-
 Le choix par défaut pour tout projet SaaS, dashboard, ou app web.
 
 **Pourquoi Next.js**
@@ -32,7 +31,6 @@ Le choix par défaut pour tout projet SaaS, dashboard, ou app web.
 - Moins adapté pour un vrai produit (moins de contrôle sur le design)
 
 ### Quand utiliser quoi
-
 | Contexte | Choix |
 |----------|-------|
 | SaaS, app produit, dashboard | Next.js + shadcn/ui |
@@ -42,7 +40,6 @@ Le choix par défaut pour tout projet SaaS, dashboard, ou app web.
 ---
 
 ## Astro
-
 Pour les projets **principalement statiques** : blog, docs, site marketing, landing page.
 
 - Envoie zéro JS par défaut (HTML pur)
@@ -54,22 +51,18 @@ Pour les projets **principalement statiques** : blog, docs, site marketing, land
 **Ne pas utiliser** pour une app avec beaucoup d'interactivité ou d'état client.
 
 ---
-
 ## ✅ Quand utiliser Next.js
 - App avec auth, dashboard, routes protégées
 - SaaS avec abonnements et interface utilisateur
 - Projet qui mélange pages marketing + app (même repo)
 - Besoin de SSR pour SEO sur contenu dynamique
-
 ## ✅ Quand utiliser Astro
 - Blog, changelog, docs, site vitrine
 - SEO critique et contenu quasi-statique
 - Pas de logique d'app côté client
-
 ## ❌ Quand ne pas utiliser
 - Next.js pour du contenu 100% statique → surcharge inutile
 - Astro pour une app avec état global, auth complexe, temps réel
-
 ## Combinaisons stack
 - `Next.js + shadcn + Tailwind + Supabase` → SaaS standard
 - `Next.js + shadcn + Clerk + Stripe` → SaaS avec auth et paiement

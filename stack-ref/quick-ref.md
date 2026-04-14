@@ -7,10 +7,7 @@ last_updated: 2026-03-26
 source: decision-matrix.md
 ```
 
----
-
 ## All-in-one Platforms (auth + DB + hosting)
-
 | Platform | Auth | DB | Realtime | Free tier | Prod price | SQL | RGPD EU | Open-source |
 |----------|------|----|----------|-----------|------------|-----|---------|-------------|
 | **Supabase** | GoTrue (50k MAU free) | PostgreSQL managed | WebSockets | 2 projects, 500 MB | $25/mo (Pro) | Yes | EU regions | Yes |
@@ -18,7 +15,6 @@ source: decision-matrix.md
 | **Convex** | Convex Auth / Clerk | Document store | First-class | 1M calls/mo | ~$16/mo (15k users) | No | EU (+30%) | FSL |
 
 ### When to pick what
-
 ```
 All-in-one platform?
 ├── Web app (SaaS, dashboard, CRUD) → Supabase
@@ -27,10 +23,7 @@ All-in-one platform?
 └── Ultra-cheap edge, DIY auth → Cloudflare + Better Auth
 ```
 
----
-
 ## Hosting Platforms — Quick Compare
-
 | Platform | Best for | Free tier | Prod start | Edge | Containers |
 |----------|----------|-----------|------------|------|------------|
 | **Vercel** | Next.js / Astro frontend | Hobby plan | $20/mo (Pro) | Edge functions | No |
@@ -42,10 +35,7 @@ All-in-one platform?
 | **Infomaniak** | EU sovereign (FR/CH) | None | ~€25/mo | No | Yes |
 | **GCP** | Cloud Run, EU residency | 2M req/mo | ~$10/mo | No | Cloud Run |
 
----
-
 ## Auth — Quick Compare
-
 | Provider | Type | Free tier | Prod price | SSO/SAML | Self-hosted | Best for |
 |----------|------|-----------|------------|----------|-------------|----------|
 | **Better Auth** | Open-source | Unlimited | $0 | Plugin | Yes | Full control, any stack |
@@ -54,10 +44,7 @@ All-in-one platform?
 | **Supabase Auth** | Platform | 50k MAU | Included in Pro | No | Yes | Supabase stack |
 | **WorkOS** | Enterprise | 1M MAU | $299+/mo | Native | No | Enterprise SAML/SCIM |
 
----
-
 ## Databases — Quick Compare
-
 | DB | Type | Free tier | Prod price | Edge | Best for |
 |----|------|-----------|------------|------|----------|
 | **Supabase** | Postgres managed | 500 MB | $25/mo | No | Full-stack web |
@@ -67,10 +54,7 @@ All-in-one platform?
 | **Convex** | Document store | 1M calls | $25/mo | No | Realtime TypeScript |
 | **Upstash Redis** | Serverless Redis | 10k cmd/day | $10/mo | Yes | Cache, sessions, rate-limit |
 
----
-
 ## Recommended Stacks by Profile
-
 | Profile | Stack | Cost (early) | Cost (growth) |
 |---------|-------|-------------|---------------|
 | **Micro-SaaS solo** | CF Workers + D1 + KV + R2 + Better Auth + Resend + Lemon Squeezy | $0 | $5-15/mo |
@@ -79,10 +63,7 @@ All-in-one platform?
 | **Containerized** | Fly.io + Supabase + Inngest + Postmark + Stripe | $20-35/mo | $60-100/mo |
 | **EU sovereign** | Infomaniak + Postgres + Better Auth + Brevo + Mollie | €25-40/mo | €55-90/mo |
 
----
-
 ## Quick Decision Keys
-
 | Question | Answer |
 |----------|--------|
 | Cheapest at all scales? | Cloudflare (Workers + D1 + KV + R2) |

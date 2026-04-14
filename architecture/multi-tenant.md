@@ -40,18 +40,6 @@ flowchart LR
 - Pool eviction for inactive tenants (LRU with configurable TTL)
 - Max total connections across all pools to prevent resource exhaustion
 
-**Pros:**
-- Strongest isolation — no shared tables, indexes, or locks
-- Independent backups and point-in-time restores per tenant
-- Per-tenant scaling (larger instance for premium tenants)
-- Simplest compliance story (data physically separated)
-
-**Cons:**
-- Highest cost — one DB instance per tenant at scale
-- Migration complexity — must run on all databases, handle partial failures
-- Connection pool overhead — hundreds of pools consume memory
-- Aggregation queries across tenants require separate analytics infrastructure
-
 **When to use:** Healthcare (HIPAA), finance (SOC 2 with physical isolation), enterprise contracts requiring dedicated infrastructure.
 
 ### Schema per Tenant
@@ -78,25 +66,11 @@ flowchart LR
 4. On failure: halt or continue (configurable), log affected tenants
 5. Provide a retry mechanism for failed schemas
 
-**Pros:**
-- Good isolation — separate tables, indexes, and constraints per tenant
-- Single DB instance — lower cost than DB-per-tenant
-- Per-tenant schema customization possible (custom fields, indexes)
-- Shared connection pool reduces memory overhead
-
-**Cons:**
-- Migration complexity — must iterate over all schemas
-- Schema count limits — Postgres handles thousands well, MySQL less so
-- Shared resources (CPU, I/O, memory) — noisy neighbor possible
-- Monitoring complexity — must track per-schema metrics
-
 **When to use:** Mid-market SaaS, moderate tenant count (<1000), need for some isolation without the cost of separate databases.
 
 ### Shared DB + Row-Level Security (RLS)
 
 Architecture: single database, all tenants in the same tables. Every table includes a `tenant_id` column. The database enforces isolation via RLS policies.
-
-**RLS policy example (Postgres):**
 
 ```sql
 -- Enable RLS on the table
@@ -129,18 +103,6 @@ flowchart LR
     E -->|tenant_id matches| F[Return Rows]
     E -->|tenant_id mismatch| G[Filter Out]
 ```
-
-**Pros:**
-- Simplest architecture — single DB, single schema, single migration path
-- Lowest cost — all tenants share resources
-- Best for high tenant count (thousands to millions)
-- DB-enforced isolation — does not rely on application discipline alone
-
-**Cons:**
-- Noisy neighbor risk — one tenant's heavy query impacts all
-- Cross-tenant bugs if RLS misconfigured or bypassed
-- Harder compliance story — data colocated, logical separation only
-- Per-tenant backup/restore requires application-level export/import
 
 **When to use:** Startups, SaaS with many small tenants, cost-sensitive environments, products where tenant count will grow rapidly.
 
@@ -206,13 +168,7 @@ sequenceDiagram
 
 ### Data Migration Between Tenants
 
-- Never implicit — always an explicit admin action with an audit trail
-- Follow the Export - Transform - Import pattern:
-  1. Export source tenant data to a neutral format
-  2. Transform: remap IDs, strip source tenant references, validate integrity
-  3. Import into target tenant with new IDs
-- Validate no data leakage after migration (run isolation tests)
-- Provide rollback capability for a defined window
+Never implicit — always an explicit admin action with audit trail. Follow Export → Transform (remap IDs, strip source references, validate integrity) → Import into target with new IDs. Validate no data leakage after migration. Provide rollback capability for a defined window.
 
 ---
 
@@ -244,16 +200,7 @@ flowchart TD
 
 ### Offboarding
 
-```mermaid
-stateDiagram-v2
-    [*] --> Active
-    Active --> Suspended: Admin action / payment failure
-    Suspended --> Active: Reactivation
-    Suspended --> PendingDeletion: Offboarding requested
-    PendingDeletion --> Deleted: Grace period expired (30 days)
-    PendingDeletion --> Active: Cancellation during grace period
-    Deleted --> [*]
-```
+States: `Active → Suspended → PendingDeletion → Deleted` (grace period 30 days). `Suspended → Active` (reactivation). `PendingDeletion → Active` (cancellation during grace period).
 
 **Offboarding steps:**
 1. **Soft delete:** Mark tenant as `suspended`, disable login, stop processing
@@ -276,10 +223,10 @@ stateDiagram-v2
 
 ### Scaling Patterns
 
-- **Shard by tenant_id** for horizontal scaling — consistent hashing or range-based partitioning
-- **Hot tenant detection:** Monitor per-tenant query volume and latency; migrate hot tenants to dedicated infrastructure
-- **Read replicas:** Route heavy-read tenants to dedicated replicas
-- **Tiered infrastructure:** Free tier on shared, paid tier on isolated, enterprise on dedicated
+- **Shard by tenant_id** — consistent hashing or range-based partitioning
+- **Hot tenant detection:** monitor per-tenant query volume; migrate hot tenants to dedicated infrastructure
+- **Read replicas:** route heavy-read tenants to dedicated replicas
+- **Tiered infrastructure:** free tier on shared, paid on isolated, enterprise on dedicated
 
 ```mermaid
 flowchart TD

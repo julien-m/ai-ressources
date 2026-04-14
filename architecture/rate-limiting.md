@@ -48,19 +48,9 @@ Use only when precision does not matter and simplicity is paramount.
 
 Combines current and previous window counts with a weighted average to eliminate boundary spikes.
 
-**Formula:**
+**Formula:** `count = current_window_count + previous_window_count * overlap_ratio`
 
-```
-count = current_window_count + previous_window_count * overlap_ratio
-```
-
-**Example:** at 12:00:30 (halfway through the current window), with 60 requests in the current window and 80 in the previous:
-
-```
-count = 60 + 80 * 0.5 = 100
-```
-
-If the limit is 100, the next request would be rejected.
+**Example:** at 12:00:30 (halfway through the current window), with 60 requests in the current window and 80 in the previous: `count = 60 + 80 * 0.5 = 100`. If the limit is 100, the next request would be rejected.
 
 This is the **recommended default** — best balance of accuracy, memory efficiency, and implementation simplicity. Two counters and one timestamp per key.
 
@@ -68,11 +58,9 @@ This is the **recommended default** — best balance of accuracy, memory efficie
 
 A bucket holds tokens up to a maximum capacity. Tokens are added at a constant refill rate. Each request consumes one token. If the bucket is empty, the request is rejected.
 
-**Parameters:**
 - `bucket_size` — maximum burst capacity
 - `refill_rate` — tokens added per second
-
-**Example:** `bucket_size=10`, `refill_rate=5/s` allows a burst of 10 requests, then a sustained 5 requests/second.
+- Example: `bucket_size=10`, `refill_rate=5/s` allows a burst of 10 requests, then a sustained 5 requests/second
 
 ```mermaid
 stateDiagram-v2
@@ -91,18 +79,11 @@ Token bucket is ideal when you want to allow short bursts while enforcing a sust
 
 ### Leaky Bucket
 
-Requests enter a queue (the bucket). The queue is drained at a constant rate. If the queue is full, new requests are rejected immediately.
-
-**Behavior:**
-- Smooths bursty traffic into a constant output rate
-- No bursts reach the backend — output is always uniform
-- Excess requests are dropped or return 429
+Requests enter a queue (the bucket). The queue is drained at a constant rate. If the queue is full, new requests are rejected immediately. Smooths bursty traffic into a constant output rate — no bursts reach the backend.
 
 **Use case:** protecting downstream services that cannot handle bursts (legacy databases, third-party APIs with strict rate limits, payment processors).
 
 ## HTTP Response Headers
-
-### Standard Headers (IETF draft-ietf-httpapi-ratelimit-headers)
 
 ```http
 RateLimit-Limit: 100
@@ -110,17 +91,9 @@ RateLimit-Remaining: 42
 RateLimit-Reset: 1679875200
 ```
 
-### Legacy Headers (still widely used)
+Legacy headers (still widely used): `X-RateLimit-Limit`, `X-RateLimit-Remaining`, `X-RateLimit-Reset`, `Retry-After`.
 
-```http
-X-RateLimit-Limit: 100
-X-RateLimit-Remaining: 42
-X-RateLimit-Reset: 1679875200
-Retry-After: 30
-```
-
-### Rules
-
+**Rules:**
 - Include rate limit headers on **every** response, not just 429s — clients need visibility into their remaining quota proactively
 - Use **Unix timestamp** for `Reset` (not relative seconds) — avoids clock synchronization ambiguity between client and server
 - Always include `Retry-After` on 429 responses — tells the client exactly when to retry
@@ -166,8 +139,7 @@ Retry-After: 30
 | Enterprise | 6000 req/min | 1000 | High-volume, SLA-backed deployments |
 | Internal | Unlimited (with circuit breaker) | N/A | Service-to-service communication |
 
-### Guidelines
-
+**Guidelines:**
 - Apply **different limits per endpoint** — search and write endpoints should have lower limits than read endpoints
 - Communicate limits clearly in API documentation and the pricing page
 - Provide a **usage dashboard** for customers to monitor their consumption and headroom
@@ -180,11 +152,7 @@ Retry-After: 30
 
 Sliding window counter implemented with Redis atomic operations.
 
-**Key format:**
-
-```
-ratelimit:{identifier}:{window_start_epoch}
-```
+**Key format:** `ratelimit:{identifier}:{window_start_epoch}`
 
 **Lua script for atomic check-and-increment:**
 
@@ -217,12 +185,10 @@ flowchart TD
     BACKEND --> RESP[Response with<br/>RateLimit headers]
 ```
 
-### Considerations
-
+**Considerations:**
 - **Redis latency:** adds 1-2ms per request — acceptable for most APIs, negligible vs business logic
 - **Redis failure mode:** prefer **fail open** (allow requests) over fail closed (reject all) — a momentary loss of rate limiting is better than a full outage
 - **Multi-region:** deploy local Redis per region with eventual synchronization, or use a global Redis cluster with higher latency. Local Redis is preferred for latency-sensitive APIs
-- **Clock synchronization:** not critical for sliding window counter — Redis handles time internally via key TTL
 
 ## Rate Limiting Layers
 
@@ -245,8 +211,6 @@ flowchart LR
 
 ## Client-Side Handling
 
-### Retry Strategy
-
 ```mermaid
 flowchart TD
     REQ[Send Request] --> CHECK{Response?}
@@ -264,8 +228,7 @@ flowchart TD
 - **Max retries:** 3-5 attempts before surfacing the error to the user
 - **Never retry immediately** — always respect `Retry-After`
 
-### SDK Design
-
+**SDK Design:**
 - Expose rate limit info to callers: `remaining`, `reset` timestamp, `limit`
 - Build **auto-retry** into the SDK with configurable behavior (on/off, max retries, backoff strategy)
 - Implement **proactive throttling** — queue requests when approaching the limit rather than waiting for 429s
@@ -286,24 +249,14 @@ flowchart TD
 
 ## Monitoring
 
-### Metrics to Track
+| Metric | Alert Threshold |
+|--------|----------------|
+| 429 rate > 5% of total traffic | Warning — limits may be too restrictive |
+| 429 rate > 20% of total traffic | Critical — investigate misconfiguration or attack |
+| Single key > 50% of capacity | Warning — potential abuse or poorly designed integration |
+| Redis latency > 10ms (p99) | Warning — Redis may need scaling |
 
-- **429 rate** — percentage of requests receiving 429 vs total traffic
-- **Limit utilization per key** — how close each consumer is to their limit
-- **Top consumers** — ranked list by request volume per window
-- **Burst frequency** — how often clients hit burst capacity
-
-### Alert Thresholds
-
-| Condition | Alert Level | Action |
-|-----------|------------|--------|
-| 429 rate > 5% of total traffic | Warning | Limits may be too restrictive — review and potentially increase |
-| 429 rate > 20% of total traffic | Critical | Investigate — possible misconfiguration or attack |
-| Single key > 50% of capacity | Warning | Potential abuse or poorly designed integration — contact consumer |
-| Redis latency > 10ms (p99) | Warning | Redis may need scaling or network investigation |
-
-### Dashboard
-
+**Dashboard:**
 - Per-tenant usage vs allocated limits (bar chart with threshold line)
 - 429 rate over time (time series)
 - Top 10 consumers by volume

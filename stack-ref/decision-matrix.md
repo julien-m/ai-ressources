@@ -13,7 +13,6 @@ confidence: high
 ---
 
 ## 🗃️ Databases — Quel choix selon le besoin ?
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | Outil local / CLI / script | SQLite + bun:sqlite | [sqlite.md](databases/sqlite.md) |
@@ -30,10 +29,7 @@ confidence: high
 | Postgres self-hosted, contrôle total | Postgres | [postgres.md](databases/postgres.md) |
 | MySQL ultra-haute charge, branching | PlanetScale | [planetscale.md](databases/planetscale.md) |
 
----
-
 ## 🗄️ Databases — Arbre de décision
-
 ```
 Besoin de SQL ?
 ├── Oui
@@ -52,10 +48,7 @@ Besoin de SQL ?
     └── Realtime TypeScript-first → Convex
 ```
 
----
-
 ## ☁️ Platforms — Quel hébergeur ?
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | Deploy web app rapide, Next.js/Astro | Vercel | [vercel.md](platforms/vercel.md) |
@@ -71,10 +64,7 @@ Besoin de SQL ?
 
 > 🌐 **Cloudflare edge stack** : Si l'objectif est une latence globale minimale sans serveur centralisé, Cloudflare est l'écosystème natif. Workers (compute edge) + D1 (SQL edge) + KV (clés-valeurs edge, TTL natif) + R2 (blobs, pas d'egress fees) + Durable Objects (état persistant edge) forment un stack complet sans jamais quitter l'edge. Turso et Upstash sont les alternatives edge-compatibles quand on est hors CF ou qu'on veut un DB edge accessible depuis n'importe quel runtime.
 
----
-
 ## ☁️ Platforms — Arbre de décision
-
 ```
 Type de projet ?
 ├── Frontend / JAMstack / Next.js
@@ -96,10 +86,7 @@ Type de projet ?
     └── Cloud EU certified → GCP europe-west1
 ```
 
----
-
 ## 💳 Paiements — Quel provider ?
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | Contrôle total, API flexible, B2B | Stripe | [stripe.md](payments/stripe.md) |
@@ -108,7 +95,6 @@ Type de projet ?
 | EU-native, SEPA/iDEAL/Bancontact | Mollie | [mollie.md](payments/mollie.md) |
 
 ### Merchant of Record (MoR) vs Processor
-
 ```
 Vends à des clients internationaux ?
 ├── Oui, et tu veux zéro gestion TVA → MoR
@@ -120,7 +106,6 @@ Vends à des clients internationaux ?
 ```
 
 ### Tableau comparatif frais
-
 | Provider | Frais standard | Frais international | MoR | Andorre 🇦🇩 |
 |----------|---------------|--------------------|----|------------|
 | Stripe | ~1.5% EU / 2.9%+$0.30 US | +1.5% | ❌ | Marchand ❌ / Acheteur ✅ |
@@ -130,10 +115,7 @@ Vends à des clients internationaux ?
 
 > ⚠️ **Andorre** : Aucun provider ne supporte les comptes marchands andorrans. Un entrepreneur andorran doit avoir une entité légale dans un pays UE/EEE pour ouvrir un compte. Les clients andorrans peuvent payer par carte Visa/MC chez tous les providers.
 
----
-
 ## 📧 Email — Quel provider transactionnel ?
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | DX moderne, React Email, MVP rapide | Resend | [resend.md](email/resend.md) |
@@ -145,7 +127,6 @@ Vends à des clients internationaux ?
 | Volume + marketing suite | SendGrid | [sendgrid.md](email/sendgrid.md) |
 
 ### Tableau comparatif email
-
 | Provider | Free tier | Prix 10k emails | Prix 100k emails | Note |
 |----------|-----------|-----------------|------------------|------|
 | Resend | 3 000/mois | ~$20/mois | ~$90/mois | Meilleur DX 2025 |
@@ -156,54 +137,7 @@ Vends à des clients internationaux ?
 | SendGrid | 100/jour | $19.95/mois | ~$35/mois | Volume + marketing |
 | Ahasend | Généreux | ~$10/mois | - | Alternative EU émergente |
 
----
-
-## 🧩 Combinaisons stack recommandées par profil
-
-### Micro-SaaS solo, budget minimal
-```
-Cloudflare Workers + D1 + KV + R2
-+ Resend (email)
-+ Lemon Squeezy (paiements MoR)
-→ Coût fixe : ~$0–10/mois sur le free tier
-```
-
-### SaaS Next.js standard
-```
-Vercel (frontend) + Neon (Postgres) + Upstash Redis (cache/sessions)
-+ Resend (email)
-+ Stripe (paiements, si EU focus) ou Paddle (si international)
-→ Coût : ~$20–50/mois
-```
-
-### App realtime TypeScript
-```
-Convex (DB + backend) + Cloudflare Workers (edge)
-+ Resend
-+ Stripe ou Lemon Squeezy
-→ Coût : $0 free tier → $25+/mois
-```
-
-### App containerisée, full control
-```
-Fly.io (containers) + Supabase (Postgres + auth + storage)
-+ Postmark (email)
-+ Stripe
-→ Coût : ~$30–80/mois selon taille
-```
-
-### Projet EU souverain, données sensibles
-```
-Infomaniak (hébergement) + Postgres self-hosted
-+ Brevo (email EU)
-+ Mollie (paiements EU-native)
-→ Données 100% EU, RGPD simplifié
-```
-
----
-
 ## 🖥️ Frontend — Quel choix selon la cible ?
-
 | Cible | Recommandation | Fichier |
 |-------|---------------|---------|
 | SaaS / dashboard / app web | Next.js + shadcn/ui | [web.md](frontend/web.md) |
@@ -226,10 +160,7 @@ Infomaniak (hébergement) + Postgres self-hosted
 
 > 📱 **Mobile hardware avancé** : Bluetooth BLE profond, NFC, ARKit/ARCore → natif Swift/Kotlin. Bluetooth basique, push, formulaires → React Native suffit.
 
----
-
 ## 🔐 Auth — Quel provider ?
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | Auth open-source, self-hosted, TypeScript | Better Auth | [better-auth.md](auth/better-auth.md) |
@@ -247,10 +178,7 @@ Auth ?
 └── Enterprise SAML / annuaire → WorkOS
 ```
 
----
-
 ## ⚙️ Background Jobs / Queues
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | Jobs TypeScript, retry, planification | Inngest | [inngest.md](jobs/inngest.md) |
@@ -266,10 +194,7 @@ Background jobs ?
 └── Workflows longs / multi-étapes → Trigger.dev
 ```
 
----
-
 ## 🗂️ Storage / Blobs
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | Blobs dans l'écosystème Cloudflare | Cloudflare R2 | [cloudflare-r2.md](storage/cloudflare-r2.md) |
@@ -299,10 +224,7 @@ Storage ?
 >
 > ⚠️ **GCS cold storage** : durée minimale 365 jours (Archive) ou 90 jours (Coldline). Supprimer avant = facturé quand même pour la durée entière. Et l'egress reste payant (~$0.08/GB) — pertinent uniquement si les données sont vraiment rarement lues.
 
----
-
 ## 🤖 AI / LLM
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | Routing multi-modèles, accès unifié | OpenRouter | [openrouter.md](ai/openrouter.md) |
@@ -311,10 +233,7 @@ Storage ?
 
 > 🔗 **Combo recommandé** : Vercel AI SDK + OpenRouter. Le SDK gère le DX et le streaming, OpenRouter gère le routing multi-modèles. Change de modèle sans refactoriser.
 
----
-
 ## 🔍 Search
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | CF Workers / edge / browser, zéro infra | Orama | [orama.md](search/orama.md) |
@@ -330,10 +249,7 @@ Search ?
 └── Enterprise, merchandising → Algolia
 ```
 
----
-
 ## 📝 CMS / Ops
-
 | Besoin | Recommandation | Fichier |
 |--------|---------------|---------|
 | Blog, changelog, FAQ — contenu éditorial | Notion as CMS + ISR | [notion-cms.md](cms/notion-cms.md) |
@@ -341,14 +257,10 @@ Search ?
 
 > 💡 **Deux usages distincts** : Notion-CMS = contenu statique servi via cache Next.js ISR (visiteurs ne touchent jamais l'API). Notion-CRM = base opérationnelle pour gérer tes premiers users manuellement.
 
----
-
 ## 📊 Comparatif coût par palier
-
 > Coûts infrastructure + DB + email. Auth et paiements non inclus.
 
 ### 🏠 Projet perso / usage interne
-
 | Stack | Coût/mois |
 |-------|-----------|
 | CF Workers + D1 + KV | $0 |
@@ -356,7 +268,6 @@ Search ?
 | Fly.io micro + SQLite | ~$3 |
 
 ### 🌱 Early stage — ~200 utilisateurs, ~5k req/jour
-
 | Stack | Coût/mois |
 |-------|-----------|
 | CF Workers + D1 + Resend free | $0–5 |
@@ -364,7 +275,6 @@ Search ?
 | Fly.io + Supabase Free + Resend | ~$5 |
 
 ### 📈 Growth — ~2k utilisateurs, ~50k req/jour
-
 | Stack | Coût/mois |
 |-------|-----------|
 | CF Workers Paid + D1 + Resend | ~$10–20 |
@@ -372,7 +282,6 @@ Search ?
 | Fly.io + Supabase Pro + Resend | ~$40–60 |
 
 ### 🚀 Scale — ~20k utilisateurs, ~500k req/jour
-
 | Stack | Coût/mois |
 |-------|-----------|
 | CF Workers + D1 + Upstash + Postmark | ~$40–80 |
@@ -381,7 +290,6 @@ Search ?
 | AWS ECS + RDS + ElastiCache | ~$200–350 |
 
 ### 🏭 Hyper-scale — ~200k+ utilisateurs, ~5M+ req/jour
-
 | Stack | Coût/mois |
 |-------|-----------|
 | CF Workers + D1 Pro + KV + R2 | ~$200–500 |
@@ -389,13 +297,8 @@ Search ?
 
 > ⚠️ À ce stade les coûts variables (tokens AI, emails transactionnels, storage) dominent souvent l'infra fixe.
 
----
-
 ## 🧩 Combinaisons stack recommandées par profil
-
 > Coûts infra uniquement (hors paiements, tokens AI, emails transactionnels au-delà du free tier).
-
----
 
 ### ⚡ Micro-SaaS solo / 100% edge
 ```
@@ -415,8 +318,6 @@ CF Workers + D1 + KV + R2
 
 > 💡 Le stack le moins cher à toutes les échelles pour une app edge-native. Pas de coût idle.
 
----
-
 ### 🏗️ SaaS Next.js standard
 ```
 Vercel + Neon + Upstash Redis
@@ -434,8 +335,6 @@ Vercel + Neon + Upstash Redis
 | Hyper-scale | ~1M MAU | **$600–1500+** |
 
 > ⚠️ Clerk devient cher au-delà de 10k MAU ($25+/mo). Migrer vers Better Auth à ce stade.
-
----
 
 ### 🤖 App AI-powered
 ```
@@ -455,8 +354,6 @@ Vercel + Neon + Upstash
 
 > ⚠️ Les tokens AI dominent les coûts dès la croissance. Monitorer par utilisateur actif. Optimiser : cache des réponses fréquentes (Upstash), choix du modèle selon le besoin (Llama pour les tâches simples via OpenRouter).
 
----
-
 ### 📦 App containerisée, full control
 ```
 Fly.io + Supabase (Postgres + auth + storage)
@@ -472,8 +369,6 @@ Fly.io + Supabase (Postgres + auth + storage)
 | Growth | ~10k MAU | **$60–100** |
 | Scale | ~100k MAU | **$200–400** |
 | Hyper-scale | ~500k MAU | **$600–1200+** |
-
----
 
 ### 🇪🇺 Projet EU souverain
 ```
@@ -493,10 +388,7 @@ Infomaniak Public Cloud + Postgres self-hosted
 
 > 💡 Données 100% en Suisse/France. Certifié ISO 27001. ~20–30% plus cher que CF ou Vercel, justifié pour secteur public, santé, finance.
 
----
-
 ## 🔑 Clés de décision rapide
-
 | Question | Réponse oriente vers |
 |----------|---------------------|
 | Cloudflare ecosystem ? | D1, KV, Workers, R2, Queues |
@@ -520,7 +412,5 @@ Infomaniak Public Cloud + Postgres self-hosted
 | CLI cross-platform ? | Go |
 | Data residency EU strict ? | Infomaniak ou GCP EU |
 | Budget zéro, prototype ? | CF free + Neon free + Resend free = $0 |
-
----
 
 > 🕐 Mettre à jour trimestriellement. Points de vigilance : prix Neon (baisses fréquentes), Better Auth (projet jeune, évolution rapide), statut Lemon Squeezy (acquisition Stripe potentielle), nouveaux entrants paiement (Polar, DodoPayments).
