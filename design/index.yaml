@@ -63,6 +63,16 @@ sections:
         use_when: ["real-time UI", "WebSocket", "SSE", "live updates", "chat UI", "AI token streaming"]
         questions_answered: ["WebSocket vs SSE?", "Reconnection strategy?", "Optimistic updates?", "Token streaming UI?"]
         see_also: ["log-viewer.md", "../../architecture/event-driven.md"]
+      - file: components/data-visualization-terminal.md
+        description: "Data visualization for terminal interfaces: ASCII sparklines, histograms, status bars (extracted from data-visualization.md)"
+        use_when: ["terminal data viz", "ASCII chart", "CLI dashboard", "terminal sparkline", "ANSI data viz"]
+        questions_answered: ["ASCII sparkline pattern?", "Terminal histogram?", "CLI status bar?"]
+        see_also: ["data-visualization.md"]
+      - file: components/realtime-streams-terminal.md
+        description: "Real-time streaming patterns for terminal interfaces: ANSI cursor control, CLI buffering (extracted from realtime-streams.md)"
+        use_when: ["terminal streaming", "ANSI realtime", "CLI live output", "tail -f pattern", "terminal buffering"]
+        questions_answered: ["Terminal streaming pattern?", "ANSI cursor streaming?"]
+        see_also: ["realtime-streams.md"]
       - file: components/email-templates.md
         description: "Email template patterns: responsive layout, dark mode, client quirks, components"
         use_when: ["email design", "transactional email", "email template", "dark mode email"]

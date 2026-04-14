@@ -1,20 +1,20 @@
 # Design: Compression sans perte — stack-ref/, code-conventions/, architecture/
 
 **Date:** 2026-04-14
-**Objectif:** Réduire ~12 600 lignes dans les 3 domaines restants sans perte d'information sémantique, en appliquant la même méthodologie que `design/` (-19.1%).
+**Objectif:** Préserver le résultat de compression déjà atteint sur les 3 domaines restants, et capturer une méthodologie de compression sans perte pour d'éventuels reruns ou nettoyages complémentaires.
 
 ## Contexte
 
-Après la compression de `design/` (12 982 → 10 496 lignes, -19.1%), trois domaines majeurs restent non-compressés :
+Sur le snapshot courant du dépôt, les trois domaines ciblés ont déjà été compressés par rapport à leurs baselines historiques. Cette spec documente la méthode zero-loss et les synchronisations obligatoires à conserver :
 
 | Domaine | Fichiers | Lignes actuelles | Taux cible |
 |---------|---------|-----------------|-----------|
-| `stack-ref/` | ~40 | ~6 175 | 20% si duplication mesurée >40%, sinon 15% |
-| `code-conventions/` | 12 | ~3 816 | 15% |
-| `architecture/` | 8 | ~2 605 | 15% |
-| **Total** | ~60 | **~12 596** | — |
+| `stack-ref/` | 61 | 5 113 | Stretch uniquement : 20% historique si duplication >40% |
+| `code-conventions/` | 24 | 3 244 | Cible historique 15% déjà atteinte |
+| `architecture/` | 8 | 2 212 | Cible historique 15% déjà atteinte |
+| **Total** | **93** | **10 569** | Maintenir ou améliorer sans régression |
 
-Ces fichiers sont consommés par les mêmes pipelines que `design/` : `build-conventions.ts`, `ai-res-librarian`, `.conventions/` compilés.
+Ces fichiers sont consommés par les mêmes pipelines que `design/` : `build-conventions.ts`, `ai-res-librarian`, `.conventions/` compiles. Toute re-edition doit donc synchroniser les index materialises dans le meme passage, sauf si le run courant impose explicitement un scope d'ecriture plus etroit qui bloque un artefact partage.
 
 ## Définitions — Zero-Loss Guarantee
 
@@ -92,12 +92,12 @@ Les fichiers d'architecture contiennent des séquences de flux en prose et des d
 3. Code block line count : `grep -c '^\s*[a-zA-Z_-].*:' fichier.md` → options/flags préservés
 4. `wc -l` → target ±5%
 
-### Validation secondaire — cc-hub copilot diff review
-Après chaque domaine, exécuter une review sémantique du diff git via cc-hub copilot avec instruction : *"Vérifier que aucune valeur discrète (flag, version, quota, default) n'a disparu, et que les chaînes de raisonnement (because, to avoid, afin de) sont intactes."*
+### Validation secondaire — review sémantique locale du diff
+Après chaque domaine, exécuter une review sémantique locale du diff git avec une consigne explicite : vérifier qu'aucune valeur discrète (flag, version, quota, default) n'a disparu, et que les chaînes de raisonnement (`because`, `to avoid`, `afin de`) sont intactes.
 
 ### Rollback
-- Un commit par domaine → revert granulaire
-- Si cc-hub copilot détecte perte sémantique : `git revert` + ré-exécution avec compression plus conservatrice
+- Un commit par domaine + un commit de sync partagé, ou un commit final unique si l'exécution est déjà dans le snapshot compressé
+- Si la review locale détecte une perte sémantique : restaurer manuellement la section fautive depuis `HEAD`, puis ré-exécuter avec compression plus conservatrice
 
 ## Exécution — Structure parallèle
 
@@ -105,18 +105,19 @@ Après chaque domaine, exécuter une review sémantique du diff git via cc-hub c
 3 subagents indépendants, un par domaine. Chaque subagent :
 1. Mesure duplication (pour stack-ref/ uniquement)
 2. Compresse les fichiers du domaine, plus gros en premier
-3. Met à jour `<domain>/index.yaml` (last_reviewed) — uniquement le fichier index local
+3. Laisse `<domain>/index.yaml` inchangé sauf si un chemin ou une description de fichier change; le `last_reviewed` vit dans `index.yaml` racine, pas dans les index locaux
 4. Valide chaque fichier (normative markers + table rows pour stack-ref/)
 5. Rapport final : lignes avant/après par fichier
 
-**Scope strict** : aucun subagent ne touche `compiled-index.txt`, `domain-catalog.md`, `.last-updated`.
+**Scope strict** : aucun subagent ne touche `compiled-index.txt`, `index.yaml` racine, `.last-updated`.
 
 ### Phase 2 : Orchestrateur — sync shared files
 Après réception des 3 rapports subagent :
-1. `bun run scripts/build-index.ts` — régénère `compiled-index.txt`
-2. `domain-catalog.md` — update last_reviewed dates (pas de création/suppression de fichiers → pas d'update d'entrées)
+1. `index.yaml` racine — update `last_reviewed` pour `stack-ref`, `code-conventions`, `architecture`
+2. `bun run build-index` — régénère `compiled-index.txt`
 3. `date +%Y-%m-%d > .last-updated`
-4. 3 commits domaine (un par domaine) + 1 commit index sync
+4. Si un artefact partagé est hors scope d'écriture pour le run courant, l'orchestrateur doit le signaler explicitement et s'arrêter avant publication
+5. Commit final de sync partagé, ou publication seulement une fois ce commit présent
 
 ### Format de commits
 ```

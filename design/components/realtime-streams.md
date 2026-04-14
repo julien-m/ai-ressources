@@ -130,15 +130,7 @@ Pattern : appliquer immediatement cote client, confirmer ou rollback cote serveu
 
 ---
 
-## Terminal — Patterns specifiques
-
-- Comportement `tail -f` : append-only, pas de reecriture
-- Ctrl+S / Ctrl+Q : pause/resume de l'output (flow control classique)
-- Alternating row background (subtil) pour la lisibilite
-- Monospace font obligatoire — respecter le token typographique
-- Limite de lignes visibles sans pagination : ~10000 (au-dela, ralentissement terminal)
-- Couleurs ANSI : supporter les codes de couleur standard (16 couleurs minimum)
-- Wrap long lines par defaut, option no-wrap pour les logs structures
+Pour les patterns terminal (ANSI cursor control, buffering CLI, `tail -f`), voir **Read** [`realtime-streams-terminal.md`](realtime-streams-terminal.md).
 
 ---
 

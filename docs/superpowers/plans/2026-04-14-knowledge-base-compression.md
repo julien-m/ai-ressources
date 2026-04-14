@@ -2,18 +2,20 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Compress stack-ref/, code-conventions/, and architecture/ by 15-20% without losing any information (flags, defaults, normative rules, reasoning chains, cross-references).
+**Goal:** Preserve and, where still possible, further compress `stack-ref/`, `code-conventions/`, and `architecture/` without losing any information (flags, defaults, normative rules, reasoning chains, cross-references).
 
-**Architecture:** Three parallel domain subagents compress content-only (no file merges/splits), each validating normative markers and structural integrity before finishing. A sequential orchestrator step runs shared-file sync (compiled-index.txt, .last-updated) after all three complete with exit code 0.
+**Architecture:** Three parallel domain subagents compress content-only (no file merges/splits), each validating normative markers and structural integrity before finishing. A sequential orchestrator step runs shared-file sync (`index.yaml`, `compiled-index.txt`, `.last-updated`) after all three complete with exit code 0, unless the caller has imposed a narrower writable-file scope for the run.
 
 **Tech Stack:** Markdown editing, bash (find, xargs, wc -l, grep), bun (build-index), git
 
 **Spec:** `docs/superpowers/specs/2026-04-14-knowledge-base-compression-design.md`
 
-**Baselines (Codex-verified):**
-- stack-ref/: **6 175 lines** → target ≤ 4 940 (20%) or ≤ 5 249 (15%) depending on duplication measurement
-- code-conventions/: **3 816 lines** → target ≤ 3 244 (15%)
-- architecture/: **2 605 lines** → target ≤ 2 214 (15%)
+**Baselines (Codex-verified, current repo snapshot):**
+- `stack-ref/`: **5 113 lines** across **61 files**. Historical 15% ceiling (**≤ 5 249**) is already met; stretch ceiling remains **≤ 4 940** if duplication still justifies more trimming.
+- `code-conventions/`: **3 244 lines** across **24 files**. Historical 15% ceiling (**≤ 3 244**) is already met; re-runs must not regress above the current snapshot.
+- `architecture/`: **2 212 lines** across **8 files**. Historical 15% ceiling (**≤ 2 214**) is already met; re-runs must not regress above the current snapshot.
+
+**Planning note:** This document reflects the repository state on `2026-04-14`. If you run it from an older branch with higher counts, use the historical ceilings above. If you run it from the current snapshot, treat the work as zero-loss cleanup only.
 
 **Mandatory measurement command (all tasks):**
 ```bash
@@ -32,7 +34,7 @@ Task 4 runs ONLY after Tasks 1, 2, and 3 have ALL completed successfully (exit 0
 
 ### Task 1: Compress stack-ref/
 
-**Context:** 61 `.md` files across 16 subdirectories, 6 175 lines total. Single `stack-ref/index.yaml` covers all files — no per-subdir indexes exist or should be created. `decision-matrix.md` (526L) is the largest. Target: 20% if measured duplication >40%, else 15%.
+**Context:** 61 `.md` files, 5 113 lines total. Single `stack-ref/index.yaml` covers all files — no per-subdir indexes exist or should be created. `decision-matrix.md` (416L) is the largest. Historical target: 20% if measured duplication >40%, else 15%. Current snapshot already satisfies the 15% ceiling.
 
 **Constraint:** Content-only edits. No file creates, renames, or deletes.
 
@@ -49,7 +51,7 @@ echo "stackref_rows_before=$ROWS_BEFORE" >> /tmp/stackref-metrics.txt
 cat /tmp/stackref-metrics.txt
 ```
 
-Expected: BEFORE=6175, plus marker and row counts.
+Expected on the current snapshot: `BEFORE=5113`, plus marker and row counts.
 
 - [ ] **Step 2: Measure duplication to set compression target**
 
@@ -71,7 +73,7 @@ If more than 40% of `decision-matrix.md` headings appear in 2+ files → **targe
 echo "stackref_target_pct=20" >> /tmp/stackref-metrics.txt  # or 15
 ```
 
-- [ ] **Step 3: Compress decision-matrix.md (526 lines — largest file)**
+- [ ] **Step 3: Compress decision-matrix.md (416 lines — largest file)**
 
 Apply in order:
 1. **Tables instead of prose repetition**: Find any section listing the same attributes per service/variant (e.g., cost/limit/use-case repeated N times as prose). Convert to a comparison table where each row is a service. Preserve every value, condition, and "because/to avoid" clause in table cells.
@@ -131,13 +133,14 @@ echo "Table rows: $stackref_rows_before → $ROWS_AFTER"
 **Acceptance criteria:**
 - `MARKERS_AFTER` ≥ `MARKERS_BEFORE`
 - `ROWS_AFTER` ≥ `ROWS_BEFORE`
-- `AFTER` ≤ 4940 if target=20%, or ≤ 5249 if target=15%
+- If `BEFORE` > 5249: `AFTER` ≤ 4940 if target=20%, or ≤ 5249 if target=15%
+- If `BEFORE` ≤ 5249: `AFTER` ≤ `BEFORE` (no regression from the verified current snapshot)
 
-If a criterion fails: `git diff stack-ref/` to identify which file has the regression. Restore that file: `git checkout HEAD -- stack-ref/<file>.md`. Recompress that file more conservatively (blank lines only). Re-run validation.
+If a criterion fails: inspect `git diff stack-ref/` to identify the regression, manually restore the affected section from `HEAD`, recompress more conservatively (blank lines only), then re-run validation.
 
-- [ ] **Step 6: Update stack-ref/index.yaml — last_reviewed only**
+- [ ] **Step 6: Confirm stack-ref/index.yaml needs no local freshness edit**
 
-Open `stack-ref/index.yaml`. Find the `last_reviewed` field (top-level or under the domain entry). Set it to `2026-04-14`. Save. No other changes.
+`stack-ref/index.yaml` does not expose a local `last_reviewed` field in the current schema. Leave it unchanged unless a file path or description changed during the compression pass. Root freshness is handled later in Task 4 via the root `index.yaml`.
 
 - [ ] **Step 7: Commit stack-ref/ (one commit, after full validation)**
 
@@ -158,7 +161,7 @@ Record `stackref_exit=0` to signal success to the orchestrator (Task 4).
 
 ### Task 2: Compress code-conventions/
 
-**Context:** 24 `.md` files, 3 816 lines. One `code-conventions/index.yaml`. Key pattern: language files (go, rust, python, etc.) may repeat rules from general.md. Target: 15% (≤ 3 244 lines).
+**Context:** 24 `.md` files, 3 244 lines. One `code-conventions/index.yaml`. Key pattern: language files (go, rust, python, etc.) may repeat rules from `general.md`. Historical target: 15% (≤ 3 244 lines), already met on the current snapshot.
 
 **Constraint:** Content-only edits. No file creates, renames, or deletes.
 
@@ -173,7 +176,7 @@ echo "codeconventions_markers_before=$MARKERS_BEFORE" >> /tmp/codeconventions-me
 cat /tmp/codeconventions-metrics.txt
 ```
 
-Expected: BEFORE=3816.
+Expected on the current snapshot: `BEFORE=3244`.
 
 - [ ] **Step 2: Identify baseline+delta pattern in language files**
 
@@ -217,13 +220,14 @@ echo "Normative markers: $codeconventions_markers_before → $MARKERS_AFTER"
 
 **Acceptance criteria:**
 - `MARKERS_AFTER` ≥ `MARKERS_BEFORE`
-- `AFTER` ≤ 3244
+- If `BEFORE` > 3244: `AFTER` ≤ 3244
+- If `BEFORE` ≤ 3244: `AFTER` ≤ `BEFORE`
 
-If normative marker regression: `git diff code-conventions/` to find the file. Restore: `git checkout HEAD -- code-conventions/<file>.md`. Recompress more conservatively. Re-run validation.
+If normative marker regression: inspect `git diff code-conventions/` to find the file, manually restore the affected section from `HEAD`, recompress more conservatively, then re-run validation.
 
-- [ ] **Step 5: Update code-conventions/index.yaml — last_reviewed only**
+- [ ] **Step 5: Confirm code-conventions/index.yaml needs no local freshness edit**
 
-Set `last_reviewed: 2026-04-14`. No other changes.
+`code-conventions/index.yaml` does not expose a local `last_reviewed` field in the current schema. Leave it unchanged unless a file path or description changed during the compression pass. Root freshness is handled later in Task 4 via the root `index.yaml`.
 
 - [ ] **Step 6: Commit code-conventions/ (one commit, after full validation)**
 
@@ -242,7 +246,7 @@ echo "codeconventions_exit=0" >> /tmp/codeconventions-metrics.txt
 
 ### Task 3: Compress architecture/
 
-**Context:** 8 `.md` files, 2 605 lines. All files 261-378 lines. One `architecture/index.yaml`. Contains ASCII flow diagrams — verify alignment after compaction. Target: 15% (≤ 2 214 lines).
+**Context:** 8 `.md` files, 2 212 lines. All files are roughly 253-315 lines. One `architecture/index.yaml`. Contains ASCII flow diagrams — verify alignment after compaction. Historical target: 15% (≤ 2 214 lines), already met on the current snapshot.
 
 **Constraint:** Content-only edits. No file creates, renames, or deletes.
 
@@ -257,9 +261,9 @@ echo "architecture_markers_before=$MARKERS_BEFORE" >> /tmp/architecture-metrics.
 cat /tmp/architecture-metrics.txt
 ```
 
-Expected: BEFORE=2605.
+Expected on the current snapshot: `BEFORE=2212`.
 
-- [ ] **Step 2: Compress event-driven.md (378 lines — largest)**
+- [ ] **Step 2: Compress event-driven.md (315 lines — largest)**
 
 Apply:
 1. **Blank line reduction**: max 1 between `##`, 0 within lists.
@@ -308,12 +312,13 @@ grep -n '[│─┼→←↑↓]' architecture/event-driven.md | head -10
 
 **Acceptance criteria:**
 - `MARKERS_AFTER` ≥ `MARKERS_BEFORE`
-- `AFTER` ≤ 2214
+- If `BEFORE` > 2214: `AFTER` ≤ 2214
+- If `BEFORE` ≤ 2214: `AFTER` ≤ `BEFORE`
 - No ASCII diagram has broken alignment (boxes and arrows readable)
 
-- [ ] **Step 6: Update architecture/index.yaml — last_reviewed only**
+- [ ] **Step 6: Confirm architecture/index.yaml needs no local freshness edit**
 
-Set `last_reviewed: 2026-04-14`. No other changes.
+`architecture/index.yaml` does not expose a local `last_reviewed` field in the current schema. Leave it unchanged unless a file path or description changed during the compression pass. Root freshness is handled later in Task 4 via the root `index.yaml`.
 
 - [ ] **Step 7: Commit architecture/ (one commit, after full validation)**
 
@@ -351,16 +356,25 @@ echo "All domain tasks verified. Proceeding with shared-file sync."
 
 If any task shows 0: STOP. Do not proceed. Report which domains are incomplete.
 
-- [ ] **Step 2: Rebuild compiled-index.txt**
+- [ ] **Step 2: Update root index freshness**
+
+```bash
+cd /Users/julienm/projects/ai-ressources
+rg -n '^(  stack-ref:|  code-conventions:|  architecture:|    last_reviewed:)' index.yaml
+```
+
+Confirm the root `index.yaml` domain entries for `stack-ref`, `code-conventions`, and `architecture` have `last_reviewed: 2026-04-14`. Update `index.yaml` before continuing if any entry is stale.
+
+- [ ] **Step 3: Rebuild compiled-index.txt**
 
 ```bash
 cd /Users/julienm/projects/ai-ressources
 bun run build-index
 ```
 
-If this exits non-zero: STOP. Do not write `.last-updated`. Do not commit. Report the error output.
+If this exits non-zero: STOP. Do not write `.last-updated`. Do not commit. Report the error output. If the current task scope forbids editing `.last-updated`, stop after reporting the successful rebuild and note the remaining required sync explicitly.
 
-- [ ] **Step 3: Write .last-updated**
+- [ ] **Step 4: Write .last-updated**
 
 ```bash
 cd /Users/julienm/projects/ai-ressources
@@ -368,26 +382,28 @@ date +%Y-%m-%d > .last-updated
 cat .last-updated
 ```
 
-Expected output: `2026-04-14`
+Expected output on 2026-04-14: `2026-04-14`
 
-- [ ] **Step 4: Verify domain-catalog.md is unchanged**
+If the current task scope forbids editing `.last-updated`, record that constraint in the final report instead of writing the file silently.
+
+- [ ] **Step 5: Verify only shared sync artifacts changed in this phase**
 
 ```bash
 cd /Users/julienm/projects/ai-ressources
-git diff domain-catalog.md
+git diff --name-only -- index.yaml compiled-index.txt .last-updated
 ```
 
-Expected: no diff. If diff exists, review it — subagents should not have touched this file. Revert if needed: `git checkout HEAD -- domain-catalog.md`
+Expected: only `index.yaml`, `compiled-index.txt`, and `.last-updated` appear here.
 
-- [ ] **Step 5: Commit index sync**
+- [ ] **Step 6: Commit index sync**
 
 ```bash
 cd /Users/julienm/projects/ai-ressources
-git add compiled-index.txt .last-updated
+git add index.yaml compiled-index.txt .last-updated
 git commit -m "refactor(compress): sync indexes post-compression"
 ```
 
-- [ ] **Step 6: Print final summary**
+- [ ] **Step 7: Print final summary**
 
 ```bash
 cd /Users/julienm/projects/ai-ressources

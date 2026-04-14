@@ -1,7 +1,7 @@
 # ai-ressources compiled index
 # Format: path | description [| use_when tags]
 # [QUICK-REF] = read first for common questions in this domain
-# Generated: 2026-04-14T10:01:00.868Z
+# Generated: 2026-04-14T13:38:03.637Z
 
 ## architecture
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
@@ -52,6 +52,7 @@ copywriting/taglines.md | Tagline and headline writing: formulas, patterns, A/B 
 
 ## design
 design/components/buttons.md | Button patterns: variants, sizes, states, icons, loading, groups, accessibility | button design, CTA button, button states, button group, icon button
+design/components/data-visualization-terminal.md | Data visualization for terminal interfaces: ASCII sparklines, histograms, status bars (extracted from data-visualization.md) | terminal data viz, ASCII chart, CLI dashboard, terminal sparkline, ANSI data viz
 design/components/data-visualization.md | Data visualization patterns: metric cards, sparklines, charts (line/bar/area/pie), dashboard layout, number formatting | dashboard, charts, metrics display, data visualization, sparklines
 design/components/email-templates.md | Email template patterns: responsive layout, dark mode, client quirks, components | email design, transactional email, email template, dark mode email
 design/components/feedback.md | Feedback patterns: toasts, alerts, banners, progress indicators, empty states, skeleton loading | toast notification, alert banner, empty state, skeleton loading, progress indicator
@@ -61,6 +62,7 @@ design/components/log-viewer.md | Log viewer patterns: terminal streaming, web t
 design/components/modals.md | Modals and dialogs: sheets, alerts, confirmation patterns | modal design, dialog, bottom sheet, alert, confirmation flow
 design/components/navigation.md | Navigation patterns: tabs, breadcrumbs, sidebars, menus, mobile bottom nav, command palette | navigation design, sidebar, tabs, breadcrumbs, mobile nav, command palette
 design/components/payment-flows.md | Payment UX patterns: tip/donation, subscription, one-time, express checkout, error handling | payment UI, checkout flow, tip/donation UX, subscription billing UI
+design/components/realtime-streams-terminal.md | Real-time streaming patterns for terminal interfaces: ANSI cursor control, CLI buffering (extracted from realtime-streams.md) | terminal streaming, ANSI realtime, CLI live output, tail -f pattern, terminal buffering
 design/components/realtime-streams.md | Real-time streaming UI: WebSocket/SSE, reconnection, buffering, auto-scroll, optimistic updates, token streaming | real-time UI, WebSocket, SSE, live updates, chat UI, AI token streaming
 design/quality/accessibility.md | Accessibility patterns: WCAG 2.2 AA, ARIA, keyboard nav, focus management, screen readers
 design/quality/ui-rules.md | UI visual non-regression rules: alignment, spacing, overflow checks
