@@ -212,9 +212,11 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `list`, `table`, `grid`, `collection` | `design/components/lists.md` |
 | `toast`, `notification`, `alert`, `snackbar`, `feedback` | `design/components/feedback.md` |
 | `chart`, `graph`, `dashboard`, `analytics`, `metrics`, `visualization` | `design/components/data-visualization.md` |
+| `terminal chart`, `ASCII sparkline`, `CLI histogram`, `terminal dashboard`, `ANSI data viz` | `design/components/data-visualization-terminal.md` |
 | `log`, `log-viewer`, `audit-trail` | `design/components/log-viewer.md` |
 | `payment`, `checkout`, `billing`, `subscription`, `pricing` | `design/components/payment-flows.md` |
 | `realtime`, `websocket`, `sse`, `live`, `streaming` | `design/components/realtime-streams.md` |
+| `terminal streaming`, `ANSI cursor`, `CLI live output`, `tail -f pattern`, `terminal buffering` | `design/components/realtime-streams-terminal.md` |
 | `email-template`, `transactional-email` | `design/components/email-templates.md` |
 
 ### Design Tokens (include when any UI work is detected)
