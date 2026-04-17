@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Update the `/conventions.init` documentation so the generated pre-commit hook examples lint only staged files and do so with filename-safe shell patterns.
+**Goal:** Update the `/conventions.init` and stack-command documentation so the generated pre-commit hook examples lint only staged files and do so with filename-safe shell patterns.
 
-**Architecture:** This patch is intentionally limited to three files already in the diff: `claude/skills/conventions.init/SKILL.md`, this implementation plan, and the paired design note. Broader source-of-truth changes remain follow-up work outside this patch.
+**Architecture:** This patch is intentionally limited to four files already in the diff: `claude/skills/conventions.init/SKILL.md`, `code-conventions/stack-commands.md`, this implementation plan, and the paired design note. Broader source-of-truth changes remain follow-up work outside this patch.
 
 **Tech Stack:** Markdown/YAML skill files, POSIX sh hook scripts
 
@@ -15,6 +15,7 @@
 | File | Change |
 |------|--------|
 | `claude/skills/conventions.init/SKILL.md` | Replace unsafe staged-file examples with filename-safe `git diff ... -z | xargs -0 ...` examples for TypeScript + Biome and Python + Ruff |
+| `code-conventions/stack-commands.md` | Align the stack table examples with the filename-safe staged-file shell pattern used by the generated hook examples |
 | `docs/superpowers/plans/2026-04-17-precommit-staged-files.md` | Record the actual patch scope and the validation checklist for the documentation update |
 | `docs/superpowers/specs/2026-04-17-precommit-staged-files-design.md` | Align the design note with the filename-safe shell pattern and clarify follow-up scope |
 
@@ -29,8 +30,8 @@ The examples in Phase 7 are the canonical reference for generated pre-commit hoo
 
 **Required shell pattern:**
 
-- Use `git diff --cached --quiet --diff-filter=ACM -- <pathspecs>` to detect whether relevant staged files exist.
-- Use `git diff --cached --name-only --diff-filter=ACM -z -- <pathspecs> | xargs -0 ...` to invoke the linter.
+- Use `git diff --cached --quiet --diff-filter=ACMR -- <pathspecs>` to detect whether relevant staged files exist.
+- Use `git diff --cached --name-only --diff-filter=ACMR -z -- <pathspecs> | xargs -0 ...` to invoke the linter.
 - Do not use `tr '\n' ' '` or `eval "$1"` for staged filenames. Both are unsafe for filenames containing spaces.
 
 - [x] **Step 1: Read the current Phase 7 examples**
@@ -39,7 +40,7 @@ Read the existing TypeScript + Biome and Python + Ruff examples in `claude/skill
 
 - [x] **Step 2: Replace newline-splitting snippets**
 
-Update both examples to use `git diff --cached --quiet --diff-filter=ACM` with Git pathspecs, followed by a `-z` / `xargs -0` execution pipeline.
+Update both examples to use `git diff --cached --quiet --diff-filter=ACMR` with Git pathspecs, followed by a `-z` / `xargs -0` execution pipeline.
 
 - [x] **Step 3: Add a note explaining why**
 
@@ -64,11 +65,11 @@ State clearly that this patch updates the `conventions.init` examples plus the c
 
 - [x] **Step 2: Replace the file map**
 
-List only the three files that are actually part of this change.
+List only the four files that are actually part of this change.
 
 - [x] **Step 3: Remove out-of-scope implementation instructions**
 
-Drop instructions for `stack-commands.md`, `conventions.refresh`, commits, asset sync, and index rebuilds from this plan revision.
+Drop instructions for `conventions.refresh`, commits, asset sync, and index rebuilds from this plan revision.
 
 - [x] **Step 4: Keep the document self-consistent**
 
@@ -94,3 +95,24 @@ Remove references to unimplemented file edits in this patch. If future follow-up
 - [x] **Step 3: Re-read for consistency**
 
 Verify that the plan and spec now describe the same safe shell approach and the same limited patch scope.
+
+---
+
+### Task 4: Align the stack command source-of-truth table
+
+**Files:**
+- Modify: `code-conventions/stack-commands.md`
+
+The stack detection table must match the same staged-file shell pattern documented in the generated hook examples.
+
+- [x] **Step 1: Update the staged-file note**
+
+Document the `git diff --cached --quiet --diff-filter=ACMR` guard and the `-z` / `xargs -0` invocation pattern.
+
+- [x] **Step 2: Update TypeScript and Python command rows**
+
+Ensure the TypeScript + Biome, TypeScript + ESLint, and Python rows use the same filename-safe `ACMR` pattern as the skill file.
+
+- [x] **Step 3: Re-read for consistency**
+
+Verify the stack table, implementation plan, and design note all describe the same rename-aware staged-file approach.

@@ -26,9 +26,9 @@ C'est lent (scan inutile de fichiers non commités) et incohérent avec les CI t
 Les linters/formatters (Biome, ESLint, Ruff) passent en mode **staged-only** avec une collecte de fichiers sûre pour les noms contenant des espaces :
 
 ```sh
-if ! git diff --cached --quiet --diff-filter=ACM -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then
+if ! git diff --cached --quiet --diff-filter=ACMR -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then
   printf "→ npx biome check (staged files)\n"
-  git diff --cached --name-only --diff-filter=ACM -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \
+  git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \
     | xargs -0 npx biome check
 fi
 ```
@@ -50,9 +50,13 @@ Les outils qui nécessitent le projet complet restent inchangés :
 ### `claude/skills/conventions.init/SKILL.md` — Phase 7
 
 Les exemples de hooks TypeScript + Biome et Python + Ruff sont mis à jour pour montrer le pattern staged-file complet, incluant :
-- Détection de présence via `git diff --cached --quiet --diff-filter=ACM -- <pathspecs>`
+- Détection de présence via `git diff --cached --quiet --diff-filter=ACMR -- <pathspecs>`
 - Passage des fichiers via `git diff ... -z | xargs -0 ...`
 - Maintien des commandes whole-project pour typecheck
+
+### `code-conventions/stack-commands.md`
+
+Le tableau source de vérité pour les stacks reprend le même pattern `ACMR` et la même pipeline `-z | xargs -0`, afin que la doc de référence et les exemples générés restent synchronisés.
 
 ### `docs/superpowers/plans/2026-04-17-precommit-staged-files.md`
 
@@ -74,9 +78,9 @@ check "npx biome check ."   # ← scan tout le projet
 ```sh
 check "npx tsc --noEmit"
 
-if ! git diff --cached --quiet --diff-filter=ACM -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then
+if ! git diff --cached --quiet --diff-filter=ACMR -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then
   printf "→ npx biome check (staged files)\n"
-  git diff --cached --name-only --diff-filter=ACM -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \
+  git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \
     | xargs -0 npx biome check
 fi
 ```
@@ -87,17 +91,17 @@ fi
 
 | Cas | Comportement |
 |-----|-------------|
-| Commit de `.md` uniquement | `git diff --cached --quiet --diff-filter=ACM -- <pathspecs>` retourne succès → linter skippé, tsc continue |
+| Commit de `.md` uniquement | `git diff --cached --quiet --diff-filter=ACMR -- <pathspecs>` retourne succès → linter skippé, tsc continue |
 | Commit d'un seul fichier `.ts` | Biome check sur ce fichier uniquement |
 | Nom de fichier avec espaces | Supporté via `-z` et `xargs -0` |
 | Stack TypeScript sans Biome/ESLint | Pas de linter staged-only à générer |
-| Stack multi (TS + Python) | Chaque linter a son propre bloc `git diff --cached --quiet --diff-filter=ACM` avec ses pathspecs dédiés |
+| Stack multi (TS + Python) | Chaque linter a son propre bloc `git diff --cached --quiet --diff-filter=ACMR` avec ses pathspecs dédiés |
 
 ---
 
 ## Non-scope
 
-- `code-conventions/stack-commands.md` et `claude/skills/conventions.refresh/SKILL.md` — follow-up explicite, hors scope de ce patch
+- `claude/skills/conventions.refresh/SKILL.md` — follow-up explicite, hors scope de ce patch
 - CI templates — déjà corrigés avant ce patch
 - lint-staged — non, zéro dépendance extra
 - Python mypy / pyright — restent whole-project (typecheck cross-fichiers)
