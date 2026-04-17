@@ -360,17 +360,18 @@ Apply? (y/n, or list items to skip)
 
    check "npx tsc --noEmit"
 
-   STAGED_TS=$(git diff --cached --name-only --diff-filter=ACM \
-     | grep -E '\.(ts|tsx|js|jsx|mjs|cjs|json)$')
-   if [ -n "$STAGED_TS" ]; then
+   if ! git diff --cached --quiet --diff-filter=ACM -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then
      printf "→ npx biome check (staged files)\n"
-     echo "$STAGED_TS" | xargs npx biome check || {
+     git diff --cached --name-only --diff-filter=ACM -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \
+       | xargs -0 npx biome check || {
        printf "\n✗ FAILED: npx biome check\n" >&2; exit 1
      }
    fi
 
    printf "\n✓ All checks passed\n"
    ```
+
+   Note: use Git pathspecs plus `-z`/`xargs -0` for staged-file linters. Newline splitting and `eval "$1"` both break on filenames with spaces.
 
    Example (single-stack, Python + Ruff):
    ```sh
@@ -394,11 +395,10 @@ Apply? (y/n, or list items to skip)
        exit 1
    fi
 
-   STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM \
-     | grep -E '\.py$')
-   if [ -n "$STAGED_PY" ]; then
+   if ! git diff --cached --quiet --diff-filter=ACM -- '*.py'; then
      printf "→ ruff check (staged files)\n"
-     echo "$STAGED_PY" | xargs ruff check || {
+     git diff --cached --name-only --diff-filter=ACM -z -- '*.py' \
+       | xargs -0 ruff check || {
        printf "\n✗ FAILED: ruff check\n" >&2; exit 1
      }
    fi
