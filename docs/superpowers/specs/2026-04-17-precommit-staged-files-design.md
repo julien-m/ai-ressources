@@ -1,7 +1,7 @@
 # Design : Pre-commit hooks — staged-file awareness
 
 **Date:** 2026-04-17
-**Skill:** conventions.init / conventions.refresh
+**Skill:** conventions.init
 
 ---
 
@@ -15,9 +15,7 @@ check "ruff check ."
 check "npx eslint ."
 ```
 
-C'est lent (scan inutile de fichiers non commités) et incohérent avec les CI templates, qui depuis le commit `8802efb` utilisent déjà `tj-actions/changed-files` pour limiter l'analyse aux fichiers modifiés.
-
-`/conventions.refresh` ne détecte pas ce pattern périmé et ne propose pas de régénérer les hooks.
+C'est lent (scan inutile de fichiers non commités) et incohérent avec les CI templates, qui limitent déjà l'analyse aux fichiers modifiés.
 
 ---
 
@@ -51,7 +49,7 @@ Les outils qui nécessitent le projet complet restent inchangés :
 
 ### `claude/skills/conventions.init/SKILL.md` — Phase 7
 
-L'exemple du hook TypeScript + Biome est mis à jour pour montrer le pattern staged-file complet, incluant :
+Les exemples de hooks TypeScript + Biome et Python + Ruff sont mis à jour pour montrer le pattern staged-file complet, incluant :
 - Détection de présence via `git diff --cached --quiet --diff-filter=ACM -- <pathspecs>`
 - Passage des fichiers via `git diff ... -z | xargs -0 ...`
 - Maintien des commandes whole-project pour typecheck
@@ -71,7 +69,7 @@ check "npx tsc --noEmit"
 check "npx biome check ."   # ← scan tout le projet
 ```
 
-### Après (hooks générés le 2026-04-17)
+### Après (hooks générés par la doc mise à jour le 2026-04-17)
 
 ```sh
 check "npx tsc --noEmit"
@@ -93,13 +91,13 @@ fi
 | Commit d'un seul fichier `.ts` | Biome check sur ce fichier uniquement |
 | Nom de fichier avec espaces | Supporté via `-z` et `xargs -0` |
 | Stack TypeScript sans Biome/ESLint | Pas de linter staged-only à générer |
-| Stack multi (TS + Python) | Chaque linter a son propre bloc `git diff --cached --quiet --diff-filter=ACM` |
+| Stack multi (TS + Python) | Chaque linter a son propre bloc `git diff --cached --quiet --diff-filter=ACM` avec ses pathspecs dédiés |
 
 ---
 
 ## Non-scope
 
-- `code-conventions/stack-commands.md` et `claude/skills/conventions.refresh/SKILL.md` — follow-up, hors scope de ce patch
+- `code-conventions/stack-commands.md` et `claude/skills/conventions.refresh/SKILL.md` — follow-up explicite, hors scope de ce patch
 - CI templates — déjà corrigés avant ce patch
 - lint-staged — non, zéro dépendance extra
 - Python mypy / pyright — restent whole-project (typecheck cross-fichiers)

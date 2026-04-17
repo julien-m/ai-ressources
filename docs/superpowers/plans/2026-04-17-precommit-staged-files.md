@@ -33,19 +33,19 @@ The examples in Phase 7 are the canonical reference for generated pre-commit hoo
 - Use `git diff --cached --name-only --diff-filter=ACM -z -- <pathspecs> | xargs -0 ...` to invoke the linter.
 - Do not use `tr '\n' ' '` or `eval "$1"` for staged filenames. Both are unsafe for filenames containing spaces.
 
-- [ ] **Step 1: Read the current Phase 7 examples**
+- [x] **Step 1: Read the current Phase 7 examples**
 
 Read the existing TypeScript + Biome and Python + Ruff examples in `claude/skills/conventions.init/SKILL.md`.
 
-- [ ] **Step 2: Replace newline-splitting snippets**
+- [x] **Step 2: Replace newline-splitting snippets**
 
 Update both examples to use `git diff --cached --quiet --diff-filter=ACM` with Git pathspecs, followed by a `-z` / `xargs -0` execution pipeline.
 
-- [ ] **Step 3: Add a note explaining why**
+- [x] **Step 3: Add a note explaining why**
 
 Document that newline splitting and `eval "$1"` are not safe for filenames with spaces.
 
-- [ ] **Step 4: Re-read the edited section**
+- [x] **Step 4: Re-read the edited section**
 
 Verify the old `STAGED_TS=$(...)` / `STAGED_PY=$(...)` pattern is gone and both examples still end with the success message.
 
@@ -58,19 +58,19 @@ Verify the old `STAGED_TS=$(...)` / `STAGED_PY=$(...)` pattern is gone and both 
 
 The original plan described edits to files that are not part of this patch. That makes the plan misleading as implementation documentation.
 
-- [ ] **Step 1: Rewrite the goal and architecture**
+- [x] **Step 1: Rewrite the goal and architecture**
 
 State clearly that this patch updates the `conventions.init` examples plus the companion plan/spec documents only.
 
-- [ ] **Step 2: Replace the file map**
+- [x] **Step 2: Replace the file map**
 
 List only the three files that are actually part of this change.
 
-- [ ] **Step 3: Remove out-of-scope implementation instructions**
+- [x] **Step 3: Remove out-of-scope implementation instructions**
 
 Drop instructions for `stack-commands.md`, `conventions.refresh`, commits, asset sync, and index rebuilds from this plan revision.
 
-- [ ] **Step 4: Keep the document self-consistent**
+- [x] **Step 4: Keep the document self-consistent**
 
 Make sure the scope described here matches the files in the current diff.
 
@@ -83,14 +83,14 @@ Make sure the scope described here matches the files in the current diff.
 
 The design note must not describe a broken staged-file implementation.
 
-- [ ] **Step 1: Replace `tr '\n' ' '` examples**
+- [x] **Step 1: Replace `tr '\n' ' '` examples**
 
 Use the same `git diff --cached --quiet` plus `git diff ... -z | xargs -0 ...` pattern documented in the skill file.
 
-- [ ] **Step 2: Correct the narrative**
+- [x] **Step 2: Correct the narrative**
 
 Remove references to unimplemented file edits in this patch. If future follow-up work is mentioned, label it explicitly as follow-up.
 
-- [ ] **Step 3: Re-read for consistency**
+- [x] **Step 3: Re-read for consistency**
 
 Verify that the plan and spec now describe the same safe shell approach and the same limited patch scope.

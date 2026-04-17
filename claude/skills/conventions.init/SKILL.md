@@ -360,9 +360,9 @@ Apply? (y/n, or list items to skip)
 
    check "npx tsc --noEmit"
 
-   if ! git diff --cached --quiet --diff-filter=ACM -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then
+   if ! git diff --cached --quiet --diff-filter=ACMR -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then
      printf "→ npx biome check (staged files)\n"
-     git diff --cached --name-only --diff-filter=ACM -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \
+     git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \
        | xargs -0 npx biome check || {
        printf "\n✗ FAILED: npx biome check\n" >&2; exit 1
      }
@@ -381,23 +381,15 @@ Apply? (y/n, or list items to skip)
    # To eject from auto-management, remove the @generated line above
    set -e
 
-   check() {
-       printf "→ %s\n" "$1"
-       if ! eval "$1"; then
-           printf "\n✗ FAILED: %s\n" "$1" >&2
-           exit 1
-       fi
-   }
-
    # Python
    if ! command -v ruff >/dev/null 2>&1; then
        printf "✗ ruff not found — install ruff to enable pre-commit checks\n" >&2
        exit 1
    fi
 
-   if ! git diff --cached --quiet --diff-filter=ACM -- '*.py'; then
+   if ! git diff --cached --quiet --diff-filter=ACMR -- '*.py'; then
      printf "→ ruff check (staged files)\n"
-     git diff --cached --name-only --diff-filter=ACM -z -- '*.py' \
+     git diff --cached --name-only --diff-filter=ACMR -z -- '*.py' \
        | xargs -0 ruff check || {
        printf "\n✗ FAILED: ruff check\n" >&2; exit 1
      }

@@ -8,21 +8,21 @@ Used by `/conventions.init` Phase 7 (pre-commit hook) and Phase 8 (CI workflows)
 
 ## Stack Detection Table
 
-> **Staged-file linters:** `$STAGED_TS` and `$STAGED_PY` are newline-separated shell variables populated at
-> hook runtime via `git diff --cached --name-only --diff-filter=ACM | grep -E '<ext-pattern>'`. When non-empty,
-> pass them to linters with `echo "$STAGED_*" | xargs ...` rather than direct `$STAGED_*` expansion. Type
-> checkers and build tools always run on the full project.
+> **Staged-file linters:** use `git diff --cached --quiet --diff-filter=ACMR -- <pathspecs>` to guard, then
+> `git diff --cached --name-only --diff-filter=ACMR -z -- <pathspecs> | xargs -0 <linter>` to invoke.
+> The `-z`/`xargs -0` pipeline is safe for filenames containing spaces. Type checkers and build tools always
+> run on the full project.
 
 | Stack Label | Markers | Pre-commit Commands | CI Template | CodeQL Language |
 |---|---|---|---|---|
-| TypeScript + Biome | tsconfig.json + (biome.json \| biome.jsonc) | `npx tsc --noEmit`<br>`STAGED_TS=$(git diff --cached --name-only --diff-filter=ACM \| grep -E '\.(ts|tsx|js|jsx|mjs|cjs|json)$'); if [ -n "$STAGED_TS" ]; then echo "$STAGED_TS" \| xargs npx biome check; fi` | ci-node | javascript-typescript |
-| TypeScript + ESLint | tsconfig.json + (.eslintrc* \| eslint.config.*) | `npx tsc --noEmit`<br>`STAGED_TS=$(git diff --cached --name-only --diff-filter=ACM \| grep -E '\.(ts|tsx|js|jsx|mjs|cjs|json)$'); if [ -n "$STAGED_TS" ]; then echo "$STAGED_TS" \| xargs npx eslint; fi` | ci-node | javascript-typescript |
+| TypeScript + Biome | tsconfig.json + (biome.json \| biome.jsonc) | `npx tsc --noEmit`<br>`if ! git diff --cached --quiet --diff-filter=ACMR -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \| xargs -0 npx biome check; fi` | ci-node | javascript-typescript |
+| TypeScript + ESLint | tsconfig.json + (.eslintrc* \| eslint.config.*) | `npx tsc --noEmit`<br>`if ! git diff --cached --quiet --diff-filter=ACMR -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs'; then git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' \| xargs -0 npx eslint; fi` | ci-node | javascript-typescript |
 | TypeScript | tsconfig.json | `npx tsc --noEmit` | ci-node | javascript-typescript |
 | Rust | Cargo.toml | `cargo check`, `cargo clippy -- -D warnings` | ci-rust | rust |
 | Go | go.mod | `go build ./...`, `go vet ./...` | ci-go | go |
-| Python + pyright | pyproject.toml + [tool.pyright] | `STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM \| grep -E '\.py$'); if [ -n "$STAGED_PY" ]; then echo "$STAGED_PY" \| xargs ruff check; fi`<br>`pyright` | ci-python | python |
-| Python + mypy | pyproject.toml + (mypy.ini \| .mypy.ini \| [tool.mypy]) | `STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM \| grep -E '\.py$'); if [ -n "$STAGED_PY" ]; then echo "$STAGED_PY" \| xargs ruff check; fi`<br>`mypy .` | ci-python | python |
-| Python | pyproject.toml \| setup.py | `STAGED_PY=$(git diff --cached --name-only --diff-filter=ACM \| grep -E '\.py$'); if [ -n "$STAGED_PY" ]; then echo "$STAGED_PY" \| xargs ruff check; fi` | ci-python | python |
+| Python + pyright | pyproject.toml + [tool.pyright] | `if ! git diff --cached --quiet --diff-filter=ACMR -- '*.py'; then git diff --cached --name-only --diff-filter=ACMR -z -- '*.py' \| xargs -0 ruff check; fi`<br>`pyright` | ci-python | python |
+| Python + mypy | pyproject.toml + (mypy.ini \| .mypy.ini \| [tool.mypy]) | `if ! git diff --cached --quiet --diff-filter=ACMR -- '*.py'; then git diff --cached --name-only --diff-filter=ACMR -z -- '*.py' \| xargs -0 ruff check; fi`<br>`mypy .` | ci-python | python |
+| Python | pyproject.toml \| setup.py | `if ! git diff --cached --quiet --diff-filter=ACMR -- '*.py'; then git diff --cached --name-only --diff-filter=ACMR -z -- '*.py' \| xargs -0 ruff check; fi` | ci-python | python |
 | Delphi | *.dproj \| *.dpr | `dcc32 {dpr_file} -Q -W` | — | — |
 | C/C++ (CMake) | CMakeLists.txt | `cmake --build . --target all` | — | — |
 | .NET / C# | *.sln \| *.csproj | `dotnet build --no-restore` | ci-dotnet | csharp |
