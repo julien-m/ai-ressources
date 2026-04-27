@@ -110,13 +110,24 @@ Language-independent. Composed in layers — common first, then per detected lan
 Always applied:
 
 ```gitignore
-# OS
-.DS_Store
+# OS — Windows
 Thumbs.db
+
+# OS — macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+._*
+.Spotlight-V100
+.Trashes
+.fseventsd
+.DocumentRevisions-V100
+.TemporaryItems
 
 # IDE
 .idea/
 .vscode/
+.zed/
 *.swp
 *.swo
 
@@ -185,10 +196,63 @@ __pycache__/
 .ruff_cache/
 ```
 ### Layer: swift
+Apple development (iOS, macOS, watchOS, tvOS, visionOS). For solo/small-team projects, lockfiles (`Package.resolved`, `Podfile.lock`) are committed for build reproducibility — only the resolved dependency trees and build artifacts are ignored.
+
 ```gitignore
-DerivedData/
-*.xcworkspace
+# Xcode build artifacts
 build/
+DerivedData/
+*.dSYM
+*.dSYM.zip
+*.xcarchive
+*.xcresult
+*.hmap
+*.ipa
+*.app
+*.app.dSYM
+
+# Xcode user-specific
+xcuserdata/
+*.xcuserstate
+*.xccheckout
+*.moved-aside
+*.perspectivev3
+!default.perspectivev3
+
+# Xcode workspace local state
+*.xcworkspace/xcuserdata/
+*.xcodeproj/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcuserdata/
+*.xcodeproj/project.xcworkspace/xcshareddata/IDEWorkspaceChecks.plist
+
+# Swift Package Manager
+.build/
+.swiftpm/
+# Note: Package.resolved IS committed (lockfile for reproducibility)
+
+# CocoaPods
+Pods/
+# Note: Podfile.lock IS committed
+
+# Carthage
+Carthage/Build/
+Carthage/Checkouts/
+
+# Fastlane
+fastlane/report.xml
+fastlane/Preview.html
+fastlane/screenshots/**/*.png
+fastlane/test_output
+
+# Provisioning / signing (sensitive)
+*.mobileprovision
+*.cer
+*.p12
+*.p8
+
+# Coverage (Xcode/llvm)
+*.gcno
+*.gcda
 ```
 ### Layer: kotlin
 ```gitignore
