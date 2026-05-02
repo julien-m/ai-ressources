@@ -1,1 +1,0 @@
-/Users/julienm/projects/ai-ressources/claude/skills/ai-res/SKILL.md

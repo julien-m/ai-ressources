@@ -6,508 +6,383 @@ argument-hint: ""
 
 # /conventions.init — Initialize Project Conventions
 
-Analyze the current project's stack, detect relevant domains, and generate a `.conventions/` directory that points to source files in `~/projects/ai-ressources/`.
-
-The generation is **deterministic** (no LLM synthesis): the build script resolves source paths and writes `manifest.yaml` plus a lightweight `index.md`. Agents read the source files directly from ai-ressources without calling `/ai-res`.
-
-## Prerequisites
-
-- The current working directory is the **target project** (NOT ai-ressources)
-- `~/projects/ai-ressources/` must exist and contain the knowledge base
-
-## Procedure
-
-### Phase 1: Analyze the target project
-
-0. **Spec stack (if available)** — Check if `.specs/stacks/_default.md` exists in the project root. If it does:
-   - Read the file
-   - Find the first Markdown table with a "Layer" or "Technology" column header
-   - Extract each row: the layer name (column 1) and the choice value (column 2)
-   - Store the extracted layers as an additional detection source — these are merged with the code scan results in Phase 2
-
-   This enables conventions generation for greenfield projects where no code exists yet but the stack is declared in LiveSpec specs.
-
-   If `.specs/stacks/_default.md` does not exist, skip this step silently. The rest of Phase 1 proceeds as normal.
-
-1. **Dependencies** — Read dependency files in the project root. Extract all package/module names:
-   - `package.json` → `dependencies` + `devDependencies`
-   - `go.mod` → `require` block
-   - `Cargo.toml` → `[dependencies]`
-   - `Podfile` → pod names
-   - `*.dproj` → Delphi project references
-   - `requirements.txt`, `pyproject.toml` → Python packages
-   - `Gemfile` → Ruby gems
-
-2. **File extensions** — Glob the project for file extensions present. **Exclude**: `node_modules/`, `dist/`, `build/`, `.git/`, `.conventions/`, `vendor/`, `target/`, `.next/`, `.nuxt/`, `.output/`.
-
-3. **Project context** — Read `CLAUDE.md` if present. Note declared stack, conventions, project description.
-
-4. **Project type** — Deduce from the above: web app, mobile app, CLI, API, landing page, design system, library, monorepo, etc.
-
-### Phase 2: Detect relevant domains
-
-Before detection, **read these reference files** and **scan ai-ressources directories**:
-
-**Read** [`references/package-mapping.md`](references/package-mapping.md) — packages → stack-ref mapping
-**Read** [`references/architecture-signals.md`](references/architecture-signals.md) — code signals → architecture patterns
-**Read** [`references/project-type-signals.md`](references/project-type-signals.md) — project type → design/copywriting
-
-**Scan dynamically** — list all `.md` files in these `~/projects/ai-ressources/` directories to discover available files at runtime:
-- `stack-ref/**/*.md`
-- `architecture/*.md`
-- `design/**/*.md`
-- `copywriting/*.md`
-- `code-conventions/*.md`
-- `conventions/*.md`
-
-#### Catalog-Based Detection (Primary when signals provided)
-
-If the caller provides a list of keyword signals (e.g., from a LiveSpec stack file):
-
-1. **Read** [`~/projects/ai-ressources/domain-catalog.md`](~/projects/ai-ressources/domain-catalog.md)
-2. Match each provided signal against all tables in the catalog
-3. Collect all matched convention file paths
-4. Use these as the **primary** detected domains — they take precedence over file scanning and code grepping
-5. Still run Channels 1-3 for any additional signals not covered by the caller's list, but do NOT override catalog results
-
-If no signals are provided by the caller, proceed with Channels 1-3 as before (backward compatible).
-
-#### Channel 1: File extensions → code-conventions (language deltas)
-
-| Extensions | Category | Source files to read (all from `code-conventions/`) |
-|---|---|---|
-| `.ts`, `.tsx`, `.js`, `.jsx` | code | `general.md` + `architecture.md` + `logging.md` + `testing.md` + `javascript.md` |
-| `.go` | code | `general.md` + `architecture.md` + `logging.md` + `testing.md` + `go.md` |
-| `.rs` | code | `general.md` + `architecture.md` + `logging.md` + `testing.md` + `rust.md` |
-| `.swift`, `.kt` | code | `general.md` + `architecture.md` + `logging.md` + `testing.md` + `swift-kotlin.md` |
-| `.pas`, `.dfm`, `.dproj` | code | `general.md` + `architecture.md` + `logging.md` + `testing.md` + `delphi.md` |
-| `.sql`, `migration`/`schema` in path | code | `database.md` |
-| `.css`, `.scss` | design-tokens | `design/tokens/*.md` |
-| `.tsx`, `.jsx`, `.svelte`, `.vue` | design-components | `design/components/*.md` |
-| `.swift` with UI, `.xib`, `.storyboard` | design-tokens | `design/systems/apple-hig.md` + `design/tokens/*.md` |
-| `.kt` with UI, layout XML | design-tokens | `design/systems/material-design.md` + `design/tokens/*.md` |
-| `.pen` | design-components | `design/references/mockup-specs.md` |
-| `.md` with mermaid/gherkin | diagrams | `conventions/diagrams.md` |
-| `.specs/` directory exists | diagrams | `conventions/diagrams.md` |
-
-#### Channel 1b: Dependencies + config → code-conventions (framework deltas)
-
-Detect frameworks from `package.json` dependencies AND config files in the project root. Each match adds the corresponding framework delta from `code-conventions/`:
-
-| Signal (dependency or config file) | Framework delta |
-|---|---|
-| `react`, `react-dom`, `.tsx` files with JSX | `react.md` |
-| `next`, `next.config.*` | `nextjs.md` |
-| `@shadcn/ui`, `components/ui/` dir, `components.json` | `shadcn.md` |
-| `tailwindcss`, `@tailwindcss/*`, `tailwind.config.*` | `tailwind.md` |
-| `wrangler.toml`, `wrangler.jsonc`, `@cloudflare/*`, `hono` | `cloudflare.md` |
-| `@tanstack/react-query`, `@tanstack/react-router`, `@tanstack/react-start` | `tanstack.md` |
-| `drizzle-orm`, `drizzle-kit`, `drizzle.config.*` | `drizzle.md` |
-| `@prisma/client`, `prisma/schema.prisma` | `prisma.md` |
-| `remotion`, `@remotion/*`, `remotion.config.*` | `remotion.md` |
-
-Multiple framework deltas can match simultaneously (e.g., React + Next.js + shadcn + Tailwind). Include all matching deltas.
-
-#### Spec-Aware Detection (resolves through catalog)
-
-If step 0 extracted layers from `.specs/stacks/_default.md`:
-
-1. Read the stack file and extract all technology names, dependency names, and keywords as a flat signal list
-2. Resolve these signals through **Read** [`~/projects/ai-ressources/domain-catalog.md`](~/projects/ai-ressources/domain-catalog.md) (same as catalog-based detection above)
-3. Merge results with Channel 1-3 detections (union)
-
-This replaces the previous hardcoded mapping table. The catalog is the single source of truth for signal-to-convention resolution.
-
-**Merge strategy:** Union. Spec layers and code scan results are combined. If both sources detect the same domain, it appears once. If only specs or only code detects a domain, it's included.
-
-This means on a greenfield project (no code), the specs alone provide enough signal to generate accurate conventions. On an existing project, both sources enrich each other.
-
-#### Channel 2: Dependencies → stack-ref + architecture
-
-Match extracted package names against **Read** [`references/package-mapping.md`](references/package-mapping.md).
-
-For architecture patterns, grep the project codebase for signals from **Read** [`references/architecture-signals.md`](references/architecture-signals.md).
-
-#### Channel 2b: Dependencies → design sub-domains
-
-Detect design sub-domains from `package.json` dependencies and project structure:
-
-| Signal | Sub-domain(s) detected |
-|--------|------------------------|
-| Any other design sub-domain detected | `design-tokens` (always include — transversal, small) |
-| `react`, `vue`, `svelte`, `solid-js`, `@shadcn/ui`, `radix-ui`, `@radix-ui/*`, `@headlessui/*`, `@mantine/*`; OR `.tsx`/`.jsx`/`.svelte`/`.vue` files exist | `design-components` |
-| `next`, `nuxt`, `@sveltejs/kit`, `@remix-run/*`, `astro`; OR `pages/`, `app/`, `routes/` directory exists | `design-views` |
-| `design-components` or `design-views` detected | `design-quality` (accessibility is a default for any web UI) |
-| `recharts`, `chart.js`, `d3`, `victory`, `@tremor/*`, `plotly.js`, `nivo`, `@visx/*`; OR source files contain `dashboard`/`metrics`/`analytics` | `design-dataviz` |
-| `ws`, `socket.io`, `ably`, `pusher-js`, `partysocket`; OR source files contain `WebSocket`/`EventSource`/`SSE`/`useWebSocket` | `design-realtime` |
-
-`design` is NOT a valid standalone domain key — always use the `design-*` sub-domains above.
-
-#### Channel 3: Project type → design sub-domains, copywriting, quality
-
-Use **Read** [`references/project-type-signals.md`](references/project-type-signals.md). Map project type signals to the appropriate `design-*` sub-domains using Channel 2b rules above.
-
-### Phase 3: Confirm with user
-
-Display detected domains grouped by category:
-
-```
-Domaines détectés pour [project-name] :
-
-Code:
-  ✓ TypeScript (general + architecture + logging + testing + javascript)
-  ✓ Database (database)
-
-Frameworks:
-  ✓ React (react)
-  ✓ Next.js (nextjs)
-  ✓ shadcn/ui (shadcn)
-  ✓ Tailwind CSS (tailwind)
-
-Architecture:
-  ✓ auth-flows, webhook-patterns
-
-Stack:
-  ✓ databases/turso, auth/better-auth, platforms/cloudflare
-
-Design:
-  ✓ design-tokens [CSS, colors, spacing, typo, motion]
-  ✓ design-components [button, form, modal, nav, toast]
-  ✓ design-views [page, layout, dashboard, settings, auth]
-  ✓ design-quality [a11y, WCAG, audit]
-  (design-dataviz not detected — add if needed)
-  (design-realtime not detected — add if needed)
-
-Copywriting:
-  (none detected)
-
-Diagrams:
-  ✓ diagrams
-
-Confirm? (or add/remove domains)
-```
-
-**Wait for user confirmation.** The user can add or remove domains before generation.
-
-### Phase 4: Generate `.conventions/` directory via build-conventions.ts
-
-This phase uses a **deterministic compilation script** to resolve dependency graphs and concatenate conventions without LLM synthesis.
-
-#### 4.0 Construct domains JSON
-
-Build a JSON object mapping category names to detected files. Use the domains detected in Phase 2-3, organized by category:
-
-```json
-{
-  "code": ["nextjs", "drizzle"],
-  "design-tokens": [],
-  "design-components": [],
-  "design-views": [],
-  "design-quality": [],
-  "legal": []
-}
-```
-
-**Note:** `design-*` keys always pass `[]` — the build script reads source paths from `design/index.yaml sub_domains`, not from the caller's file list.
-
-**Mapping from Phase 2-3 to domains JSON:**
-
-- **code domain**: All detected language/framework files (javascript, react, nextjs, drizzle, prisma, tailwind, etc.) PLUS any transversal files explicitly mentioned (testing, logging, architecture, runtime-configs). `general` and `database` are **excluded** from the domains array — they are auto-resolved by the build script via the `extends` graph in each file's frontmatter.
-- **legal domain**: Architecture or legal files detected in Phase 2 (from `architecture/`, `conventions/`)
-- **design-\* domains**: Each detected `design-*` sub-domain gets its own key with an empty array (`[]`). Never use a bare `"design"` key.
-- **pricing domain**: Pricing model files if detected (from `pricing-models/`)
-- **architecture domain**: Not a separate domain — include in code if `architecture.md` was detected
-
-**Examples:**
-
-- Detected: TypeScript, React, Next.js, Drizzle → `code: ["nextjs", "drizzle"]` (general + javascript + react are inherited via extends)
-- Detected: TypeScript, testing, logging → `code: ["javascript", "testing", "logging"]` (general inherited)
-- Greenfield project, no code → `code: []` (omit or empty array)
-- Detected: React + Next.js → `"design-tokens": [], "design-components": [], "design-views": [], "design-quality": []`
-
-#### 4.1 Invoke build-conventions.ts
-
-Call the build script with the project directory and domains JSON:
-
-```bash
-bun run ~/projects/ai-ressources/scripts/build-conventions.ts "$(pwd)" '{"code":["nextjs","drizzle"],"design-tokens":[],"design-components":[],"design-views":[],"design-quality":[],"legal":[]}'
-```
-
-**Script behavior:**
-
-- Reads from `~/projects/ai-ressources/code-conventions/*.md` (and other domain directories)
-- Resolves the `extends` graph for code domain (post-order DFS, deduplication)
-- For `design-*` domains: reads source paths from `design/index.yaml sub_domains` (ignores caller's empty arrays)
-- Outputs:
-  - `.conventions/manifest.yaml` (source paths, exclusions, metadata per domain)
-  - `.conventions/index.md` (table of contents with domain hints)
-- Does NOT output per-domain `.md` files (`code.md`, `design.md`, etc.) — manifest-based system only
-- Creates `.conventions/` directory if it does not exist
-- Exits with status 0 (warnings non-fatal)
-
-**Expected output:**
-```
-✓ code (5 source(s))
-✓ design-tokens (4 source(s))
-✓ design-components (7 source(s))
-✓ design-views (4 source(s))
-✓ design-quality (2 source(s))
-✓ .conventions/manifest.yaml
-✓ .conventions/index.md
-```
-
-**Verify output:** `.conventions/` must contain ONLY `manifest.yaml` and `index.md`. It must NOT contain `design.md`, `code.md`, `conventions.manifest.json`, or any other per-domain `.md` files.
-
-**Edge cases handled by script:**
-
-- **Cycle in extends**: warns, skips the cyclic file, continues
-- **Missing source file**: warns, continues
-- **Empty code domain**: emits a `code` entry with zero sources if `code: []` was requested
-- **No domains**: creates only `manifest.yaml` + `index.md` (no domain entries in manifest)
-
-### Phase 5: Gitignore
-
-Check if `.conventions/` is in the project's `.gitignore`:
-- If `.gitignore` exists and `.conventions/` is not listed → append `\n# Materialized conventions\n.conventions/\n`
-- If `.gitignore` does not exist AND project is a git repo → create `.gitignore` with `.conventions/\n`
-- If not a git repo → skip
-
-### Phase 6: Config Audit
-
-1. **Read** [`~/projects/ai-ressources/code-conventions/runtime-configs.md`](~/projects/ai-ressources/code-conventions/runtime-configs.md)
-2. **Detect runtime** — glob lockfiles and config files in the project root, match against the runtime detection table
-3. **Detect languages** — reuse Phase 1 file extension analysis
-4. **If no supported language detected** → skip Phase 6
-5. **Audit .gitignore** — compose layers from `runtime-configs.md` (common + all detected languages). Add only missing patterns to the existing `.gitignore` (no duplicates). If `.gitignore` does not exist, create it. No confirmation needed — auto-apply.
-6. **Audit config files** (TypeScript only for now):
-   - Read each config file if it exists
-   - Compare each expected key/value from `runtime-configs.md` against the actual file
-   - Classify each item: `ok` (matches), `fix` (wrong value), `create` (file missing, auto-create), `signal` (info only, no action)
-7. **Display grouped summary:**
-
-```
-Config Audit ({runtime} detected):
-
-.gitignore:
-  + {N} patterns added ({list of key patterns}...)
-
-tsconfig.json:
-  ✓ strict: true
-  ⚠ moduleResolution: "node" → "bundler"
-  ⚠ target: "ES2020" → "ESNext"
-
-package.json:
-  ✓ type: "module"
-  ⚠ devDependencies: missing @types/bun
-  ⚠ scripts.typecheck: "tsc --noEmit" → "bunx tsc --noEmit"
-
-Files to create:
-  + .editorconfig (standard defaults)
-  + biome.json (tabs, semi, double quotes, lineWidth 120)
-  + .nvmrc (v22.x)
-ℹ vitest.config.ts not found (vitest in devDependencies)
-
-Apply? (y/n, or list items to skip)
-```
-
-8. **On confirmation:**
-   - Fix existing files using JSON merge (not overwrite) for `.json` files
-   - Create missing files marked "auto" in `runtime-configs.md`
-   - Files marked "confirm" (tsconfig.json, package.json) are included in the grouped summary — the summary serves as the confirmation gate
-   - Files marked "signal" are displayed with `ℹ` — no action taken
-9. **User can skip items** — respond with "skip .nvmrc, biome.json" etc.
-10. **If nothing to fix or create** (all items `ok`) → display "Config audit: all checks passed ✓" and skip the confirmation prompt
-
-### Phase 7: Pre-commit Hook
-
-1. **Read** [`~/projects/ai-ressources/code-conventions/stack-commands.md`](~/projects/ai-ressources/code-conventions/stack-commands.md) — load the stack detection table
-2. **Detect stack** — scan project root for markers per the detection rules in `stack-commands.md`
-3. **No stack detected** → skip Phase 7, display "No supported stack detected — skipping pre-commit hook"
-4. **If `.githooks/pre-commit` exists:**
-   - If contains sentinel `# @generated by conventions.init` → will overwrite
-   - If no sentinel → ask user confirmation before overwriting
-5. **Generate `.githooks/pre-commit`** — a POSIX shell script (`#!/bin/sh`) containing:
-   - Sentinel comment: `# @generated by conventions.init — do not edit manually`
-   - Stack label comment
-   - `set -e`
-   - A `check()` function that prints the command, runs it, and prints failure message on error
-   - For each detected stack: a tool existence guard (`command -v`) followed by `check` calls for each command
-   - **Single-stack:** tool guard uses `exit 1` (fail-closed)
-   - **Multi-stack:** tool guard uses `else` block (skip block, warn, continue to next stack). Add a `_ran=0` counter incremented per executed block. At the end, if `_ran` is still 0, exit 1 with "No tools found" error.
-   - Final success message
-
-   Example (single-stack, TypeScript + Biome):
-   ```sh
-   #!/bin/sh
-   # @generated by conventions.init — do not edit manually
-   # Stack: TypeScript + Biome
-   # To eject from auto-management, remove the @generated line above
-   set -e
-
-   check() {
-       printf "→ %s\n" "$1"
-       if ! eval "$1"; then
-           printf "\n✗ FAILED: %s\n" "$1" >&2
-           exit 1
-       fi
-   }
-
-   # TypeScript + Biome
-   if ! command -v npx >/dev/null 2>&1; then
-       printf "✗ npx not found — install Node.js to enable pre-commit checks\n" >&2
-       exit 1
-   fi
-
-   check "npx tsc --noEmit"
-
-   if ! git diff --cached --quiet --diff-filter=ACMR -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then
-     printf "→ npx biome check (staged files)\n"
-     git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \
-       | xargs -0 npx biome check || {
-       printf "\n✗ FAILED: npx biome check\n" >&2; exit 1
-     }
-   fi
-
-   printf "\n✓ All checks passed\n"
+## Goal
+Generate a `.conventions/` directory in the target project containing exactly `manifest.yaml` and `index.md`, plus configured `.gitignore`, `.githooks/pre-commit`, and `.github/workflows/*.yml` matching the detected stack — produced deterministically, with per-phase verification.
+
+## Execution context
+- Mode: apply
+- Month: 2026-05
+
+## Anti-drift rules (apply to all steps)
+- Execute phases in the exact numbered order. Do NOT reorder, parallelise, merge, or skip any phase.
+- Do NOT start phase N+1 until phase N success criteria are fully met and observed.
+- Do NOT assume a phase already ran. Execute it and capture observable evidence (file paths, command output, exit codes).
+- Run listed commands as written. If blocked by policy, stop and report: `BLOCKED at step N - policy_blocked - <one-line reason>`.
+- Deterministic failure policy: `timeout=90s`, `max_retries=1` per command unless overridden.
+- If a command fails after allowed retries, stop. Do NOT silently substitute alternative commands.
+- "Probably works", "looks correct" are not success criteria — verification is mandatory.
+- Confirmation gates (Phase 3, Phase 6) must surface to the user; never auto-confirm on the user's behalf.
+- Never write secrets in generated files.
+
+## Steps
+
+### 1. Verify prerequisites and target context
+**Prerequisite**: None.
+
+**Required inputs/resources**:
+- `pwd` (must be the target project, NOT `~/projects/ai-ressources/`)
+- `~/projects/ai-ressources/` directory must exist
+
+**Action**:
+1. Run `pwd` and confirm path does not equal `~/projects/ai-ressources` (or its realpath).
+2. Run `test -d ~/projects/ai-ressources && test -f ~/projects/ai-ressources/.last-updated`.
+
+**Execution evidence**:
+- Resolved `pwd` value
+- Exit code of the directory check (must be 0)
+
+**Success criteria**:
+- pwd ≠ ai-ressources path
+- ai-ressources tree present and readable
+
+**If this step fails**:
+- Retry once.
+- On terminal failure: `ERROR step=1 type=missing_dependency retry_count=<n> timed_out=false message="<reason>"`. Stop.
+
+---
+
+### 2. Analyze the target project (Phase 1 — gather signals)
+**Prerequisite**: Step 1 success criteria met.
+
+**Required inputs/resources**:
+- Project root files: `.specs/stacks/_default.md`, `package.json`, `go.mod`, `Cargo.toml`, `Podfile`, `*.dproj`, `requirements.txt`, `pyproject.toml`, `Gemfile`, `CLAUDE.md`
+- Excluded paths: `node_modules/`, `dist/`, `build/`, `.git/`, `.conventions/`, `vendor/`, `target/`, `.next/`, `.nuxt/`, `.output/`
+
+**Action**:
+1. **Spec stack** — if `.specs/stacks/_default.md` exists, parse first table with `Layer` or `Technology` header; extract layer→choice pairs as `spec_signals`.
+2. **Dependencies** — read each dependency file present; extract package/module names into `deps`.
+3. **File extensions** — glob (excluding the paths above) into `extensions`.
+4. **Project context** — read `CLAUDE.md` if present; extract declared stack, conventions, description into `claudeMd`.
+5. **Project type** — deduce from the four signals above into `projectType`.
+
+**Execution evidence**:
+- Counts: `len(spec_signals)`, `len(deps)`, `len(extensions)`, `claudeMd present? y/n`
+- Resolved `projectType` string
+
+**Success criteria**:
+- All present source files were read; absent files were skipped silently.
+- At least one signal source returned data (greenfield-only with no `.specs/` and no deps must explicitly stop with `BLOCKED at step 2 - no_signals - cannot detect anything`).
+
+**If this step fails**:
+- Retry once for transient read errors.
+- Terminal: `ERROR step=2 type=command_failed ...`. Stop.
+
+---
+
+### 3. Detect relevant domains (Phase 2 — channels)
+**Prerequisite**: Step 2 success criteria met; signals available.
+
+**Required inputs/resources**:
+- **Read** [`references/package-mapping.md`](references/package-mapping.md)
+- **Read** [`references/architecture-signals.md`](references/architecture-signals.md)
+- **Read** [`references/project-type-signals.md`](references/project-type-signals.md)
+- Dynamic scan of `~/projects/ai-ressources/{stack-ref,architecture,design,copywriting,code-conventions,conventions}/**/*.md`
+- **Read** [`~/projects/ai-ressources/domain-catalog.md`](~/projects/ai-ressources/domain-catalog.md) (when caller-provided signals exist or when `spec_signals` non-empty)
+
+**Action** (run channels in order, then union):
+1. **Catalog-Based Detection** — if caller passed signals, match them against `domain-catalog.md`; collected paths are primary, never overridden by later channels.
+2. **Channel 1 — file extensions → code-conventions** (language deltas):
+   | Extensions | Source files (in `code-conventions/`) |
+   |---|---|
+   | `.ts/.tsx/.js/.jsx` | `general + architecture + logging + testing + javascript` |
+   | `.go` | `general + architecture + logging + testing + go` |
+   | `.rs` | `general + architecture + logging + testing + rust` |
+   | `.swift/.kt` | `general + architecture + logging + testing + swift-kotlin` |
+   | `.pas/.dfm/.dproj` | `general + architecture + logging + testing + delphi` |
+   | `.sql`, `migration|schema` in path | `database` |
+   | `.css/.scss` | `design/tokens/*` |
+   | `.tsx/.jsx/.svelte/.vue` | `design/components/*` |
+   | `.swift` UI / `.xib/.storyboard` | `design/systems/apple-hig + design/tokens/*` |
+   | `.kt` UI / layout xml | `design/systems/material-design + design/tokens/*` |
+   | `.pen` | `design/references/mockup-specs` |
+   | `.md` w/ mermaid|gherkin OR `.specs/` exists | `conventions/diagrams` |
+3. **Channel 1b — framework deltas** (deps + config files):
+   | Signal | Delta |
+   |---|---|
+   | `react/.tsx JSX` | `react.md` |
+   | `next, next.config.*` | `nextjs.md` |
+   | `@shadcn/ui, components/ui/, components.json` | `shadcn.md` |
+   | `tailwindcss, tailwind.config.*` | `tailwind.md` |
+   | `wrangler.{toml,jsonc}, @cloudflare/*, hono` | `cloudflare.md` |
+   | `@tanstack/react-{query,router,start}` | `tanstack.md` |
+   | `drizzle-orm, drizzle-kit, drizzle.config.*` | `drizzle.md` |
+   | `@prisma/client, prisma/schema.prisma` | `prisma.md` |
+   | `remotion, @remotion/*, remotion.config.*` | `remotion.md` |
+4. **Spec-Aware Detection** — resolve `spec_signals` through `domain-catalog.md`; union with channels above.
+5. **Channel 2 — deps → stack-ref + architecture** via `package-mapping.md` and grep against `architecture-signals.md`.
+6. **Channel 2b — deps → design-* sub-domains**:
+   | Signal | Sub-domain |
+   |---|---|
+   | Any other `design-*` detected | `design-tokens` (always include) |
+   | `react/vue/svelte/solid-js/@shadcn-ui/radix-ui/@radix-ui/*/@headlessui/*/@mantine/*` OR `.tsx/.jsx/.svelte/.vue` | `design-components` |
+   | `next/nuxt/@sveltejs/kit/@remix-run/*/astro` OR `pages//app//routes/` | `design-views` |
+   | `design-components` OR `design-views` detected | `design-quality` |
+   | `recharts/chart.js/d3/victory/@tremor/*/plotly.js/nivo/@visx/*` OR `dashboard|metrics|analytics` in src | `design-dataviz` |
+   | `ws/socket.io/ably/pusher-js/partysocket` OR `WebSocket|EventSource|SSE|useWebSocket` in src | `design-realtime` |
+   `design` alone is NEVER valid — always a `design-*` sub-domain.
+7. **Channel 3** — `references/project-type-signals.md` → design-*/copywriting/quality.
+
+**Execution evidence**:
+- Final `detectedDomains` map: `{category: [files]}` with explicit non-empty list per category, or `[]`.
+- For each domain entry, the channel(s) that contributed it.
+
+**Success criteria**:
+- Every detection-category key is present in the canonical detection set: `code`, `design-tokens`, `design-components`, `design-views`, `design-quality`, `design-dataviz`, `design-realtime`, `copywriting`, `legal`, `pricing`, `diagrams`, **`stack`** (Channel 2 stack-ref/... results), **`architecture`** (Channel 2 architecture/... results). The first 11 are also valid manifest domain keys; `stack` and `architecture` are detection-only — at step 5 their files are folded into the `code` array (see Phase 4.0 mapping rules).
+- No bare `design` key.
+- Catalog results never overridden by later channels.
+
+**If this step fails**:
+- Retry once.
+- Terminal: `ERROR step=3 type=verification_failed ...`. Stop.
+
+---
+
+### 4. Confirm detected domains with the user (Phase 3)
+**Prerequisite**: Step 3 success criteria met.
+
+**Required inputs/resources**:
+- `detectedDomains` from step 3, project name from `pwd`.
+
+**Action**:
+1. Print the grouped summary (Code / Frameworks / Architecture / Stack / Design / Copywriting / Diagrams) with `✓` per detected item and `(... not detected — add if needed)` for absent design sub-domains.
+2. End with `Confirm? (or add/remove domains)`.
+3. Wait for explicit user reply. Apply add/remove instructions; re-print on edit.
+
+**Execution evidence**:
+- Verbatim user reply (`confirm` or edit list).
+- Final confirmed `detectedDomains`.
+
+**Success criteria**:
+- User explicitly confirmed (no implicit assumption).
+- Final domain set differs from step 3 only by user-requested edits.
+
+**If this step fails**:
+- Re-prompt up to 1 retry.
+- Terminal (no reply): `BLOCKED at step 4 - awaiting_user_confirmation`. Stop.
+
+---
+
+### 5. Generate `.conventions/` via build-conventions.ts (Phase 4)
+**Prerequisite**: Step 4 confirmed.
+
+**Required inputs/resources**:
+- Confirmed `detectedDomains`
+- `~/projects/ai-ressources/scripts/build-conventions.ts`
+
+**Action**:
+1. **Construct domains JSON** (Phase 4.0 mapping rules, verbatim):
+   - `design-*` keys → always `[]`.
+   - `code` array contains explicit framework/language/transversal files (e.g. `nextjs`, `drizzle`, `testing`, `logging`, `runtime-configs`). Exclude `general` and `database` (auto-resolved via `extends`).
+   - `legal`, `pricing`, etc. → as detected.
+   - Greenfield (no code) → `code: []`.
+2. Run:
+   ```bash
+   bun run ~/projects/ai-ressources/scripts/build-conventions.ts "$(pwd)" '<DOMAINS_JSON>'
    ```
+   `timeout=90s`, `max_retries=1`.
 
-   Note: use Git pathspecs plus `-z`/`xargs -0` for staged-file linters. Newline splitting and `eval "$1"` both break on filenames with spaces.
+**Execution evidence**:
+- Captured stdout containing `✓` lines per domain plus `✓ .conventions/manifest.yaml` and `✓ .conventions/index.md`.
+- `ls .conventions/` showing exactly `manifest.yaml` and `index.md`.
 
-   Example (single-stack, Python + Ruff):
-   ```sh
-   #!/bin/sh
-   # @generated by conventions.init — do not edit manually
-   # Stack: Python
-   # To eject from auto-management, remove the @generated line above
-   set -e
+**Success criteria**:
+- Exit code 0.
+- `.conventions/` contains ONLY `manifest.yaml` + `index.md` — no `design.md`, `code.md`, `conventions.manifest.json`, or any per-domain `.md`.
+- Each requested domain appears in `manifest.yaml`.
 
-   # Python
-   if ! command -v ruff >/dev/null 2>&1; then
-       printf "✗ ruff not found — install ruff to enable pre-commit checks\n" >&2
-       exit 1
-   fi
+**If this step fails**:
+- Retry once.
+- Terminal: `ERROR step=5 type=command_failed retry_count=1 timed_out=<bool> message="<stderr>"`. Stop.
 
-   if ! git diff --cached --quiet --diff-filter=ACMR -- '*.py'; then
-     printf "→ ruff check (staged files)\n"
-     git diff --cached --name-only --diff-filter=ACMR -z -- '*.py' \
-       | xargs -0 ruff check || {
-       printf "\n✗ FAILED: ruff check\n" >&2; exit 1
-     }
-   fi
+---
 
-   printf "\n✓ All checks passed\n"
-   ```
+### 6. Update `.gitignore` for `.conventions/` (Phase 5)
+**Prerequisite**: Step 5 success criteria met.
 
-6. **`chmod +x .githooks/pre-commit`**
-7. **If `.git/` exists:** `git config core.hooksPath .githooks`. If no `.git/`, skip this step and display a note: "No .git/ found — run `git config core.hooksPath .githooks` after `git init`"
-8. **Ensure `.githooks/` is NOT in `.gitignore`** — if found, ask confirmation before removing the entry
-9. **Display confirmation:**
+**Required inputs/resources**: project `.gitignore`, `.git/` presence.
 
-```
-Pre-commit hook installed:
-  Stack: {detected stack label(s)}
-  Commands: {comma-separated list}
-  Location: .githooks/pre-commit
-  Hook path: git config core.hooksPath .githooks
-```
+**Action**:
+- If `.gitignore` exists and lacks `.conventions/` → append `\n# Materialized conventions\n.conventions/\n`.
+- If absent and `.git/` exists → create `.gitignore` with `.conventions/\n`.
+- If no `.git/` → skip.
 
-### Phase 8: CI Workflows
+**Execution evidence**:
+- Diff or hash of `.gitignore` before/after, or explicit "skipped (no .git)".
 
-1. **Verify git repository** — if no `.git/` in project root, skip Phase 8
-2. **Read templates** from **Read** [`references/templates/`](references/templates/) — list available CI templates
-3. **Map detected stack(s) to templates** using the stack detection table from Phase 7:
-   - Each stack label maps to a CI template name (column "CI Template")
-   - Always include `security.yml` (Gitleaks) regardless of stack
-   - Stacks with `—` in CI Template column → skip CI for that stack
-4. **Check repository visibility:**
+**Success criteria**:
+- `.gitignore` either contains `.conventions/` or step skipped due to no git.
+
+**If this step fails**:
+- Retry once.
+- Terminal: `ERROR step=6 type=command_failed ...`. Stop.
+
+---
+
+### 7. Config audit (Phase 6)
+**Prerequisite**: Step 6 complete.
+
+**Required inputs/resources**:
+- **Read** [`~/projects/ai-ressources/code-conventions/runtime-configs.md`](~/projects/ai-ressources/code-conventions/runtime-configs.md)
+- Project lockfiles + config files
+
+**Action**:
+1. Detect runtime via lockfile/config table; detect languages via step 2 extensions.
+2. If no supported language → skip Phase 7 entry section ("Config audit: not applicable").
+3. Audit `.gitignore` against language layers; append only missing patterns. Auto-apply, no confirmation.
+4. Audit config files (TypeScript first):
+   - Classify each item as `ok | fix | create | signal`.
+5. Print grouped summary (`.gitignore`, `tsconfig.json`, `package.json`, Files to create, ℹ signals) and end with `Apply? (y/n, or list items to skip)`.
+6. Wait for confirmation. Apply via JSON merge for `.json`. Auto-create files marked `auto`. Skip per user list. Display `Config audit: all checks passed ✓` if everything was `ok` (no prompt).
+
+**Execution evidence**:
+- Verbatim summary printed; user reply captured; per-item action log (`fixed`, `created`, `skipped`).
+
+**Success criteria**:
+- No file modified that the user explicitly skipped.
+- All `fix`/`create` items either applied or recorded as skipped.
+
+**If this step fails**:
+- Retry once for filesystem writes.
+- Terminal: `ERROR step=7 type=<command_failed|verification_failed> ...`. Stop.
+
+---
+
+### 8. Pre-commit hook (Phase 7)
+**Prerequisite**: Step 7 complete.
+
+**Required inputs/resources**:
+- **Read** [`~/projects/ai-ressources/code-conventions/stack-commands.md`](~/projects/ai-ressources/code-conventions/stack-commands.md)
+- Project root markers, existing `.githooks/pre-commit`
+
+**Action**:
+1. Detect stacks per `stack-commands.md`. If none → print `No supported stack detected — skipping pre-commit hook`. Skip rest of step.
+2. If `.githooks/pre-commit` exists:
+   - Sentinel `# @generated by conventions.init` present → overwrite without prompt.
+   - No sentinel → ask user; await confirmation. No reply → `BLOCKED at step 8 - awaiting_user_confirmation`.
+3. Generate POSIX `#!/bin/sh` script with sentinel, stack label, `set -e`, `check()` helper, per-stack tool guard (`command -v`) + `check` calls. Single-stack guard fails closed (`exit 1`); multi-stack uses `_ran=0` counter and warns when no tool found.
+4. **Staged-file linters MUST use** `git diff --cached --name-only --diff-filter=ACMR -z -- '<pathspec>' | xargs -0 <linter>` — never newline splitting, never `eval "$file"` on filenames.
+5. `chmod +x .githooks/pre-commit`.
+6. If `.git/` present: `git config core.hooksPath .githooks`. Else print: `No .git/ found — run \`git config core.hooksPath .githooks\` after \`git init\``.
+7. If `.githooks/` is in `.gitignore` → ask confirmation before removing; never auto-remove.
+8. Print confirmation block (Stack / Commands / Location / Hook path).
+
+**Execution evidence**:
+- File `.githooks/pre-commit` exists with sentinel and exec bit (`ls -l`).
+- `git config core.hooksPath` returns `.githooks` (when applicable).
+
+**Success criteria**:
+- Hook is executable, contains sentinel, and runs `set -e`.
+- Hooks path configured or explicit "no .git" note printed.
+
+**If this step fails**:
+- Retry once.
+- Terminal: `ERROR step=8 type=<command_failed|verification_failed> ...`. Stop.
+
+---
+
+### 9. CI workflows (Phase 8)
+**Prerequisite**: Step 8 complete.
+
+**Required inputs/resources**:
+- `.git/` must exist (else skip entire step).
+- **Read** [`references/templates/`](references/templates/)
+- `gh` CLI for visibility check
+
+**Action**:
+1. List available templates in `references/templates/`.
+2. Map detected stacks → CI templates per `stack-commands.md` "CI Template" column. Always include `security.yml`. Stacks with `—` → skip.
+3. Repo visibility:
    ```bash
    gh repo view --json visibility -q '.visibility'
    ```
-   - **Public** → include `codeql.yml`, replace `__LANGUAGES__` with comma-separated CodeQL language identifiers from all detected stacks
-   - **Private** or `gh` unavailable → skip CodeQL (known limitation: public repos without `gh` will miss CodeQL)
-5. **Dependabot** — if npm/Node.js stack detected, generate `.github/dependabot.yml` from `dependabot-npm.yml` template
-6. **Create `.github/workflows/` directory** if it does not exist
-7. **For each file to write:**
-   - **Does not exist** → create from template
-   - **Exists with sentinel `# @generated by conventions.init`** → overwrite
-   - **Exists without sentinel** → show diff, ask: replace / keep. Default: keep
-8. **CI file naming:**
+   - Public → include `codeql.yml`, replace `__LANGUAGES__` with comma-separated CodeQL identifiers.
+   - Private or `gh` unavailable → skip CodeQL.
+4. If npm/Node.js stack → generate `.github/dependabot.yml` from `dependabot-npm.yml`.
+5. `mkdir -p .github/workflows`.
+6. Per file:
+   - Missing → create from template.
+   - Sentinel `# @generated by conventions.init` present → overwrite.
+   - No sentinel → diff + ask `replace / keep` (default `keep`).
+7. Output filenames per table: `ci-node.yml/ci-python.yml/ci-go.yml/ci-rust.yml/ci-dotnet.yml → .github/workflows/ci.yml`; multi-stack additional → `.github/workflows/ci-<stack>.yml`. `security.yml`, `codeql.yml`, `dependabot-npm.yml → .github/dependabot.yml`.
+8. Print summary block.
 
-   | Template | Output file |
-   |---|---|
-   | ci-node.yml | `.github/workflows/ci.yml` |
-   | ci-python.yml | `.github/workflows/ci.yml` |
-   | ci-go.yml | `.github/workflows/ci.yml` |
-   | ci-rust.yml | `.github/workflows/ci.yml` |
-   | ci-dotnet.yml | `.github/workflows/ci.yml` |
-   | security.yml | `.github/workflows/security.yml` |
-   | codeql.yml | `.github/workflows/codeql.yml` |
-   | dependabot-npm.yml | `.github/dependabot.yml` |
+**Execution evidence**:
+- File listing of `.github/workflows/` and `.github/dependabot.yml` after run.
+- Captured user replies for each non-sentinel overwrite.
 
-   **Multi-stack:** Primary stack (first in table order) writes to `ci.yml`. Additional stacks write to `ci-{stack-lowercase}.yml` (e.g., `ci-python.yml`).
+**Success criteria**:
+- All applicable CI files written or explicitly kept on user choice.
+- CodeQL state matches visibility detection.
 
-9. **Display summary:**
-   ```
-   CI workflows generated:
-     ✓ .github/workflows/ci.yml (from {template})
-     ✓ .github/workflows/security.yml (Gitleaks)
-     ✓ .github/dependabot.yml (npm)
-     ⊘ .github/workflows/codeql.yml skipped (private repo)
-   ```
+**If this step fails**:
+- Retry once.
+- Terminal: `ERROR step=9 type=<command_failed|policy_blocked|verification_failed> ...`. Stop.
 
-### Manifest Update
+---
 
-After Phase 8, append the `stack` field to `.conventions/manifest.yaml`:
+### 10. Manifest stack update + completion summary
+**Prerequisite**: Step 9 complete (or skipped because no `.git/`).
 
-```yaml
-stack:
-  labels:
-    - "TypeScript + Biome"
-  markers:
-    - tsconfig.json
-    - biome.json
-  hookGenerated: true
-  ciGenerated:
-    - ci.yml
-    - security.yml
-  dependabotGenerated: true
-```
+**Required inputs/resources**: `.conventions/manifest.yaml`, results from steps 8–9.
 
-This is written by the skill (not `build-conventions.ts`), after Phase 4 generates the manifest.
+**Action**:
+1. Append `stack:` block to `manifest.yaml` (labels, markers, hookGenerated, ciGenerated[], dependabotGenerated). Done by the skill, NOT by `build-conventions.ts`.
+2. Print final completion block: domains/sources, config audit counts, pre-commit confirmation, CI workflows summary.
 
-### Completion
+**Execution evidence**:
+- `grep -A6 '^stack:' .conventions/manifest.yaml` shows the block.
+- Completion block printed verbatim.
 
-Display:
-```
-.conventions/ generated — {N} domains
-  ✓ code ({S} source(s))
-  ✓ design-tokens ({S} source(s))
-  ✓ design-components ({S} source(s))
-  ✓ design-views ({S} source(s))
-  ✓ design-quality ({S} source(s))
-  ✓ manifest.yaml
-  ✓ index.md
+**Success criteria**:
+- `stack:` block present and parseable as YAML.
+- Completion block printed.
 
-Config audit: {X} fixed, {Y} created, {Z} skipped
+**If this step fails**:
+- Retry once.
+- Terminal: `ERROR step=10 type=verification_failed ...`. Stop.
 
-Pre-commit hook installed:
-  Stack: {label(s)}
-  Commands: {list}
-  Location: .githooks/pre-commit
+---
 
-CI workflows generated:
-  ✓ .github/workflows/ci.yml ({template})
-  ✓ .github/workflows/security.yml (Gitleaks)
-  ✓ .github/dependabot.yml (npm)
-```
+## Done
+The task is complete when ALL of the following are true:
+- [ ] Step 1 success criteria met (correct cwd, ai-ressources present)
+- [ ] Step 2 success criteria met (signals gathered)
+- [ ] Step 3 success criteria met (canonical domains map produced)
+- [ ] Step 4 success criteria met (user confirmation captured)
+- [ ] Step 5 success criteria met (`.conventions/` contains only `manifest.yaml` + `index.md`)
+- [ ] Step 6 success criteria met (.gitignore handled or skipped)
+- [ ] Step 7 success criteria met (config audit applied or all-ok)
+- [ ] Step 8 success criteria met (hook installed or no-stack note)
+- [ ] Step 9 success criteria met (CI files written or no-git skip)
+- [ ] Step 10 success criteria met (manifest stack block + summary)
+- [ ] No phase was skipped, reordered, parallelised
+- [ ] No unresolved ambiguity remains
+- [ ] Month is present in `Execution context`
 
-`manifest.yaml` tracks source paths, exclusions, and the detected stack for `/conventions.refresh` plus hook/CI refresh.
+Report: `DONE` or `BLOCKED at step N - <one-line reason>`.
 
-## Rules
+## Final consistency check
+- Every step has prerequisite, required inputs, action, evidence, success criteria, failure handling.
+- Failure uses `timeout=90s, max_retries=1` and the canonical `ERROR step=N ...` line.
+- Policy-block uses `BLOCKED at step N - policy_blocked - <reason>`.
+- All actions and success criteria are observable.
+- `.conventions/` end-state strictly equals `{manifest.yaml, index.md}` after step 5.
 
-- Never write secrets or sensitive data in generated files
-- Scan `stack-ref/`, `architecture/`, `design/`, `copywriting/` dynamically — never hardcode the file list
-- The output file must stay under **400 lines** — this is a hard budget
-- For design/components, only include components relevant to the project
-- If a source file does not exist in ai-ressources, skip it and warn
-- The synthesized content must be equivalent to what `ai-res-librarian` would produce
+## Drift tests (mini-suite)
+1. Skip Phase 3 user confirmation → expected: BLOCKED at step 4 (awaiting_user_confirmation).
+2. Run `build-conventions.ts` before confirmation → expected: BLOCKED at step 5 (prerequisite unmet).
+3. `.conventions/` ends with extra `code.md` → expected: BLOCKED at step 5 (success criterion violated).
+4. `gh` unavailable on public repo → expected: CodeQL skipped + WARN, step 9 still passes.
+5. Pre-commit hook generated using `eval "$file"` on staged files → expected: BLOCKED at step 8 (success criterion violated — must use `xargs -0`).
+6. Phase 8 attempted with no `.git/` → expected: step 9 fully skipped, step 10 still required.
+7. `bun run build-conventions.ts` exit ≠ 0 → expected: ERROR step=5 type=command_failed, no further steps.
