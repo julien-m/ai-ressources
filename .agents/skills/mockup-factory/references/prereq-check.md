@@ -22,7 +22,6 @@ immediately — no `.mockup-validation/` directory is created.
 5. **`theme.css` locatable?** Try in order:
    - (a) `<target>/theme.css`
    - (b) path under `manifest.yaml` key `theme_css:` (if set — explicit override)
-   - (c) `<target>/projects/<slug>/theme.css` (orchestrator-v2 mode only; requires `slug` from pipeline state)
    - If none found → `BLOCKED: theme_missing`, payload `{tried: [...], hint: "run Brander or create theme.css manually"}`. Stop.
 6. **All OK** → return `{status: "ok", conventions_dir: "<resolved-path>", conventions: {...}, theme_css_path: "..."}` — proceed to preload.
 

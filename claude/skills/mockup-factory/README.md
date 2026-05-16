@@ -22,14 +22,6 @@ This skill is target-agnostic: when invoked against `<target>`, it operates on
 /mockup-factory --target . --groups auth,dashboard,settings --product web --notify
 ```
 
-### When invoked by project-brainstorm orchestrator-v2
-
-`/mockup-factory` is automatically dispatched after `BusinessChallenger → APPROVE`.
-No explicit CLI invocation needed — the caller skill computes `--target`, `--groups`,
-and `--product` from pipeline state. Orchestrator-v2 mode is documented by the caller
-skill at `~/.claude/skills/project-brainstorm/references/agents/mockup-factory-caller.md`
-(installed by the project-brainstorm repo).
-
 ## Known limitations
 
 - **Cost (NFR-001):** each group may consume up to 4 Codex calls (1 audit + 3 revalidations). Cap overridable via `MOCKUP_FACTORY_MAX_CODEX_CALLS` env var. `project.md` budget is nominally `$0` — this feature explicitly deviates and is budget-bound per NFR-001.
@@ -44,7 +36,7 @@ When the factory returns `ESCALATED`:
 
 1. Read `<target>/.mockup-validation/<group>/escalation.md` for the list of remaining BLOCKING items.
 2. Decide: (a) accept the mockups as-is (override → advance manually to Planning), (b) fix the underlying conventions/theme gap and re-invoke, or (c) abandon the group.
-3. Orchestrator v2 halts at `UserOverride` on ESCALATED — user drives the next step.
+3. External callers (if any) are expected to halt and surface `escalation.md` to the user — this skill does not auto-advance past ESCALATED.
 
 ## `BLOCKED` reasons
 
