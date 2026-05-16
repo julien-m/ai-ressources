@@ -1,0 +1,26 @@
+{
+  "_sc": "SC-001 (happy path)",
+  "_purpose": "Initial audit finds 1 BLOCKING; single fix wave resolves it; iter=1 revalidation returns all-ticked → PASS on first cycle.",
+  "_expected_disk": {
+    "final_status": "PASS",
+    "iteration_count": 1,
+    "codex_calls_used": 2,
+    "audit_report_md_present": true,
+    "pen_file_saved": true,
+    "escalation_md_present": false
+  },
+  "calls": [
+    {
+      "_call": "initial audit — 1 BLOCKING",
+      "exit": 0,
+      "stdout": "{\"items\": [{\"id\": \"logo-size\", \"description\": \"Logo overflows hero container\", \"severity\": \"BLOCKING\"}]}",
+      "stderr": ""
+    },
+    {
+      "_call": "revalidation iter=1 — all ticked",
+      "exit": 0,
+      "stdout": "{\"ticked\": [\"logo-size\"], \"unticked\": []}",
+      "stderr": ""
+    }
+  ]
+}

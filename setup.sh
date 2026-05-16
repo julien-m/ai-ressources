@@ -52,11 +52,15 @@ export ${VAR_NAME}="$BASE_DIR"
 echo ""
 echo "Linking Claude Code assets..."
 
-# Skills
-if [ -d "$BASE_DIR/claude/skills/ai-res" ]; then
-  cc-hub skill link "$BASE_DIR/claude/skills/ai-res/SKILL.md" 2>/dev/null && \
-    echo "  ✓ skill: ai-res" || echo "  ⚠ skill ai-res already linked"
-fi
+# Skills (generic loop, idempotent)
+for skill_dir in "$BASE_DIR"/claude/skills/*/; do
+  [ -d "$skill_dir" ] || continue
+  skill_md="${skill_dir}SKILL.md"
+  [ -f "$skill_md" ] || continue
+  name="$(basename "$skill_dir")"
+  cc-hub skill link "$skill_md" 2>/dev/null && \
+    echo "  ✓ skill: $name" || echo "  ⚠ skill $name already linked"
+done
 
 # Rules
 for rule in "$BASE_DIR"/claude/rules/*.md; do
