@@ -8,7 +8,7 @@ fixer agents are subagents (see **Read** [`https://github.com/julien-m/project-b
 
 ## Run lifecycle
 
-1. **Argument parsing.** Read `--target`, `--groups`, `--notify`. In orchestrator-v2 mode, resolve the target from pipeline state (`projects/<slug>/`).
+1. **Argument parsing.** Read `--target`, `--groups`, `--product`, `--notify`. `--target` defaults to the current working directory when omitted.
 2. **Prerequisite check.** Follow **Read** [`prereq-check.md`](prereq-check.md). On any BLOCKED reason, return immediately without spawning agents.
 3. **Preload (FR-001).** Use `conventions_dir` returned by prereq-check (resolved by walking up from `<target>`; typically repo root in monorepo layouts, `<target>` otherwise). Read ONCE, cache in memory:
    - `<conventions_dir>/manifest.yaml` (parse YAML)
@@ -98,5 +98,4 @@ Initial audit AND revalidation invoke `cc-hub codex` under the following contrac
 | ESCALATED | Write `escalation.md` (no `.pen` save override) | `ESCALATED` |
 | BLOCKED | Write `codex-raw.log` only | `BLOCKED(<reason>)` |
 
-In orchestrator-v2 mode, map verdicts to state transitions per **Read**
-[`../../project-brainstorm/references/agents/mockup-factory-caller.md`](../../project-brainstorm/references/agents/mockup-factory-caller.md).
+External callers (e.g. brainstorm orchestrators) map these verdicts to their own state transitions; this skill itself returns the verdict as documented above.

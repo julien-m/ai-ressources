@@ -3,9 +3,8 @@ name: mockup-factory
 description: >
   Parallel Pencil mockup generation + cc-hub codex audit loop with frozen checklist,
   3-iteration cap and severity-aware terminal status (PASS / PASSED_WITH_WARNINGS /
-  ESCALATED / BLOCKED). Invokable standalone (`/mockup-factory --target <path> --groups ...`)
-  or as a phase of Orchestrator v2 between Brander and Planner. Triggers on:
-  `/mockup-factory`, "génère les mockups", "audit des mockups", "mockup factory".
+  ESCALATED / BLOCKED). Invocation: `/mockup-factory [--target <path>] --groups <g1,g2> --product <enum>`.
+  Triggers on: `/mockup-factory`, "génère les mockups", "audit des mockups", "mockup factory".
 ---
 
 <!-- @spec FR-001..FR-016: Mockup Factory entry point — https://github.com/julien-m/project-brainstorm/blob/717494f5d8b475d59ed59405036e648b2e3b87cd/.specs/features/005-mockup-factory/spec.md -->
@@ -19,18 +18,15 @@ independent model (`cc-hub codex`), with a frozen checklist and bounded iteratio
 
 ## Invocation
 
-| Form | Use |
-|---|---|
-| `/mockup-factory --target <path> --groups <g1,g2> [--notify]` | Standalone (CLI-style) |
-| Invoked by brainstorm Orchestrator v2 | Between `Branding` → `Planning` |
+```
+/mockup-factory [--target <path>] --groups <g1,g2> --product <enum> [--notify]
+```
 
 **Flags:**
-- `--target <path>` — required in standalone mode; ignored in orchestrator mode (slug resolved from pipeline state)
-- `--groups <csv>` — required in standalone mode; a list of logical group ids (e.g. `auth,dashboard`)
+- `--target <path>` — optional; defaults to the current working directory
+- `--groups <csv>` — required; a list of logical group ids (e.g. `auth,dashboard`)
+- `--product <enum>` — required; value MUST come from the closed enum defined in **Read** [`references/naming-convention.md`](references/naming-convention.md). Validated at dispatch; unknown or missing values cause the skill to refuse dispatch and surface an error listing the allowed values.
 - `--notify` — optional; send a Telegram summary via `cc-hub telegram` on terminal status (AC-015)
-- `--product <enum>` — required; value MUST come from the closed enum defined in **Read** [`references/naming-convention.md`](references/naming-convention.md). Validated at dispatch; unknown or missing values cause the orchestrator to refuse dispatch and surface an error listing the allowed values. In orchestrator-v2 mode the value is derived from the pipeline state (viewport/target).
-
-<!-- @spec FR-013a: Two invocation modes — https://github.com/julien-m/project-brainstorm/blob/717494f5d8b475d59ed59405036e648b2e3b87cd/.specs/features/005-mockup-factory/spec.md#fr-013a -->
 
 ## Posture contract
 
