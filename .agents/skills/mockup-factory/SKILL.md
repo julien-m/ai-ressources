@@ -3,9 +3,8 @@ name: mockup-factory
 description: >
   Parallel Pencil mockup generation + cc-hub codex audit loop with frozen checklist,
   3-iteration cap and severity-aware terminal status (PASS / PASSED_WITH_WARNINGS /
-  ESCALATED / BLOCKED). Invokable standalone (`/mockup-factory --target <path> --groups ...`)
-  or as a phase of Orchestrator v2 between Brander and Planner. Triggers on:
-  `/mockup-factory`, "génère les mockups", "audit des mockups", "mockup factory".
+  ESCALATED / BLOCKED). Invocation: `/mockup-factory [--target <path>] --groups <g1,g2> --product <enum>`.
+  Triggers on: `/mockup-factory`, "génère les mockups", "audit des mockups", "mockup factory".
 ---
 
 <!-- @spec FR-001..FR-016: Mockup Factory entry point — ../../../.specs/features/005-mockup-factory/spec.md -->
@@ -19,18 +18,15 @@ independent model (`cc-hub codex`), with a frozen checklist and bounded iteratio
 
 ## Invocation
 
-| Form | Use |
-|---|---|
-| `/mockup-factory --target <path> --groups <g1,g2> [--notify]` | Standalone (CLI-style) |
-| Invoked by brainstorm Orchestrator v2 | Between `Branding` → `Planning` |
+```
+/mockup-factory [--target <path>] --groups <g1,g2> --product <enum> [--notify]
+```
 
 **Flags:**
-- `--target <path>` — required in standalone mode; ignored in orchestrator mode (slug resolved from pipeline state)
-- `--groups <csv>` — required in standalone mode; a list of logical group ids (e.g. `auth,dashboard`)
+- `--target <path>` — optional; defaults to the current working directory
+- `--groups <csv>` — required; a list of logical group ids (e.g. `auth,dashboard`)
+- `--product <enum>` — required; value MUST come from the closed enum defined in **Read** [`references/naming-convention.md`](references/naming-convention.md). Validated at dispatch; unknown or missing values cause the skill to refuse dispatch and surface an error listing the allowed values.
 - `--notify` — optional; send a Telegram summary via `cc-hub telegram` on terminal status (AC-015)
-- `--product <enum>` — required; value MUST come from the closed enum defined in **Read** [`references/naming-convention.md`](references/naming-convention.md). Validated at dispatch; unknown or missing values cause the orchestrator to refuse dispatch and surface an error listing the allowed values. In orchestrator-v2 mode the value is derived from the pipeline state (viewport/target).
-
-<!-- @spec FR-013a: Two invocation modes — ../../../.specs/features/005-mockup-factory/spec.md#fr-013a -->
 
 ## Posture contract
 
@@ -89,14 +85,6 @@ in **Read** [`references/naming-convention.md`](references/naming-convention.md)
 — the single source of truth. Do NOT restate the enum values in this file or any
 other. Validation is at the source (orchestrator on invocation, generator on
 payload-to-filename conversion) — no post-export renaming.
-
-## Hooks
-
-Hook names added to the allowed set: `mockup-factory`. Files loaded if present:
-- **Read** [`../../../hooks/before-mockup-factory.md`](../../../hooks/before-mockup-factory.md)
-- **Read** [`../../../hooks/after-mockup-factory.md`](../../../hooks/after-mockup-factory.md)
-
-See **Read** [`../../../hooks/README.md`](../../../hooks/README.md) for the convention.
 
 ## Reference files
 
