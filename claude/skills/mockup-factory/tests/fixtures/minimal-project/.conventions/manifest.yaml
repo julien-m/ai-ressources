@@ -1,0 +1,8 @@
+version: 1
+sub_domains:
+  design-tokens:
+    source: ai-ressources/design/tokens
+  design-components:
+    source: ai-ressources/design/components
+  design-views:
+    source: ai-ressources/design/views

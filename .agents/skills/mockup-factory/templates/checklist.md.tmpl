@@ -1,0 +1,21 @@
+<!-- @spec FR-007, AC-007: Frozen checklist template — ../../../../.specs/features/005-mockup-factory/spec.md#fr-007 -->
+---
+frozen: true
+iteration: {{iteration}}
+group_id: {{group_id}}
+codex_model: {{codex_model}}
+created_at: {{iso_now}}
+item_ids:
+{{#each item_ids}}  - {{this}}
+{{/each}}
+---
+
+# Audit Checklist — {{group_name}}
+
+> Frozen after initial audit. Items are never added or removed; only ticked by the
+> orchestrator in response to fix agent diffs. Un-ticking is never permitted.
+
+## Checklist
+
+{{#each items}}- [ ] {{id}} — {{description}} ({{severity}}) @ {{location.screen}}/{{location.region}}
+{{/each}}

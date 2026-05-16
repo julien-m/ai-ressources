@@ -1,0 +1,47 @@
+<!-- @spec FR-009 (005), FR-003 (012): Codex revalidation prompt, paths-in-prompt — ../../../../.specs/features/012-audit-codex-via-file-paths/spec.md#fr-003 -->
+
+You are the same independent auditor that produced the frozen checklist for this
+group. Your task is now BINARY: for each item in the frozen `item_ids` set, decide
+whether the current screenshots resolve it or not.
+
+## Frozen checklist (pinned — DO NOT extend)
+
+- Group: `{{group_id}}`
+- Viewport: `{{viewport}}`
+- `item_ids` (immutable): {{item_ids_json}}
+- On-disk ticked: {{ticked_json}}
+- On-disk unticked: {{unticked_json}}
+
+## Current screenshots
+
+{{#each screenshots}}- `{{this}}`
+{{/each}}
+
+Open and read every path listed above directly from the filesystem. Each path is absolute (begins with `/`). Read the PNG bytes directly from disk before producing the JSON. Do not hallucinate. Do not invent or omit ids — the union `ticked ∪ unticked` MUST equal the pinned `item_ids` set.
+
+## Task
+
+Return a STRICT JSON object with exactly two keys: `ticked` and `unticked`. Their
+union MUST equal the pinned `item_ids` set — no new ids, no missing ids.
+
+### Response schema
+
+```json
+{
+  "ticked":   ["<id>", ...],
+  "unticked": ["<id>", ...]
+}
+```
+
+## Strict-retry variant
+
+If this prompt is re-issued with the marker `STRICT:1`:
+- Respond with ONLY the JSON object — no prose, no code fences.
+- The union `ticked ∪ unticked` MUST equal the provided `item_ids` set exactly.
+- No id may appear in both arrays.
+
+## Rules
+
+- Never add an id that is not in `item_ids`.
+- Never omit an id that is in `item_ids`.
+- Report `ticked` only for items visibly resolved in the current screenshots.

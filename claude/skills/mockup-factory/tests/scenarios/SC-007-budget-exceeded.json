@@ -1,0 +1,30 @@
+{
+  "_sc": "SC-007",
+  "_purpose": "With MOCKUP_FACTORY_MAX_CODEX_CALLS=2 (override), the 3rd call is refused before hitting Codex → BLOCKED: codex_budget_exceeded. Proves NFR-001 budget guard.",
+  "_env_required": { "MOCKUP_FACTORY_MAX_CODEX_CALLS": "2" },
+  "_expected_disk": {
+    "final_status": "BLOCKED",
+    "reason": "codex_budget_exceeded",
+    "codex_calls_used": 2
+  },
+  "calls": [
+    {
+      "_call": "initial audit — 1 BLOCKING unticked",
+      "exit": 0,
+      "stdout": "{\"items\": [{\"id\": \"color-accent\", \"description\": \"Accent color not a theme token\", \"severity\": \"BLOCKING\"}]}",
+      "stderr": ""
+    },
+    {
+      "_call": "revalidation iter=1 — still unticked (consumes 2nd budget slot)",
+      "exit": 0,
+      "stdout": "{\"ticked\": [], \"unticked\": [\"color-accent\"]}",
+      "stderr": ""
+    },
+    {
+      "_call": "SHOULD NOT BE REACHED — budget guard stops before this",
+      "exit": 99,
+      "stdout": "",
+      "stderr": "shim: scenario exhausted is not expected here"
+    }
+  ]
+}

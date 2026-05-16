@@ -1,0 +1,57 @@
+<!-- @spec FR-006 (005), FR-002 (012): Codex initial audit prompt, paths-in-prompt — https://github.com/julien-m/project-brainstorm/blob/717494f5d8b475d59ed59405036e648b2e3b87cd/.specs/features/012-audit-codex-via-file-paths/spec.md#fr-002 -->
+
+You are an independent design auditor. Your sole task is to read the screenshots
+listed below (by absolute filesystem path) and produce a STRICT JSON checklist of
+every non-conformity. You are NOT Claude and MUST NOT take design decisions on
+behalf of the project team.
+
+## Context
+
+- **Target project root:** `{{target}}`
+- **Conventions:** read `{{conventions_dir}}/` (resolved by walking up from `<target>` to the nearest ancestor containing `.conventions/`) — mandatory sub-domains
+  `design-tokens`, `design-components`; optional `design-views`. When `design-views` is part of the loaded audit context, it includes `device-frames.md` for canonical frame sizes and mandatory system overlays for Watch / iPhone / Web.
+- **Theme:** read `{{theme_css_path}}` — the only allowed source of colors,
+  radii, shadows, and component tokens.
+- **Framework/stack:** infer from `{{target}}` (package.json, framework config).
+- **Group:** `{{group_id}}` — viewport `{{viewport}}`.
+
+## Screenshots under audit
+
+{{#each screenshots}}- `{{this}}`
+{{/each}}
+
+Open and read every path listed above directly from the filesystem before producing the JSON. Each path is absolute (begins with `/`). Read the PNG bytes directly from disk before producing the JSON. Do not hallucinate.
+
+## Task
+
+Produce a JSON object matching the schema below. Every non-conformity becomes one
+`item`. Severity is `BLOCKING` when the item breaks a design-tokens or
+design-components rule, breaks accessibility (contrast, touch target), or, when
+`design-views/device-frames.md` is part of the loaded audit context, violates it
+(non-canonical frame dimensions, missing system overlay, absolute positioning of
+overlays, screen frame `borderRadius != 0`, missing App content Frame, or App
+content Frame paddings that do not match the canonical values from the Content
+layout margins table). Severity is `WARNING` when the item is a stylistic or design-views
+divergence that a human might accept as a trade-off.
+
+### Response schema
+
+```json
+{
+  "items": [
+    {
+      "id": "<kebab-slug, unique>",
+      "description": "<one-sentence issue>",
+      "location": { "screen": "<screen-name>", "region": "<visual region>" },
+      "severity": "BLOCKING" | "WARNING"
+    }
+  ]
+}
+```
+
+## Strict-retry variant
+
+If this prompt is re-issued with the marker `STRICT:1`, additionally:
+- Respond with ONLY the JSON object — no prose, no code fences, no commentary.
+- The root key MUST be exactly `items` (array).
+- Every `id` MUST be kebab-case and unique within the response.

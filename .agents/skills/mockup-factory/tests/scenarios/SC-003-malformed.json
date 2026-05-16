@@ -1,0 +1,15 @@
+{
+  "_sc": "SC-003",
+  "_purpose": "cc-hub codex exits 0 but returns unparseable garbage on initial audit AND on retry → BLOCKED: codex_malformed. Counter MUST stay at 0.",
+  "_expected_disk": {
+    "final_status": "BLOCKED",
+    "reason": "codex_malformed",
+    "codex_raw_log_present": true,
+    "codex_raw_log_contains_both_attempts": true,
+    "iteration_count": 0
+  },
+  "calls": [
+    { "exit": 0, "stdout": "not a json object — totally broken", "stderr": "" },
+    { "exit": 0, "stdout": "{ still not: valid, missing-quotes }", "stderr": "" }
+  ]
+}
