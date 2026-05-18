@@ -81,12 +81,12 @@ files:
     priority: 6
 
   - file: runtime-configs.md
-    description: "Expected config defaults per runtime/language: tsconfig, package.json, editorconfig, prettier, gitignore patterns. Used by /conventions.init Phase 6."
+    description: "Expected config defaults per runtime/language: tsconfig, package.json, editorconfig, prettier, gitignore patterns. Used by /conventions-init Phase 6."
     applies_to: ["*"]
     priority: 6
 
   - file: stack-commands.md
-    description: "Stack detection → pre-commit commands + CI template mapping. Used by /conventions.init Phase 7-8."
+    description: "Stack detection → pre-commit commands + CI template mapping. Used by /conventions-init Phase 7-8."
     applies_to: ["*"]
     priority: 6
 

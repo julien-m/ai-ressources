@@ -3,7 +3,7 @@ extends: []
 ---
 # Runtime Configurations
 
-Expected configuration defaults per runtime and language. Used by `/conventions.init` Phase 6 (Config Audit).
+Expected configuration defaults per runtime and language. Used by `/conventions-init` Phase 6 (Config Audit).
 
 Structure: `##` per language, `###` per config file. Each config section specifies expected keys, values, and behavior when the file is missing.
 

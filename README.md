@@ -70,19 +70,7 @@ Vendor comparison sheets with a consistent template: pricing, DX, limits, best-f
 
 ## Usage
 
-### `/ai-res` skill
-
-The `/ai-res` skill provides structured, on-demand access to any domain:
-
-```
-/ai-res              → list all domains
-/ai-res design       → load design domain index, pick relevant files
-/ai-res stack        → alias for stack-ref
-/ai-res code         → alias for code-conventions
-/ai-res pricing      → alias for pricing-models
-```
-
-Each domain contains an `index.yaml` that describes its files and structure. The root `index.yaml` lists all domains with their status (complete, placeholder, partial).
+Each domain contains an `index.yaml` that describes its files and structure. The root `index.yaml` lists all domains with their status (complete, placeholder, partial). `compiled-index.txt` provides a flat routing index generated from those files.
 
 ### Direct browsing
 
@@ -90,7 +78,7 @@ Browse files directly or point an AI coding assistant at the relevant section fo
 
 ## Conventions Lifecycle
 
-### `/conventions.init`
+### `/conventions-init`
 
 Analyzes the project stack and generates:
 - `.conventions/` — compiled convention files from this knowledge base
@@ -101,7 +89,7 @@ Analyzes the project stack and generates:
 
 Stack detection uses `code-conventions/stack-commands.md` to map marker files (tsconfig.json, Cargo.toml, go.mod, etc.) to the appropriate lint commands and CI templates.
 
-### `/conventions.refresh`
+### `/conventions-refresh`
 
 Incrementally updates materialized conventions when the knowledge base changes:
 - **Conventions**: hash-based staleness detection per domain

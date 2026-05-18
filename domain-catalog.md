@@ -1,7 +1,7 @@
 # Domain Catalog — Signal-to-Convention Mapping
 
 > **This file is the single source of truth for mapping keyword signals to convention files.**
-> Read by: `/conventions.init`, `/conventions.refresh`, `/audit`.
+> Read by: `/conventions-init`, `/conventions-refresh`, `/audit`.
 > When a consumer provides a list of keyword signals (from a stack file, dependencies, or project context), resolve each signal against the tables below to determine which convention files to include.
 
 ## How to Use

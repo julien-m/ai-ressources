@@ -38,7 +38,7 @@ When the factory returns `ESCALATED`:
 
 | Reason | Fix |
 |---|---|
-| `conventions_missing` | Add `.conventions/` to the target (run `/conventions.init`). |
+| `conventions_missing` | Add `.conventions/` to the target (run `/conventions-init`). |
 | `conventions_incomplete` | Add missing mandatory sub-domain(s) to `.conventions/manifest.yaml`. |
 | `theme_missing` | Generate `theme.css` via Brander or hand-author it. |
 | `codex_unavailable` | Ensure `cc-hub codex --help` works; check PATH + install. |

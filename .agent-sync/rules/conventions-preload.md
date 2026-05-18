@@ -47,7 +47,7 @@ The directory prefix on each `→` line applies to ALL filenames listed on that 
 | Pricing page, billing tiers | `pricing` |
 | Marketing copy, landing page | `copywriting` |
 
-**Sub-domain not in index?** Not configured for this project. Use `/ai-res` for ad-hoc, or re-run `/conventions.refresh --full` or `/conventions.init` to re-detect it.
+**Sub-domain not in index?** Not configured for this project. Use `/ai-res` for ad-hoc, or re-run `/conventions-refresh --full` or `/conventions-init` to re-detect it.
 
 ## Overrides
 
@@ -70,8 +70,8 @@ The subagent does NOT need to load conventions itself — the dispatching agent 
 
 Conventions are always fresh — they reference ai-ressources source files directly. No hash comparison needed.
 
-Check `.conventions/manifest.yaml` exists. If not found, or if `.conventions/` contains compiled `.md` domain files (e.g., `design.md`, `code.md` — old format), suggest `/conventions.refresh --full` once to migrate. Do not block.
+Check `.conventions/manifest.yaml` exists. If not found, or if `.conventions/` contains compiled `.md` domain files (e.g., `design.md`, `code.md` — old format), suggest `/conventions-refresh --full` once to migrate. Do not block.
 
 ## Initialization
 
-If `.conventions/` does not exist and the project has code or design files, suggest `/conventions.init` once. Do not block.
+If `.conventions/` does not exist and the project has code or design files, suggest `/conventions-init` once. Do not block.

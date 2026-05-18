@@ -4,7 +4,7 @@ extends: []
 # Stack Commands
 
 Mapping from stack detection markers to pre-commit commands and CI templates.
-Used by `/conventions.init` Phase 7 (pre-commit hook) and Phase 8 (CI workflows).
+Used by `/conventions-init` Phase 7 (pre-commit hook) and Phase 8 (CI workflows).
 
 ## Stack Detection Table
 

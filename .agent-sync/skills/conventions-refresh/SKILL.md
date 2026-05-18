@@ -1,10 +1,10 @@
 ---
-name: conventions.refresh
+name: conventions-refresh
 description: "Check if project conventions need migration or refresh from ai-ressources. Use when conventions may be outdated or after ai-ressources updates."
 argument-hint: "[--full]"
 ---
 
-# /conventions.refresh — Refresh Project Conventions
+# /conventions-refresh — Refresh Project Conventions
 
 ## Goal
 Bring `.conventions/manifest.yaml` to current state by detecting old format, comparing the manifest date against `ai-ressources/.last-updated`, rebuilding via `build-conventions.ts` when stale, and refreshing hook/CI when stack markers changed — without recompiling content (sources are read directly from ai-ressources).
@@ -64,7 +64,7 @@ Bring `.conventions/manifest.yaml` to current state by detecting old format, com
   3. Jump to step 5 with `migration=true`. Step 5 (migration mode) handles the migration atomically: run init Phases 1–4 (re-detect + user confirm + `build-conventions.ts`), and only on build success delete `OLD_COMPILED_FILES`. On any failure (detection error, user cancel, build non-zero exit), the old compiled files remain in place.
   4. After step 5 success, print: `Migration complete. Old compiled files removed.` Stop (do not run steps 3–4, 6).
 - **Case B — No `.conventions/` or no `manifest.yaml`**:
-  1. Print: ``No `.conventions/manifest.yaml` found. Run `/conventions.init` to set up.``
+  1. Print: ``No `.conventions/manifest.yaml` found. Run `/conventions-init` to set up.``
   2. Stop.
 - **Case C — `manifest.yaml` exists**:
   - If `full == true` → jump to step 5 with `full=true` (skip staleness check).
@@ -97,7 +97,7 @@ LAST_UPDATED=$(cat "$AI_RES_PATH/.last-updated" 2>/dev/null || echo "unknown")
 echo "Manifest generated: $MANIFEST_DATE"
 echo "ai-ressources last updated: $LAST_UPDATED"
 ```
-- If `LAST_UPDATED == "unknown"` → print: ``Cannot read `ai-ressources/.last-updated` — run `/conventions.refresh --full` to force refresh.`` Stop (no rebuild).
+- If `LAST_UPDATED == "unknown"` → print: ``Cannot read `ai-ressources/.last-updated` — run `/conventions-refresh --full` to force refresh.`` Stop (no rebuild).
 - If `LAST_UPDATED ≤ MANIFEST_DATE` → print `Conventions up to date.` Proceed to step 6 (stack tracking only).
 - If `LAST_UPDATED > MANIFEST_DATE` → proceed to step 4.
 
@@ -168,7 +168,7 @@ Never run the snippet directly from the target project's cwd — the `yaml` impo
 
 **Required inputs/resources**:
 - `~/projects/ai-ressources/scripts/build-conventions.ts`.
-- For migration / `--full`: re-run `/conventions.init` Phases 1–4 to regenerate `DOMAINS_JSON` from current project signals (NOT from old manifest). For staleness rebuild: use step 4 JSON.
+- For migration / `--full`: re-run `/conventions-init` Phases 1–4 to regenerate `DOMAINS_JSON` from current project signals (NOT from old manifest). For staleness rebuild: use step 4 JSON.
 
 **Action**:
 
@@ -211,8 +211,8 @@ Never run the snippet directly from the target project's cwd — the `yaml` impo
 1. Re-run stack detection on current project root.
 2. Compute `markersChanged = (currentMarkers != manifestStack.markers)`.
 3. If `markersChanged`:
-   - Re-run `/conventions.init` Phase 7 (pre-commit hook regeneration) under its own success criteria.
-   - Re-run `/conventions.init` Phase 8 (CI workflows) under its own success criteria.
+   - Re-run `/conventions-init` Phase 7 (pre-commit hook regeneration) under its own success criteria.
+   - Re-run `/conventions-init` Phase 8 (CI workflows) under its own success criteria.
    - Update `manifest.yaml stack:` block accordingly.
 4. Else: print `Stack unchanged — hook and CI left as-is.`
 
