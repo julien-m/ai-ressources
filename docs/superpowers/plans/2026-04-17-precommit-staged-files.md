@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Update the `/conventions.init` and stack-command documentation so the generated pre-commit hook examples lint only staged files and do so with filename-safe shell patterns.
+**Goal:** Update the `/conventions-init` and stack-command documentation so the generated pre-commit hook examples lint only staged files and do so with filename-safe shell patterns.
 
-**Architecture:** This patch is intentionally limited to four files already in the diff: `claude/skills/conventions.init/SKILL.md`, `code-conventions/stack-commands.md`, this implementation plan, and the paired design note. Broader source-of-truth changes remain follow-up work outside this patch.
+**Architecture:** This patch is intentionally limited to four files already in the diff: `.agent-sync/skills/conventions-init/SKILL.md`, `code-conventions/stack-commands.md`, this implementation plan, and the paired design note. Broader source-of-truth changes remain follow-up work outside this patch.
 
 **Tech Stack:** Markdown/YAML skill files, POSIX sh hook scripts
 
@@ -14,17 +14,17 @@
 
 | File | Change |
 |------|--------|
-| `claude/skills/conventions.init/SKILL.md` | Replace unsafe staged-file examples with filename-safe `git diff ... -z | xargs -0 ...` examples for TypeScript + Biome and Python + Ruff |
+| `.agent-sync/skills/conventions-init/SKILL.md` | Replace unsafe staged-file examples with filename-safe `git diff ... -z | xargs -0 ...` examples for TypeScript + Biome and Python + Ruff |
 | `code-conventions/stack-commands.md` | Align the stack table examples with the filename-safe staged-file shell pattern used by the generated hook examples |
 | `docs/superpowers/plans/2026-04-17-precommit-staged-files.md` | Record the actual patch scope and the validation checklist for the documentation update |
 | `docs/superpowers/specs/2026-04-17-precommit-staged-files-design.md` | Align the design note with the filename-safe shell pattern and clarify follow-up scope |
 
 ---
 
-### Task 1: Update `conventions.init` Phase 7 hook examples
+### Task 1: Update `conventions-init` Phase 7 hook examples
 
 **Files:**
-- Modify: `claude/skills/conventions.init/SKILL.md`
+- Modify: `.agent-sync/skills/conventions-init/SKILL.md`
 
 The examples in Phase 7 are the canonical reference for generated pre-commit hooks. They must use a filename-safe staged-file pattern.
 
@@ -36,7 +36,7 @@ The examples in Phase 7 are the canonical reference for generated pre-commit hoo
 
 - [x] **Step 1: Read the current Phase 7 examples**
 
-Read the existing TypeScript + Biome and Python + Ruff examples in `claude/skills/conventions.init/SKILL.md`.
+Read the existing TypeScript + Biome and Python + Ruff examples in `.agent-sync/skills/conventions-init/SKILL.md`.
 
 - [x] **Step 2: Replace newline-splitting snippets**
 
@@ -61,7 +61,7 @@ The original plan described edits to files that are not part of this patch. That
 
 - [x] **Step 1: Rewrite the goal and architecture**
 
-State clearly that this patch updates the `conventions.init` examples plus the companion plan/spec documents only.
+State clearly that this patch updates the `conventions-init` examples plus the companion plan/spec documents only.
 
 - [x] **Step 2: Replace the file map**
 
@@ -69,7 +69,7 @@ List only the four files that are actually part of this change.
 
 - [x] **Step 3: Remove out-of-scope implementation instructions**
 
-Drop instructions for `conventions.refresh`, commits, asset sync, and index rebuilds from this plan revision.
+Drop instructions for `conventions-refresh`, commits, asset sync, and index rebuilds from this plan revision.
 
 - [x] **Step 4: Keep the document self-consistent**
 

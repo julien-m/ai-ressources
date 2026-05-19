@@ -1,10 +1,10 @@
-# conventions.init Config Audit — Implementation Plan
+# conventions-init Config Audit — Implementation Plan
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Add a Phase 6 "Config Audit" to `/conventions.init` that detects the project runtime, audits config files against expected defaults, enriches `.gitignore` with language-specific patterns, and applies fixes with user confirmation.
+**Goal:** Add a Phase 6 "Config Audit" to `/conventions-init` that detects the project runtime, audits config files against expected defaults, enriches `.gitignore` with language-specific patterns, and applies fixes with user confirmation.
 
-**Architecture:** Two deliverables — (1) a new `code-conventions/runtime-configs.md` reference file containing expected config defaults per runtime/language, and (2) a Phase 6 section appended to the existing `conventions.init/SKILL.md`. The reference file is the source of truth; the skill reads it at runtime.
+**Architecture:** Two deliverables — (1) a new `code-conventions/runtime-configs.md` reference file containing expected config defaults per runtime/language, and (2) a Phase 6 section appended to the existing `conventions-init/SKILL.md`. The reference file is the source of truth; the skill reads it at runtime.
 
 **Tech Stack:** Markdown knowledge base files, YAML index entries, build script (`bun run scripts/build-index.ts`)
 
@@ -22,7 +22,7 @@
 ```markdown
 # Runtime Configurations
 
-Expected configuration defaults per runtime and language. Used by `/conventions.init` Phase 6 (Config Audit).
+Expected configuration defaults per runtime and language. Used by `/conventions-init` Phase 6 (Config Audit).
 
 Structure: `##` per language, `###` per config file. Each config section specifies expected keys, values, and behavior when the file is missing.
 
@@ -284,7 +284,7 @@ Add after the last `file:` entry (before the framework deltas comment), at prior
 
 ```yaml
   - file: runtime-configs.md
-    description: "Expected config defaults per runtime/language: tsconfig, package.json, editorconfig, prettier, gitignore patterns. Used by /conventions.init Phase 6."
+    description: "Expected config defaults per runtime/language: tsconfig, package.json, editorconfig, prettier, gitignore patterns. Used by /conventions-init Phase 6."
     applies_to: ["*"]
     priority: 6
 ```
@@ -321,10 +321,10 @@ Note: `file_count` goes from 10 to 11 (adding `runtime-configs.md`). The `last_r
 
 ---
 
-### Task 4: Add Phase 6 to `conventions.init/SKILL.md`
+### Task 4: Add Phase 6 to `conventions-init/SKILL.md`
 
 **Files:**
-- Modify: `claude/skills/conventions.init/SKILL.md`
+- Modify: `.agent-sync/skills/conventions-init/SKILL.md`
 
 - [ ] **Step 1: Add Phase 6 section after Phase 5 (gitignore)**
 
@@ -417,7 +417,7 @@ Expected files changed:
 - `code-conventions/runtime-configs.md` (new)
 - `code-conventions/index.yaml` (modified)
 - `index.yaml` (modified)
-- `claude/skills/conventions.init/SKILL.md` (modified)
+- `.agent-sync/skills/conventions-init/SKILL.md` (modified)
 - `compiled-index.txt` (modified, auto-generated)
 - `.last-updated` (modified)
 - `docs/superpowers/specs/2026-03-28-conventions-init-config-audit-design.md` (new)
@@ -426,10 +426,10 @@ Expected files changed:
 - [ ] **Step 2: Stage and commit**
 
 ```bash
-git add code-conventions/runtime-configs.md code-conventions/index.yaml index.yaml claude/skills/conventions.init/SKILL.md compiled-index.txt .last-updated docs/superpowers/specs/2026-03-28-conventions-init-config-audit-design.md docs/superpowers/plans/2026-03-28-conventions-init-config-audit.md
-git commit -m "feat(conventions.init): add Phase 6 config audit with runtime detection
+git add code-conventions/runtime-configs.md code-conventions/index.yaml index.yaml .agent-sync/skills/conventions-init/SKILL.md compiled-index.txt .last-updated docs/superpowers/specs/2026-03-28-conventions-init-config-audit-design.md docs/superpowers/plans/2026-03-28-conventions-init-config-audit.md
+git commit -m "feat(conventions-init): add Phase 6 config audit with runtime detection
 
-Add runtime-configs.md reference file and Phase 6 to conventions.init
+Add runtime-configs.md reference file and Phase 6 to conventions-init
 that detects JS/TS runtime (Bun/Deno/Node+npm/pnpm/yarn), audits
 config files (tsconfig, package.json, editorconfig, prettier, etc.),
 and enriches .gitignore with language-specific patterns for all

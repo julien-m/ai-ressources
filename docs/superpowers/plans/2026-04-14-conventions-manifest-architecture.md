@@ -22,8 +22,8 @@
 | `schemas/domain-index.schema.yaml` | Add `sub_domains` property definition |
 | `scripts/build-conventions.ts` | Refactor: generate `manifest.yaml` + `index.md`, no compiled content |
 | `claude/rules/conventions-preload.md` | Rewrite loading procedure for manifest-based system |
-| `claude/skills/conventions.init/SKILL.md` | Update Phase 3 display + Phase 4.0 JSON example + Phase 4.1 script behavior |
-| `claude/skills/conventions.refresh/SKILL.md` | Rewrite for manifest-based system (date-vs-.last-updated staleness) |
+| `.agent-sync/skills/conventions-init/SKILL.md` | Update Phase 3 display + Phase 4.0 JSON example + Phase 4.1 script behavior |
+| `.agent-sync/skills/conventions-refresh/SKILL.md` | Rewrite for manifest-based system (date-vs-.last-updated staleness) |
 
 ---
 
@@ -641,7 +641,7 @@ The directory prefix on each `→` line applies to ALL filenames listed on that 
 | Pricing page, billing tiers | `pricing` |
 | Marketing copy, landing page | `copywriting` |
 
-**Sub-domain not in index?** Not configured for this project. Use `/ai-res` for ad-hoc, or re-run `/conventions.init` to add it.
+**Sub-domain not in index?** Not configured for this project. Use `/ai-res` for ad-hoc, or re-run `/conventions-init` to add it.
 
 ## Overrides
 
@@ -664,11 +664,11 @@ The subagent does NOT need to load conventions itself — the dispatching agent 
 
 Conventions are always fresh — they reference ai-ressources source files directly. No hash comparison needed.
 
-Check `.conventions/manifest.yaml` exists. If not found, or if `.conventions/` contains compiled `.md` domain files (e.g., `design.md`, `code.md` — old format), suggest `/conventions.refresh --full` once to migrate. Do not block.
+Check `.conventions/manifest.yaml` exists. If not found, or if `.conventions/` contains compiled `.md` domain files (e.g., `design.md`, `code.md` — old format), suggest `/conventions-refresh --full` once to migrate. Do not block.
 
 ## Initialization
 
-If `.conventions/` does not exist and the project has code or design files, suggest `/conventions.init` once. Do not block.
+If `.conventions/` does not exist and the project has code or design files, suggest `/conventions-init` once. Do not block.
 ```
 
 - [ ] **Step 3: Verify file length**
@@ -691,15 +691,15 @@ Use `/git.commit`. Message: `feat(conventions): rewrite conventions-preload for 
 
 ---
 
-### Task 5: Update conventions.init skill — sub-domain detection + manifest output
+### Task 5: Update conventions-init skill — sub-domain detection + manifest output
 
 **Files:**
-- Modify: `claude/skills/conventions.init/SKILL.md`
+- Modify: `.agent-sync/skills/conventions-init/SKILL.md`
 
-- [ ] **Step 1: Read full conventions.init/SKILL.md**
+- [ ] **Step 1: Read full conventions-init/SKILL.md**
 
 ```bash
-cat /Users/julienm/projects/ai-ressources/claude/skills/conventions.init/SKILL.md
+cat /Users/julienm/projects/ai-ressources/.agent-sync/skills/conventions-init/SKILL.md
 ```
 
 - [ ] **Step 2: Update Phase 2 — replace `design` with sub-domain detection signals**
@@ -766,26 +766,26 @@ Update "verify output" step: `.conventions/` must contain ONLY `manifest.yaml` a
 - [ ] **Step 6: Sync to global Claude Code**
 
 ```bash
-cc-hub skill link claude/skills/conventions.init/SKILL.md
+cc-hub skill link .agent-sync/skills/conventions-init/SKILL.md
 ```
 
 - [ ] **Step 7: Commit Task 5**
 
-Use `/git.commit`. Message: `feat(conventions): update conventions.init for sub-domain detection and manifest output`
+Use `/git.commit`. Message: `feat(conventions): update conventions-init for sub-domain detection and manifest output`
 
 ---
 
-### Task 6: Rewrite conventions.refresh skill — manifest-based, date staleness
+### Task 6: Rewrite conventions-refresh skill — manifest-based, date staleness
 
 **Files:**
-- Modify: `claude/skills/conventions.refresh/SKILL.md`
+- Modify: `.agent-sync/skills/conventions-refresh/SKILL.md`
 
 Current skill does hash-based staleness detection on compiled `.md` files. The new system has no compiled files. Staleness is detected by comparing `manifest.yaml`'s `generated` date against `.last-updated` from ai-ressources.
 
-- [ ] **Step 1: Read full conventions.refresh/SKILL.md**
+- [ ] **Step 1: Read full conventions-refresh/SKILL.md**
 
 ```bash
-cat /Users/julienm/projects/ai-ressources/claude/skills/conventions.refresh/SKILL.md
+cat /Users/julienm/projects/ai-ressources/.agent-sync/skills/conventions-refresh/SKILL.md
 ```
 
 - [ ] **Step 2: Rewrite the skill content**
@@ -794,12 +794,12 @@ Replace full content (keeping frontmatter) with:
 
 ```markdown
 ---
-name: conventions.refresh
+name: conventions-refresh
 description: "Check if conventions are stale and regenerate from ai-ressources. Use when conventions may be outdated or after ai-ressources updates."
 argument-hint: "[--full]"
 ---
 
-# /conventions.refresh — Refresh Project Conventions
+# /conventions-refresh — Refresh Project Conventions
 
 Check if `.conventions/` is current and reconfigure if needed. Content is always fresh (source files in ai-ressources are read directly). This command focuses on: migrating old format, detecting staleness via ai-ressources date, and reconfiguring when the project stack changes.
 
@@ -814,13 +814,13 @@ Check if `.conventions/` is current and reconfigure if needed. Content is always
 
 **Case A — Old compiled format detected** (`.conventions/design.md` or `.conventions/conventions.manifest.json` exists):
 1. Print: "Old compiled format detected. Migrating to manifest format."
-2. Run `/conventions.init` Phases 1–4 (re-detects stack, generates `manifest.yaml` + `index.md`)
+2. Run `/conventions-init` Phases 1–4 (re-detects stack, generates `manifest.yaml` + `index.md`)
 3. Delete old compiled files from `.conventions/`: all `*.md` files except `index.md`, and `conventions.manifest.json`
 4. Print: "Migration complete. Old compiled files removed."
 5. Stop here.
 
 **Case B — No `.conventions/` or no `manifest.yaml`:**
-1. Print: "No `.conventions/manifest.yaml` found. Run `/conventions.init` to set up."
+1. Print: "No `.conventions/manifest.yaml` found. Run `/conventions-init` to set up."
 2. Stop here.
 
 **Case C — `manifest.yaml` exists:** proceed to Step 2.
@@ -840,7 +840,7 @@ echo "ai-ressources last updated: $LAST_UPDATED"
 ```
 
 **If `.last-updated` does not exist:**
-- Warn: "Cannot read `ai-ressources/.last-updated` — run `/conventions.refresh --full` to force refresh."
+- Warn: "Cannot read `ai-ressources/.last-updated` — run `/conventions-refresh --full` to force refresh."
 - Stop here.
 
 **If `LAST_UPDATED` ≤ `MANIFEST_DATE`:** print "Conventions up to date." and stop.
@@ -882,7 +882,7 @@ Compare detected stack markers with what was last used. If markers changed, rege
 
 ### --full flag
 
-Skip staleness check. Re-run `/conventions.init` Phases 1–4 from scratch. Use when project stack changed significantly or when in doubt.
+Skip staleness check. Re-run `/conventions-init` Phases 1–4 from scratch. Use when project stack changed significantly or when in doubt.
 
 ## What "refresh" does NOT do
 
@@ -894,12 +894,12 @@ Skip staleness check. Re-run `/conventions.init` Phases 1–4 from scratch. Use 
 - [ ] **Step 3: Sync to global Claude Code**
 
 ```bash
-cc-hub skill link claude/skills/conventions.refresh/SKILL.md
+cc-hub skill link .agent-sync/skills/conventions-refresh/SKILL.md
 ```
 
 - [ ] **Step 4: Commit Task 6**
 
-Use `/git.commit`. Message: `feat(conventions): rewrite conventions.refresh for manifest-based system`
+Use `/git.commit`. Message: `feat(conventions): rewrite conventions-refresh for manifest-based system`
 
 ---
 

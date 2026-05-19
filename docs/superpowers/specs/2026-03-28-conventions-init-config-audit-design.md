@@ -1,7 +1,7 @@
-# conventions.init Config Audit — Design Spec
+# conventions-init Config Audit — Design Spec
 
 **Date:** 2026-03-28
-**Scope:** Add a Phase 6 "Config Audit" to `/conventions.init` that detects the project runtime/toolchain and audits/fixes configuration files.
+**Scope:** Add a Phase 6 "Config Audit" to `/conventions-init` that detects the project runtime/toolchain and audits/fixes configuration files.
 
 ## Decisions
 
@@ -18,7 +18,7 @@
 ## Deliverables
 
 1. **`code-conventions/runtime-configs.md`** — new file in the knowledge base
-2. **`conventions.init/SKILL.md`** — Phase 6 added
+2. **`conventions-init/SKILL.md`** — Phase 6 added
 
 ---
 
@@ -332,7 +332,7 @@ Config audit: {X} fixed, {Y} created, {Z} skipped
 
 ## 5. Interactions with Existing Features
 
-- **`conventions.refresh`** — does NOT re-run the config audit. Configs don't change when conventions are refreshed. Config audit only runs with `conventions.init`.
+- **`conventions-refresh`** — does NOT re-run the config audit. Configs don't change when conventions are refreshed. Config audit only runs with `conventions-init`.
 - **`/audit`** — could read `runtime-configs.md` to verify config compliance in the future. Out of scope here.
 - **`runtime-configs.md`** — indexed in `code-conventions/index.yaml`, compiled into `compiled-index.txt`. Available to `ai-res-librarian`.
 - **Phase 5 overlap** — Phase 5 still adds `.conventions/` to `.gitignore`. Phase 6 `.gitignore` audit skips patterns already present (including those added by Phase 5).

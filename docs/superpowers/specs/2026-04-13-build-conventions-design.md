@@ -7,7 +7,7 @@
 
 ## Problème
 
-L'agent `ai-res-librarian` (modèle Haiku) synthétise les conventions lors de `conventions.init`. Cette synthèse est lossy : des règles entières sont omises (ex: JSDoc dans `javascript.md`). Le système est non-déterministe et dépendant de la qualité de sortie d'un LLM.
+L'agent `ai-res-librarian` (modèle Haiku) synthétise les conventions lors de `conventions-init`. Cette synthèse est lossy : des règles entières sont omises (ex: JSDoc dans `javascript.md`). Le système est non-déterministe et dépendant de la qualité de sortie d'un LLM.
 
 ## Solution
 
@@ -18,7 +18,7 @@ Remplacer la synthèse LLM par une **compilation déterministe** : le script lit
 ## Architecture
 
 ```
-conventions.init (Phase 1-3: détection stack + confirmation)
+conventions-init (Phase 1-3: détection stack + confirmation)
     ↓
     liste de domaines : { code: [nextjs, drizzle, testing], legal: [...], ... }
     ↓
@@ -88,7 +88,7 @@ extends: [javascript]
 bun run scripts/build-conventions.ts <project-dir> <domains-json>
 ```
 
-`domains-json` = JSON stringifié passé par `conventions.init` :
+`domains-json` = JSON stringifié passé par `conventions-init` :
 
 ```json
 {
@@ -185,7 +185,7 @@ Dans `code.md` : règle du fichier fils prime sur celle du parent. Ordre de conc
 
 ---
 
-## Composant 3 — Modifications `conventions.init`
+## Composant 3 — Modifications `conventions-init`
 
 ### Phase 4 — complètement réécrite
 
@@ -203,12 +203,12 @@ Limite 400 lignes → **supprimée**
 
 ---
 
-## Composant 4 — Modifications `conventions.refresh`
+## Composant 4 — Modifications `conventions-refresh`
 
 ### Nouveau comportement
 
 ```
-conventions.refresh :
+conventions-refresh :
   1. Cherche .conventions/conventions.manifest.json
   2. Si absent → auto-full (migration transparente)
   3. Si présent :
@@ -218,9 +218,9 @@ conventions.refresh :
        → Non : rebuild ce domaine via build-conventions.ts (domaine seul)
   4. Met à jour le manifest
 
-conventions.refresh --full :
-  Re-exécute conventions.init Phases 1-4 sans phase de confirmation interactive
-  (équivalent conventions.init sur projet existant)
+conventions-refresh --full :
+  Re-exécute conventions-init Phases 1-4 sans phase de confirmation interactive
+  (équivalent conventions-init sur projet existant)
 ```
 
 ---
@@ -237,7 +237,7 @@ Avant de coder, designer ou produire :
 3. Read le fichier domaine correspondant (code.md pour du code, legal.md pour du légal, etc.)
 
 Subagents : inclure le contenu du fichier domaine pertinent dans le prompt.
-Freshness : si pas de manifest → suggérer /conventions.refresh une fois.
+Freshness : si pas de manifest → suggérer /conventions-refresh une fois.
 ```
 
 ---
@@ -256,8 +256,8 @@ Le skill `/ai-res` continue d'exister pour les requêtes ad-hoc hors-projet. Il 
 |---------|--------|
 | `scripts/build-conventions.ts` | Créer |
 | `code-conventions/*.md` (23 fichiers) | Ajouter frontmatter `extends` |
-| `claude/skills/conventions.init/SKILL.md` | Réécrire Phase 4 |
-| `claude/skills/conventions.refresh/SKILL.md` | Réécrire entièrement |
+| `.agent-sync/skills/conventions-init/SKILL.md` | Réécrire Phase 4 |
+| `.agent-sync/skills/conventions-refresh/SKILL.md` | Réécrire entièrement |
 | `claude/rules/conventions-preload.md` | Réécrire |
 | `claude/skills/ai-res/SKILL.md` | Supprimer références à librarian |
 | `.claude/agents/ai-res-librarian.md` | Supprimer |

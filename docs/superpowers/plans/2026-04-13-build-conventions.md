@@ -2,9 +2,9 @@
 
 > **For agentic workers:** REQUIRED SUB-SKILL: Use superpowers:subagent-driven-development (recommended) or superpowers:executing-plans to implement this plan task-by-task. Steps use checkbox (`- [ ]`) syntax for tracking.
 
-**Goal:** Replace LLM synthesis in conventions.init with a deterministic build script that resolves dependency chains and concatenates source files verbatim into per-domain convention files.
+**Goal:** Replace LLM synthesis in conventions-init with a deterministic build script that resolves dependency chains and concatenates source files verbatim into per-domain convention files.
 
-**Architecture:** A new `scripts/build-conventions.ts` script reads `extends` frontmatter from code-conventions files, resolves the dependency graph with deduplication, concatenates raw content, and writes per-domain files to `.conventions/`. conventions.init calls this script instead of dispatching ai-res-librarian agents. conventions.refresh uses the generated manifest.json for hash-based staleness detection.
+**Architecture:** A new `scripts/build-conventions.ts` script reads `extends` frontmatter from code-conventions files, resolves the dependency graph with deduplication, concatenates raw content, and writes per-domain files to `.conventions/`. conventions-init calls this script instead of dispatching ai-res-librarian agents. conventions-refresh uses the generated manifest.json for hash-based staleness detection.
 
 **Tech Stack:** Bun, TypeScript, yaml (already in package.json), node:crypto (SHA256), node:fs
 
@@ -14,7 +14,7 @@
 
 ### Transversal files strategy — Option A
 
-`conventions.init` Phase 4.1 passes **leaf/framework files plus any explicit transversal files** to the build script. The `extends` chain resolves `general` automatically for language/framework files, and resolves `database` automatically for `drizzle` and `prisma`. `testing`, `logging`, `architecture`, and `runtime-configs` are root/transversal files and must still be passed explicitly when they are detected for the `code` domain.
+`conventions-init` Phase 4.1 passes **leaf/framework files plus any explicit transversal files** to the build script. The `extends` chain resolves `general` automatically for language/framework files, and resolves `database` automatically for `drizzle` and `prisma`. `testing`, `logging`, `architecture`, and `runtime-configs` are root/transversal files and must still be passed explicitly when they are detected for the `code` domain.
 
 Example: `{"code": ["nextjs", "drizzle"]}` → build script resolves `[general, javascript, react, nextjs, database, javascript(dedup), drizzle]` = `[general, javascript, react, nextjs, database, drizzle]`.
 
@@ -24,11 +24,11 @@ Example: `{"code": ["nextjs", "drizzle"]}` → build script resolves `[general, 
 
 ### conventions-preload freshness signal
 
-Replace the `.last-updated` date comparison with: check if `.conventions/conventions.manifest.json` exists. If it does not → project is on old format → suggest `/conventions.refresh` once.
+Replace the `.last-updated` date comparison with: check if `.conventions/conventions.manifest.json` exists. If it does not → project is on old format → suggest `/conventions-refresh` once.
 
 ### Files excluded from extends graph
 
-- `runtime-configs.md` — config reference only, not a convention chain file. Gets `extends: []` but is never included in the `code` array via extends resolution. Included only if conventions.init explicitly requests it via the `config` domain.
+- `runtime-configs.md` — config reference only, not a convention chain file. Gets `extends: []` but is never included in the `code` array via extends resolution. Included only if conventions-init explicitly requests it via the `config` domain.
 - `database.md` — root node (language-agnostic). Gets `extends: []`. Included via extends only by `drizzle.md` and `prisma.md`.
 
 ### Full extends graph (all 23 files with frontmatter)
@@ -711,15 +711,15 @@ git commit -m "feat(scripts): add build-conventions.ts — deterministic convent
 
 ---
 
-### Task 3: Rewrite `conventions.init` Phase 4
+### Task 3: Rewrite `conventions-init` Phase 4
 
 **Files:**
-- Modify: `claude/skills/conventions.init/SKILL.md:175-350` (Phase 4 section)
+- Modify: `.agent-sync/skills/conventions-init/SKILL.md:175-350` (Phase 4 section)
 
 - [ ] **Step 1: Read current Phase 4 section**
 
 ```
-Read claude/skills/conventions.init/SKILL.md lines 175-350
+Read .agent-sync/skills/conventions-init/SKILL.md lines 175-350
 ```
 
 Identifier précisément les lignes à remplacer (de `### Phase 4` jusqu'à `### Phase 5`).
@@ -799,20 +799,20 @@ Read the full updated SKILL.md and confirm:
 
 ```bash
 cd /Users/julienm/projects/ai-ressources
-git add claude/skills/conventions.init/SKILL.md
-git commit -m "feat(conventions.init): replace LLM synthesis with build-conventions.ts script"
+git add .agent-sync/skills/conventions-init/SKILL.md
+git commit -m "feat(conventions-init): replace LLM synthesis with build-conventions.ts script"
 ```
 
 ---
 
-### Task 4: Rewrite `conventions.refresh` SKILL.md
+### Task 4: Rewrite `conventions-refresh` SKILL.md
 
 **Files:**
-- Modify: `claude/skills/conventions.refresh/SKILL.md`
+- Modify: `.agent-sync/skills/conventions-refresh/SKILL.md`
 
 - [ ] **Step 1: Read current file**
 
-Read `claude/skills/conventions.refresh/SKILL.md` in full.
+Read `.agent-sync/skills/conventions-refresh/SKILL.md` in full.
 
 - [ ] **Step 2: Rewrite the entire file**
 
@@ -820,18 +820,18 @@ Replace the full content with:
 
 ```markdown
 ---
-name: conventions.refresh
+name: conventions-refresh
 description: "Check if .conventions/ is stale and regenerate changed domains. Use when conventions may be outdated or after ai-ressources updates."
 argument-hint: "[--full]"
 ---
 
-# /conventions.refresh — Refresh Materialized Conventions
+# /conventions-refresh — Refresh Materialized Conventions
 
 Check if `.conventions/` is up to date with `~/projects/ai-ressources/`, and regenerate stale domains.
 
 ## Prerequisites
 
-- `.conventions/` must exist in the current project (run `/conventions.init` first)
+- `.conventions/` must exist in the current project (run `/conventions-init` first)
 - `~/projects/ai-ressources/` must exist
 
 ## Procedure
@@ -885,7 +885,7 @@ Conventions refreshed:
 Re-run the full stack detection and regenerate everything from scratch.
 
 1. Read current `manifest.domains` to know which domains were previously detected (or skip if no manifest)
-2. Re-run `/conventions.init` Phases 1-4 on the current project — but skip the user confirmation in Phase 3 (use existing detected domains as default, ask only if new domains are found or existing ones are missing)
+2. Re-run `/conventions-init` Phases 1-4 on the current project — but skip the user confirmation in Phase 3 (use existing detected domains as default, ask only if new domains are found or existing ones are missing)
 3. Regenerate all domain files + manifest
 
 Useful when:
@@ -903,15 +903,15 @@ Full refresh: code.md, legal.md regenerated — manifest updated
 - Default mode MUST NOT re-detect the stack — use manifest sources only
 - If a source file in the manifest no longer exists in ai-ressources, warn and skip that file (do not fail)
 - After any rebuild, always update `conventions.manifest.json` with new hashes and `generated` date
-- If `.conventions/` does not exist → suggest `/conventions.init` instead
+- If `.conventions/` does not exist → suggest `/conventions-init` instead
 ```
 
 - [ ] **Step 3: Commit**
 
 ```bash
 cd /Users/julienm/projects/ai-ressources
-git add claude/skills/conventions.refresh/SKILL.md
-git commit -m "feat(conventions.refresh): rewrite with hash-based staleness detection via manifest"
+git add .agent-sync/skills/conventions-refresh/SKILL.md
+git commit -m "feat(conventions-refresh): rewrite with hash-based staleness detection via manifest"
 ```
 
 ---
@@ -969,12 +969,12 @@ When dispatching a subagent that will code or design, **include the content of t
 ## Freshness
 
 At the start of each session, check if `.conventions/conventions.manifest.json` exists:
-- If it does NOT exist → suggest `/conventions.refresh` once (will auto-migrate). Do not block.
+- If it does NOT exist → suggest `/conventions-refresh` once (will auto-migrate). Do not block.
 - If it exists → no freshness check needed (refresh handles staleness on demand).
 
 ## Initialization
 
-If `.conventions/` does **not** exist and the project contains code or design files, suggest `/conventions.init` once at the start of the session. Do not block.
+If `.conventions/` does **not** exist and the project contains code or design files, suggest `/conventions-init` once at the start of the session. Do not block.
 ```
 
 - [ ] **Step 3: Commit**
@@ -1055,8 +1055,8 @@ git commit -m "feat(ai-res): remove librarian agent, read files directly"
 Each modified asset must be re-linked. Run all four:
 
 ```bash
-cc-hub skill link claude/skills/conventions.init/SKILL.md
-cc-hub skill link claude/skills/conventions.refresh/SKILL.md
+cc-hub skill link .agent-sync/skills/conventions-init/SKILL.md
+cc-hub skill link .agent-sync/skills/conventions-refresh/SKILL.md
 cc-hub skill link claude/skills/ai-res/SKILL.md
 cc-hub rule link claude/rules/conventions-preload.md
 ```

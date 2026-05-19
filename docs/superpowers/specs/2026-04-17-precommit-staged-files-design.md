@@ -1,13 +1,13 @@
 # Design : Pre-commit hooks — staged-file awareness
 
 **Date:** 2026-04-17
-**Skill:** conventions.init
+**Skill:** conventions-init
 
 ---
 
 ## Contexte et problème
 
-Les hooks pre-commit générés par `/conventions.init` utilisent des commandes qui analysent **tout le projet** :
+Les hooks pre-commit générés par `/conventions-init` utilisent des commandes qui analysent **tout le projet** :
 
 ```sh
 check "npx biome check ."
@@ -47,7 +47,7 @@ Les outils qui nécessitent le projet complet restent inchangés :
 
 ## Architecture des changements
 
-### `claude/skills/conventions.init/SKILL.md` — Phase 7
+### `.agent-sync/skills/conventions-init/SKILL.md` — Phase 7
 
 Les exemples de hooks TypeScript + Biome et Python + Ruff sont mis à jour pour montrer le pattern staged-file complet, incluant :
 - Détection de présence via `git diff --cached --quiet --diff-filter=ACMR -- <pathspecs>`
@@ -60,7 +60,7 @@ Le tableau source de vérité pour les stacks reprend le même pattern `ACMR` et
 
 ### `docs/superpowers/plans/2026-04-17-precommit-staged-files.md`
 
-Le plan est recentré sur le scope réel du patch : documentation de `conventions.init` + mise à jour des documents de support. Les changements plus larges restent explicitement en follow-up.
+Le plan est recentré sur le scope réel du patch : documentation de `conventions-init` + mise à jour des documents de support. Les changements plus larges restent explicitement en follow-up.
 
 ---
 
@@ -101,7 +101,7 @@ fi
 
 ## Non-scope
 
-- `claude/skills/conventions.refresh/SKILL.md` — follow-up explicite, hors scope de ce patch
+- `.agent-sync/skills/conventions-refresh/SKILL.md` — follow-up explicite, hors scope de ce patch
 - CI templates — déjà corrigés avant ce patch
 - lint-staged — non, zéro dépendance extra
 - Python mypy / pyright — restent whole-project (typecheck cross-fichiers)

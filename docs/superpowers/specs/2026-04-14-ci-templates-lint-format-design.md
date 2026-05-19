@@ -1,14 +1,14 @@
 # Design Spec — CI Templates: Lint/Format sur fichiers modifiés
 
 **Date :** 2026-04-14
-**Scope :** 5 fichiers templates CI dans `claude/skills/conventions.init/references/templates/`
+**Scope :** 5 fichiers templates CI dans `.agent-sync/skills/conventions-init/references/templates/`
 **Status :** Approved (auto-brainstorm)
 
 ---
 
 ## Contexte
 
-Les templates CI générés par `conventions.init` Phase 8 manquent tous de steps lint/format. Le `typecheck`, `build`, et `test` sont présents mais aucun vérification de style ou de lint n'est exécutée en CI.
+Les templates CI générés par `conventions-init` Phase 8 manquent tous de steps lint/format. Le `typecheck`, `build`, et `test` sont présents mais aucun vérification de style ou de lint n'est exécutée en CI.
 
 **Demande :** Ajouter lint/format sur les fichiers modifiés uniquement (diff-only), avec typecheck/build/test toujours en full codebase, et fallback full lint si un fichier de config linter change.
 
@@ -69,7 +69,7 @@ concurrency:
 Version tags maintenus. Chaque template inclut un commentaire explicite référençant l'incident mars 2025.
 
 ### D11 — Scope : 5 fichiers templates uniquement
-Pas de changement aux SKILL.md ni à stack-commands.md. Les templates sont copiés verbatim par conventions.init Phase 8 → corriger les templates suffit.
+Pas de changement aux SKILL.md ni à stack-commands.md. Les templates sont copiés verbatim par conventions-init Phase 8 → corriger les templates suffit.
 
 ### D12 — Caching linters (décision ajoutée après validation Codex)
 | Template | Cache | Clé |
@@ -167,8 +167,8 @@ test: dotnet test --no-build --configuration Release (full)
 
 ## Fichiers modifiés
 
-1. `claude/skills/conventions.init/references/templates/ci-python.yml`
-2. `claude/skills/conventions.init/references/templates/ci-node.yml`
-3. `claude/skills/conventions.init/references/templates/ci-go.yml`
-4. `claude/skills/conventions.init/references/templates/ci-rust.yml`
-5. `claude/skills/conventions.init/references/templates/ci-dotnet.yml`
+1. `.agent-sync/skills/conventions-init/references/templates/ci-python.yml`
+2. `.agent-sync/skills/conventions-init/references/templates/ci-node.yml`
+3. `.agent-sync/skills/conventions-init/references/templates/ci-go.yml`
+4. `.agent-sync/skills/conventions-init/references/templates/ci-rust.yml`
+5. `.agent-sync/skills/conventions-init/references/templates/ci-dotnet.yml`

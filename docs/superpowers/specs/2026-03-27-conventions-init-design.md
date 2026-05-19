@@ -1,4 +1,4 @@
-# Design: /conventions.init + /conventions.refresh (v3)
+# Design: /conventions-init + /conventions-refresh (v3)
 
 - **Date**: 2026-03-27
 - **Status**: Approved
@@ -11,8 +11,8 @@ Agents load conventions at runtime via `/ai-res` — slow, redundant, and subage
 
 Two skills + one global rule + one freshness marker:
 
-1. **`/conventions.init`** — Analyzes cwd project, detects stack/domains, dispatches `ai-res-librarian` agents per category in parallel to synthesize a **single file** `.conventions/conventions.md`
-2. **`/conventions.refresh`** — Compares `generated` date vs `.last-updated` marker, re-dispatches librarian for same categories if stale
+1. **`/conventions-init`** — Analyzes cwd project, detects stack/domains, dispatches `ai-res-librarian` agents per category in parallel to synthesize a **single file** `.conventions/conventions.md`
+2. **`/conventions-refresh`** — Compares `generated` date vs `.last-updated` marker, re-dispatches librarian for same categories if stale
 3. **`conventions-preload.md`** rule — Auto-loads the single file before work, replaces `/ai-res`, injects into subagent prompts
 4. **`.last-updated`** file — Updated automatically when any domain `.md` file changes in ai-ressources
 
@@ -33,7 +33,7 @@ Two skills + one global rule + one freshness marker:
 ```mermaid
 flowchart LR
     A[".md changed in ai-ressources"] --> B["update .last-updated"]
-    C["/conventions.refresh"] --> D["read .last-updated"]
+    C["/conventions-refresh"] --> D["read .last-updated"]
     C --> E["read generated date"]
     D --> F{generated < .last-updated?}
     E --> F
