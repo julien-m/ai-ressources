@@ -1,8 +1,0 @@
-:root {
-  --primary: oklch(0.55 0.2 260);
-  --background: oklch(0.99 0 0);
-  --destructive: oklch(0.55 0.22 25);
-  --spacing-sm: 8px;
-  --spacing-base: 16px;
-  --spacing-lg: 24px;
-}
