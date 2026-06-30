@@ -3,7 +3,8 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "build-index": "bun run scripts/build-index.ts"
+    "build-index": "bun run scripts/build-index.ts",
+    "test": "bun test"
   },
   "dependencies": {
     "yaml": "^2.7.1"

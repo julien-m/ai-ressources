@@ -4,7 +4,7 @@ extends: []
 # Stack Commands
 
 Mapping from stack detection markers to pre-commit commands and CI templates.
-Used by `/conventions-init` Phase 7 (pre-commit hook) and Phase 8 (CI workflows).
+Used by `/conventions-init` Phase 7 (pre-commit hook), Phase 8 (CI workflows), and security profile generation.
 
 ## Stack Detection Table
 
@@ -26,6 +26,20 @@ Used by `/conventions-init` Phase 7 (pre-commit hook) and Phase 8 (CI workflows)
 | Delphi | *.dproj \| *.dpr | `dcc32 {dpr_file} -Q -W` | — | — |
 | C/C++ (CMake) | CMakeLists.txt | `cmake --build . --target all` | — | — |
 | .NET / C# | *.sln \| *.csproj | `dotnet build --no-restore` | ci-dotnet | csharp |
+
+## Security Profile Matrix
+
+Profiles are opt-in through `$conventions-init --security <profile>` / `/conventions-init --security <profile>`, `$conventions-refresh --security <profile>` / `/conventions-refresh --security <profile>`, or `$security-hardening --profile <profile>` / `/security-hardening --profile <profile>`.
+
+| Profile | Scope | Workflow template | Stack additions |
+|---|---|---|---|
+| `none` | No security workflow | — | — |
+| `baseline` | Default private-project posture | `security-baseline.yml` | Gitleaks + Trivy filesystem `vuln,secret,misconfig` |
+| `production` | Production-bound projects | `security-production-js-ts.yml` for JS/TS; other stack-specific `security-production-*.yml` when available, else baseline with warning | JS/TS: Semgrep OWASP + JS/TS configs and npm/pnpm/yarn audit; Python: Semgrep Python + pip-audit; Go: govulncheck; Rust: cargo audit; .NET: vulnerable package check |
+| `public` | Public repos or published packages | Production template + CodeQL/Dependabot when supported | Uses CodeQL Language column and dependency update template |
+| `web-staging` | Deployed web apps with staging URL | `security-production-web-js-ts.yml` for JS/TS web apps | Production scans + Nuclei/ZAP DAST against `secrets.STAGING_URL` |
+
+DAST is app-context dependent, not language dependent. Do not add Nuclei/ZAP just because a language is detected; require a deployed web app and `web-staging`.
 
 ## Detection Rules
 ### Within a stack family

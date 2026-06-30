@@ -40,6 +40,8 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `ci workflow` | `code-conventions/stack-commands.md` |
 | `github actions` | `code-conventions/stack-commands.md` |
 | `linter commands` | `code-conventions/stack-commands.md` |
+| `security hardening`, `security profile`, `production security`, `public security`, `web staging` | `code-conventions/stack-commands.md` |
+| `sast`, `sca`, `dast`, `semgrep`, `trivy`, `gitleaks`, `nuclei`, `zap` | `code-conventions/stack-commands.md` |
 
 ---
 

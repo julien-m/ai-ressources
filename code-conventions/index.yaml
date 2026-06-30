@@ -86,7 +86,7 @@ files:
     priority: 6
 
   - file: stack-commands.md
-    description: "Stack detection → pre-commit commands + CI template mapping. Used by /conventions-init Phase 7-8."
+    description: "Stack detection → pre-commit commands, CI template mapping, and opt-in security profile matrix. Used by /conventions-init Phase 7-8."
     applies_to: ["*"]
     priority: 6
 

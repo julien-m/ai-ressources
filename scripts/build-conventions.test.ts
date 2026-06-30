@@ -1,18 +1,18 @@
 #!/usr/bin/env bun
 /**
- * build-conventions.test.ts — TDD tests for build-conventions.ts
+ * build-conventions.test.ts - tests for build-conventions.ts
  *
- * Tests run the script as a subprocess with a temp AI_RESOURCES_PATH.
+ * The generator writes a manifest-only .conventions/ directory:
+ * manifest.yaml + index.md. It does not compile per-domain markdown files.
  */
 
-import { test, expect, beforeEach, afterEach, describe } from "bun:test";
-import { mkdtempSync, mkdirSync, writeFileSync, existsSync, readFileSync, rmSync } from "node:fs";
-import { join, dirname } from "node:path";
+import { afterEach, beforeEach, describe, expect, test } from "bun:test";
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
 import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
+import { parse } from "yaml";
 
 const SCRIPT = join(dirname(import.meta.dir), "scripts", "build-conventions.ts");
-
-// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function makeFakeAiRes(files: Record<string, string>): string {
   const dir = mkdtempSync(join(tmpdir(), "ai-res-"));
@@ -33,14 +33,11 @@ async function runScript(
   projectDir: string,
   domainsJson: string
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
-  const proc = Bun.spawn(
-    ["bun", "run", SCRIPT, projectDir, domainsJson],
-    {
-      env: { ...process.env, AI_RESOURCES_PATH: aiResPath },
-      stdout: "pipe",
-      stderr: "pipe",
-    }
-  );
+  const proc = Bun.spawn(["bun", "run", SCRIPT, projectDir, domainsJson], {
+    env: { ...process.env, AI_RESOURCES_PATH: aiResPath },
+    stdout: "pipe",
+    stderr: "pipe",
+  });
   const [stdout, stderr, exitCode] = await Promise.all([
     new Response(proc.stdout).text(),
     new Response(proc.stderr).text(),
@@ -49,7 +46,13 @@ async function runScript(
   return { stdout, stderr, exitCode };
 }
 
-// ── Fixtures ─────────────────────────────────────────────────────────────────
+function readManifest(projectDir: string): any {
+  return parse(readFileSync(join(projectDir, ".conventions", "manifest.yaml"), "utf-8"));
+}
+
+function sourceList(projectDir: string, domain: string): string[] {
+  return readManifest(projectDir).domains[domain].sources;
+}
 
 function makeCodeConventionsFixture(): Record<string, string> {
   return {
@@ -63,11 +66,9 @@ function makeCodeConventionsFixture(): Record<string, string> {
   };
 }
 
-// ── Tests ─────────────────────────────────────────────────────────────────────
-
 describe("build-conventions", () => {
-  let aiRes: string;
-  let project: string;
+  let aiRes = "";
+  let project = "";
 
   beforeEach(() => {
     project = makeTmpProject();
@@ -76,40 +77,33 @@ describe("build-conventions", () => {
   afterEach(() => {
     if (aiRes) rmSync(aiRes, { recursive: true, force: true });
     if (project) rmSync(project, { recursive: true, force: true });
+    aiRes = "";
+    project = "";
   });
 
-  // 1. Simple chain
-  test("simple chain: nextjs resolves general → javascript → react → nextjs in order", async () => {
+  test("simple chain: nextjs resolves general, javascript, react, nextjs in order", async () => {
     aiRes = makeFakeAiRes(makeCodeConventionsFixture());
-    const { exitCode, stderr } = await runScript(aiRes, project, JSON.stringify({ code: ["nextjs"] }));
+    const { exitCode } = await runScript(aiRes, project, JSON.stringify({ code: ["nextjs"] }));
 
     expect(exitCode).toBe(0);
-    const codeMd = readFileSync(join(project, ".conventions", "code.md"), "utf-8");
-
-    // All four files must appear as source comments in order
-    const generalIdx = codeMd.indexOf("source: code-conventions/general.md");
-    const jsIdx = codeMd.indexOf("source: code-conventions/javascript.md");
-    const reactIdx = codeMd.indexOf("source: code-conventions/react.md");
-    const nextjsIdx = codeMd.indexOf("source: code-conventions/nextjs.md");
-
-    expect(generalIdx).toBeGreaterThanOrEqual(0);
-    expect(jsIdx).toBeGreaterThan(generalIdx);
-    expect(reactIdx).toBeGreaterThan(jsIdx);
-    expect(nextjsIdx).toBeGreaterThan(reactIdx);
+    expect(sourceList(project, "code")).toEqual([
+      "code-conventions/general.md",
+      "code-conventions/javascript.md",
+      "code-conventions/react.md",
+      "code-conventions/nextjs.md",
+    ]);
   });
 
-  // 2. Deduplication
-  test("deduplication: react + nextjs → general appears exactly once", async () => {
+  test("deduplication: react + nextjs resolves shared ancestors once", async () => {
     aiRes = makeFakeAiRes(makeCodeConventionsFixture());
     const { exitCode } = await runScript(aiRes, project, JSON.stringify({ code: ["react", "nextjs"] }));
 
     expect(exitCode).toBe(0);
-    const codeMd = readFileSync(join(project, ".conventions", "code.md"), "utf-8");
-    const count = (codeMd.match(/source: code-conventions\/general\.md/g) ?? []).length;
-    expect(count).toBe(1);
+    const sources = sourceList(project, "code");
+    expect(sources.filter((source) => source === "code-conventions/general.md")).toHaveLength(1);
+    expect(sources.filter((source) => source === "code-conventions/javascript.md")).toHaveLength(1);
   });
 
-  // 3. Diamond dependency
   test("diamond dependency: shared ancestor appears exactly once", async () => {
     aiRes = makeFakeAiRes({
       "code-conventions/root.md": "---\nextends: []\n---\n# Root\n\nRoot content.",
@@ -120,12 +114,9 @@ describe("build-conventions", () => {
     const { exitCode } = await runScript(aiRes, project, JSON.stringify({ code: ["a"] }));
 
     expect(exitCode).toBe(0);
-    const codeMd = readFileSync(join(project, ".conventions", "code.md"), "utf-8");
-    const count = (codeMd.match(/source: code-conventions\/root\.md/g) ?? []).length;
-    expect(count).toBe(1);
+    expect(sourceList(project, "code").filter((source) => source === "code-conventions/root.md")).toHaveLength(1);
   });
 
-  // 4. Cycle detection
   test("cycle detection: exits 0 and warns to stderr", async () => {
     aiRes = makeFakeAiRes({
       "code-conventions/a.md": "---\nextends: [b]\n---\n# A\n\nA content.",
@@ -137,7 +128,6 @@ describe("build-conventions", () => {
     expect(stderr.toLowerCase()).toContain("cycle");
   });
 
-  // 5. Missing file
   test("missing file: exits 0 and warns to stderr", async () => {
     aiRes = makeFakeAiRes({
       "code-conventions/general.md": "---\nextends: []\n---\n# General\n\nGeneral content.",
@@ -148,20 +138,17 @@ describe("build-conventions", () => {
     expect(stderr.toLowerCase()).toContain("missing");
   });
 
-  // 6. Empty extends
-  test("empty extends: general alone works fine", async () => {
+  test("empty extends: general alone is listed in manifest", async () => {
     aiRes = makeFakeAiRes({
       "code-conventions/general.md": "---\nextends: []\n---\n# General Rules\n\nGeneral content here.",
     });
     const { exitCode } = await runScript(aiRes, project, JSON.stringify({ code: ["general"] }));
 
     expect(exitCode).toBe(0);
-    const codeMd = readFileSync(join(project, ".conventions", "code.md"), "utf-8");
-    expect(codeMd).toContain("General content here.");
+    expect(sourceList(project, "code")).toEqual(["code-conventions/general.md"]);
   });
 
-  // 7. Flat domain
-  test("flat domain: legal.md contains both files in order", async () => {
+  test("flat domain: legal sources are listed in request order", async () => {
     aiRes = makeFakeAiRes({
       "legal/cgu.md": "# CGU\n\nCGU content here.",
       "legal/rgpd.md": "# RGPD\n\nRGPD content here.",
@@ -169,31 +156,28 @@ describe("build-conventions", () => {
     const { exitCode } = await runScript(aiRes, project, JSON.stringify({ legal: ["cgu", "rgpd"] }));
 
     expect(exitCode).toBe(0);
-    const legalMd = readFileSync(join(project, ".conventions", "legal.md"), "utf-8");
-    const cguIdx = legalMd.indexOf("CGU content here.");
-    const rgpdIdx = legalMd.indexOf("RGPD content here.");
-    expect(cguIdx).toBeGreaterThanOrEqual(0);
-    expect(rgpdIdx).toBeGreaterThan(cguIdx);
+    expect(sourceList(project, "legal")).toEqual(["legal/cgu.md", "legal/rgpd.md"]);
   });
 
-  // 8. Manifest written
-  test("manifest written with correct structure", async () => {
+  test("manifest-only directory is written with the current structure", async () => {
     aiRes = makeFakeAiRes(makeCodeConventionsFixture());
     const { exitCode } = await runScript(aiRes, project, JSON.stringify({ code: ["nextjs"] }));
 
     expect(exitCode).toBe(0);
-    const manifestPath = join(project, ".conventions", "conventions.manifest.json");
-    expect(existsSync(manifestPath)).toBe(true);
+    expect(existsSync(join(project, ".conventions", "manifest.yaml"))).toBe(true);
+    expect(existsSync(join(project, ".conventions", "index.md"))).toBe(true);
+    expect(existsSync(join(project, ".conventions", "code.md"))).toBe(false);
+    expect(existsSync(join(project, ".conventions", "conventions.manifest.json"))).toBe(false);
 
-    const manifest = JSON.parse(readFileSync(manifestPath, "utf-8"));
+    const manifest = readManifest(project);
     expect(typeof manifest.generated).toBe("string");
     expect(typeof manifest.project).toBe("string");
-    expect(typeof manifest.aiResourcesPath).toBe("string");
-    expect(typeof manifest.domains).toBe("object");
-    expect(typeof manifest.domains.code).toBe("object");
-    expect(typeof manifest.domains.code.file).toBe("string");
-    expect(Array.isArray(manifest.domains.code.sources)).toBe(true);
-    expect(typeof manifest.domains.code.hashes).toBe("object");
-    expect(typeof manifest.domains.code.outputHash).toBe("string");
+    expect(typeof manifest.ai_resources_path).toBe("string");
+    expect(manifest.domains.code.sources).toEqual([
+      "code-conventions/general.md",
+      "code-conventions/javascript.md",
+      "code-conventions/react.md",
+      "code-conventions/nextjs.md",
+    ]);
   });
 });

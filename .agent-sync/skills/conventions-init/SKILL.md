@@ -1,17 +1,17 @@
 ---
 name: conventions-init
 description: "Analyze a project's stack and generate a .conventions/ manifest + index. Use when setting up conventions for a new or existing project."
-argument-hint: ""
+argument-hint: "[--security <none|baseline|production|public|web-staging>]"
 ---
 
 # /conventions-init — Initialize Project Conventions
 
 ## Goal
-Generate a `.conventions/` directory in the target project containing exactly `manifest.yaml` and `index.md`, plus configured `.gitignore`, `.githooks/pre-commit`, and `.github/workflows/*.yml` matching the detected stack — produced deterministically, with per-phase verification.
+Generate a `.conventions/` directory in the target project containing exactly `manifest.yaml` and `index.md`, plus configured `.gitignore`, `.githooks/pre-commit`, and `.github/workflows/*.yml` matching the detected stack and requested security profile — produced deterministically, with per-phase verification.
 
 ## Execution context
 - Mode: apply
-- Month: 2026-05
+- Month: 2026-06
 
 ## Anti-drift rules (apply to all steps)
 - Execute phases in the exact numbered order. Do NOT reorder, parallelise, merge, or skip any phase.
@@ -23,6 +23,7 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 - "Probably works", "looks correct" are not success criteria — verification is mandatory.
 - Confirmation gates (Phase 3, Phase 6) must surface to the user; never auto-confirm on the user's behalf.
 - Never write secrets in generated files.
+- Security workflows must reference secrets by name only, never inline secret values.
 
 ## Steps
 
@@ -32,18 +33,22 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 **Required inputs/resources**:
 - `pwd` (must be the target project, NOT `~/projects/ai-ressources/`)
 - `~/projects/ai-ressources/` directory must exist
+- Argument string may contain `--security <none|baseline|production|public|web-staging>`
 
 **Action**:
 1. Run `pwd` and confirm path does not equal `~/projects/ai-ressources` (or its realpath).
 2. Run `test -d ~/projects/ai-ressources && test -f ~/projects/ai-ressources/.last-updated`.
+3. Parse `securityProfile`; default to `baseline` when absent. Reject any value outside `none|baseline|production|public|web-staging`.
 
 **Execution evidence**:
 - Resolved `pwd` value
 - Exit code of the directory check (must be 0)
+- Resolved `securityProfile`
 
 **Success criteria**:
 - pwd ≠ ai-ressources path
 - ai-ressources tree present and readable
+- `securityProfile` is valid
 
 **If this step fails**:
 - Retry once.
@@ -296,33 +301,45 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 **Required inputs/resources**:
 - `.git/` must exist (else skip entire step).
 - **Read** [`references/templates/`](references/templates/)
+- **Read** [`references/security-profiles.md`](references/security-profiles.md)
 - `gh` CLI for visibility check
 
 **Action**:
 1. List available templates in `references/templates/`.
-2. Map detected stacks → CI templates per `stack-commands.md` "CI Template" column. Always include `security.yml`. Stacks with `—` → skip.
-3. Repo visibility:
+2. Map detected stacks → CI templates per `stack-commands.md` "CI Template" column. Stacks with `—` → skip.
+3. Resolve security workflow from `securityProfile`:
+   - `none` → if `.github/workflows/security.yml` has the generated sentinel, delete it; if it has no sentinel, ask `keep / remove` with default `keep`; generate no security workflow.
+   - `baseline` → generate `.github/workflows/security.yml` from `security-baseline.yml`.
+   - `production` → generate `.github/workflows/security.yml` from the best stack-specific production template; for JS/TS use `security-production-js-ts.yml`; if no non-DAST template exists for the detected stack, fall back to baseline with warning.
+   - `public` → generate production security workflow plus CodeQL/Dependabot where applicable.
+   - `web-staging` → generate `.github/workflows/security.yml` from `security-production-web-js-ts.yml`; DAST requires `${{ secrets.STAGING_URL }}`.
+   - For unsupported production stack templates, fall back to `security-baseline.yml` and print `WARN security profile=<profile> stack-specific template unavailable; generated baseline security only`.
+4. Repo visibility:
    ```bash
    gh repo view --json visibility -q '.visibility'
    ```
-   - Public → include `codeql.yml`, replace `__LANGUAGES__` with comma-separated CodeQL identifiers.
-   - Private or `gh` unavailable → skip CodeQL.
-4. If npm/Node.js stack → generate `.github/dependabot.yml` from `dependabot-npm.yml`.
-5. `mkdir -p .github/workflows`.
-6. Per file:
+   - Public or `securityProfile == public` → include `codeql.yml`, replace `__LANGUAGES__` with comma-separated CodeQL identifiers.
+   - Private and `securityProfile != public` → skip CodeQL.
+   - `gh` unavailable and `securityProfile != public` → skip CodeQL with WARN.
+5. If npm/Node.js stack → generate `.github/dependabot.yml` from `dependabot-npm.yml`.
+6. `mkdir -p .github/workflows`.
+7. Per file:
    - Missing → create from template.
    - Sentinel `# @generated by conventions-init` present → overwrite.
    - No sentinel → diff + ask `replace / keep` (default `keep`).
-7. Output filenames per table: `ci-node.yml/ci-python.yml/ci-go.yml/ci-rust.yml/ci-dotnet.yml → .github/workflows/ci.yml`; multi-stack additional → `.github/workflows/ci-<stack>.yml`. `security.yml`, `codeql.yml`, `dependabot-npm.yml → .github/dependabot.yml`.
-8. Print summary block.
+8. Output filenames per table: `ci-node.yml/ci-python.yml/ci-go.yml/ci-rust.yml/ci-dotnet.yml → .github/workflows/ci.yml`; multi-stack additional → `.github/workflows/ci-<stack>.yml`. `security-*.yml → .github/workflows/security.yml`; `codeql.yml`; `dependabot-npm.yml → .github/dependabot.yml`.
+9. Print summary block.
 
 **Execution evidence**:
 - File listing of `.github/workflows/` and `.github/dependabot.yml` after run.
 - Captured user replies for each non-sentinel overwrite.
+- Security profile, chosen security template, and generated security files.
 
 **Success criteria**:
 - All applicable CI files written or explicitly kept on user choice.
 - CodeQL state matches visibility detection.
+- Security workflow state matches `securityProfile`.
+- Generated workflows contain no literal secret values; only `${{ secrets.NAME }}` references.
 
 **If this step fails**:
 - Retry once.
@@ -337,14 +354,20 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 
 **Action**:
 1. Append `stack:` block to `manifest.yaml` (labels, markers, hookGenerated, ciGenerated[], dependabotGenerated). Done by the skill, NOT by `build-conventions.ts`.
+   Include security metadata:
+   - `securityProfile`
+   - `securityGenerated[]`
+   - `securityMatrixVersion: "2026-06-30"`
+   - `stagingUrlSecret: "STAGING_URL"` when `securityProfile == web-staging`
 2. Print final completion block: domains/sources, config audit counts, pre-commit confirmation, CI workflows summary.
 
 **Execution evidence**:
-- `grep -A6 '^stack:' .conventions/manifest.yaml` shows the block.
+- `grep -A12 '^stack:' .conventions/manifest.yaml` shows the block.
 - Completion block printed verbatim.
 
 **Success criteria**:
 - `stack:` block present and parseable as YAML.
+- Security metadata present and consistent with generated workflows.
 - Completion block printed.
 
 **If this step fails**:
@@ -364,7 +387,7 @@ The task is complete when ALL of the following are true:
 - [ ] Step 7 success criteria met (config audit applied or all-ok)
 - [ ] Step 8 success criteria met (hook installed or no-stack note)
 - [ ] Step 9 success criteria met (CI files written or no-git skip)
-- [ ] Step 10 success criteria met (manifest stack block + summary)
+- [ ] Step 10 success criteria met (manifest stack block, security metadata + summary)
 - [ ] No phase was skipped, reordered, parallelised
 - [ ] No unresolved ambiguity remains
 - [ ] Month is present in `Execution context`
@@ -386,3 +409,5 @@ Report: `DONE` or `BLOCKED at step N - <one-line reason>`.
 5. Pre-commit hook generated using `eval "$file"` on staged files → expected: BLOCKED at step 8 (success criterion violated — must use `xargs -0`).
 6. Phase 8 attempted with no `.git/` → expected: step 9 fully skipped, step 10 still required.
 7. `bun run build-conventions.ts` exit ≠ 0 → expected: ERROR step=5 type=command_failed, no further steps.
+8. `--security none` → expected: no `.github/workflows/security.yml` generated and manifest `securityProfile: none`.
+9. `--security web-staging` → expected: security workflow references `secrets.STAGING_URL` and validates missing `TARGET_URL`.

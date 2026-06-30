@@ -89,10 +89,19 @@ Analyzes the project stack and generates:
 
 Stack detection uses `code-conventions/stack-commands.md` to map marker files (tsconfig.json, Cargo.toml, go.mod, etc.) to the appropriate lint commands and CI templates.
 
+Security workflows are opt-in by profile:
+- `--security baseline` (default): Gitleaks + Trivy filesystem scan.
+- `--security production`: baseline plus stack-specific SAST/SCA where templates exist.
+- `--security public`: production profile plus public-repo CodeQL/Dependabot posture.
+- `--security web-staging`: production web profile plus Nuclei/ZAP DAST against `secrets.STAGING_URL`.
+- `--security none`: no security workflow for experiments or local-only repos.
+
+Use `$security-hardening --profile <profile>` in Codex or `/security-hardening --profile <profile>` in Claude Code on an existing conventions-enabled project to apply or change only the security posture.
+
 ### `/conventions-refresh`
 
 Incrementally updates materialized conventions when the knowledge base changes:
-- **Conventions**: hash-based staleness detection per domain
-- **Hooks/CI**: marker-based stack change detection — regenerates if the stack evolved
+- **Conventions**: date-based staleness detection from `.last-updated`
+- **Hooks/CI/security**: marker/profile-based stack change detection — regenerates if the stack or security profile evolved
 
-Use `--full` to force a complete re-detection and rebuild.
+Use `--full` to force a complete re-detection and rebuild. Use `--security keep|none|baseline|production|public|web-staging` to preserve or change security hardening.
