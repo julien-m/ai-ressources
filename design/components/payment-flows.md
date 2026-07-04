@@ -24,7 +24,7 @@ Complète forms.md avec les conventions spécifiques au paiement.
 │ └────────────┘     └─────────────┘          │
 │ Name on card                                 │
 │ ┌──────────────────────────────────────┐    │
-│ │ Jane Doe                             │    │
+│ │ Maya Lee                             │    │
 │ └──────────────────────────────────────┘    │
 │ 🔒 Secured by Stripe                        │
 └──────────────────────────────────────────────┘
@@ -97,8 +97,8 @@ Pattern Ko-fi, Buy Me a Coffee — friction minimale, émotion maximale.
 │ └──────────────────────────────────────┘    │
 │ 280 characters remaining                     │
 │ ☐ Make this a private message                │
-│ Your name: [Jane Doe]                        │
-│ Email (for receipt): [jane@example.com]      │
+│ Your name: [Maya Lee]                        │
+│ Email (for receipt): [maya@north.co]         │
 └──────────────────────────────────────────────┘
 ```
 
@@ -107,7 +107,7 @@ Pattern Ko-fi, Buy Me a Coffee — friction minimale, émotion maximale.
 ┌──────────────────────────────────────────────┐
 │ ✓ Thank you for your support!               │
 │ $5 sent to [Creator Name]                   │
-│ Receipt sent to jane@example.com            │
+│ Receipt sent to maya@north.co               │
 │ [Share your support]                         │
 │ [Twitter]  [Copy link]  [Close]              │
 └──────────────────────────────────────────────┘
@@ -257,7 +257,7 @@ Paiement en un tap — Apple Pay, Google Pay, Shop Pay.
 ┌───────────────────────────────────────────┐
 │              ✓ Payment complete            │
 │     $53.90 charged to Visa ****4242      │
-│     Receipt sent to jane@example.com      │
+│     Receipt sent to maya@north.co         │
 │     ┌───────────────────────────────┐    │
 │     │        Continue               │    │
 │     └───────────────────────────────┘    │

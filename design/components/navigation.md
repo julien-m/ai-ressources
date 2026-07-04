@@ -14,6 +14,14 @@ Sidebar, action menus, tabs, bottom nav, breadcrumbs, and product tour patterns 
 | **Breadcrumbs** | Full path with separator (`/` or `>`) | Same as desktop | Hide entirely OR back arrow + parent name only |
 | **Bottom nav** | NEVER use on web desktop — mobile-only | N/A | 3–5 items (4 ideal); iOS: 49pt+safe area; Android: 80dp |
 
+## Marketing Navigation Taste Rules
+
+- Desktop navigation must render on one line. If it wraps, shorten labels, drop secondary links, or move items into a menu.
+- Desktop nav height max: 80px. Default range: 64-72px.
+- Keep one CTA intent label across nav, hero, and footer.
+- Do not expose destructive or low-frequency actions as primary mobile nav items.
+- Mobile hamburger triggers need a reserved 44x44px hit area and must not overlap logo or CTA.
+
 ---
 
 ## Sidebar

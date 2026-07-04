@@ -23,7 +23,7 @@ frameworks:
 
 files:
   - file: general.md
-    description: "Shared rules for all languages: types, naming, testing, errors, imports, security, mandatory comment triggers (§25)"
+    description: "Shared rules for all languages: types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste"
     applies_to: ["*"]
     priority: 1
 
@@ -92,22 +92,22 @@ files:
 
   # Framework deltas (priority 7 — loaded after language delta when framework detected)
   - file: react.md
-    description: "React hooks, re-renders, composition, data fetching (delta on javascript.md)"
+    description: "React hooks, re-renders, composition, data fetching, motion value boundaries (delta on javascript.md)"
     applies_to: ["React"]
     priority: 7
 
   - file: nextjs.md
-    description: "Next.js App Router, RSC, Server Components, caching (delta on react.md)"
+    description: "Next.js App Router, RSC, Server Components, caching, client motion leaf isolation (delta on react.md)"
     applies_to: ["Next.js"]
     priority: 7
 
   - file: shadcn.md
-    description: "shadcn/ui composition, variants, semantic tokens, forms (delta on react.md + tailwind.md)"
+    description: "shadcn/ui composition, variants, semantic tokens, forms, no unchanged registry defaults (delta on react.md + tailwind.md)"
     applies_to: ["shadcn/ui"]
     priority: 7
 
   - file: tailwind.md
-    description: "Tailwind CSS v4 configuration, theming, utilities (delta on javascript.md)"
+    description: "Tailwind CSS v4 configuration, theming, utilities, marketing layout guardrails (delta on javascript.md)"
     applies_to: ["Tailwind CSS"]
     priority: 7
 

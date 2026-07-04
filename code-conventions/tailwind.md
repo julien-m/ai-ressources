@@ -59,6 +59,9 @@ Define CSS variables at `:root` and `.dark`, then map to Tailwind via `@theme in
 - Use `size-*` for equal width/height (e.g., `size-10` instead of `w-10 h-10`)
 - Mobile-first: write base styles for mobile, add responsive modifiers (`md:`, `lg:`)
 - Use `container mx-auto px-4` for page-level containers
+- Use CSS Grid for multi-column page sections instead of flex percentage math.
+- Use `min-h-[100dvh]` for full-height heroes; avoid `h-screen`.
+- Keep CTA labels on one desktop line; do not constrain CTA width until labels wrap.
 
 ## Utilities
 - `truncate` instead of `overflow-hidden text-ellipsis whitespace-nowrap`
@@ -82,3 +85,4 @@ Define CSS variables at `:root` and `.dark`, then map to Tailwind via `@theme in
 - No raw color values (`bg-blue-500`) — use semantic tokens (`bg-primary`)
 - No `!important` via `!` prefix — fix specificity at the source
 - No deeply nested `@layer` rules — keep CSS flat
+- No arbitrary repeated gradients, radius values, or z-index values across a page. Promote them to tokens.

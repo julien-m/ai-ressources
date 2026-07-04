@@ -145,3 +145,8 @@ When source URLs are provided, **always scrape them first** to extract assets an
 - **Store assets locally** — never hotlink external URLs (they break)
 - Fall back to generic sources only if no source URL exists
 - Verify every image URL loads (HTTP 200). Wikimedia Commons URLs are fragile — avoid them
+
+### 32. Frontend Taste Data
+- Visible UI examples must use domain-specific names, messy-but-plausible metrics, and concrete copy.
+- Do not commit `Jane Doe`, `John Smith`, `Acme`, `Lorem ipsum`, or fake-perfect metrics in user-facing examples.
+- If data is illustrative, mark it as sample data in code or docs and keep it plausible for the domain.

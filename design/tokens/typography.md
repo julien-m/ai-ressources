@@ -75,3 +75,12 @@ Semantic roles mapped across platforms. Sizes in pt (iOS), sp (Android), px (Web
 - Minimum text size: **11pt** (iOS), **12sp** (Android), **12px** (Web)
 - Test with real content — "Lorem ipsum" hides line-break problems
 - See [colors.md](colors.md) for text contrast requirements
+
+## Taste Rules
+
+- Do not default to Inter for every marketing surface. Use it when the brief asks for neutral, accessibility-first, public-sector, or Linear-style work; otherwise pick a brand-appropriate sans such as Geist, Satoshi, Cabinet Grotesk, Outfit, or a project-owned face.
+- Serif is not the default marker for creative or premium work. Use serif only for editorial, luxury, heritage, publication, manuscript, or explicit brand briefs.
+- Do not emphasize one word in a sans headline by injecting a random serif. Use italic, weight, or width from the same family.
+- Avoid repeated default display serifs such as Fraunces or Instrument Serif unless the brand explicitly fits them.
+- Italic display words with descenders (`y`, `g`, `j`, `p`, `q`) need at least `line-height: 1.1` plus bottom reserve to avoid clipping.
+- Hero headlines should be planned with imagery. Long headlines use smaller display sizes; 4-line desktop heroes are a type-scale failure.

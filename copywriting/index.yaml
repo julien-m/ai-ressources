@@ -1,6 +1,6 @@
 files:
   - file: landing-page.md
-    description: "Landing page copywriting: hero, features, social proof, CTA, pricing section"
+    description: "Landing page copywriting: hero, features, social proof, CTA, pricing section, CTA intent, and placeholder-proof sample data"
     status: complete
     use_when: ["writing landing page", "launching product", "marketing site", "conversion optimization"]
     questions_answered: ["How to structure a SaaS landing page?", "What sections to include?", "How to write a compelling hero?"]

@@ -16,6 +16,7 @@ extends: [react]
 - Never import server-only code in client components
 - Never pass non-serializable props (functions, classes, Date) from server to client
 - Use `server-only` package to prevent accidental client imports of sensitive code
+- Components using Motion, pointer physics, scroll listeners, or browser layout APIs must be isolated client leaves. Keep route/page shells server-rendered.
 
 ```tsx
 // BAD — entire page is client
@@ -68,6 +69,7 @@ export default function Dashboard() {
 - Provide `width` and `height` or use `fill` with a sized container
 - Use `next/font` for font loading — eliminates layout shift
 - Configure `priority` on above-the-fold images
+- Use `next/font` or self-hosted fonts with `font-display: swap`; do not link Google Fonts in production HTML.
 
 ## Caching & Revalidation
 - `fetch()` in Server Components is cached by default

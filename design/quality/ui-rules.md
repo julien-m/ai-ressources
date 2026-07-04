@@ -10,6 +10,7 @@ Rules to catch before every deploy. If any of these break, it's a bug.
 - Never place text on a same-color or low-contrast background (WCAG minimum contrast ratio: **4.5:1**)
 - Never use a fixed font size that breaks on small screens
 - Always handle long content: a 40-character username, a product title with no spaces
+- Never ship generic placeholder names or fake-perfect metrics in visible UI examples
 
 ## Layout / Overlap
 - Never let two elements overlap unintentionally
@@ -87,6 +88,15 @@ When a visual mockup or reference image exists (AI-generated or user-provided), 
 - **Sanity-check AI-generated mockups**: AI mockups may show impossible layouts (overlapping elements, inconsistent spacing, text that doesn't fit). Identify and resolve conflicts before implementing — don't blindly reproduce a broken layout
 - **Screenshot after implementation** (Playwright or equivalent) and compare visually to the mockup before marking a task complete
 - **Match intensity of effects**: if the mockup shows a strong glow, implement a strong glow — don't default to subtle
+
+## Taste QA
+
+- Count repeated section patterns. The same family should not appear more than once on a landing page.
+- Count small uppercase eyebrows. Use at most 1 per 3 sections.
+- Check CTA labels for duplicate intent and desktop wrapping.
+- Check one accent color and one radius system across the page.
+- Check that bento/card grids have content-driven cell counts, not filler cells.
+- Check hero first-viewport fit on desktop and mobile.
 
 ## Responsive — Mandatory Rule
 

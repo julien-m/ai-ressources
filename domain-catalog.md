@@ -194,6 +194,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | Signal | Convention file |
 |---|---|
 | `web`, `webapp`, `react`, `next`, `vue`, `svelte`, `html` | `design/systems/web-standards.md` |
+| `design-system`, `design system`, `fluent`, `material`, `carbon`, `polaris`, `atlaskit`, `primer`, `govuk`, `uswds`, `bootstrap`, `radix`, `shadcn` | `design/systems/design-system-selection.md` |
 | `ios`, `macos`, `swift`, `swiftui`, `apple` | `design/systems/apple-hig.md` |
 | `android`, `kotlin`, `material`, `jetpack` | `design/systems/material-design.md` |
 | `cli`, `terminal`, `command-line`, `tui` | `design/systems/cli-patterns.md` |
@@ -203,6 +204,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 |---|---|
 | `web`, `webapp`, `accessibility`, `wcag`, `a11y` | `design/quality/accessibility.md` |
 | `ui`, `frontend`, `responsive`, `layout` | `design/quality/ui-rules.md` |
+| `taste`, `anti-slop`, `ai-tell`, `placeholder`, `hero fit`, `cta wrap`, `bento`, `eyebrow` | `design/quality/design-taste.md` |
 
 ### Design Components (include selectively based on feature context)
 | Signal | Convention file |
@@ -232,6 +234,8 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 |---|---|
 | `webapp`, `app`, `saas` | `design/references/app-views.md` + `design/references/app-ui.md` |
 | `landing-page`, `marketing`, `homepage` | `design/references/landing-pages.md` |
+| `design-read`, `brief interpretation`, `vibe`, `aesthetic`, `audience` | `design/references/design-read-protocol.md` |
+| `redesign`, `site refresh`, `visual overhaul`, `preserve brand` | `design/references/redesign-protocol.md` |
 | `mockup`, `wireframe`, `pencil`, `figma` | `design/references/mockup-specs.md` |
 | `devtools`, `developer-tools` | `design/references/devtools.md` |
 

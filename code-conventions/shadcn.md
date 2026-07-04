@@ -9,6 +9,7 @@ extends: [react, tailwind]
 2. **Compose primitives** — combine existing components (Sidebar + Card + Table), never reinvent
 3. **Use built-in variants** — `variant="outline"`, `size="sm"` instead of custom CSS
 4. **Use semantic tokens** — `bg-primary`, `text-muted-foreground`, never raw `bg-blue-500`
+5. **Never ship registry defaults unchanged** — customize copy, spacing, data, icon family, and visual rhythm for the brief
 
 ## CLI Workflow
 ```bash
@@ -82,3 +83,4 @@ npx shadcn@latest search -q "sidebar"       # search registry
 - No building custom modals/tooltips/dropdowns — use Dialog/Tooltip/DropdownMenu
 - No inline styles — always Tailwind utilities
 - No importing from `@radix-ui` directly — use the shadcn wrapper
+- No default placeholder content from examples (`Acme`, generic teams, perfect metrics)

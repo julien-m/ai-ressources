@@ -1,7 +1,7 @@
 # ai-ressources compiled index
 # Format: path | description [| use_when tags]
 # [QUICK-REF] = read first for common questions in this domain
-# Generated: 2026-06-30T14:50:34.011Z
+# Generated: 2026-07-04T10:20:35.802Z
 
 ## architecture
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
@@ -27,27 +27,27 @@ code-conventions/cloudflare.md | Cloudflare Workers, D1, R2, KV, Hono patterns a
 code-conventions/database.md | SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)
 code-conventions/delphi.md | Delphi/Pascal memory management and style (delta on general.md)
 code-conventions/drizzle.md | Drizzle ORM schema, migrations, queries, D1/PostgreSQL (delta on database.md)
-code-conventions/general.md | Shared rules for all languages: types, naming, testing, errors, imports, security, mandatory comment triggers (§25)
+code-conventions/general.md | Shared rules for all languages: types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste
 code-conventions/go.md | Go-specific patterns and tooling (delta on general.md)
 code-conventions/javascript.md | TypeScript/Node.js/React conventions (delta on general.md)
 code-conventions/logging.md | Structured logging, sensitive data redaction, compliance rules
-code-conventions/nextjs.md | Next.js App Router, RSC, Server Components, caching (delta on react.md)
+code-conventions/nextjs.md | Next.js App Router, RSC, Server Components, caching, client motion leaf isolation (delta on react.md)
 code-conventions/prisma.md | Prisma v7 schema, client, transactions, migrations (delta on database.md)
 code-conventions/python.md | Python conventions: typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)
-code-conventions/react.md | React hooks, re-renders, composition, data fetching (delta on javascript.md)
+code-conventions/react.md | React hooks, re-renders, composition, data fetching, motion value boundaries (delta on javascript.md)
 code-conventions/remotion.md | Remotion compositions, animations, sequencing, assets, rendering (delta on react.md)
 code-conventions/runtime-configs.md | Expected config defaults per runtime/language: tsconfig, package.json, editorconfig, prettier, gitignore patterns. Used by /conventions-init Phase 6.
 code-conventions/rust.md | Rust idioms, ownership, error handling (delta on general.md)
-code-conventions/shadcn.md | shadcn/ui composition, variants, semantic tokens, forms (delta on react.md + tailwind.md)
+code-conventions/shadcn.md | shadcn/ui composition, variants, semantic tokens, forms, no unchanged registry defaults (delta on react.md + tailwind.md)
 code-conventions/stack-commands.md | Stack detection → pre-commit commands, CI template mapping, and opt-in security profile matrix. Used by /conventions-init Phase 7-8.
 code-conventions/swift-kotlin.md | iOS/Android native conventions for Swift and Kotlin (delta on general.md)
-code-conventions/tailwind.md | Tailwind CSS v4 configuration, theming, utilities (delta on javascript.md)
+code-conventions/tailwind.md | Tailwind CSS v4 configuration, theming, utilities, marketing layout guardrails (delta on javascript.md)
 code-conventions/tanstack.md | TanStack Query v5, Router, Start conventions (delta on react.md)
 code-conventions/testing.md | Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage, CLI output testing (ANSI/NO_COLOR)
 
 ## copywriting
 copywriting/email-sequences.md | Email sequence templates: onboarding, trial expiry, win-back, feature announcements | email marketing, onboarding flow, retention, user engagement
-copywriting/landing-page.md | Landing page copywriting: hero, features, social proof, CTA, pricing section | writing landing page, launching product, marketing site, conversion optimization
+copywriting/landing-page.md | Landing page copywriting: hero, features, social proof, CTA, pricing section, CTA intent, and placeholder-proof sample data | writing landing page, launching product, marketing site, conversion optimization
 copywriting/taglines.md | Tagline and headline writing: formulas, patterns, A/B testing guidance | naming product, writing headlines, brand messaging, A/B testing copy
 
 ## design
@@ -65,17 +65,21 @@ design/components/payment-flows.md | Payment UX patterns: tip/donation, subscrip
 design/components/realtime-streams-terminal.md | Real-time streaming patterns for terminal interfaces: ANSI cursor control, CLI buffering (extracted from realtime-streams.md) | terminal streaming, ANSI realtime, CLI live output, tail -f pattern, terminal buffering
 design/components/realtime-streams.md | Real-time streaming UI: WebSocket/SSE, reconnection, buffering, auto-scroll, optimistic updates, token streaming | real-time UI, WebSocket, SSE, live updates, chat UI, AI token streaming
 design/quality/accessibility.md | Accessibility patterns: WCAG 2.2 AA, ARIA, keyboard nav, focus management, screen readers
+design/quality/design-taste.md | Design taste QA: anti-default rules, AI tell ban, hero/nav/CTA/bento pre-flight checks
 design/quality/ui-rules.md | UI visual non-regression rules: alignment, spacing, overflow checks
 design/references/app-ui.md | App UI conventions: universal SaaS patterns, layout, components, views by category | SaaS app design, dashboard layout, app shell, sidebar layout
 design/references/app-views-catalog.md | App views catalog: view compositions from blocks, app template patterns (SaaS B2B, Creator, AI Chat, DevTool, CRM, E-commerce, Mobile, Project Tracker, Internal Tool/Admin Panel), composable traits (Auth, Billing, Team, API, Notifications, Integrations, Audit), views (Chat View, Billing Upgrade Flow, Board, Calendar, Notifications Inbox, Settings Integrations, Media Library) | app template, which views for an app, view composition, SaaS app structure, app pattern shorthand, composable traits, project tracker, kanban board, issue tracker, internal tool, admin panel, chat view, billing upgrade
 design/references/app-views.md | Standard SaaS views catalog: dashboard, settings, user management, auth, activity log | settings page, user management UI, activity log, auth pages, standard SaaS views
 design/references/component-blocks-catalog.md | UI blocks taxonomy and template patterns: marketing section types, application block types (dashboard, data, auth, nav, settings, content, commerce, integration), page compositions by product type, universal ordering rules | page composition, landing page sections, block types, template pattern, section ordering, what sections to include, app blocks, dashboard blocks, CRUD table, auth flow blocks
+design/references/design-read-protocol.md | Design read protocol: infer page kind, audience, vibe, dials, and aesthetic/system direction before design work | design read, brief interpretation, landing page design, portfolio design, redesign
 design/references/design-references.md | Per-company design system references: Vercel, Linear, Stripe, Clerk, etc. | design inspiration, design system reference, company design benchmarks
 design/references/devtools.md | DevTools UI conventions: monitoring dashboards, log viewers, deployment pipelines | devtools UI, monitoring dashboard, deployment UI, container management
 design/references/landing-pages.md | Landing page conventions by product type: devtools, B2B SaaS, fintech, consumer, creators, health, AI, e-commerce | landing page design, marketing site, product page layout, hero section
 design/references/mockup-specs.md | Mockup maquettage reference: explicit px values for component heights, paddings, icon sizes | mockup, maquettage, wireframe, pixel specs, component dimensions
+design/references/redesign-protocol.md | Redesign protocol: preserve vs evolve vs overhaul, audit before touching, preservation rules | redesign, site refresh, visual overhaul, preserve brand
 design/systems/apple-hig.md | Apple Human Interface Guidelines: iOS/macOS patterns, SF Symbols, navigation
 design/systems/cli-patterns.md | CLI design system: colors ANSI, typographie terminal, composants (spinner, progress, prompts, tables), TUI frameworks, layout, error handling
+design/systems/design-system-selection.md | Design system selection: official packages, honest aesthetic implementations, dependency checks
 design/systems/material-design.md | Material Design 3: Android patterns, dynamic color, components
 design/systems/web-standards.md | Web standards: responsive patterns, accessibility, CSS best practices
 design/tokens/colors.md | Color tokens: semantic palette, dark mode, contrast rules

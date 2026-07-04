@@ -164,6 +164,7 @@ Undo is faster UX — action happens immediately, user can revert within a short
 - **Duration threshold**: if data loads in <200ms, do not show skeleton (avoid flash). Use a 200ms delay before showing.
 - **Text placeholders**: rounded rectangles, varying widths (80%, 60%, 70%) to look natural
 - **Image placeholders**: same aspect ratio as real images, with a subtle icon in center (optional)
+- Do not fake perfect data in skeleton-adjacent examples. Use organic names and metrics when previewing loaded states.
 
 ---
 
@@ -207,6 +208,12 @@ Same height as determinate, animated gradient sliding left-to-right continuously
 Sizes: see Component Sizing Reference. Color: accent or `currentColor` (inherit from context). Use cases: button loading, inline fetch, pull-to-refresh.
 - **Never use spinners for initial page load** — use skeleton instead
 - Replace button label with spinner on loading state, keep button width stable
+
+## Empty And Error State Taste
+
+- Empty states explain what is missing and the next action; they are not decorative card fillers.
+- Error states live where the user can act: inline for forms, persistent banner for blocking page issues, toast only for transient failures.
+- Clipboard and success feedback should be short, specific, and reversible when possible.
 
 ---
 

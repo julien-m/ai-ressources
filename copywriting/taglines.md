@@ -24,7 +24,7 @@ Résultat : "Nous aidons les équipes engineering à déployer en continu sans g
 |-----------------|----------------------|
 | "Des heures de config YAML" | "Un git push, c'est en prod" |
 | "Des dashboards éparpillés" | "Toutes vos métriques en un écran" |
-| "Des emails qui finissent en spam" | "99.9 % de deliverability" |
+| "Des emails qui finissent en spam" | "98.7% de deliverability" |
 
 Formule headline : **"De [avant] à [après]"** ou **"Fini [avant]. Place à [après]."**
 

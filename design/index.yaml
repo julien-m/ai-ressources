@@ -22,6 +22,8 @@ sections:
         description: "Material Design 3: Android patterns, dynamic color, components"
       - file: systems/web-standards.md
         description: "Web standards: responsive patterns, accessibility, CSS best practices"
+      - file: systems/design-system-selection.md
+        description: "Design system selection: official packages, honest aesthetic implementations, dependency checks"
       - file: systems/cli-patterns.md
         description: "CLI design system: colors ANSI, typographie terminal, composants (spinner, progress, prompts, tables), TUI frameworks, layout, error handling"
 
@@ -96,13 +98,23 @@ sections:
 
   references:
     description: "Market design references: per-company design systems, landing page conventions, app UI patterns (based on 2026 market analysis)"
-    last_reviewed: "2026-03-25"
+    last_reviewed: "2026-07-04"
     files:
       - file: references/landing-pages.md
         description: "Landing page conventions by product type: devtools, B2B SaaS, fintech, consumer, creators, health, AI, e-commerce"
         use_when: ["landing page design", "marketing site", "product page layout", "hero section"]
         questions_answered: ["Landing page conventions by industry?", "Hero section patterns?", "Social proof placement?"]
         see_also: ["../../copywriting/landing-page.md", "../../seo/core-web-vitals.md"]
+      - file: references/design-read-protocol.md
+        description: "Design read protocol: infer page kind, audience, vibe, dials, and aesthetic/system direction before design work"
+        use_when: ["design read", "brief interpretation", "landing page design", "portfolio design", "redesign"]
+        questions_answered: ["How should the brief be read?", "Which audience and vibe apply?", "When should I ask a design clarification?"]
+        see_also: ["../systems/design-system-selection.md", "../quality/design-taste.md"]
+      - file: references/redesign-protocol.md
+        description: "Redesign protocol: preserve vs evolve vs overhaul, audit before touching, preservation rules"
+        use_when: ["redesign", "site refresh", "visual overhaul", "preserve brand"]
+        questions_answered: ["What should a redesign preserve?", "When is a full redesign justified?", "What should be audited first?"]
+        see_also: ["design-read-protocol.md", "../quality/design-taste.md"]
       - file: references/app-ui.md
         description: "App UI conventions: universal SaaS patterns, layout, components, views by category"
         use_when: ["SaaS app design", "dashboard layout", "app shell", "sidebar layout"]
@@ -146,6 +158,8 @@ sections:
         description: "UI visual non-regression rules: alignment, spacing, overflow checks"
       - file: quality/accessibility.md
         description: "Accessibility patterns: WCAG 2.2 AA, ARIA, keyboard nav, focus management, screen readers"
+      - file: quality/design-taste.md
+        description: "Design taste QA: anti-default rules, AI tell ban, hero/nav/CTA/bento pre-flight checks"
 
 sub_domains:
   design-tokens:
@@ -176,6 +190,8 @@ sub_domains:
     sources:
       - references/app-views.md
       - references/app-views-catalog.md
+      - references/design-read-protocol.md
+      - references/redesign-protocol.md
       - references/mockup-specs.md
       - systems/web-standards.md
 
@@ -185,6 +201,7 @@ sub_domains:
     sources:
       - quality/accessibility.md
       - quality/ui-rules.md
+      - quality/design-taste.md
 
   design-dataviz:
     label: "Data visualization — charts, metrics, KPIs, dashboard, sparklines"

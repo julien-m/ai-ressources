@@ -97,6 +97,8 @@ First impression section — the most important section on any page.
 
 **Variants:** centered, left-aligned (text left / visual right), split with image, video background, gradient, interactive demo.
 
+**Taste constraints:** max 4 text elements, max 2 desktop headline lines, subtext under 20 words where possible, CTA visible in the initial viewport. Logo walls, pricing teasers, trust micro-copy, and feature bullets belong in the next section.
+
 #### Banner / Topbar
 Announcement bar above the header.
 
@@ -243,6 +245,8 @@ Mixed-size feature cards in asymmetric grid.
 | 3 | Size hierarchy | 1 large card + 2-4 smaller cards to emphasize primary feature |
 
 **Variants:** 2x2, 3x3, asymmetric, with animations, with interactive demos.
+
+**Taste constraints:** cell count must match real content count. Add 2-3 visual treatments in a multi-cell grid: product image, pattern, tinted background, diagram, or brand-specific gradient. Do not ship six white cards with text only.
 
 #### Integration
 Supported tools and platform logos.

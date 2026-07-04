@@ -37,6 +37,14 @@ Trois patterns de navbar observés :
 7. **CTA final** : répétition du message hero + 2 CTAs
 8. **Footer** : 4–6 colonnes, status système, toggle dark/light
 
+### Anti-slop hero rules
+
+- The hero is a single focused moment: optional eyebrow, H1, subtext, CTA group. Move logo walls, pricing teasers, feature bullets, and trust micro-copy below.
+- H1 max: 2 lines on desktop. Subtext max: 20 words and 3-4 lines.
+- CTA group must be visible without scroll on a typical desktop viewport.
+- Do not use a centered hero by default when the brief calls for high variance. Use split, asymmetric, pinned, or media-led structures.
+- Do not repeat the same CTA intent under different labels.
+
 ### Typographie
 
 | Élément | Taille | Poids |
@@ -66,6 +74,14 @@ Trois niveaux observés :
 3. **Subtle** (Resend, Stripe) : animations discrètes, priorité donnée au contenu
 
 **Règle** : Le motion doit communiquer le produit, pas décorer. Exemples réussis : Linear (scroll-jacking qui guide dans l'app), Vercel (données live AI Gateway), Resend (cube qui tourne légèrement).
+
+### Taste QA before publishing
+
+- Count eyebrows: max 1 per 3 sections.
+- Do not repeat a section layout family more than once.
+- Bento grids must have exactly the number of cells the content requires and at least 2 visual treatments in a multi-cell grid.
+- Avoid default AI-purple gradients and default warm-craft premium palettes unless the brand requires them.
+- Use real product media or specific generated assets; avoid generic atmospheric stock.
 
 ---
 
@@ -269,6 +285,8 @@ Avant de livrer :
 - [ ] Le footer contient : navigation, statut système, liens légaux
 - [ ] La page est lisible en dark ET light selon le mode par défaut choisi
 - [ ] Les screenshots de l'app sont des captures réelles, pas des maquettes idéalisées
+- [ ] Aucun placeholder type `Jane Doe`, `Acme`, `Lorem ipsum` ou métrique parfaite n'est visible
+- [ ] Les CTAs ne se dupliquent pas par intention et ne wrap pas sur desktop
 
 **Ajouts par type :**
 - Devtools : code snippets interactifs, frameworks listés, badge GitHub

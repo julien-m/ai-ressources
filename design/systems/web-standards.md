@@ -34,6 +34,14 @@ Tailwind-aligned defaults. Mobile-first: use `min-width` media queries.
 - Use `max-width` + `margin: 0 auto` — never stretch text to full viewport
 - Touch targets: minimum **48 × 48px** (WCAG 2.5.8). Adjacent targets: min **8px** gap. Desktop: smaller OK if hover feedback exists
 
+## Landing And Marketing Layout Caps
+
+- Use `min-height: 100dvh` for full-height sections, never `h-screen`, to avoid mobile browser chrome jumps.
+- Hero top padding maxes at roughly 6rem on desktop. If the hero feels low, adjust type or media scale rather than adding more top padding.
+- Desktop nav must fit one line and stay under 80px tall.
+- Hero copy must fit in the first viewport with CTAs visible. Keep subtext under 20 words when possible.
+- Logo walls and trust strips sit under the hero, not inside the hero stack.
+
 ## Spacing Scale
 
 Base unit: **4px**. Matches Tailwind default scale.
@@ -105,6 +113,13 @@ Standardized layers prevent z-index wars.
 - Lazy load below-the-fold images: `loading="lazy"`
 - Preload critical fonts and LCP images
 - See [../quality/ui-rules.md](../quality/ui-rules.md) for visual non-regression rules
+
+## Implementation Guardrails
+
+- Use CSS Grid instead of flex percentage math for multi-column layouts.
+- Declare mobile collapse behavior for every multi-column section.
+- Keep z-index on the named scale. If layering becomes complex, create an isolated stacking context intentionally.
+- Reserve media dimensions with `aspect-ratio`, width/height, or fixed containers before loading.
 
 ## PWA Considerations
 - `theme-color` meta tag for browser chrome coloring

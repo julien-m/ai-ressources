@@ -60,6 +60,14 @@ Use semantic names, never raw hex values in components.
 - Shadows are invisible on dark backgrounds — use border or tonal difference instead
 - Test dark mode independently — don't assume auto-inversion works
 
+## Taste Calibration
+
+- Lock one accent color per page or product surface. The same accent drives CTAs, links, focus, active nav, and badges unless a semantic status token is required.
+- Do not default to AI-purple or blue glows. Use purple only when the brand, brief, or product category explicitly calls for it.
+- Premium consumer briefs must not automatically use cream, brass, clay, oxblood, ochre, or espresso palettes. Rotate toward cold luxury, forest, cobalt, terracotta-plus-slate, olive-plus-brick, or monochrome-plus-one-pop unless the brand proves the warm-craft palette.
+- Shadows inherit the background hue. Avoid pure black shadows on light backgrounds.
+- Every palette decision must survive dark mode, color-blind review, and CTA contrast review.
+
 ## WCAG Contrast Requirements
 |Level|Normal text (>=16px)|Large text (>=18px bold / 24px)|UI components|
 |-----|--------------------|-----------------------------|-------------|
@@ -91,3 +99,5 @@ Use semantic names, never raw hex values in components.
 - [ ] Focus rings visible in both themes (see [../quality/ui-rules.md](../quality/ui-rules.md))
 - [ ] Status colors (success/warning/error) tested for color blindness (protanopia, deuteranopia)
 - [ ] Opacity tokens used for overlays — no hardcoded rgba values
+- [ ] Accent color is consistent across the whole page
+- [ ] No default AI-purple or default warm-craft palette appears without brand justification

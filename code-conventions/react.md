@@ -61,6 +61,7 @@ const [user, posts] = await Promise.all([getUser(id), getPosts(id)]);
 - Derive state from existing state instead of duplicating (`useMemo` over separate `useState`)
 - Use `useReducer` for complex state transitions with multiple related fields
 - Avoid syncing state between components — lift state up or use a shared store
+- Do not store continuous pointer, scroll, or animation values in React state. Use refs, Motion values, CSS variables, or platform animation primitives.
 
 ## Error Boundaries
 - Wrap route-level components with error boundaries
@@ -76,6 +77,7 @@ const [user, posts] = await Promise.all([getUser(id), getPosts(id)]);
 - Use `useTransition` for non-urgent state updates (search, filtering)
 - Avoid deep component trees — flatten when possible
 - Prefer SVG sprites or icon components over inline SVGs repeated in lists
+- Isolate motion-heavy components as leaves so interaction state does not re-render the whole page.
 
 ## Anti-Patterns
 - No `useEffect` for derived state — compute inline or `useMemo`

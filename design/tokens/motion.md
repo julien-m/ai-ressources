@@ -188,6 +188,14 @@ val animSpec = if (reduceMotion) snap() else spring()
 - Fade-in au scroll : une seule fois par élément (pas de re-animation au scroll up)
 - Threshold d'apparition : quand l'élément est visible à 20% dans le viewport
 
+## Taste Motion Rules
+
+- Motion must explain state, reveal product behavior, or support navigation. Decorative loops are a last resort.
+- Never animate continuous pointer, scroll, or physics values through React state. Use Motion values, CSS variables, or platform-native animation primitives.
+- Scroll-jacking is banned for apps and allowed on marketing pages only when it is the concept of the page.
+- Avoid infinite micro-animation loops. Use entrance, hover, focus, active, loading, or explicit demo motion.
+- Hero motion must not delay the CTA or block input.
+
 ---
 
 ## Guidelines
@@ -200,3 +208,4 @@ val animSpec = if (reduceMotion) snap() else spring()
 - **L'absence d'animation est un choix valide.** Si un élément n'a pas besoin de transition, `instant` est le bon token
 - Performance : viser 60fps — si une animation cause du jank, la simplifier ou la supprimer
 - Le délai de 200ms avant d'afficher un loading state est critique — l'appliquer systématiquement
+- Import Motion from `motion/react` in new React work; `framer-motion` is legacy-compatible but not preferred.

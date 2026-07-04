@@ -53,9 +53,9 @@ Tout doit être visible **sans scroller** sur desktop (viewport ~900px) :
 2. **Subheadline** -- bénéfice concret ou clarification (1-2 lignes)
 3. **CTA principal** -- bouton unique, contrasté, action claire
 4. **Visual** -- screenshot produit, vidéo, ou illustration
-5. **Social proof minimal** -- logos ou metric ("Trusted by 10 000+ teams")
+5. **Social proof minimal** -- logos ou métrique sourcée, placée sous le hero si elle encombre le premier écran
 
-Interdit above the fold : menu déroulant complexe, slider, vidéo autoplay avec son, formulaire > 2 champs.
+Interdit above the fold : menu déroulant complexe, slider, vidéo autoplay avec son, formulaire > 2 champs, feature bullets, pricing teaser, trust strip dans le hero.
 
 ## 4. CTA -- Patterns de boutons
 
@@ -161,6 +161,9 @@ Limiter à 3-6 features sur la landing. Trop de features = aucune ne ressort.
 | Stock photos génériques | Détruit la crédibilité | Screenshots produit ou illustrations custom |
 | Slider/carousel en hero | Personne ne voit les slides 2+ | Un message fort, pas cinq faibles |
 | Jargon interne | Le visiteur n'a pas le contexte | Tester le headline sur quelqu'un hors équipe |
+| Plusieurs CTA pour la même intention | Donne l'impression d'un template et dilue l'action | Choisir un seul libellé par intention |
+| Preuve sociale fake-perfect | Semble générée ou invérifiable | Utiliser chiffres sourcés, organiques, ou supprimer |
+| Placeholder générique | Casse la crédibilité | Employer noms, métiers, entreprises et données du domaine |
 
 ## 10. Checklist pré-publication
 
@@ -174,6 +177,8 @@ Limiter à 3-6 features sur la landing. Trop de features = aucune ne ressort.
 - [ ] Temps de chargement < 3 secondes (LCP)
 - [ ] Aucun lien externe dans le corps (garder le visiteur sur la page)
 - [ ] Le CTA final reprend la promesse hero avec une formulation différente
+- [ ] Aucun CTA ne wrap sur desktop
+- [ ] Aucune donnée parfaite ou placeholder générique n'est visible
 
 ## Voir aussi
 - [Landing pages design](../design/references/landing-pages.md) — conventions visuelles par type de produit

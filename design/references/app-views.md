@@ -117,11 +117,11 @@ Profil personnel de l'utilisateur connecté.
 │ └────────┘                                                   │
 │ Display name                                                 │
 │ ┌────────────────────────────────┐                          │
-│ │ Jane Doe                       │                          │
+│ │ Maya Lee                       │                          │
 │ └────────────────────────────────┘                          │
 │ Email                                                        │
 │ ┌────────────────────────────────┐                          │
-│ │ jane@example.com               │  ✓ Verified              │
+│ │ maya@north.co                  │  ✓ Verified              │
 │ └────────────────────────────────┘                          │
 │ Role (read-only)                                             │
 │ [Admin]                                                      │
@@ -305,9 +305,9 @@ Gestion des membres d'une organisation.
 │ Team                                          [Invite ✉]    │
 │ 5 members · 3 pending invites                                │
 │ MEMBERS                                                      │
-│ [Avatar] Jane Doe          jane@ex.com    [Admin ▾]    ⋯    │
+│ [Avatar] Maya Lee          maya@north.co  [Admin ▾]    ⋯    │
 │          Joined Mar 2025                   (you)             │
-│ [Avatar] John Smith        john@ex.com    [Member ▾]   ⋯    │
+│ [Avatar] Noah Adler        noah@north.co  [Member ▾]   ⋯    │
 │          Joined Jun 2025                                     │
 │ [Avatar] Alice Martin      alice@ex.com   [Viewer ▾]   ⋯    │
 │          Joined Jan 2026                                     │
@@ -399,8 +399,8 @@ Vue d'administration des utilisateurs.
 │ Users                              🔍 Search    [+ Add user] │
 │ [All ▾]  [Role ▾]  [Status ▾]  [Date range ▾]              │
 │ □  USER              EMAIL              ROLE    STATUS  LAST │
-│ □  [Av] Jane Doe     jane@ex.com        Admin   ● Act.  2m  │
-│ □  [Av] John Smith   john@ex.com        Member  ● Act.  1d  │
+│ □  [Av] Maya Lee     maya@north.co      Admin   ● Act.  2m  │
+│ □  [Av] Noah Adler   noah@north.co      Member  ● Act.  1d  │
 │ □  [Av] Alice M.     alice@ex.com       Viewer  ○ Inv.  —   │
 │ □  [Av] Bob Wilson   bob@ex.com         Member  ◌ Susp. 30d │
 │ Showing 4 of 128 users                    [← 1 2 3 ... →]  │
@@ -423,15 +423,15 @@ Profil d'un utilisateur vu par un administrateur.
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│ ← Users    Jane Doe                         [Actions ▾]     │
-│ ┌────────┐  Jane Doe                                        │
-│ │ Avatar │  jane@example.com                                │
+│ ← Users    Maya Lee                         [Actions ▾]     │
+│ ┌────────┐  Maya Lee                                        │
+│ │ Avatar │  maya@north.co                                   │
 │ └────────┘  [Admin]  ● Active  Joined Mar 2025              │
 │ ─────────────────────────────────────────────────────────── │
 │ DETAILS                           ACTIVITY                   │
-│ Email    jane@example.com         [Av] Updated profile  2m  │
+│ Email    maya@north.co            [Av] Updated profile  2m  │
 │ Role     Admin                    [Av] Created item X   1h  │
-│ 2FA      ● Enabled                [Av] Invited @john    1d  │
+│ 2FA      ● Enabled                [Av] Invited @noah    1d  │
 │ Sessions 2 active                 [Av] Logged in        2d  │
 │ Created  Mar 15, 2025                                        │
 │ Last     2min ago                                            │
@@ -462,17 +462,17 @@ Journal d'activité chronologique pour la sécurité et le debugging.
 ┌──────────────────────────────────────────────────────────────┐
 │ Activity log                    [Filter ▾]  [Date range ▾]  │
 │ TODAY                                                        │
-│ │ [Av] Jane Doe                              14:32:05 UTC   │
+│ │ [Av] Maya Lee                              14:32:05 UTC   │
 │ │ Updated billing · Payment method changed                   │
 │ │ IP: 203.0.113.42                                          │
 │ │                                                            │
 │ │ [Av] System                                14:30:12 UTC   │
 │ │ Webhook delivered · invoice.paid → https://...             │
 │ │                                                            │
-│ │ [Av] John Smith                            13:15:00 UTC   │
+│ │ [Av] Noah Adler                            13:15:00 UTC   │
 │ │ Invited user · bob@example.com as Member                   │
 │ YESTERDAY                                                    │
-│ │ [Av] Jane Doe                              18:42:33 UTC   │
+│ │ [Av] Maya Lee                              18:42:33 UTC   │
 │ │ Revoked API token · "CI/CD"                                │
 │ │ IP: 203.0.113.42                                          │
 │                                              [Load more]     │
@@ -507,7 +507,7 @@ Journal d'activité chronologique pour la sécurité et le debugging.
 │         Welcome back                      │
 │ Email                                     │
 │ ┌───────────────────────────────────┐    │
-│ │ jane@example.com                   │    │
+│ │ maya@north.co                      │    │
 │ └───────────────────────────────────┘    │
 │ Password                 Forgot password? │
 │ ┌───────────────────────────────────┐    │
@@ -626,12 +626,12 @@ Panneau de notifications in-app.
 ┌──────────────────────────────────┐
 │ Notifications        [Mark all read]│
 │ NEW                              │
-│ ● Jane mentioned you in "Q1..."  │
+│ ● Maya mentioned you in "Q1..."  │
 │   2min ago                       │
 │ ● Payment of $29 received       │
 │   1hr ago                        │
 │ EARLIER                          │
-│ ○ John joined your workspace     │
+│ ○ Noah joined your workspace     │
 │   Yesterday                      │
 │ ○ Your plan was renewed          │
 │   3 days ago                     │
@@ -709,7 +709,7 @@ Panneau de notifications in-app.
 ├──────────────────────────────────────────────────────────────┤
 │ RECENT                                                       │
 │ ↻ Dashboard settings                                        │
-│ ↻ jane@example.com                                          │
+│ ↻ maya@north.co                                             │
 │ QUICK ACTIONS                                                │
 │ + Create new item                                            │
 │ ⚙ Go to Settings                                            │
@@ -760,12 +760,12 @@ Connected third-party apps and services.
 │ ┌────────────────────────────────────────────────────────┐  │
 │ │ [Logo] Slack                        ● Connected  [⋯]  │  │
 │ │        Post notifications to #product channel          │  │
-│ │        Connected by @jane · Mar 1, 2026                │  │
+│ │        Connected by @maya · Mar 1, 2026                │  │
 │ └────────────────────────────────────────────────────────┘  │
 │ ┌────────────────────────────────────────────────────────┐  │
 │ │ [Logo] GitHub                       ● Connected  [⋯]  │  │
 │ │        Auto-link commits to issues                     │  │
-│ │        Connected by @john · Feb 15, 2026               │  │
+│ │        Connected by @noah · Feb 15, 2026               │  │
 │ └────────────────────────────────────────────────────────┘  │
 │ AVAILABLE                                                    │
 │ ┌──────────┐ ┌──────────┐ ┌──────────┐ ┌──────────┐       │
@@ -871,14 +871,14 @@ Security and compliance event history.
 │ Audit log                                                    │
 │ [Search events...]  [Actor ▾]  [Action ▾]  [Date range ▾]   │
 │ TIMESTAMP           ACTOR          ACTION          TARGET    │
-│ Mar 20, 14:32 UTC   [Av] Jane D.  Deleted token   "CI/CD"  │
-│ Mar 20, 14:30 UTC   [Av] Jane D.  Updated role    @john →   │
+│ Mar 20, 14:32 UTC   [Av] Maya L.  Deleted token   "CI/CD"  │
+│ Mar 20, 14:30 UTC   [Av] Maya L.  Updated role    @noah →   │
 │                                                    Member    │
-│ Mar 20, 09:15 UTC   [Av] John S.  Logged in       —         │
+│ Mar 20, 09:15 UTC   [Av] Noah A.  Logged in       —         │
 │                                    from Paris, FR            │
 │ Mar 19, 18:42 UTC   System        Renewed plan    Pro Plan  │
 │ Mar 19, 16:00 UTC   [Av] Alice M. Invited user    bob@ex…   │
-│ Mar 19, 10:23 UTC   [Av] Jane D.  Enabled 2FA     —         │
+│ Mar 19, 10:23 UTC   [Av] Maya L.  Enabled 2FA     —         │
 │ Showing 6 of 1,247 events              [← 1 2 3 ... 42 →]  │
 └──────────────────────────────────────────────────────────────┘
 ```
@@ -889,7 +889,7 @@ Security and compliance event history.
 ┌──────────────────────────────────────────────────────────────┐
 │ Event detail                                                 │
 │ Action       Deleted token                                   │
-│ Actor        Jane Doe (jane@example.com)                     │
+│ Actor        Maya Lee (maya@north.co)                        │
 │ Timestamp    Mar 20, 2026 14:32:15 UTC                       │
 │ IP address   203.0.113.42                                    │
 │ User agent   Chrome 122 · macOS 15.3                         │

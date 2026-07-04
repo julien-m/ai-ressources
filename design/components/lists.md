@@ -195,8 +195,8 @@ Expanded:  ▼ Section title [3 items]
 ```
 NAME             STATUS     CREATED        AMOUNT
 ───────────────────────────────────────────────────
-Jane Doe         ● Active   Mar 20, 2026   $1,234
-John Smith       ○ Invited  Mar 19, 2026   $567
+Maya Lee         ● Active   Mar 20, 2026   $1,234
+Noah Kim         ○ Invited  Mar 19, 2026   $567
 ```
 
 - Click to cycle: unsorted → ascending → descending → unsorted
@@ -225,12 +225,12 @@ John Smith       ○ Invited  Mar 19, 2026   $567
 ### Row Expansion (Inline Detail)
 
 ```
-│ Jane Doe    ● Active    Mar 20    $1,234    ▶ │
+│ Maya Lee    ● Active    Mar 20    $1,234    ▶ │
 ├─────────────────────────────────────────────────┤
-│ John Smith  ○ Invited   Mar 19    $567      ▼ │
+│ Noah Adler  ○ Invited   Mar 19    $567      ▼ │
 │ ┌─────────────────────────────────────────┐    │
-│ │ Email: john@example.com                 │    │
-│ │ Role: Member · Invited by @jane         │    │
+│ │ Email: noah@north.co                    │    │
+│ │ Role: Member · Invited by @maya         │    │
 │ │ Last login: Never                       │    │
 │ └─────────────────────────────────────────┘    │
 │ Alice M.    ● Active    Mar 18    $890      ▶ │

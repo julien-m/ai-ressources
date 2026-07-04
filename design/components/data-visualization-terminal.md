@@ -28,7 +28,7 @@ Mini-graphiques inline en caracteres Unicode block elements. Usage principal : i
 Requests   ████████████████████████ 2,431
 Errors     ██░░░░░░░░░░░░░░░░░░░░    89
 Latency    ███████████░░░░░░░░░░░   142ms
-Uptime     ████████████████████████ 99.9%
+Uptime     ████████████████████████ 98.7%
 ```
 
 `█` = valeur remplie, `░` = espace restant jusqu'au max. Largeur fixe 24 caracteres. Label a gauche, valeur a droite. Trier par valeur decroissante sauf si l'ordre a un sens metier.

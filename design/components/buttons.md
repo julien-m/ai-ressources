@@ -79,6 +79,8 @@ Applies to all button variants (primary, secondary, ghost, destructive, icon-onl
 - Two icons (leading + trailing) — except dropdown chevron or external link indicator
 - Icon trailing without semantic meaning — ↗ (external link) and ▾ (dropdown) are the only valid trailing icons
 - Truncated labels — if the label doesn't fit, use a shorter label or icon-only
+- Wrapped desktop CTA labels — keep primary CTA labels to 1-3 words or widen the button
+- Duplicate CTA intent labels on one page — choose one label for each intent and reuse it
 
 ## Button Groups
 ### Horizontal Group
@@ -258,6 +260,10 @@ ON:  [○○○○○○○○○○●] Accent track, right thumb
 
 ## Checklist
 - [ ] Only one primary button per view
+- [ ] Primary and ghost buttons pass contrast on their actual background
+- [ ] Loading state preserves button width
+- [ ] Desktop CTA text stays on one line
+- [ ] Icon-only buttons have `aria-label` and tooltip
 - [ ] All icon-only buttons have `aria-label` and tooltip
 - [ ] Button sizes match platform conventions (44pt iOS, 48dp Android, 44–48px web)
 - [ ] Touch targets meet minimums even if visual size is smaller
