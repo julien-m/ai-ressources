@@ -258,6 +258,8 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `mermaid`, `gherkin`, `diagram`, `flowchart`, `sequence`, `state` | `conventions/diagrams.md` |
 | `naming`, `file-name`, `directory`, `kebab-case` | `conventions/naming.md` |
 | `convention-conflict`, `override`, `authority` | `conventions/authority.md` |
+| `technical-writing`, `developer-docs`, `readme`, `tutorial`, `runbook`, `procedure` | `conventions/technical-writing.md` |
+| `api-reference`, `docstring`, `code-sample`, `code-example`, `cli-help`, `developer-guide` | `conventions/technical-writing.md` |
 
 ---
 

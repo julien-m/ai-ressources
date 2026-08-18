@@ -1,7 +1,7 @@
 # ai-ressources compiled index
 # Format: path | description [| use_when tags]
 # [QUICK-REF] = read first for common questions in this domain
-# Generated: 2026-07-04T10:20:35.802Z
+# Generated: 2026-08-18T12:23:33.235Z
 
 ## architecture
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
@@ -17,6 +17,7 @@ architecture/webhook-patterns.md | Webhook design: delivery guarantees, retry lo
 conventions/authority.md | Convention authority and conflict resolution: hierarchy levels, non-overridable rules, design convention priority
 conventions/diagrams.md | Diagram conventions: Gherkin for business flows, Mermaid for technical flows. Applies to all contexts (code, specs, rules, skills, docs)
 conventions/naming.md | File and directory naming conventions: kebab-case, extensions, encoding, macOS case-insensitivity warning
+conventions/technical-writing.md | Technical writing conventions for developer docs, procedures, code samples, API references, accessibility, and AI-generated content
 
 ## code-conventions
 conventions/diagrams.md | Diagram conventions (transversal — also loaded outside code context). See conventions/

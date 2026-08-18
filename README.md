@@ -30,7 +30,7 @@ After setup, restart your shell or run `source ~/.zshrc`.
 architecture/      → Auth flows, multi-tenant, rate limiting, webhook patterns
 claude/            → Claude Code skills and rules (synced to ~/.claude/ via cc-hub)
 code-conventions/  → Language-agnostic and per-language coding standards
-conventions/       → Transversal conventions (naming, authority, diagrams)
+conventions/       → Transversal conventions (naming, authority, diagrams, technical writing)
 copywriting/       → Landing pages, email sequences, taglines
 design/            → Design tokens, platform systems (HIG, M3, Web), components
 legal/             → CGU, CGV, RGPD, privacy, cookies, mentions légales, MoR

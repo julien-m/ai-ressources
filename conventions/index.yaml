@@ -7,3 +7,6 @@ files:
 
   - file: naming.md
     description: "File and directory naming conventions: kebab-case, extensions, encoding, macOS case-insensitivity warning"
+
+  - file: technical-writing.md
+    description: "Technical writing conventions for developer docs, procedures, code samples, API references, accessibility, and AI-generated content"
