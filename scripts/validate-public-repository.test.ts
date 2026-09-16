@@ -79,7 +79,7 @@ describe("public repository contracts", () => {
 			expect.objectContaining({ run: "bun audit --audit-level=high" }),
 		);
 		expect(security.jobs["filesystem-scan"].steps).toContainEqual(
-			expect.objectContaining({ uses: "aquasecurity/trivy-action@0.36.0" }),
+			expect.objectContaining({ uses: "aquasecurity/trivy-action@v0.36.0" }),
 		);
 		expect(dependabot.updates).toHaveLength(2);
 	});
