@@ -1,77 +1,77 @@
-#!/bin/bash
-set -e
+#!/usr/bin/env bash
+set -euo pipefail
 
-# ai-ressources — Setup script
-# Run this once after cloning to configure the knowledge base for Claude Code.
+# ai-ressources setup: configure the knowledge-base path and optionally link portable assets.
 
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
-SHELL_RC="$HOME/.zshrc"
 VAR_NAME="AI_RESOURCES_PATH"
+LINK_ASSETS=false
+
+if [[ "${1:-}" == "--link-assets" ]]; then
+  LINK_ASSETS=true
+  shift
+fi
+
+if [[ "$#" -ne 0 ]]; then
+  echo "Usage: ./setup.sh [--link-assets]" >&2
+  exit 2
+fi
+
+if [[ -n "${AI_RESOURCES_SHELL_RC:-}" ]]; then
+  SHELL_RC="$AI_RESOURCES_SHELL_RC"
+else
+  case "$(basename "${SHELL:-sh}")" in
+    zsh) SHELL_RC="$HOME/.zshrc" ;;
+    bash) SHELL_RC="$HOME/.bashrc" ;;
+    *) SHELL_RC="$HOME/.profile" ;;
+  esac
+fi
 
 echo "📦 ai-ressources setup"
 echo "   Base directory: $BASE_DIR"
 echo ""
 
-# ------------------------------------------------------------------
-# 1. Check cc-hub is installed
-# ------------------------------------------------------------------
-if ! command -v cc-hub &>/dev/null; then
-  echo "❌ cc-hub is not installed."
-  echo ""
-  echo "   cc-hub is required to link Claude Code skills and rules."
-  echo "   Install it:"
-  echo ""
-  echo "     git clone https://github.com/julien-m/cc-hub.git ~/projects/cc-hub"
-  echo "     cd ~/projects/cc-hub && bun install && bun link"
-  echo ""
-  echo "   Then re-run this script."
-  exit 1
-fi
-echo "✓ cc-hub found: $(which cc-hub)"
+EXPECTED_EXPORT="export ${VAR_NAME}=\"${BASE_DIR}\""
 
-# ------------------------------------------------------------------
-# 2. Set AI_RESOURCES_PATH in shell profile
-# ------------------------------------------------------------------
-if grep -q "^export ${VAR_NAME}=" "$SHELL_RC" 2>/dev/null; then
-  # Update existing export
-  sed -i '' "s|^export ${VAR_NAME}=.*|export ${VAR_NAME}=\"${BASE_DIR}\"|" "$SHELL_RC"
-  echo "✓ Updated ${VAR_NAME} in $SHELL_RC"
+if grep -Fqx "$EXPECTED_EXPORT" "$SHELL_RC" 2>/dev/null; then
+  echo "✓ ${VAR_NAME} already configured in $SHELL_RC"
+elif grep -q "^export ${VAR_NAME}=" "$SHELL_RC" 2>/dev/null; then
+  echo "❌ $SHELL_RC already defines ${VAR_NAME}." >&2
+  echo "   Update that line to: $EXPECTED_EXPORT" >&2
+  exit 1
 else
-  echo "" >> "$SHELL_RC"
-  echo "# ai-ressources knowledge base" >> "$SHELL_RC"
-  echo "export ${VAR_NAME}=\"${BASE_DIR}\"" >> "$SHELL_RC"
+  mkdir -p "$(dirname "$SHELL_RC")"
+  printf '\n# ai-ressources knowledge base\n%s\n' "$EXPECTED_EXPORT" >> "$SHELL_RC"
   echo "✓ Added ${VAR_NAME} to $SHELL_RC"
 fi
 
-# Export for current session
-export ${VAR_NAME}="$BASE_DIR"
+export "$VAR_NAME=$BASE_DIR"
 
 # ------------------------------------------------------------------
-# 3. Link Claude Code assets via cc-hub
-# ------------------------------------------------------------------
-echo ""
-echo "Linking Claude Code assets..."
+if $LINK_ASSETS; then
+  if ! command -v cc-hub >/dev/null 2>&1; then
+    echo "❌ --link-assets requires an existing cc-hub installation." >&2
+    echo "   The knowledge base is configured; rerun without this option or install assets manually." >&2
+    exit 1
+  fi
 
-# Skills (generic loop, idempotent)
-for skill_dir in "$BASE_DIR"/claude/skills/*/; do
-  [ -d "$skill_dir" ] || continue
-  skill_md="${skill_dir}SKILL.md"
-  [ -f "$skill_md" ] || continue
-  name="$(basename "$skill_dir")"
-  cc-hub skill link "$skill_md" 2>/dev/null && \
-    echo "  ✓ skill: $name" || echo "  ⚠ skill $name already linked"
-done
+  echo ""
+  echo "Linking portable assets from .agent-sync/..."
+  for skill_dir in "$BASE_DIR"/.agent-sync/skills/*; do
+    [[ -f "$skill_dir/SKILL.md" ]] || continue
+    cc-hub skill link "$skill_dir" --scope global --targets all --force
+    echo "  ✓ skill: $(basename "$skill_dir")"
+  done
 
-# Rules
-for rule in "$BASE_DIR"/claude/rules/*.md; do
-  [ -f "$rule" ] || continue
-  name="$(basename "$rule" .md)"
-  cc-hub rule link "$rule" 2>/dev/null && \
-    echo "  ✓ rule: $name" || echo "  ⚠ rule $name already linked"
-done
+  for rule in "$BASE_DIR"/.agent-sync/rules/*.md; do
+    [[ -f "$rule" ]] || continue
+    cc-hub rule link "$rule" --scope global --targets all --force
+    echo "  ✓ rule: $(basename "$rule" .md)"
+  done
+else
+  echo "✓ Portable asset linking skipped (optional: ./setup.sh --link-assets)"
+fi
 
-# ------------------------------------------------------------------
-# 4. Done
 # ------------------------------------------------------------------
 echo ""
 echo "✅ Setup complete."
@@ -79,7 +79,4 @@ echo ""
 echo "   ${VAR_NAME}=${BASE_DIR}"
 echo "   Restart your shell or run: source $SHELL_RC"
 echo ""
-echo "   Usage in Claude Code:"
-echo "     /ai-res              → list all domains"
-echo "     /ai-res design       → load design reference"
-echo "     /ai-res stack        → vendor comparison sheets"
+echo "   Browse index.yaml or point your agent at $BASE_DIR."

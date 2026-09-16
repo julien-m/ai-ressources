@@ -1,6 +1,6 @@
 # Design System Selection
 
-Attribution: adapted from the Fable anti-slop frontend guidance.
+Attribution: adapted from the MIT-licensed [Taste Skill](../../THIRD_PARTY_NOTICES.md#taste-skill).
 Scope: choosing an official design system, component foundation, or honest custom aesthetic.
 
 ## Selection Rules

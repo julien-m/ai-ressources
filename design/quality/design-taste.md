@@ -1,6 +1,6 @@
 # Design Taste QA
 
-Attribution: adapted from the Fable anti-slop frontend guidance.
+Attribution: adapted from the MIT-licensed [Taste Skill](../../THIRD_PARTY_NOTICES.md#taste-skill).
 Scope: landing pages, portfolios, marketing sites, and redesign QA. Not a replacement for product-app, dashboard, or data-table conventions.
 
 ## Read Before Use

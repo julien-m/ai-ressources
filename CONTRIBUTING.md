@@ -9,8 +9,9 @@ This knowledge base is structured for human and AI-agent consumption. This guide
 - [Keeping indexes up to date](#keeping-indexes-up-to-date)
 - [File naming and structure](#file-naming-and-structure)
 - [Rule precedence / authority](#rule-precedence--authority)
-- [Claude Code assets (rules and skills)](#claude-code-assets-rules-and-skills)
+- [Portable assets](#portable-assets)
 - [Validation and CI](#validation-and-ci)
+- [Releases and provenance](#releases-and-provenance)
 
 ---
 
@@ -36,7 +37,7 @@ This knowledge base is structured for human and AI-agent consumption. This guide
 - **design components:** copy `templates/design-component.md` and fill every section.
 - **Other entries:** follow the structure of existing files in the same domain.
 
-All files must be in **English** (rule enforced by `claude/rules/code.md`).
+All files must be in **English**. **Read** [`code-conventions/general.md`](code-conventions/general.md) for the repository-wide language and documentation rules.
 
 ### 3. Update the domain `index.yaml`
 
@@ -103,65 +104,58 @@ Indexes are the "table of contents" that Claude Code reads first. Stale indexes 
 
 When multiple documents address the same topic, the following priority applies (highest first):
 
-1. **`claude/rules/code.md`** — the primary dispatcher for coding tasks. It defines load order and applies to all coding work.
-2. **`code-conventions/general.md`** — shared rules for all languages; always loaded.
-3. **`code-conventions/architecture.md`**, **`logging.md`**, **`testing.md`** — cross-cutting rules; always loaded after general.
-4. **Language-specific delta** (e.g. `javascript.md`, `go.md`) — overrides `general.md` for language-specific choices.
-5. **Domain references** (`design/`, `architecture/`, `stack-ref/`) — authoritative for their domain; do not override code conventions.
+1. **Project instructions** — [`AGENTS.md`](AGENTS.md) and provider-generated project rules define repository maintenance behavior.
+2. **Portable dispatcher rules** — [`.agent-sync/rules/`](.agent-sync/rules/) define how consumers load conventions.
+3. **`code-conventions/general.md`** — shared rules for all languages.
+4. **Cross-cutting and language/runtime deltas** — architecture, logging, testing, and language-specific files refine the foundation.
+5. **Domain references** — `design/`, `architecture/`, and `stack-ref/` are authoritative within their domains.
 
 If two rules conflict, the higher-priority source wins. Document the conflict resolution in the relevant convention file.
 
 ---
 
-## Claude Code assets (rules and skills)
+## Portable assets
 
-### Project rules (`.claude/rules/`)
+Canonical global skills and rules live under [`.agent-sync/`](.agent-sync/). Never create or edit a provider-specific global target as the source of truth.
 
-Files in `.claude/rules/` are **Claude Code project rules** — they are loaded automatically whenever Claude Code opens this repository. They describe meta-level behavior (how to keep indexes in sync, how to sync assets to the global Claude Code hub).
-
-Do **not** put coding conventions in `.claude/rules/`. Those belong in `claude/rules/`.
-
-### Global rules and skills (`claude/rules/`, `claude/skills/`)
-
-Files in `claude/rules/` and `claude/skills/` are designed to be linked globally via `cc-hub`:
+After modifying a global skill, synchronize its canonical directory:
 
 ```bash
-# Link a rule globally
-cc-hub rule link claude/rules/<name>.md
-
-# Link a skill globally
-cc-hub skill link claude/skills/<name>/SKILL.md
+cc-hub skill link .agent-sync/skills/<name> --scope global --targets all --force
 ```
 
-After creating or modifying an asset in `claude/`, run the appropriate `cc-hub` command to sync it. See `.claude/rules/sync-claude-assets.md` for details.
+After modifying a global rule, synchronize its canonical file:
 
-### Modifying the `/ai-res` skill
+```bash
+cc-hub rule link .agent-sync/rules/<name>.md --scope global --targets all --force
+```
 
-The `/ai-res` skill base path (`claude/skills/ai-res/SKILL.md`) must point to your local clone of this repository. Update the `Base path` section if you move or rename the directory.
+`cc-hub` is a maintainer convenience and is not required for contributors who only edit or consume the knowledge base. Provider outputs under `.claude/` or `.agents/` are generated/local state; do not edit them as canonical sources.
 
 ---
 
 ## Validation and CI
 
-CI runs on push to `main` and pull requests. It validates:
+CI runs on pushes to `main` and pull requests. It validates:
 
-- **Schema validation** (`check-jsonschema`) — `index.yaml` (root and all domains) against their JSON Schemas in `schemas/`.
+- Bun tests, index reproducibility, and `setup.sh` syntax.
+- Root and domain `index.yaml` files against the schemas in [`schemas/`](schemas/).
+- Scheduled and pull-request security workflows configure secret, dependency, and filesystem checks; a configured workflow is not evidence of a completed scan.
 
 To run locally before pushing:
 
 ```bash
-# Install (one-time)
-pip install check-jsonschema
-
-# Validate root index
-check-jsonschema --schemafile schemas/root-index.schema.yaml index.yaml
-
-# Validate domain indexes
-for f in architecture/index.yaml code-conventions/index.yaml conventions/index.yaml \
-          copywriting/index.yaml legal/index.yaml pricing-models/index.yaml seo/index.yaml \
-          design/index.yaml stack-ref/index.yaml; do
-  check-jsonschema --schemafile schemas/domain-index.schema.yaml "$f"
-done
+bun test
+bun run scripts/build-index.ts
+bash -n setup.sh
+git diff --check
 ```
 
-Schemas are defined in `schemas/root-index.schema.yaml` and `schemas/domain-index.schema.yaml`.
+The CI schema job installs `check-jsonschema` and validates [`index.yaml`](index.yaml) plus every domain index against [`schemas/root-index.schema.yaml`](schemas/root-index.schema.yaml) and [`schemas/domain-index.schema.yaml`](schemas/domain-index.schema.yaml).
+
+## Releases and provenance
+
+- `main` is the maintained source. Tags may identify stable knowledge-base snapshots; there is no package-registry release.
+- Keep [`README.md`](README.md), indexes, `compiled-index.txt`, and `.last-updated` synchronized with relevant changes.
+- Record copied or adapted material in [`THIRD_PARTY_NOTICES.md`](THIRD_PARTY_NOTICES.md) with an authoritative source, immutable revision, affected files, and required license text.
+- Do not add material when rights or provenance cannot be established; replace it with independently authored content instead.

@@ -1,6 +1,6 @@
 # Design Read Protocol
 
-Attribution: adapted from the Fable anti-slop frontend guidance.
+Attribution: adapted from the MIT-licensed [Taste Skill](../../THIRD_PARTY_NOTICES.md#taste-skill).
 Scope: first-pass interpretation for landing pages, portfolios, marketing sites, and redesigns.
 
 ## Output Contract

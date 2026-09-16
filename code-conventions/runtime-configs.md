@@ -139,8 +139,10 @@ Thumbs.db
 # Logs
 *.log
 
-# Conventions
+# Conventions and local agent state
 .conventions/
+.claude/
+.agents/
 ```
 
 > `.vscode/` is skippable if the user explicitly opts out (team shares VS Code settings).

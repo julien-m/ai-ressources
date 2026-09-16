@@ -7,7 +7,7 @@ argument-hint: "[--full] [--security <keep|none|baseline|production|public|web-s
 # /conventions-refresh — Refresh Project Conventions
 
 ## Goal
-Bring `.conventions/manifest.yaml` to current state by detecting old format, comparing the manifest date against `ai-ressources/.last-updated`, rebuilding via `build-conventions.ts` when stale, and refreshing hook/CI/security workflows when stack markers or the requested security profile changed — without recompiling content (sources are read directly from ai-ressources).
+Bring `.conventions/manifest.yaml` to current state by detecting old format, comparing the manifest date against `ai-ressources/.last-updated`, rebuilding via `build-conventions.ts` when stale, ensuring `.gitignore` excludes generated convention/agent state, and refreshing hook/CI/security workflows when stack markers or the requested security profile changed — without recompiling content (sources are read directly from ai-ressources).
 
 ## Execution context
 - Mode: apply
@@ -64,7 +64,7 @@ Bring `.conventions/manifest.yaml` to current state by detecting old format, com
   1. Print: `Old compiled format detected. Migrating to manifest format.`
   2. Record `OLD_COMPILED_FILES` as the observed old-format artifacts in `.conventions/` (`design.md`, `code.md`, `conventions.manifest.json`, plus any other pre-existing per-domain `*.md` except `index.md`).
   3. Jump to step 5 with `migration=true`. Step 5 (migration mode) handles the migration atomically: run init Phases 1–4 (re-detect + user confirm + `build-conventions.ts`), and only on build success delete `OLD_COMPILED_FILES`. On any failure (detection error, user cancel, build non-zero exit), the old compiled files remain in place.
-  4. After step 5 success, print: `Migration complete. Old compiled files removed.` Stop (do not run steps 3–4, 6).
+  4. After step 6 success, print: `Migration complete. Old compiled files removed.` Stop (do not run steps 3–4, 7).
 - **Case B — No `.conventions/` or no `manifest.yaml`**:
   1. Print: ``No `.conventions/manifest.yaml` found. Run `/conventions-init` to set up.``
   2. Stop.
@@ -100,7 +100,7 @@ echo "Manifest generated: $MANIFEST_DATE"
 echo "ai-ressources last updated: $LAST_UPDATED"
 ```
 - If `LAST_UPDATED == "unknown"` → print: ``Cannot read `ai-ressources/.last-updated` — run `/conventions-refresh --full` to force refresh.`` Stop (no rebuild).
-- If `LAST_UPDATED ≤ MANIFEST_DATE` → print `Conventions up to date.` Proceed to step 6 (stack tracking only).
+- If `LAST_UPDATED ≤ MANIFEST_DATE` → print `Conventions up to date.` Proceed to step 6.
 - If `LAST_UPDATED > MANIFEST_DATE` → proceed to step 4.
 
 **Execution evidence**:
@@ -202,8 +202,37 @@ Never run the snippet directly from the target project's cwd — the `yaml` impo
 
 ---
 
-### 6. Stack tracking — refresh hook, CI, and security if needed
+### 6. Ensure `.gitignore` exclusions
 **Prerequisite**: Step 3 ended `up to date`, OR step 5 succeeded.
+
+**Required inputs/resources**: project `.gitignore`, `.git/` presence.
+
+**Action**:
+- Required exclusions: `.conventions/`, `.claude/`, `.agents/`.
+- If `.gitignore` exists → append only missing required exclusions under:
+  ```gitignore
+  # Materialized conventions and local agent state
+  .conventions/
+  .claude/
+  .agents/
+  ```
+- If absent and `.git/` exists → create `.gitignore` with the block above.
+- If no `.git/` → skip.
+
+**Execution evidence**:
+- Diff or hash of `.gitignore` before/after, or explicit "skipped (no .git)".
+
+**Success criteria**:
+- `.gitignore` contains `.conventions/`, `.claude/`, and `.agents/`, or step skipped due to no git.
+
+**If this step fails**:
+- Retry once.
+- Terminal: `ERROR step=6 type=command_failed ...`. Stop.
+
+---
+
+### 7. Stack tracking — refresh hook, CI, and security if needed
+**Prerequisite**: Step 6 success criteria met.
 
 **Required inputs/resources**:
 - `.conventions/manifest.yaml stack.markers` (previous markers).
@@ -253,7 +282,8 @@ The task is complete when ALL of the following are true:
 - [ ] Step 3 success criteria met (date branch picked or skipped due to flag/migration)
 - [ ] Step 4 success criteria met (DOMAINS_JSON valid) — when staleness rebuild branch
 - [ ] Step 5 success criteria met (`.conventions/` strictly `{manifest.yaml, index.md}`) — when rebuild ran
-- [ ] Step 6 success criteria met (stack/security tracked or unchanged)
+- [ ] Step 6 success criteria met (`.gitignore` handled or skipped)
+- [ ] Step 7 success criteria met (stack/security tracked or unchanged)
 - [ ] No step skipped, reordered, parallelised outside the routed branch
 - [ ] No unresolved ambiguity remains
 - [ ] Month present in `Execution context`
@@ -266,14 +296,15 @@ Report: `DONE` or `BLOCKED at step N - <one-line reason>`.
 - Policy-block uses `BLOCKED at step N - policy_blocked - <reason>`.
 - Date comparison is the staleness signal. Per-file hashes are NOT used.
 - After any rebuild, `.conventions/` contains only `manifest.yaml` + `index.md`.
+- After any refresh path that reaches step 6, `.gitignore` contains `.conventions/`, `.claude/`, and `.agents/`, or was skipped because no `.git/` exists.
 
 ## Drift tests (mini-suite)
 1. Old `.conventions/design.md` present, no `--full` → expected: Case A migration path, never reaches step 3.
 2. Missing `.last-updated` → expected: WARN + stop, no rebuild attempted.
 3. `--full` flag → expected: skip step 3, jump to step 5 with init Phases 1–4.
-4. `LAST_UPDATED ≤ MANIFEST_DATE` → expected: `Conventions up to date.` then proceed to step 6 (stack check).
+4. `LAST_UPDATED ≤ MANIFEST_DATE` → expected: `Conventions up to date.` then proceed to step 6 (gitignore) and step 7 (stack check).
 5. `bun -e` JSON build emits invalid JSON → expected: ERROR step=4 type=verification_failed; no rebuild.
 6. After rebuild, `.conventions/code.md` still present → expected: BLOCKED step 5 (success criterion violated).
-7. Stack markers unchanged and security unchanged → expected: hook + CI untouched, only `Stack unchanged and security profile unchanged — hook, CI, and security left as-is.` printed.
+7. Stack markers unchanged and security unchanged → expected: hook + CI untouched after `.gitignore` exclusions are verified; `Stack unchanged and security profile unchanged — hook, CI, and security left as-is.` printed.
 8. Manifest lacks security metadata but generated `security.yml` has sentinel → expected: infer `baseline`, then preserve with `--security keep`.
 9. `--security production` on existing `baseline` manifest → expected: regenerate security workflow and update manifest security metadata.

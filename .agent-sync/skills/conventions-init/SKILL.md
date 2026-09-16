@@ -211,21 +211,28 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 
 ---
 
-### 6. Update `.gitignore` for `.conventions/` (Phase 5)
+### 6. Update `.gitignore` exclusions (Phase 5)
 **Prerequisite**: Step 5 success criteria met.
 
 **Required inputs/resources**: project `.gitignore`, `.git/` presence.
 
 **Action**:
-- If `.gitignore` exists and lacks `.conventions/` → append `\n# Materialized conventions\n.conventions/\n`.
-- If absent and `.git/` exists → create `.gitignore` with `.conventions/\n`.
+- Required exclusions: `.conventions/`, `.claude/`, `.agents/`.
+- If `.gitignore` exists → append only missing required exclusions under:
+  ```gitignore
+  # Materialized conventions and local agent state
+  .conventions/
+  .claude/
+  .agents/
+  ```
+- If absent and `.git/` exists → create `.gitignore` with the block above.
 - If no `.git/` → skip.
 
 **Execution evidence**:
 - Diff or hash of `.gitignore` before/after, or explicit "skipped (no .git)".
 
 **Success criteria**:
-- `.gitignore` either contains `.conventions/` or step skipped due to no git.
+- `.gitignore` contains `.conventions/`, `.claude/`, and `.agents/`, or step skipped due to no git.
 
 **If this step fails**:
 - Retry once.

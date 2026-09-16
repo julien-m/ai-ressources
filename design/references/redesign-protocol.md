@@ -1,6 +1,6 @@
 # Redesign Protocol
 
-Attribution: adapted from the Fable anti-slop frontend guidance.
+Attribution: adapted from the MIT-licensed [Taste Skill](../../THIRD_PARTY_NOTICES.md#taste-skill).
 Scope: redesigning an existing website, landing page, or portfolio without erasing useful brand equity.
 
 ## First Action
