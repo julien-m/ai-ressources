@@ -65,11 +65,21 @@ describe("public repository contracts", () => {
 		const dependabot = parse(readRepoFile(".github/dependabot.yml"));
 
 		expect(continuousIntegration.jobs["repository-checks"]).toBeDefined();
+		expect(continuousIntegration.jobs["repository-checks"].steps).toContainEqual(
+			expect.objectContaining({ uses: "actions/checkout@v7" }),
+		);
+		expect(security.permissions).toEqual({
+			contents: "read",
+			"pull-requests": "read",
+		});
 		expect(security.jobs["secret-scan"].steps).toContainEqual(
-			expect.objectContaining({ uses: "gitleaks/gitleaks-action@v2" }),
+			expect.objectContaining({ uses: "gitleaks/gitleaks-action@v3" }),
 		);
 		expect(security.jobs["dependency-audit"].steps).toContainEqual(
 			expect.objectContaining({ run: "bun audit --audit-level=high" }),
+		);
+		expect(security.jobs["filesystem-scan"].steps).toContainEqual(
+			expect.objectContaining({ uses: "aquasecurity/trivy-action@0.36.0" }),
 		);
 		expect(dependabot.updates).toHaveLength(2);
 	});
