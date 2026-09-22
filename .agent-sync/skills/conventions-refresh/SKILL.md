@@ -271,7 +271,7 @@ Never run the snippet directly from the target project's cwd — the `yaml` impo
 
 **If this step fails**:
 - Retry once.
-- Terminal: `ERROR step=6 type=<command_failed|verification_failed> ...`. Stop.
+- Terminal: `ERROR step=7 type=<command_failed|verification_failed> ...`. Stop.
 
 ---
 
