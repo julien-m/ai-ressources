@@ -29,6 +29,14 @@ describe("generated gitignore exclusions", () => {
     expect(content).toContain(".agents/");
   });
 
+  test("conventions-refresh Step 7 emits a Step 7 failure receipt", () => {
+    const content = readRepoFile(".agent-sync/skills/conventions-refresh/SKILL.md");
+    const step7 = content.slice(content.indexOf("### 7. Stack tracking"), content.indexOf("## Done"));
+
+    expect(step7).toContain("ERROR step=7 type=<command_failed|verification_failed>");
+    expect(step7).not.toContain("ERROR step=6");
+  });
+
   test("runtime config common gitignore layer includes local agent state", () => {
     const content = readRepoFile("code-conventions/runtime-configs.md");
     const commonLayer = content.slice(content.indexOf("### Layer: common"), content.indexOf("### Layer: typescript"));
