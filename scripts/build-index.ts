@@ -112,7 +112,7 @@ const lines: string[] = [
 	"# ai-ressources compiled index",
 	"# Format: path | description [| use_when tags]",
 	"# [QUICK-REF] = read first for common questions in this domain",
-	`# Generated: ${new Date().toISOString()}`,
+	"# Generated deterministically from index.yaml and domain index files",
 	"",
 ];
 
