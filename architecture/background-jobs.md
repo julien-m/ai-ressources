@@ -227,6 +227,10 @@ Required fields per job log:
 
 ## Infrastructure Mapping
 
+### Cloudflare scheduling
+
+For user-defined dates, editable recurrence and crash-safe dispatch, **Read** [Cloudflare job scheduling](cloudflare-job-scheduling.md). It distinguishes DO alarms + Queues from global Cron Triggers, short Queue delays and durable Workflows. Cloudflare Queues does **not** guarantee FIFO delivery; generic ordering/timeout examples in this guide must be checked against the chosen engine's actual contract.
+
 | Engine | Model | Best For | Trade-offs |
 |--------|-------|----------|------------|
 | Inngest | Event-driven workflow orchestration | Multi-step workflows, fan-out, scheduled jobs | Hosted service, vendor dependency |

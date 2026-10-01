@@ -112,7 +112,7 @@ files:
     priority: 7
 
   - file: cloudflare.md
-    description: "Cloudflare Workers, D1, R2, KV, Hono patterns and anti-patterns (delta on javascript.md)"
+    description: "Cloudflare Workers, D1, R2, KV, Hono, scheduled jobs and durable execution patterns (delta on javascript.md)"
     applies_to: ["Cloudflare Workers", "Hono"]
     priority: 7
 

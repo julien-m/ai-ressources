@@ -219,6 +219,12 @@ app.get('/items', async (c) => {
 });
 ```
 
+## Scheduled Jobs and Durable Execution
+
+- Use Cron Triggers for global UTC recurrence, Queue delays for simple deferral up to 24 hours, DO alarms + Queues for editable per-entity schedules, and Workflows for durable multi-step execution.
+- DO alarms and Queue delivery are at-least-once; Queue ordering is not guaranteed. Persist pending dispatch before sending, use stable occurrence IDs, and make consumers idempotent.
+- **Read** [the Cloudflare scheduling pattern](../architecture/cloudflare-job-scheduling.md) for timing, cancellation, retries, crash windows, alternatives and validation evidence.
+
 ## Security
 - Use `crypto.randomUUID()` for secure randomness
 - Hash before comparing secrets with `crypto.subtle.timingSafeEqual()`

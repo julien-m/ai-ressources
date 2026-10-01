@@ -4,9 +4,11 @@
 # Generated deterministically from index.yaml and domain index files
 
 ## architecture
+architecture/_template.md | Reusable architecture pattern template: concrete use case, selection, components, ownership, lifecycle, failures, examples, operations, validation and sources | architecture pattern template, reference architecture, document architecture example, reusable pattern
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
-architecture/background-jobs.md | Background job patterns: queues, workflows, retry, DLQ, observability | background jobs, async processing, queues, cron jobs, workflow orchestration, DLQ
+architecture/background-jobs.md | Background job patterns: queues, workflows, retry, DLQ, observability, Cloudflare scheduling selection | background jobs, async processing, queues, cron jobs, workflow orchestration, DLQ
 architecture/caching-strategies.md | Multi-layer caching: application, Redis/KV, CDN/edge, invalidation strategies | caching, Redis, CDN, edge caching, cache invalidation, performance
+architecture/cloudflare-job-scheduling.md | Cloudflare scheduled job pattern: Durable Object alarms, Queues, Cron/Workflows alternatives, occurrence idempotency, outbox, cancellation, DST, recovery and sourced examples | Cloudflare scheduling, Durable Objects, setAlarm, scheduled jobs, Cloudflare Queues, Cloudflare Workflows, timezone scheduling, dispatch outbox
 architecture/database-migrations.md | Database migration patterns: versioning, zero-downtime, expand/contract, rollback | database migration, schema change, zero-downtime deploy, rollback strategy
 architecture/event-driven.md | Event-driven architecture, pub/sub, message queues, CQRS, event sourcing | event-driven, pub/sub, message queue, CQRS, event sourcing, decoupling services
 architecture/multi-tenant.md | Multi-tenant architecture: DB-per-tenant, schema-per-tenant, row-level security | multi-tenant, B2B SaaS, tenant isolation, row-level security, organization model
@@ -24,7 +26,7 @@ conventions/diagrams.md | Diagram conventions (transversal — also loaded outsi
 code-conventions/architecture.md | Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events
 code-conventions/astro.md | Astro islands, client directives, content collections, routing, rendering modes (delta on javascript.md)
 code-conventions/cli.md | TypeScript/Node.js CLI application conventions: entry point fast-path, Commander.js, module structure, esbuild build pipeline, feature gates, startup optimization, error handling, Ink/React TUI (delta on javascript.md) | building a CLI, Node.js CLI, TypeScript CLI, Commander.js, Ink TUI, terminal application, bun build --compile, stdin input, pipe input
-code-conventions/cloudflare.md | Cloudflare Workers, D1, R2, KV, Hono patterns and anti-patterns (delta on javascript.md)
+code-conventions/cloudflare.md | Cloudflare Workers, D1, R2, KV, Hono, scheduled jobs and durable execution patterns (delta on javascript.md)
 code-conventions/database.md | SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)
 code-conventions/delphi.md | Delphi/Pascal memory management and style (delta on general.md)
 code-conventions/drizzle.md | Drizzle ORM schema, migrations, queries, D1/PostgreSQL (delta on database.md)
@@ -154,7 +156,7 @@ stack-ref/frontend/desktop.md | Desktop: Tauri (Rust + React), SwiftUI native
 stack-ref/frontend/mobile.md | Mobile: React Native/Expo, Swift/SwiftUI, Kotlin
 stack-ref/frontend/web.md | Web frameworks: Next.js, Astro, shadcn/ui, DaisyUI
 stack-ref/jobs/bullmq.md | BullMQ: Redis-based queue for Node.js
-stack-ref/jobs/cloudflare-queues.md | Cloudflare Queues: native queue for CF Workers
+stack-ref/jobs/cloudflare-queues.md | Cloudflare Queues: at-least-once unordered delivery, delay/retention/CPU limits, operation pricing and DO scheduling pattern
 stack-ref/jobs/inngest.md | Inngest: serverless TypeScript jobs with retry and scheduling
 stack-ref/jobs/triggerdotdev.md | Trigger.dev: long-running multi-step workflows
 stack-ref/ops/notion-crm.md | Notion as CRM: early-stage lead management with n8n automation

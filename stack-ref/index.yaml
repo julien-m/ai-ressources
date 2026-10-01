@@ -103,7 +103,7 @@ sections:
       - file: jobs/bullmq.md
         description: "BullMQ: Redis-based queue for Node.js"
       - file: jobs/cloudflare-queues.md
-        description: "Cloudflare Queues: native queue for CF Workers"
+        description: "Cloudflare Queues: at-least-once unordered delivery, delay/retention/CPU limits, operation pricing and DO scheduling pattern"
       - file: jobs/inngest.md
         description: "Inngest: serverless TypeScript jobs with retry and scheduling"
       - file: jobs/triggerdotdev.md

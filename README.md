@@ -30,7 +30,7 @@ If `cc-hub` is already installed, link every portable asset to its supported pro
 
 ```text
 .agent-sync/       Portable global skills and rules
-architecture/      Auth flows, multi-tenant, rate limiting, webhooks
+architecture/      Auth, multi-tenant, jobs, scheduling, reusable patterns
 code-conventions/  Language-agnostic and per-language coding standards
 conventions/       Naming, authority, diagrams, technical writing
 copywriting/       Landing pages, email sequences, taglines
@@ -49,6 +49,13 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 - **Read** [`design/index.yaml`](design/index.yaml) to route design questions.
 - **Read** [`stack-ref/index.yaml`](stack-ref/index.yaml) to route vendor and platform questions.
 - **Read** [`.agent-sync/rules/conventions-preload.md`](.agent-sync/rules/conventions-preload.md) for the portable loading workflow.
+
+### Reusable Architecture Patterns
+
+Each pattern explains a concrete use case, component selection, state ownership, lifecycle, failure recovery, examples and validation evidence. Sources support the design; application policies and vendor guarantees are distinguished explicitly.
+
+- **Read** [the architecture pattern template](architecture/_template.md) when adding another reusable example.
+- **Read** [Cloudflare job scheduling](architecture/cloudflare-job-scheduling.md) for editable execution times using Durable Objects and Queues, alternatives with Cron/Workflows, and the assessment of the linked DEV.to article.
 
 ## Conventions Lifecycle
 

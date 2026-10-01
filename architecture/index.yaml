@@ -42,11 +42,11 @@ files:
     see_also: ["../stack-ref/databases/upstash-redis.md", "../stack-ref/platforms/cloudflare.md"]
 
   - file: background-jobs.md
-    description: "Background job patterns: queues, workflows, retry, DLQ, observability"
+    description: "Background job patterns: queues, workflows, retry, DLQ, observability, Cloudflare scheduling selection"
     status: complete
     use_when: ["background jobs", "async processing", "queues", "cron jobs", "workflow orchestration", "DLQ"]
     questions_answered: ["Which job queue?", "How to handle retries and DLQ?", "Job observability?", "Cron vs event-triggered?"]
-    see_also: ["event-driven.md", "../stack-ref/jobs/", "../code-conventions/logging.md"]
+    see_also: ["event-driven.md", "cloudflare-job-scheduling.md", "../stack-ref/jobs/", "../code-conventions/logging.md"]
 
   - file: database-migrations.md
     description: "Database migration patterns: versioning, zero-downtime, expand/contract, rollback"
@@ -54,3 +54,17 @@ files:
     use_when: ["database migration", "schema change", "zero-downtime deploy", "rollback strategy"]
     questions_answered: ["How to do zero-downtime migrations?", "Expand/contract pattern?", "Rollback strategy?", "Migration versioning?"]
     see_also: ["../code-conventions/database.md", "../stack-ref/databases/"]
+
+  - file: cloudflare-job-scheduling.md
+    description: "Cloudflare scheduled job pattern: Durable Object alarms, Queues, Cron/Workflows alternatives, occurrence idempotency, outbox, cancellation, DST, recovery and sourced examples"
+    status: complete
+    use_when: ["Cloudflare scheduling", "Durable Objects", "setAlarm", "scheduled jobs", "Cloudflare Queues", "Cloudflare Workflows", "timezone scheduling", "dispatch outbox"]
+    questions_answered: ["How to schedule an editable job on Cloudflare?", "DO alarms vs Cron vs Queue delay vs Workflows?", "How to survive dispatch crashes and duplicate delivery?", "How to handle cancellation, DST and missed occurrences?"]
+    see_also: ["background-jobs.md", "_template.md", "../code-conventions/cloudflare.md", "../stack-ref/jobs/cloudflare-queues.md"]
+
+  - file: _template.md
+    description: "Reusable architecture pattern template: concrete use case, selection, components, ownership, lifecycle, failures, examples, operations, validation and sources"
+    status: complete
+    use_when: ["architecture pattern template", "reference architecture", "document architecture example", "reusable pattern"]
+    questions_answered: ["How to document a reusable architecture example?", "Which guarantees and evidence belong in an architecture pattern?"]
+    see_also: ["cloudflare-job-scheduling.md", "../conventions/diagrams.md", "../conventions/technical-writing.md"]
