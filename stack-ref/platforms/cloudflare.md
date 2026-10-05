@@ -1,6 +1,6 @@
 ---
-last_updated: 2026-03-16
-confidence: high
+last_updated: 2026-10-05
+confidence: medium
 category: platform
 type: edge
 pricing_model: [flat, per-usage]
@@ -91,6 +91,8 @@ Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF),
 - Auth/tunnel Zero Trust pour exposer des services privés
 - CDN + sécurité pour app existante
 - Cron jobs légers dans un environnement Workers
+- Percentage rollouts, traffic splitting and request sampling — **Read** [the use-case lookup](#use-case-lookup) to choose a `hash_in_range()` expression and its rule action.
+- Visitor-level A/B experiments — **Read** [the use-case lookup](#use-case-lookup) for persistent assignment and measurement requirements.
 ## ❌ Quand ne PAS utiliser
 - Besoin de Node.js APIs non disponibles (Workers ≠ Node.js)
 - Workloads CPU > 50ms par requête (limites Workers)
@@ -119,6 +121,52 @@ Cache     : Upstash Redis (si TTL avancé nécessaire)
 | Versioning | ✅ | ✅ |
 
 > 💰 Pour les apps avec beaucoup d'egress (vidéos, gros fichiers), R2 est souvent 10× moins cher que S3.
+## Request sampling and A/B experiments with `hash_in_range()`
+
+Verified on 2026-10-05: this section only. Other sections retain their earlier snapshot and need independent verification before use.
+
+Cloudflare's 2026-10-02 announcement makes `hash_in_range()` available across HTTP products on all plans. It selects a share of traffic in Ruleset Engine expressions. The rule's action still determines what happens to matching requests; the function alone does not serve a variant.
+
+For a request-level 50/50 split, use this expression, adapted from the official 10% example:
+
+```text
+hash_in_range(0, 100, cf.random_seed) < 50
+```
+
+This matches approximately half of requests. Change the threshold to `10` for approximately 10%. These documentation examples have not been executed against a live Cloudflare zone.
+
+### Contract and limits
+
+- The result includes the lower bound and excludes the upper bound: `0` through `99` here. Bounds must be integer literals, with the upper bound greater than the lower bound.
+- Seeds must be fields of type Integer, Bytes or IP address, not literal values. Missing seeds are ignored; all missing returns nil. Use `coalesce()` when a fallback is needed.
+- `cf.random_seed` is always present and supplies fresh random bytes per request. A returning visitor can match a different group on another request.
+- Cloudflare may change the hash algorithm without notice. A fixed seed does not guarantee a lasting assignment.
+
+### Assessment for SaaS projects
+
+Useful for request sampling and gradual exposure to a rule. The announcement also shows a Cloudflare for SaaS rollout percentage controlled by each hostname's custom metadata.
+
+For a user-level A/B experiment, persist the assigned variant, for example in a cookie or application state, and measure exposure and conversions separately. Keep variants isolated in the cache when responses differ. These are application design requirements inferred from the request-level behavior; the function does not supply an experiment analytics system.
+
+### Use-case lookup
+
+Start from the action you need. The application examples below apply the documented sampling behavior; check that the chosen HTTP product supports the required rule action.
+
+| Need / action | Method to use | Boundary / additional work |
+|---|---|---|
+| Apply an HTTP rule to approximately 10% of requests | `hash_in_range(0, 100, cf.random_seed) < 10` | Configure the action for matching requests; this only selects traffic. |
+| Split requests between two treatments, approximately 50/50 | Use `< 50` for one group and `>= 50` for its complement, with the same `hash_in_range(0, 100, cf.random_seed)` expression | Configure both treatments. A visitor can receive either on successive requests. |
+| Roll out a rule progressively: 1%, 5%, 10%, 50%, 100% | Increase the threshold in the sampling expression at each stage | Observe results before each increase; this does not keep a stable cohort of users. |
+| Set different rollout percentages for SaaS customer hostnames | Compare the hash result with `coalesce(lookup_json_integer(cf.hostname.metadata, "rollout_pct"), 0)` | Requires Cloudflare for SaaS custom metadata. Missing percentage matches no requests. |
+| Keep each visitor in one variant during an A/B experiment | Persist the variant in a cookie or application state; sampling can be used for the initial assignment | Use the saved variant for subsequent requests. Do not rely on a fixed hash output as a permanent assignment. |
+| Determine which variant improves conversions | Record exposure, variant and conversion events in the experiment's measurement system | `hash_in_range()` supplies selection, not statistical analysis or a conversion dashboard. |
+
+### Sources
+
+- **Read** the [official availability announcement](https://developers.cloudflare.com/changelog/post/2026-10-02-hash-in-range-ga/) for rollout examples.
+- **Read** the [function reference](https://developers.cloudflare.com/ruleset-engine/rules-language/functions/#hash_in_range) for supported inputs, missing values and algorithm guarantees.
+- **Open** the [user-supplied CFchangelog post](https://x.com/CFchangelog/status/2106806748657102907) for the discovery link. Its body was unavailable during this review; the analysis uses the official sources instead.
+
 ## Ressources
 - [Documentation Workers](https://developers.cloudflare.com/workers/)
 - [Documentation R2](https://developers.cloudflare.com/r2/)

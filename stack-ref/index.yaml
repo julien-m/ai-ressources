@@ -135,7 +135,19 @@ sections:
       - file: platforms/aws.md
         description: "AWS: full cloud suite for large teams"
       - file: platforms/cloudflare.md
-        description: "Cloudflare: 100% edge stack (Workers, D1, KV, R2, DO)"
+        description: "Cloudflare: edge stack (Workers, D1, KV, R2, DO), hash_in_range request sampling, percentage rollouts and A/B experiment limits"
+        use_when:
+          - "A/B testing and persistent visitor assignment on Cloudflare"
+          - "Split HTTP traffic between variants"
+          - "Percentage rollout or canary rollout of an HTTP rule"
+          - "Sample a percentage of requests with hash_in_range"
+          - "Control Cloudflare for SaaS rollout per customer hostname"
+        questions_answered:
+          - "How can I apply a Cloudflare rule to 10% of requests?"
+          - "How can I split HTTP requests 50/50 between two treatments?"
+          - "How can I gradually roll out a Cloudflare rule?"
+          - "Can hash_in_range keep a visitor in the same A/B variant?"
+          - "How can I set a different rollout percentage for each SaaS customer?"
       - file: platforms/firebase.md
         description: "Firebase: mobile-first platform (offline sync, FCM, auth)"
       - file: platforms/flyio.md

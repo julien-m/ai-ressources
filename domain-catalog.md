@@ -165,6 +165,8 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | Signal | Convention file |
 |---|---|
 | `cloudflare` (platform), `workers`, `pages`, `wrangler` | `stack-ref/platforms/cloudflare.md` |
+| `hash_in_range`, `cf.random_seed`, `cloudflare-rules`, `cloudflare-ab-testing`, `cloudflare-rollout` | `stack-ref/platforms/cloudflare.md` |
+| `a/b testing` (Cloudflare), `traffic splitting` (HTTP rules), `request sampling`, `percentage rollout` (Cloudflare), `canary rollout` (Cloudflare rules) | `stack-ref/platforms/cloudflare.md` |
 | `vercel`, `@vercel` | `stack-ref/platforms/vercel.md` |
 | `firebase`, `firebase-admin`, `@firebase` | `stack-ref/platforms/firebase.md` |
 | `fly.io`, `flyio`, `fly.toml` | `stack-ref/platforms/flyio.md` |

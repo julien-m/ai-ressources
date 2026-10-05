@@ -82,6 +82,15 @@ If the `file_count` for the domain changes, update it in the root `index.yaml`.
 
 Indexes are the "table of contents" that Claude Code reads first. Stale indexes mislead the agent.
 
+### Make references discoverable by use case
+
+When adding or updating a reference to a tool, method or feature:
+
+- Describe the concrete needs it addresses in the resource's "When to use" section. Link to a detailed use-case lookup when the explanation belongs in another section.
+- Map each need to the method or action, an example and its prerequisites or limits. Distinguish direct capabilities from application work required around them.
+- Populate the owning index entry's `use_when` and `questions_answered` with task-oriented phrases a reader would search for, even without knowing the method's name. `use_when` is included in the compiled index; `questions_answered` remains in the domain index.
+- Add specific matching signals to the domain catalog and regenerate the compiled index in the same pass. Keep generic needs qualified by their relevant platform or context.
+
 **Rules:**
 - Never leave an index entry pointing to a file that does not exist.
 - Never leave a real file unindexed (it will be invisible to `/ai-res`).

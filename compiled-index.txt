@@ -166,7 +166,7 @@ stack-ref/payments/mollie.md | Mollie: EU-native payments, SEPA/iDEAL/Bancontact
 stack-ref/payments/paddle.md | Paddle: MoR for growing SaaS, international sales
 stack-ref/payments/stripe.md | Stripe: full control, flexible API, B2B focus
 stack-ref/platforms/aws.md | AWS: full cloud suite for large teams
-stack-ref/platforms/cloudflare.md | Cloudflare: 100% edge stack (Workers, D1, KV, R2, DO)
+stack-ref/platforms/cloudflare.md | Cloudflare: edge stack (Workers, D1, KV, R2, DO), hash_in_range request sampling, percentage rollouts and A/B experiment limits | A/B testing and persistent visitor assignment on Cloudflare, Split HTTP traffic between variants, Percentage rollout or canary rollout of an HTTP rule, Sample a percentage of requests with hash_in_range, Control Cloudflare for SaaS rollout per customer hostname
 stack-ref/platforms/firebase.md | Firebase: mobile-first platform (offline sync, FCM, auth)
 stack-ref/platforms/flyio.md | Fly.io: Docker containers, multi-region
 stack-ref/platforms/gcp.md | GCP: Cloud Run, EU data residency
