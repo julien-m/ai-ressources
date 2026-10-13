@@ -31,9 +31,20 @@ echo "📦 ai-ressources setup"
 echo "   Base directory: $BASE_DIR"
 echo ""
 
-EXPECTED_EXPORT="export ${VAR_NAME}=\"${BASE_DIR}\""
+# Single-quote the path so the profile never expands $(...), backticks or variables in it.
+quote_for_shell() {
+  local escaped=${1//\'/\'\\\'\'}
+  printf "'%s'" "$escaped"
+}
 
-if grep -Fqx "$EXPECTED_EXPORT" "$SHELL_RC" 2>/dev/null; then
+EXPECTED_EXPORT="export ${VAR_NAME}=$(quote_for_shell "$BASE_DIR")"
+# Earlier releases wrote a double-quoted line; it is equivalent only for paths without expandable characters.
+PREVIOUS_EXPORT="export ${VAR_NAME}=\"${BASE_DIR}\""
+PREVIOUS_IS_SAFE=false
+[[ "$BASE_DIR" != *[\"\$\`\\]* ]] && PREVIOUS_IS_SAFE=true
+
+if grep -Fqx "$EXPECTED_EXPORT" "$SHELL_RC" 2>/dev/null \
+  || { $PREVIOUS_IS_SAFE && grep -Fqx "$PREVIOUS_EXPORT" "$SHELL_RC" 2>/dev/null; }; then
   echo "✓ ${VAR_NAME} already configured in $SHELL_RC"
 elif grep -q "^export ${VAR_NAME}=" "$SHELL_RC" 2>/dev/null; then
   echo "❌ $SHELL_RC already defines ${VAR_NAME}." >&2
@@ -44,6 +55,12 @@ else
   printf '\n# ai-ressources knowledge base\n%s\n' "$EXPECTED_EXPORT" >> "$SHELL_RC"
   echo "✓ Added ${VAR_NAME} to $SHELL_RC"
 fi
+
+# Releases before AIRESOURCES exported this variable; nothing reads it anymore.
+LEGACY_VAR_NAME="AI_RESOURCES_PATH"
+while IFS=: read -r line_number _; do
+  echo "⚠ $SHELL_RC:$line_number still exports $LEGACY_VAR_NAME, which nothing reads anymore. Remove that line." >&2
+done < <(grep -n "^[[:space:]]*export ${LEGACY_VAR_NAME}=" "$SHELL_RC" 2>/dev/null || true)
 
 export "$VAR_NAME=$BASE_DIR"
 

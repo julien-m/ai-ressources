@@ -20,7 +20,7 @@ The script exports `AIRESOURCES` (the absolute path of the clone) from the shell
 - `scripts/build-conventions.ts` honors `AIRESOURCES` and otherwise uses the clone that contains it. An empty value counts as unset. It records the resolved path in the generated `.conventions/manifest.yaml` (`ai_resources_path`) and `.conventions/index.md`; the skills read `$AIRESOURCES`, not that recorded path.
 - [LiveSpec](https://github.com/julien-m/livespec) locates this knowledge base through the same variable.
 
-To move the clone, rerun `./setup.sh` from the new location after updating the existing `export AIRESOURCES=` line it reports.
+To move the clone, rerun `./setup.sh` from the new location after updating the existing `export AIRESOURCES=` line it reports. The script single-quotes the path, so a directory name containing `$(...)`, backticks or quotes is never executed by the shell profile. If the profile still exports `AI_RESOURCES_PATH` from an earlier release, the script reports that line so you can remove it.
 
 ### Optional portable assets
 
