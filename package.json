@@ -10,7 +10,7 @@
     "yaml": "^2.7.1"
   },
   "devDependencies": {
-    "@types/bun": "^1.2.10",
+    "@types/bun": "^1.4.2",
     "@types/node": "^26.5.1"
   }
 }
