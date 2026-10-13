@@ -4,15 +4,23 @@ Reference knowledge base for building cross-platform SaaS applications, designed
 
 ## Install
 
-The knowledge base has no runtime dependency. Clone it and run the setup script to record its location:
+The knowledge base has no runtime dependency. Clone it anywhere and run the setup script to record its location:
 
 ```bash
-git clone https://github.com/julien-m/ai-ressources.git ~/projects/ai-ressources
-cd ~/projects/ai-ressources
+git clone https://github.com/julien-m/ai-ressources.git
+cd ai-ressources
 ./setup.sh
 ```
 
-The script adds `AI_RESOURCES_PATH` to the shell profile selected from `$SHELL`. Override the target with `AI_RESOURCES_SHELL_RC=/path/to/profile ./setup.sh`. Restart the shell or source the reported profile after setup.
+The script exports `AIRESOURCES` (the absolute path of the clone) from the shell profile selected from `$SHELL`. Override the profile with `AI_RESOURCES_SHELL_RC=/path/to/profile ./setup.sh`. Restart the shell or source the reported profile after setup.
+
+`AIRESOURCES` is the only location contract:
+
+- The portable skills read `$AIRESOURCES` and stop with a setup instruction when it is unset; the portable rules report the missing variable and continue without cross-cutting conventions.
+- `scripts/build-conventions.ts` honors `AIRESOURCES` and otherwise uses the clone that contains it. An empty value counts as unset. It records the resolved path in the generated `.conventions/manifest.yaml` (`ai_resources_path`) and `.conventions/index.md`; the skills read `$AIRESOURCES`, not that recorded path.
+- [LiveSpec](https://github.com/julien-m/livespec) locates this knowledge base through the same variable.
+
+To move the clone, rerun `./setup.sh` from the new location after updating the existing `export AIRESOURCES=` line it reports.
 
 ### Optional portable assets
 
@@ -36,10 +44,16 @@ conventions/       Naming, authority, diagrams, technical writing
 copywriting/       Landing pages, email sequences, taglines
 design/            Tokens, platform systems, components, quality
 legal/             CGU, CGV, RGPD, privacy, cookies, MoR
+models/            AI model catalog (chat, image, video, music)
 pricing-models/    Freemium, flat-rate, per-seat, usage-based
 seo/               Core Web Vitals, programmatic and technical SEO
 stack-ref/         Vendor comparison sheets
+templates/         Templates for new knowledge-base files
+schemas/           JSON Schemas validating every index.yaml
+scripts/           Index and conventions builders, with their tests
 ```
+
+Content is written in English or French depending on the domain; legal templates target French law.
 
 ## Use the Knowledge Base
 

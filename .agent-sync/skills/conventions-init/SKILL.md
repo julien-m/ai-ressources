@@ -31,13 +31,14 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 **Prerequisite**: None.
 
 **Required inputs/resources**:
-- `pwd` (must be the target project, NOT `~/projects/ai-ressources/`)
-- `~/projects/ai-ressources/` directory must exist
+- `AIRESOURCES` environment variable: absolute path of the ai-ressources clone, exported by its `setup.sh`
+- `pwd` (must be the target project, NOT `$AIRESOURCES/`)
+- `$AIRESOURCES/` directory must exist
 - Argument string may contain `--security <none|baseline|production|public|web-staging>`
 
 **Action**:
-1. Run `pwd` and confirm path does not equal `~/projects/ai-ressources` (or its realpath).
-2. Run `test -d ~/projects/ai-ressources && test -f ~/projects/ai-ressources/.last-updated`.
+1. Run `pwd` and confirm path does not equal `$AIRESOURCES` (or its realpath).
+2. Run `test -n "$AIRESOURCES" && test -d "$AIRESOURCES" && test -f "$AIRESOURCES/.last-updated"`.
 3. Parse `securityProfile`; default to `baseline` when absent. Reject any value outside `none|baseline|production|public|web-staging`.
 
 **Execution evidence**:
@@ -51,6 +52,7 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 - `securityProfile` is valid
 
 **If this step fails**:
+- If `AIRESOURCES` is unset or does not point to a clone, print `AIRESOURCES is not set to an ai-ressources clone. Run ./setup.sh from the clone, then restart the shell.` and stop without retrying.
 - Retry once.
 - On terminal failure: `ERROR step=1 type=missing_dependency retry_count=<n> timed_out=false message="<reason>"`. Stop.
 
@@ -91,8 +93,8 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 - **Read** [`references/package-mapping.md`](references/package-mapping.md)
 - **Read** [`references/architecture-signals.md`](references/architecture-signals.md)
 - **Read** [`references/project-type-signals.md`](references/project-type-signals.md)
-- Dynamic scan of `~/projects/ai-ressources/{stack-ref,architecture,design,copywriting,code-conventions,conventions}/**/*.md`
-- **Read** [`~/projects/ai-ressources/domain-catalog.md`](~/projects/ai-ressources/domain-catalog.md) (when caller-provided signals exist or when `spec_signals` non-empty)
+- Dynamic scan of `$AIRESOURCES/{stack-ref,architecture,design,copywriting,code-conventions,conventions}/**/*.md`
+- **Read** [`$AIRESOURCES/domain-catalog.md`]($AIRESOURCES/domain-catalog.md) (when caller-provided signals exist or when `spec_signals` non-empty)
 
 **Action** (run channels in order, then union):
 1. **Catalog-Based Detection** — if caller passed signals, match them against `domain-catalog.md`; collected paths are primary, never overridden by later channels.
@@ -182,7 +184,7 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 
 **Required inputs/resources**:
 - Confirmed `detectedDomains`
-- `~/projects/ai-ressources/scripts/build-conventions.ts`
+- `$AIRESOURCES/scripts/build-conventions.ts`
 
 **Action**:
 1. **Construct domains JSON** (Phase 4.0 mapping rules, verbatim):
@@ -192,7 +194,7 @@ Generate a `.conventions/` directory in the target project containing exactly `m
    - Greenfield (no code) → `code: []`.
 2. Run:
    ```bash
-   bun run ~/projects/ai-ressources/scripts/build-conventions.ts "$(pwd)" '<DOMAINS_JSON>'
+   bun run "$AIRESOURCES"/scripts/build-conventions.ts "$(pwd)" '<DOMAINS_JSON>'
    ```
    `timeout=90s`, `max_retries=1`.
 
@@ -244,7 +246,7 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 **Prerequisite**: Step 6 complete.
 
 **Required inputs/resources**:
-- **Read** [`~/projects/ai-ressources/code-conventions/runtime-configs.md`](~/projects/ai-ressources/code-conventions/runtime-configs.md)
+- **Read** [`$AIRESOURCES/code-conventions/runtime-configs.md`]($AIRESOURCES/code-conventions/runtime-configs.md)
 - Project lockfiles + config files
 
 **Action**:
@@ -273,7 +275,7 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 **Prerequisite**: Step 7 complete.
 
 **Required inputs/resources**:
-- **Read** [`~/projects/ai-ressources/code-conventions/stack-commands.md`](~/projects/ai-ressources/code-conventions/stack-commands.md)
+- **Read** [`$AIRESOURCES/code-conventions/stack-commands.md`]($AIRESOURCES/code-conventions/stack-commands.md)
 - Project root markers, existing `.githooks/pre-commit`
 
 **Action**:

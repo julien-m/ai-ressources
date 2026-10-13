@@ -12,7 +12,7 @@
  * Usage: bun run scripts/build-conventions.ts <project-dir> <domains-json>
  *
  * Environment:
- *   AI_RESOURCES_PATH — path to ai-ressources repo (default: parent of scripts/)
+ *   AIRESOURCES — path to the ai-ressources clone (default: parent of scripts/)
  *
  * domains-json example:
  *   {"code":["nextjs","drizzle"],"design-tokens":[],"legal":["cgu-saas-type"]}
@@ -25,7 +25,7 @@ import { parse as parseYaml } from "yaml";
 // ── Constants ─────────────────────────────────────────────────────────────────
 
 const SCRIPT_DIR = dirname(import.meta.path);
-const AI_RESOURCES_PATH = process.env.AI_RESOURCES_PATH ?? dirname(SCRIPT_DIR);
+const AIRESOURCES_ROOT = process.env.AIRESOURCES || dirname(SCRIPT_DIR);
 
 /** Maps domain key → subdirectory in ai-ressources */
 const DOMAIN_DIRS: Record<string, string> = {
@@ -257,7 +257,7 @@ const projectName = basename(projectDirArg);
 const today = new Date().toISOString().slice(0, 10);
 
 const manifest: Manifest = {
-  ai_resources_path: AI_RESOURCES_PATH,
+  ai_resources_path: AIRESOURCES_ROOT,
   generated: today,
   project: projectName,
   domains: {},
@@ -268,11 +268,11 @@ for (const [domainKey, fileNames] of Object.entries(domainsInput)) {
   let warnings: string[];
 
   if (domainKey === "code") {
-    ({ domain, warnings } = resolveCodeDomain(fileNames, AI_RESOURCES_PATH));
+    ({ domain, warnings } = resolveCodeDomain(fileNames, AIRESOURCES_ROOT));
   } else if (domainKey.startsWith("design-")) {
-    ({ domain, warnings } = resolveDesignSubDomain(domainKey, AI_RESOURCES_PATH, fileNames));
+    ({ domain, warnings } = resolveDesignSubDomain(domainKey, AIRESOURCES_ROOT, fileNames));
   } else {
-    ({ domain, warnings } = resolveFlatDomain(domainKey, fileNames, AI_RESOURCES_PATH));
+    ({ domain, warnings } = resolveFlatDomain(domainKey, fileNames, AIRESOURCES_ROOT));
   }
 
   for (const w of warnings) process.stderr.write(`⚠  ${w}\n`);
@@ -291,7 +291,7 @@ const domainEntries = Object.entries(manifest.domains)
   .map(([key, domain]) => buildIndexEntry(key, domain))
   .join("\n\n");
 
-const indexMd = `# Conventions · ${projectName}\n\n> Match your task to domain keywords → **Read** the listed files from ai-ressources. Apply ⊘ exclusions mentally.\n> \`$AIRESOURCES\` = \`${AI_RESOURCES_PATH}\`\n\n${domainEntries}\n`;
+const indexMd = `# Conventions · ${projectName}\n\n> Match your task to domain keywords → **Read** the listed files from ai-ressources. Apply ⊘ exclusions mentally.\n> \`$AIRESOURCES\` = \`${AIRESOURCES_ROOT}\`\n\n${domainEntries}\n`;
 
 writeFileSync(join(conventionsDir, "index.md"), indexMd, "utf-8");
 console.log("✓ .conventions/index.md");

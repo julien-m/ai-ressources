@@ -30,13 +30,14 @@ Bring `.conventions/manifest.yaml` to current state by detecting old format, com
 **Prerequisite**: None.
 
 **Required inputs/resources**:
-- `pwd` (must be a target project, NOT `~/projects/ai-ressources`).
-- `~/projects/ai-ressources/` must exist.
+- `AIRESOURCES` environment variable: absolute path of the ai-ressources clone, exported by its `setup.sh`.
+- `pwd` (must be a target project, NOT `$AIRESOURCES`).
+- `$AIRESOURCES/` must exist.
 - Argument string (may contain `--full` and/or `--security <keep|none|baseline|production|public|web-staging>`).
 
 **Action**:
 1. Confirm cwd ≠ ai-ressources path.
-2. Confirm `~/projects/ai-ressources/` is readable.
+2. Run `test -n "$AIRESOURCES" && test -f "$AIRESOURCES/.last-updated"` to confirm the clone is readable.
 3. Set `full = true` iff `--full` token present in arguments.
 4. Set `securityProfileRequested = keep` unless `--security <profile>` is present. Reject values outside `keep|none|baseline|production|public|web-staging`.
 
@@ -48,6 +49,7 @@ Bring `.conventions/manifest.yaml` to current state by detecting old format, com
 - ai-ressources reachable.
 
 **If this step fails**:
+- If `AIRESOURCES` is unset or does not point to a clone, print `AIRESOURCES is not set to an ai-ressources clone. Run ./setup.sh from the clone, then restart the shell.` and stop without retrying.
 - Retry once.
 - Terminal: `ERROR step=1 type=missing_dependency ...`. Stop.
 
@@ -88,14 +90,13 @@ Bring `.conventions/manifest.yaml` to current state by detecting old format, com
 **Prerequisite**: Step 2 routed to staleness-check (Case C, `full=false`).
 
 **Required inputs/resources**:
-- `.conventions/manifest.yaml` (`generated:`, `ai_resources_path:` keys).
-- `<ai_resources_path>/.last-updated` file.
+- `.conventions/manifest.yaml` (`generated:` key). Its `ai_resources_path:` records the generating machine and is not read here.
+- `$AIRESOURCES/.last-updated` file.
 
 **Action**:
 ```bash
 MANIFEST_DATE=$(grep "^generated:" .conventions/manifest.yaml | awk '{print $2}')
-AI_RES_PATH=$(grep "^ai_resources_path:" .conventions/manifest.yaml | awk '{print $2}')
-LAST_UPDATED=$(cat "$AI_RES_PATH/.last-updated" 2>/dev/null || echo "unknown")
+LAST_UPDATED=$(cat "$AIRESOURCES/.last-updated" 2>/dev/null || echo "unknown")
 echo "Manifest generated: $MANIFEST_DATE"
 echo "ai-ressources last updated: $LAST_UPDATED"
 ```
@@ -107,7 +108,7 @@ echo "ai-ressources last updated: $LAST_UPDATED"
 - Both date strings printed; chosen branch.
 
 **Success criteria**:
-- Both keys parsed from manifest.
+- `generated:` parsed from manifest and `$AIRESOURCES/.last-updated` read.
 - Branch selected from observed comparison only.
 
 **If this step fails**:
@@ -124,11 +125,11 @@ echo "ai-ressources last updated: $LAST_UPDATED"
 - `bun` available.
 
 **Action**:
-The `bun -e` snippet `import { parse } from 'yaml'` resolves the `yaml` package from cwd. The target project is rarely a Node project, so run from `~/projects/ai-ressources` (which has `yaml` installed) and read the manifest via an absolute path:
+The `bun -e` snippet `import { parse } from 'yaml'` resolves the `yaml` package from cwd. The target project is rarely a Node project, so run from `$AIRESOURCES` (which has `yaml` installed) and read the manifest via an absolute path:
 
 ```bash
 export MANIFEST_ABS="$(pwd)/.conventions/manifest.yaml"
-DOMAINS_JSON=$(cd ~/projects/ai-ressources && bun -e "
+DOMAINS_JSON=$(cd "$AIRESOURCES" && bun -e "
   import { parse } from 'yaml';
   import { readFileSync } from 'fs';
   const m = parse(readFileSync(process.env.MANIFEST_ABS,'utf-8'));
@@ -169,14 +170,14 @@ Never run the snippet directly from the target project's cwd — the `yaml` impo
 **Prerequisite**: Step 4 success criteria met (or step 2 jumped here for migration / `--full`).
 
 **Required inputs/resources**:
-- `~/projects/ai-ressources/scripts/build-conventions.ts`.
+- `$AIRESOURCES/scripts/build-conventions.ts`.
 - For migration / `--full`: re-run `/conventions-init` Phases 1–4 to regenerate `DOMAINS_JSON` from current project signals (NOT from old manifest). For staleness rebuild: use step 4 JSON.
 
 **Action**:
 
 1. Run the build:
    ```bash
-   bun run ~/projects/ai-ressources/scripts/build-conventions.ts "$(pwd)" "$DOMAINS_JSON"
+   bun run "$AIRESOURCES"/scripts/build-conventions.ts "$(pwd)" "$DOMAINS_JSON"
    ```
    `timeout=90s`, `max_retries=1`.
 
@@ -237,7 +238,7 @@ Never run the snippet directly from the target project's cwd — the `yaml` impo
 **Required inputs/resources**:
 - `.conventions/manifest.yaml stack.markers` (previous markers).
 - `.conventions/manifest.yaml stack.securityProfile` and `stack.securityMatrixVersion` when present.
-- **Read** [`~/projects/ai-ressources/.agent-sync/skills/conventions-init/references/security-profiles.md`](~/projects/ai-ressources/.agent-sync/skills/conventions-init/references/security-profiles.md)
+- **Read** [`$AIRESOURCES/.agent-sync/skills/conventions-init/references/security-profiles.md`]($AIRESOURCES/.agent-sync/skills/conventions-init/references/security-profiles.md)
 - Current project root markers per `stack-commands.md` detection.
 
 **Action**:

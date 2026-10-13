@@ -2,7 +2,7 @@
 
 Maps dependency names to their corresponding `stack-ref/` files in ai-ressources.
 
-> **Dynamic scan**: The skill MUST also scan `~/projects/ai-ressources/stack-ref/` at runtime to catch files not listed here. This table accelerates matching but is not exhaustive.
+> **Dynamic scan**: The skill MUST also scan `$AIRESOURCES/stack-ref/` at runtime to catch files not listed here. This table accelerates matching but is not exhaustive.
 
 ## npm / bun packages
 

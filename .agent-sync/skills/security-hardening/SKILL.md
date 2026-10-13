@@ -24,13 +24,13 @@ Apply a conventions security profile to the current target project by delegating
 - Valid profiles are defined in **Read** [`../conventions-init/references/security-profiles.md`](../conventions-init/references/security-profiles.md).
 
 ## Rules
-- Run from the target project, never from `~/projects/ai-ressources`.
+- Run from the target project, never from `$AIRESOURCES`.
 - Do not invent a separate security matrix; reuse the conventions-init matrix and templates.
 - Never write literal secret values. Use secret names only, especially `STAGING_URL` for `web-staging`.
 - `web-staging` requires a deployed staging URL stored as `secrets.STAGING_URL`.
 
 ## Procedure
-1. Validate cwd is not `~/projects/ai-ressources`.
+1. Validate cwd is not `$AIRESOURCES`.
 2. Parse `--profile`; stop if missing or invalid.
 3. If `.conventions/manifest.yaml` exists, run `$conventions-refresh --security <profile>`.
 4. If `.conventions/manifest.yaml` is missing, print: `Run $conventions-init --security <profile> first.`

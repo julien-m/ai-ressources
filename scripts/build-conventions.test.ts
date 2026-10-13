@@ -34,7 +34,7 @@ async function runScript(
   domainsJson: string
 ): Promise<{ stdout: string; stderr: string; exitCode: number }> {
   const proc = Bun.spawn(["bun", "run", SCRIPT, projectDir, domainsJson], {
-    env: { ...process.env, AI_RESOURCES_PATH: aiResPath },
+    env: { ...process.env, AIRESOURCES: aiResPath },
     stdout: "pipe",
     stderr: "pipe",
   });
@@ -79,6 +79,12 @@ describe("build-conventions", () => {
     if (project) rmSync(project, { recursive: true, force: true });
     aiRes = "";
     project = "";
+  });
+
+  test("empty AIRESOURCES falls back to the clone containing the script", async () => {
+    const { exitCode } = await runScript("", project, JSON.stringify({ legal: [] }));
+    expect(exitCode).toBe(0);
+    expect(readManifest(project).ai_resources_path).toBe(dirname(dirname(SCRIPT)));
   });
 
   test("simple chain: nextjs resolves general, javascript, react, nextjs in order", async () => {
@@ -172,7 +178,7 @@ describe("build-conventions", () => {
     const manifest = readManifest(project);
     expect(typeof manifest.generated).toBe("string");
     expect(typeof manifest.project).toBe("string");
-    expect(typeof manifest.ai_resources_path).toBe("string");
+    expect(manifest.ai_resources_path).toBe(aiRes);
     expect(manifest.domains.code.sources).toEqual([
       "code-conventions/general.md",
       "code-conventions/javascript.md",

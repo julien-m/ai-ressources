@@ -4,7 +4,7 @@ set -euo pipefail
 # ai-ressources setup: configure the knowledge-base path and optionally link portable assets.
 
 BASE_DIR="$(cd "$(dirname "$0")" && pwd)"
-VAR_NAME="AI_RESOURCES_PATH"
+VAR_NAME="AIRESOURCES"
 LINK_ASSETS=false
 
 if [[ "${1:-}" == "--link-assets" ]]; then

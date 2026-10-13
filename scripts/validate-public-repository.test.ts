@@ -31,6 +31,23 @@ describe("public repository contracts", () => {
 		expect(`${readme}\n${setup}`).not.toContain("claude/rules");
 	});
 
+	test("portable assets locate the clone through AIRESOURCES only", () => {
+		const hardcodedClone = ["projects", "ai-ressources"].join("/");
+		const legacyVariable = ["AI", "RESOURCES", "PATH"].join("_");
+		const listed = Bun.spawnSync(["git", "ls-files", "--", ".agent-sync", "scripts", "setup.sh"], { cwd: ROOT });
+		const offenders = listed.stdout
+			.toString()
+			.split("\n")
+			.filter(Boolean)
+			.filter((path) => {
+				const content = readRepoFile(path);
+				return content.includes(hardcodedClone) || content.includes(legacyVariable);
+			});
+
+		expect(listed.exitCode).toBe(0);
+		expect(offenders).toEqual([]);
+	});
+
 	test("setup succeeds without linking assets", () => {
 		const temporaryDirectory = mkdtempSync(join(tmpdir(), "ai-ressources-setup-"));
 		temporaryDirectories.push(temporaryDirectory);
@@ -46,7 +63,7 @@ describe("public repository contracts", () => {
 		});
 
 		expect(result.exitCode).toBe(0);
-		expect(readFileSync(shellProfile, "utf-8")).toContain(`export AI_RESOURCES_PATH="${ROOT}"`);
+		expect(readFileSync(shellProfile, "utf-8")).toContain(`export AIRESOURCES="${ROOT}"`);
 		expect(result.stdout.toString()).toContain("Portable asset linking skipped");
 	});
 
