@@ -1,1 +1,0 @@
-../../.agent-sync.local/rules/update-index-on-file-change.md

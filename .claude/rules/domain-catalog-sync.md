@@ -1,1 +1,0 @@
-../../.agent-sync.local/rules/domain-catalog-sync.md

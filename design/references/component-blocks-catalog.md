@@ -1323,7 +1323,7 @@ When requesting a page, use this shorthand:
 The pattern name defines the section sequence. Override specific sections as needed:
 
 ```
-"Pattern SaaS for TipBrace, replace Problem/Solution with Creator Showcase, add Testimonials after Features"
+"Pattern SaaS for Acme, replace Problem/Solution with Creator Showcase, add Testimonials after Features"
 ```
 
 For individual sections, reference by block type:

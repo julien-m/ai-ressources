@@ -1,1 +1,0 @@
-../../.agent-sync.local/rules/sync-claude-assets.md
