@@ -23,6 +23,10 @@ jobs:
       - name: Install dependencies
         run: bun install --frozen-lockfile
 
+      # setup.sh tests load the generated shell profile in both bash and zsh.
+      - name: Install zsh
+        run: sudo apt-get update -qq && sudo apt-get install -y -qq zsh
+
       - name: Run tests
         run: bun test
 
