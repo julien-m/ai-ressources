@@ -70,6 +70,7 @@ Each pattern explains a concrete use case, component selection, state ownership,
 
 - **Read** [the architecture pattern template](architecture/_template.md) when adding another reusable example.
 - **Read** [Cloudflare job scheduling](architecture/cloudflare-job-scheduling.md) for editable execution times using Durable Objects and Queues, alternatives with Cron/Workflows, and the assessment of the linked DEV.to article.
+- **Read** [Durable Object pooling in Cloudflare Containers](architecture/cloudflare-durable-object-pooling.md) for reducing always-awake actor costs, candidate workloads and checkpoint trade-offs; compare native hibernation first for reservation reminders.
 
 ## Conventions Lifecycle
 

@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-10-05
+last_updated: 2026-10-16
 confidence: medium
 category: platform
 type: edge
@@ -21,6 +21,7 @@ Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF),
 - **D1** — SQLite edge (voir `databases/cloudflare-d1.md`)
 - **KV** — Store clé-valeur eventually consistent (voir `databases/cloudflare-kv.md`)
 - **Durable Objects** — State persistant transactionnel par objet (WebSockets, coordination)
+- **Containers** — Exécution d'images de conteneurs sur une infrastructure distincte des Workers, disponible avec Workers Paid. Lire [la documentation officielle](https://developers.cloudflare.com/containers/).
 - **AI** — Inférence IA à l'edge (Workers AI, Vectorize pour embeddings)
 - **Queues** — Message queues durables entre Workers
 - **Cron Triggers** — Cron jobs pour Workers
@@ -85,6 +86,7 @@ Cloudflare est une plateforme edge qui combine CDN, DNS, sécurité (DDoS, WAF),
 >
 > ⚠️ **D1 limites** : 10 GB storage max sur Paid, 50k writes/jour sur Free. Au-delà de 10 GB, envisager Turso ou Neon.
 ## ✅ Quand utiliser
+- Many small actors that must remain awake: **Read** [the container pooling assessment](../../architecture/cloudflare-durable-object-pooling.md) for presence, game ticks, agent scratchpads and live feeds. Qualify cost and recovery; sleeping reservation reminders remain candidates for native DO alarms.
 - API edge avec latence ultra-faible mondiale
 - Stack entièrement Cloudflare (Workers + R2 + D1 + KV)
 - Object storage sans frais d'egress (R2 = remplacement S3 moins cher)

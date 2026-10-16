@@ -135,14 +135,16 @@ sections:
       - file: platforms/aws.md
         description: "AWS: full cloud suite for large teams"
       - file: platforms/cloudflare.md
-        description: "Cloudflare: edge stack (Workers, D1, KV, R2, DO), hash_in_range request sampling, percentage rollouts and A/B experiment limits"
+        description: "Cloudflare: edge stack (Workers, D1, KV, R2, DO, Containers), actor pooling cost trade-offs, hash_in_range request sampling, percentage rollouts and A/B experiment limits"
         use_when:
+          - "Reduce Cloudflare costs for many always-awake stateful actors"
           - "A/B testing and persistent visitor assignment on Cloudflare"
           - "Split HTTP traffic between variants"
           - "Percentage rollout or canary rollout of an HTTP rule"
           - "Sample a percentage of requests with hash_in_range"
           - "Control Cloudflare for SaaS rollout per customer hostname"
         questions_answered:
+          - "When should I pool Durable Objects in Cloudflare Containers?"
           - "How can I apply a Cloudflare rule to 10% of requests?"
           - "How can I split HTTP requests 50/50 between two treatments?"
           - "How can I gradually roll out a Cloudflare rule?"

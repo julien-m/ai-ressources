@@ -1,4 +1,11 @@
 files:
+  - file: cloudflare-durable-object-pooling.md
+    description: "Pool awake-but-light Durable Object actors in workerd on Cloudflare Containers: use cases, cost model, native hibernation baseline, checkpoint durability and validation"
+    status: complete
+    use_when: ["Cloudflare Containers", "Durable Object pooling", "workerd", "do-pool", "reduce always-awake actor costs", "presence and game loops", "agent scratchpads"]
+    questions_answered: ["When is pooling Durable Objects in containers cheaper?", "Should reservation reminders use native alarms or a container pool?", "Which durability guarantees change with workerd and R2 checkpoints?"]
+    see_also: ["cloudflare-job-scheduling.md", "../stack-ref/platforms/cloudflare.md"]
+
   - file: auth-flows.md
     description: "OAuth2/OIDC flows, JWT strategies, token refresh patterns"
     status: complete

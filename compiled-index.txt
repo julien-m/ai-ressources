@@ -8,6 +8,7 @@ architecture/_template.md | Reusable architecture pattern template: concrete use
 architecture/auth-flows.md | OAuth2/OIDC flows, JWT strategies, token refresh patterns | authentication, login flow, OAuth2, JWT, token refresh, MFA, social login
 architecture/background-jobs.md | Background job patterns: queues, workflows, retry, DLQ, observability, Cloudflare scheduling selection | background jobs, async processing, queues, cron jobs, workflow orchestration, DLQ
 architecture/caching-strategies.md | Multi-layer caching: application, Redis/KV, CDN/edge, invalidation strategies | caching, Redis, CDN, edge caching, cache invalidation, performance
+architecture/cloudflare-durable-object-pooling.md | Pool awake-but-light Durable Object actors in workerd on Cloudflare Containers: use cases, cost model, native hibernation baseline, checkpoint durability and validation | Cloudflare Containers, Durable Object pooling, workerd, do-pool, reduce always-awake actor costs, presence and game loops, agent scratchpads
 architecture/cloudflare-job-scheduling.md | Cloudflare scheduled job pattern: Durable Object alarms, Queues, Cron/Workflows alternatives, occurrence idempotency, outbox, cancellation, DST, recovery and sourced examples | Cloudflare scheduling, Durable Objects, setAlarm, scheduled jobs, Cloudflare Queues, Cloudflare Workflows, timezone scheduling, dispatch outbox
 architecture/database-migrations.md | Database migration patterns: versioning, zero-downtime, expand/contract, rollback | database migration, schema change, zero-downtime deploy, rollback strategy
 architecture/event-driven.md | Event-driven architecture, pub/sub, message queues, CQRS, event sourcing | event-driven, pub/sub, message queue, CQRS, event sourcing, decoupling services
@@ -166,7 +167,7 @@ stack-ref/payments/mollie.md | Mollie: EU-native payments, SEPA/iDEAL/Bancontact
 stack-ref/payments/paddle.md | Paddle: MoR for growing SaaS, international sales
 stack-ref/payments/stripe.md | Stripe: full control, flexible API, B2B focus
 stack-ref/platforms/aws.md | AWS: full cloud suite for large teams
-stack-ref/platforms/cloudflare.md | Cloudflare: edge stack (Workers, D1, KV, R2, DO), hash_in_range request sampling, percentage rollouts and A/B experiment limits | A/B testing and persistent visitor assignment on Cloudflare, Split HTTP traffic between variants, Percentage rollout or canary rollout of an HTTP rule, Sample a percentage of requests with hash_in_range, Control Cloudflare for SaaS rollout per customer hostname
+stack-ref/platforms/cloudflare.md | Cloudflare: edge stack (Workers, D1, KV, R2, DO, Containers), actor pooling cost trade-offs, hash_in_range request sampling, percentage rollouts and A/B experiment limits | Reduce Cloudflare costs for many always-awake stateful actors, A/B testing and persistent visitor assignment on Cloudflare, Split HTTP traffic between variants, Percentage rollout or canary rollout of an HTTP rule, Sample a percentage of requests with hash_in_range, Control Cloudflare for SaaS rollout per customer hostname
 stack-ref/platforms/firebase.md | Firebase: mobile-first platform (offline sync, FCM, auth)
 stack-ref/platforms/flyio.md | Fly.io: Docker containers, multi-region
 stack-ref/platforms/gcp.md | GCP: Cloud Run, EU data residency

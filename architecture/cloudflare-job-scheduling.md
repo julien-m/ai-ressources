@@ -201,6 +201,7 @@ Feature: A report scheduled for a user-defined time
 - Tune consumer batching and concurrency to downstream limits and the latency budget. Queue buffering already handles bursts; jitter is an optional business trade-off, not a prerequisite.
 - Benchmark before consolidating schedules into tenant/hash shards. Index deadlines, bound catch-up batches, avoid one global scheduler DO, and preserve tenant fairness. Define how shard identities remain stable during resharding.
 - Model costs from alarm invocations, DO storage operations, Queue operations/retries, consumer CPU and optional projections. Sleeping DOs do not require an application polling loop. Batch delivery does not eliminate per-message Queue operations. **Read** [Queue limits and pricing](../stack-ref/jobs/cloudflare-queues.md).
+- For container pooling, compare billed awake time first: editable reminders that sleep between alarms usually do not match an always-awake actor benchmark. **Read** [DO pooling in Cloudflare Containers](cloudflare-durable-object-pooling.md) for candidate workloads, checkpoint trade-offs and the cost model.
 - Retain audit/result state for the documented replay window, then clean up completed schedule state. Replayed messages must preserve `runId`; recreating a schedule requires a new identity or monotonic revision so old messages cannot become valid again.
 
 ## Validation before reuse

@@ -70,6 +70,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `oauth`, `jwt`, `session`, `auth`, `login`, `authentication`, `sign-in`, `mfa`, `2fa` | `architecture/auth-flows.md` |
 | `cron`, `scheduled`, `background`, `worker`, `queue`, `job`, `task-scheduler`, `async-task` | `architecture/background-jobs.md` |
 | `cloudflare-scheduler`, `cloudflare-scheduling`, `durable-objects`, `durableobjects`, `setalarm`, `cloudflare-queues`, `cloudflare-workflows` | `architecture/cloudflare-job-scheduling.md` |
+| `cloudflare-containers`, `workerd`, `do-pool`, `durable-object-pooling`, `always-awake-actors`, `actor-pooling` | `architecture/cloudflare-durable-object-pooling.md` |
 | `architecture-pattern-template`, `architecture-example`, `reference-architecture`, `reusable-pattern` | `architecture/_template.md` |
 | `cache`, `caching`, `redis`, `memoize`, `ttl`, `lru`, `invalidation`, `cdn` | `architecture/caching-strategies.md` |
 | `migration`, `migrate`, `schema-change`, `alter-table`, `versioning`, `expand-contract` | `architecture/database-migrations.md` |
