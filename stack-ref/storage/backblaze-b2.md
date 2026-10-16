@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-03-17
+last_updated: 2026-10-16
 confidence: high
 category: storage
 type: managed
@@ -7,54 +7,60 @@ pricing_model: [free, per-storage, per-download]
 free_tier: true
 ---
 
-# Backblaze B2
+# Backblaze B2 + Cloudflare
 
-> _Le stockage le moins cher — idéal couplé à Cloudflare pour éliminer les frais d'egress._
+> Default comparison assumption: always deliver B2 files through Cloudflare, with no B2 download fees for that route.
 
-## Ce que c'est
-Object storage S3-compatible de Backblaze. Le prix de stockage est 3–4x moins cher qu'AWS S3 ou GCS. Backblaze est partenaire Bandwidth Alliance de Cloudflare : **le trafic B2 → Cloudflare est gratuit** (zéro frais d'egress dans ce path).
+## What it is
 
-## Free tier
-- **10 GB stockage** gratuit permanent
-- **1 GB download/jour** gratuit
+S3-compatible object storage with Cloudflare delivery through the Bandwidth Alliance. Public files can use Cloudflare CDN; private buckets can use a Cloudflare Worker for authenticated access.
 
 ## Pricing
-| Ressource | Prix |
-|-----------|------|
-| Stockage | **$0.006/GB/mois** (vs $0.023 AWS S3) |
-| Download | $0.01/GB (via internet direct) |
-| Download via Cloudflare | **$0** (Bandwidth Alliance) |
-| Upload | Gratuit |
-| API calls | $0.004/10k (Class C) |
 
-### Comparatif stockage 100 GB/mois
-| Provider | Stockage | Egress 1TB | Total |
-|----------|----------|------------|-------|
-| Backblaze B2 + CF | $0.60 | $0 | **$0.60** |
-| Cloudflare R2 | $1.50 | $0 | $1.50 |
-| AWS S3 | $2.30 | $92 | $94+ |
+Verified 2026-10-16; USD before taxes.
 
-## Pattern B2 + Cloudflare
+| Resource | Price |
+|----------|-------|
+| Storage | Advertised from $6.95/TB-month; first 10 GB free |
+| Downloads through Cloudflare | $0 B2 egress, including above 3x stored volume |
+| Uploads | Free |
+| Common Class A/B/C API operations | Free |
+| Class D event-notification operations | First 2,500/day free, then $0.004/10,000 |
+| Direct internet downloads, outside the default architecture | Free up to 3x average monthly storage; then $0.01/GB |
+
+The current commercial pricing page takes precedence over older storage rates still present in API notes. No minimum file size or storage duration fee. Optional Cloudflare Workers, transformations and paid plans have their own charges; free B2 egress does not make those services free.
+
+### Comparison
+
+Read [the Railway comparison](railway-buckets.md#comparison-with-r2-and-b2--cloudflare) for example workloads. Before free allowances and other services, 1 TB costs from $6.95/month on B2 versus $15 on R2 or Railway, about 54% less. Downloading 1 TB or 10 TB through Cloudflare leaves that B2 storage estimate unchanged.
+
+## Delivery pattern
+
+```mermaid
+flowchart LR
+    Client -->|Direct upload| B2[Backblaze B2]
+    Client -->|Read| CF[Cloudflare CDN or Worker]
+    CF -->|Fetch on cache miss; free B2 egress| B2
 ```
-Upload → B2 directement (API)
-Lecture → Cloudflare Workers/CDN → B2 (egress gratuit)
-         ou R2 comme cache devant B2
-```
 
-Le client ne touche jamais B2 directement — il passe par CF. Egress B2→CF = $0.
-## ✅ Quand utiliser
-- Stockage de gros volumes (backups, archives, médias)
-- Couplé à Cloudflare pour zéro egress
-- Alternative R2 encore moins chère pour du stockage pur
-- Backups de DB, exports, assets statiques
-## ❌ Quand ne PAS utiliser
-- Besoin d'accès depuis CF Workers en binding natif → R2
-- Latence critique (R2 est plus proche des Workers CF)
-- Moins de 50 GB → différence de prix négligeable, R2 plus simple
-## Combinaisons stack
-- `B2 + Cloudflare CDN` → assets publics ultra-cheap
-- `B2 + R2 cache` → B2 stockage, R2 pour hot files Workers
-- `B2` → backups DB quotidiens
-## Ressources
-- [backblaze.com/cloud-storage/pricing](https://www.backblaze.com/cloud-storage/pricing)
-- [Bandwidth Alliance CF](https://www.cloudflare.com/bandwidth-alliance/)
+## When to use
+
+- Large active-storage volumes, backups, exports and public assets delivered through Cloudflare.
+- Lower storage costs alongside server-side encryption, Object Lock and replication options.
+
+## Trade-offs
+
+- Two providers to configure; private access may require Worker authentication code.
+- No native R2-style Workers binding.
+- Compare cold-cache and warm-cache latency for the real workload; neither R2 nor Railway is universally faster without measurements.
+- At small stored volumes, assess whether the savings justify the additional setup.
+
+## Alternatives
+
+Read [the R2 reference](cloudflare-r2.md) for native Workers integration and [the Railway reference](railway-buckets.md) for integrated app hosting and free bucket operations. Keep all three on the storage shortlist.
+
+## Sources
+
+- Read [current commercial pricing](https://www.backblaze.com/cloud-storage/pricing) and [API operation pricing](https://www.backblaze.com/cloud-storage/transaction-pricing).
+- Read [public delivery through Cloudflare](https://www.backblaze.com/docs/cloud-storage-deliver-public-backblaze-b2-content-through-cloudflare-cdn) and [private delivery through Cloudflare](https://www.backblaze.com/docs/cloud-storage-deliver-private-backblaze-b2-content-through-cloudflare-cdn).
+- Read [B2 security features](https://www.backblaze.com/cloud-storage/security) for encryption, immutability and replication.

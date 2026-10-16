@@ -62,7 +62,7 @@ domains:
   stack-ref:
     description: "Vendor comparison sheets with decision matrices, cost comparisons, and recommended stack combos. Covers 12 categories: AI, auth, CMS, databases, email, frontend, jobs, ops, payments, platforms, search, storage."
     status: complete
-    file_count: 60
+    file_count: 61
     last_reviewed: 2026-10-16
     subdirectories:
       - ai

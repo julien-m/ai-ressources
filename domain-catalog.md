@@ -187,6 +187,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 ### Storage
 | Signal | Convention file |
 |---|---|
+| `railway`, `railway-buckets`, `railway-storage` | `stack-ref/storage/railway-buckets.md` |
 | `r2`, `cloudflare-r2` | `stack-ref/storage/cloudflare-r2.md` |
 | `backblaze`, `b2`, `backblaze-b2` | `stack-ref/storage/backblaze-b2.md` |
 | `gcs`, `google-cloud-storage`, `@google-cloud/storage` | `stack-ref/storage/google-cloud-storage.md` |

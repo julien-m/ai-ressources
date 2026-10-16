@@ -1,5 +1,5 @@
 ---
-last_updated: 2026-03-17
+last_updated: 2026-10-16
 confidence: high
 category: storage
 type: managed
@@ -9,48 +9,54 @@ free_tier: true
 
 # Cloudflare R2
 
-> _Object storage S3-compatible sans frais d'egress — le meilleur rapport qualité/prix pour les blobs._
+> S3-compatible object storage with free egress and native Workers integration. Compare with B2 + Cloudflare and Railway Buckets before selecting storage.
 
-## Ce que c'est
-Object storage compatible API S3 de Cloudflare. Le différenciateur majeur : **zéro frais d'egress** (lire un fichier ne coûte rien, contrairement à AWS S3 ou GCS). Accessible depuis Workers directement ou via URL publique.
+## What it is
 
-## Free tier
-- **10 GB stockage/mois**
-- **1 million opérations Class A** (écriture) / mois
-- **10 millions opérations Class B** (lecture) / mois
-- **Egress : toujours gratuit**
+Object storage accessible through S3 clients, public custom domains or a native Workers binding. Free egress means no charge per downloaded byte; API reads can still be billed.
 
 ## Pricing
-| Ressource | Prix |
-|-----------|------|
-| Stockage | $0.015/GB/mois |
-| Opérations Class A (PUT, POST) | $4.50/million |
-| Opérations Class B (GET) | $0.36/million |
-| Egress | **$0 (toujours gratuit)** |
 
-### Exemple calculé
-- 100 GB stockés + 100k uploads + 1M downloads/mois
-- = $1.50 + $0.45 + $0.036 = **~$2/mois**
-- Équivalent AWS S3 : ~$15–20/mois (avec egress)
+Verified 2026-10-16; USD before taxes.
 
-## Features clés
-- API S3-compatible (libs AWS SDK fonctionnent)
-- Accès direct depuis Workers (binding natif)
-- URL publique optionnelle (custom domain)
-- Multipart upload
-- Lifecycle policies (expiration objets)
-- Intégration avec CF Images et CF Stream
-## ✅ Quand utiliser
-- Tout projet qui stocke des fichiers : avatars, uploads users, assets, exports
-- Stack Cloudflare Workers → binding natif, zéro latence
-- Alternative S3 à moindre coût (pas d'egress)
-- Assets servis publiquement (CDN CF automatique)
-## ❌ Quand ne PAS utiliser
-- Besoin de requêtes S3 Select (requêtes SQL sur données) → S3
-- Compliance spécifique (HIPAA certifié, etc.) → vérifier CF compliance
-## Combinaisons stack
-- `R2 + CF Workers` → binding natif, accès direct sans HTTP
-- `R2 + Uploadthing` → upload frontend vers R2
-- `R2 + Backblaze B2` → R2 comme CDN devant B2 (egress gratuit)
-## Ressources
-- [developers.cloudflare.com/r2](https://developers.cloudflare.com/r2/)
+| Resource | Standard | Infrequent Access |
+|----------|----------|-------------------|
+| Storage | $0.015/GB-month | $0.01/GB-month |
+| Class A operations | $4.50/million | $9/million |
+| Class B operations | $0.36/million | $0.90/million |
+| Retrieval | None | $0.01/GB |
+| Egress | Free | Free |
+| Minimum retention | None | 30 days |
+
+Standard includes 10 GB-month storage, 1 million Class A operations and 10 million Class B operations each month. Infrequent Access has no corresponding free allowance. Billable usage is rounded up to billing units.
+
+Example: 100 GB stored all month, 100,000 uploads and 1 million downloads cost **$1.35/month** in Standard: 90 billable GB-month and operations within free allowances. Multipart uploads may consume multiple operations. Workers and other attached services are billed separately.
+
+## Features
+
+- S3-compatible API, multipart uploads and presigned URLs.
+- Native Workers binding; no universal latency guarantee.
+- Public custom domains, Cloudflare caching and object lifecycle expiration.
+
+## When to use
+
+- Workers applications that benefit from a native storage binding.
+- Files requiring automatic expiration or public delivery through a custom domain.
+- Frequent downloads with predictable bandwidth charges.
+
+## Trade-offs and alternatives
+
+- Read [the B2 + Cloudflare reference](backblaze-b2.md) when lower storage cost matters: B2 traffic through Cloudflare also has free egress.
+- Read [the Railway Buckets reference](railway-buckets.md) when the application already runs on Railway or API operation volume is high: Railway has free bucket operations at the same base storage rate as R2.
+- Compare actual workload latency and throughput before selecting on performance; no provider is a universal winner.
+- For short-lived files, avoid Infrequent Access minimum retention and retrieval charges unless the cost model justifies them.
+
+## Stack combinations
+
+- Workers + R2: native file access and application authorization.
+- B2 + Cloudflare CDN/Worker: a separate lower-storage-cost option; R2 is not required to obtain free B2-to-Cloudflare egress.
+
+## Sources
+
+- Read [R2 pricing](https://developers.cloudflare.com/r2/pricing/) before estimating costs.
+- Read [R2 documentation](https://developers.cloudflare.com/r2/) for API, public access and lifecycle configuration.

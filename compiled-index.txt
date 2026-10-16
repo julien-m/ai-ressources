@@ -178,6 +178,7 @@ stack-ref/search/algolia.md | Algolia: managed search, enterprise, merchandising
 stack-ref/search/meilisearch.md | Meilisearch: self-hosted search, open-source, FR-based
 stack-ref/search/orama.md | Orama: embedded search for edge/browser, zero infra
 stack-ref/search/typesense.md | Typesense: cloud managed search with geo-search
-stack-ref/storage/backblaze-b2.md | Backblaze B2: cheapest active storage, free egress via CF
+stack-ref/storage/backblaze-b2.md | Backblaze B2 + Cloudflare: lower-cost active storage, free partner egress
 stack-ref/storage/cloudflare-r2.md | Cloudflare R2: native CF blob storage, zero egress fees
 stack-ref/storage/google-cloud-storage.md | Google Cloud Storage: Archive/Coldline tiers for cold storage
+stack-ref/storage/railway-buckets.md | Railway Buckets: S3 storage, free operations and egress, performance evidence and comparison with R2 and B2 + Cloudflare

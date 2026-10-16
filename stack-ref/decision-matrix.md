@@ -199,6 +199,7 @@ Background jobs ?
 |--------|---------------|---------|
 | Blobs dans l'écosystème Cloudflare | Cloudflare R2 | [cloudflare-r2.md](storage/cloudflare-r2.md) |
 | Coût minimal, accès régulier, egress via CF | Backblaze B2 + CF | [backblaze-b2.md](storage/backblaze-b2.md) |
+| Railway app integration or high API operation volume | Railway Buckets | Read [the Railway reference](storage/railway-buckets.md) |
 | **Archive longue durée / cold storage** | **GCS Archive / Coldline** | [google-cloud-storage.md](storage/google-cloud-storage.md) |
 
 ```
@@ -214,9 +215,12 @@ Storage ?
 |----------|-----------------|-----------|-----------|------|
 | **GCS Archive** | **$1.23** | $80–120 | $0.05/GB | ⭐ Cold storage pur, quasi-gratuit |
 | **GCS Coldline** | $4.10 | $80–120 | $0.02/GB | Disaster recovery trimestriel |
-| **Backblaze B2 + CF** | $6 | $0 via CF | $0 via CF | Meilleur pour accès régulier |
-| Cloudflare R2 | $15 | $0 | $0 | Natif CF, accès fréquent |
+| **Backblaze B2 + CF** | From $6.95 | $0 via CF | $0 via CF | Meilleur pour accès régulier |
+| Cloudflare R2 | $15 | $0 | $0 | Native Workers binding; billable operations after allowances |
+| Railway Buckets | $15 | $0 direct | $0 | Free operations; service relay egress is separate |
 | AWS S3 | $23 | $90 | $0 (Standard) | Référence, mais cher |
+
+Storage shortlist reviewed 2026-10-16: compare B2 + Cloudflare, R2 and Railway. B2 always uses Cloudflare delivery in this comparison. Active-storage prices use 1 TB = 1,000 GB before free allowances, Railway plan minimums and optional Cloudflare services. Read [the Railway comparison](storage/railway-buckets.md) for performance evidence and limits; the reported X benchmarks remain unverified.
 
 > 💡 **Pattern backup multi-tier recommandé** :
 > - Fichiers actifs → **B2 + CF** (egress gratuit, accès fréquent)

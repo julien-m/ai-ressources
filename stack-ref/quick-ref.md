@@ -3,7 +3,7 @@
 > Condensed decision guide for the most common questions. For full details, see [decision-matrix.md](decision-matrix.md) and individual category files.
 
 ```yaml
-last_updated: 2026-03-26
+last_updated: 2026-10-16
 source: decision-matrix.md
 ```
 
@@ -66,7 +66,7 @@ All-in-one platform?
 ## Quick Decision Keys
 | Question | Answer |
 |----------|--------|
-| Cheapest at all scales? | Cloudflare (Workers + D1 + KV + R2) |
+| Low-cost edge application? | Cloudflare; compare B2 + Cloudflare for storage |
 | Best all-in-one web? | Supabase |
 | Best all-in-one mobile? | Firebase |
 | Scale-to-zero? | Neon, Turso, Upstash, CF Workers |
@@ -77,3 +77,13 @@ All-in-one platform?
 | Cheapest email at scale? | Amazon SES |
 | EU data residency? | Infomaniak or GCP EU |
 | Zero budget prototype? | CF free + Neon free + Resend free = $0 |
+
+## Object storage shortlist
+
+| Need | Consider |
+|------|----------|
+| Lower storage price with free Cloudflare delivery | B2 + Cloudflare, from $6.95/TB-month |
+| Native Workers binding and lifecycle expiration | R2 Standard, $15/TB-month plus billable operations |
+| Railway integration and free bucket API operations | Railway Buckets, $15/TB-month before plan minimums |
+
+Read [the storage comparison](storage/railway-buckets.md) for limits, pricing assumptions and performance evidence. Always model B2 with Cloudflare delivery; compare representative benchmarks rather than assuming a speed winner.

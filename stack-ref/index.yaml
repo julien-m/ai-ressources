@@ -179,8 +179,10 @@ sections:
     description: "Object/blob storage providers"
     files:
       - file: storage/backblaze-b2.md
-        description: "Backblaze B2: cheapest active storage, free egress via CF"
+        description: "Backblaze B2 + Cloudflare: lower-cost active storage, free partner egress"
       - file: storage/cloudflare-r2.md
         description: "Cloudflare R2: native CF blob storage, zero egress fees"
+      - file: storage/railway-buckets.md
+        description: "Railway Buckets: S3 storage, free operations and egress, performance evidence and comparison with R2 and B2 + Cloudflare"
       - file: storage/google-cloud-storage.md
         description: "Google Cloud Storage: Archive/Coldline tiers for cold storage"
