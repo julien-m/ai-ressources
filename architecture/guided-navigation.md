@@ -118,6 +118,8 @@ Show at most three suggestions and require an explicit selection before leaving 
 
 Execution results are `reached` (screen and requested anchor reached), `partial` (screen reached, anchor absent) or `failed` (destination not reached). Never present `partial` as a successful highlight. No provider is allowed to supply a result claiming navigation succeeded.
 
+A `fallbackDestinationId` is a candidate suggestion only when the selected destination becomes unavailable at execution time or has no binding for the current platform. It never causes automatic navigation. Resolve the fallback independently against the current session, tenant, capabilities, preconditions, availability, catalog revision and platform. Do not disclose an inaccessible destination. Present an eligible fallback using its own catalog title and require a new explicit selection; without one, return `unavailable` and keep manual navigation. Resolve the fallback's declared parameters from its own authorized context or a new local picker: never copy primary parameters implicitly. A missing anchor after reaching the primary screen remains `partial` and does not trigger fallback navigation. An ineligible fallback ends this attempt; do not recursively traverse the fallback graph at runtime.
+
 ## 4. Anchors across website and application surfaces
 
 | Situation | Adapter responsibility |
