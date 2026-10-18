@@ -312,3 +312,15 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `video-generation`, `sora`, `runway`, `kling` | `models/video.md` |
 | `chat-model`, `llm-model`, `model-selection` | `models/chat.md` |
 | `music-generation`, `audio-generation` | `models/music.md` |
+
+## Evidence-based UI resources
+
+| Signal | Convention file |
+|---|---|
+| `dashboard`, `cockpit`, `KPI`, `analytics` | `design/components/dashboard-design.md` |
+| `onboarding`, `activation`, `personalization`, `permissions` | `design/components/onboarding-design.md` |
+| `paywall`, `upgrade`, `subscription`, `free trial` | `design/components/paywall-design.md` |
+| `streak`, `habit`, `gamification`, `progress` | `design/components/streak-design.md` |
+| `Mobbin`, `blog review`, `UX research` | `design/references/mobbin-blog-review.md` |
+| `UI benchmark`, `MCP design`, `reference research` | `design/references/ui-reference-research.md` |
+| `homepage`, `testimonial`, `bento`, `marketing proof` | `design/references/homepage-evidence.md` |
