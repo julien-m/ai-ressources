@@ -324,3 +324,11 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `Mobbin`, `blog review`, `UX research` | `design/references/mobbin-blog-review.md` |
 | `UI benchmark`, `MCP design`, `reference research` | `design/references/ui-reference-research.md` |
 | `homepage`, `testimonial`, `bento`, `marketing proof` | `design/references/homepage-evidence.md` |
+
+## Guided Navigation
+
+| Signal | Convention file |
+|---|---|
+| `guided navigation`, `natural-language navigation`, `navigation guidée` | `architecture/guided-navigation.md` |
+| `in-app help`, `aide contextuelle`, `destination catalog` | `architecture/guided-navigation.md` |
+| `intent routing`, `scroll to anchor`, `anchor navigation` | `architecture/guided-navigation.md` |

@@ -1,4 +1,11 @@
 files:
+  - file: guided-navigation.md
+    description: "Provider-neutral internal standard for natural-language navigation: destination catalogs, typed route and anchor bindings, authorization, optional closed-set intent resolution, privacy, fallbacks and adoption tests"
+    status: complete
+    use_when: ["guided navigation", "natural-language navigation", "in-app help", "intent routing", "scroll to anchor", "destination catalog", "navigation guidée", "aide contextuelle", "Ylune", "Livia"]
+    questions_answered: ["How can users reach an application screen or section using natural language?", "Which format describes routes, anchors, permissions and unavailable destinations?", "What should be shared between applications without coupling their routers or choosing an AI provider?"]
+    see_also: ["../design/components/navigation.md", "../design/quality/accessibility.md", "multi-tenant.md"]
+
   - file: cloudflare-durable-object-pooling.md
     description: "Pool awake-but-light Durable Object actors in workerd on Cloudflare Containers: use cases, cost model, native hibernation baseline, checkpoint durability and validation"
     status: complete
