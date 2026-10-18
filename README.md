@@ -66,6 +66,8 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 
 ### Reusable Architecture Patterns
 
+- **Read** [the guided navigation contract](architecture/guided-navigation.md) to define provider-neutral destination catalogs for natural-language help, route changes and scroll-to-anchor behavior. Applications supply their own routes, permissions and UI adapters; documentation adoption does not activate a runtime feature.
+
 Each pattern explains a concrete use case, component selection, state ownership, lifecycle, failure recovery, examples and validation evidence. Sources support the design; application policies and vendor guarantees are distinguished explicitly.
 
 - **Read** [the architecture pattern template](architecture/_template.md) when adding another reusable example.

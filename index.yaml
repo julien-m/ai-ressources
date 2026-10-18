@@ -1,9 +1,9 @@
 domains:
   architecture:
-    description: "SaaS architecture patterns: auth flows (OAuth2/OIDC/JWT/MFA), multi-tenant isolation, rate limiting, webhooks, event-driven/CQRS, caching, background jobs, Cloudflare job scheduling and container actor pooling, database migrations and a reusable architecture example template."
+    description: "SaaS architecture patterns: auth flows (OAuth2/OIDC/JWT/MFA), multi-tenant isolation, rate limiting, webhooks, event-driven/CQRS, caching, background jobs, Cloudflare job scheduling and container actor pooling, database migrations, a reusable architecture example template, and a provider-neutral guided navigation contract."
     status: complete
-    file_count: 11
-    last_reviewed: 2026-10-16
+    file_count: 12
+    last_reviewed: 2026-10-18
 
   conventions:
     description: "Transversal conventions (not code-specific): diagram formats, naming rules, authority hierarchy, and technical writing."
