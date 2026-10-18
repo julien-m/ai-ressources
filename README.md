@@ -72,6 +72,12 @@ Each pattern explains a concrete use case, component selection, state ownership,
 - **Read** [Cloudflare job scheduling](architecture/cloudflare-job-scheduling.md) for editable execution times using Durable Objects and Queues, alternatives with Cron/Workflows, and the assessment of the linked DEV.to article.
 - **Read** [Durable Object pooling in Cloudflare Containers](architecture/cloudflare-durable-object-pooling.md) for reducing always-awake actor costs, candidate workloads and checkpoint trade-offs; compare native hibernation first for reservation reminders.
 
+### Reusable UX Resources
+
+- **Read** [the Mobbin article review](design/references/mobbin-blog-review.md) for the 14 public articles reviewed on 2026-10-18, their limitations, and links to six practical resources: dashboards, onboarding, paywalls, streaks, UI research and homepage evidence.
+- Each resource defines design decisions, data and interaction states, examples, accessibility and verification. Observations from external articles are separated from local recommendations; no conversion improvement is assumed.
+- Design sub-domains in [the design index](design/index.yaml) route these resources independently for targeted convention loading.
+
 ## Conventions Lifecycle
 
 `$conventions-init` in Codex or `/conventions-init` in Claude Code detects a target project's stack and can generate its `.conventions/` manifest/index, hooks, CI, and opt-in security workflows. `$conventions-refresh` or `/conventions-refresh` updates that materialized state when this knowledge base changes.

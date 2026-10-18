@@ -30,6 +30,18 @@ sections:
   components:
     description: "Cross-platform component specs with per-platform guidelines"
     files:
+      - file: components/dashboard-design.md
+        description: "Decision-first dashboards: data contracts, freshness, partial states, summaries and drill-down"
+        use_when: ["dashboard", "cockpit", "KPI", "analytics"]
+      - file: components/onboarding-design.md
+        description: "Purposeful onboarding: first value, questions, permissions, resumability and activation"
+        use_when: ["onboarding", "activation", "personalization", "permissions"]
+      - file: components/paywall-design.md
+        description: "Transparent paywalls: offers, trials, pricing disclosure, access reconciliation and recovery"
+        use_when: ["paywall", "upgrade", "subscription", "free trial"]
+      - file: components/streak-design.md
+        description: "Meaningful streaks: qualifying events, timezones, pauses, reminders and recovery"
+        use_when: ["streak", "habit", "gamification", "progress"]
       - file: components/forms.md
         description: "Form patterns: validation, layout, input types, error states"
         use_when: ["form design", "input validation UX", "form layout", "error states"]
@@ -98,8 +110,17 @@ sections:
 
   references:
     description: "Market design references: per-company design systems, landing page conventions, app UI patterns (based on 2026 market analysis)"
-    last_reviewed: "2026-07-04"
+    last_reviewed: "2026-10-18"
     files:
+      - file: references/mobbin-blog-review.md
+        description: "Article-by-article review of 14 Mobbin blog posts with source limits and reusable local recommendations"
+        use_when: ["Mobbin", "blog review", "UX research"]
+      - file: references/ui-reference-research.md
+        description: "UI reference research: source provenance, benchmark selection, MCP limits and implementable contracts"
+        use_when: ["UI benchmark", "MCP design", "reference research"]
+      - file: references/homepage-evidence.md
+        description: "Homepage evidence: truthful claims, testimonial provenance, bento composition and accessible motion"
+        use_when: ["homepage", "testimonial", "bento", "marketing proof"]
       - file: references/landing-pages.md
         description: "Landing page conventions by product type: devtools, B2B SaaS, fintech, consumer, creators, health, AI, e-commerce"
         use_when: ["landing page design", "marketing site", "product page layout", "hero section"]
@@ -207,6 +228,7 @@ sub_domains:
     label: "Data visualization — charts, metrics, KPIs, dashboard, sparklines"
     keywords: [chart, graphe, metrics, dashboard, sparkline, KPI, "line chart", "bar chart", "area chart", histogram, "pie chart", "donut chart", "number formatting", "metric card", recharts, d3, tremor]
     sources:
+      - components/dashboard-design.md
       - components/data-visualization.md
 
   design-realtime:
@@ -214,3 +236,43 @@ sub_domains:
     keywords: [WebSocket, SSE, "real-time", "temps réel", streaming, LLM, "token streaming", reconnect, "optimistic updates", "live updates", "chat UI", buffering, "socket.io", ably, pusher]
     sources:
       - components/realtime-streams.md
+
+  design-onboarding:
+    label: "Onboarding — first value, personalization, permissions, resumption"
+    keywords: [onboarding, activation, personalization, "first run", "premiere utilisation", "permission prompt"]
+    sources:
+      - components/onboarding-design.md
+      - components/forms.md
+      - quality/accessibility.md
+
+  design-monetization:
+    label: "Monetization — paywalls, upgrades, subscriptions, trials"
+    keywords: [paywall, upgrade, subscription, abonnement, "free trial", essai, "plan selection"]
+    sources:
+      - components/paywall-design.md
+      - components/payment-flows.md
+      - quality/accessibility.md
+
+  design-engagement:
+    label: "Engagement — meaningful goals, streaks, pauses, reminders"
+    keywords: [streak, habit, gamification, habitude, "daily goal", "streak freeze"]
+    sources:
+      - components/streak-design.md
+      - components/feedback.md
+      - quality/accessibility.md
+
+  design-research:
+    label: "UI research — references, benchmarks, provenance, MCP"
+    keywords: [Mobbin, "UI benchmark", "MCP design", "reference research", "UX research", "blog review"]
+    sources:
+      - references/ui-reference-research.md
+      - references/mobbin-blog-review.md
+      - references/design-read-protocol.md
+
+  design-marketing:
+    label: "Marketing design — homepage evidence, testimonials, bento composition"
+    keywords: [homepage, bento, testimonial, temoignage, "marketing proof", "hero evidence"]
+    sources:
+      - references/homepage-evidence.md
+      - references/landing-pages.md
+      - quality/accessibility.md

@@ -56,6 +56,7 @@ copywriting/taglines.md | Tagline and headline writing: formulas, patterns, A/B 
 
 ## design
 design/components/buttons.md | Button patterns: variants, sizes, states, icons, loading, groups, accessibility | button design, CTA button, button states, button group, icon button
+design/components/dashboard-design.md | Decision-first dashboards: data contracts, freshness, partial states, summaries and drill-down | dashboard, cockpit, KPI, analytics
 design/components/data-visualization-terminal.md | Data visualization for terminal interfaces: ASCII sparklines, histograms, status bars (extracted from data-visualization.md) | terminal data viz, ASCII chart, CLI dashboard, terminal sparkline, ANSI data viz
 design/components/data-visualization.md | Data visualization patterns: metric cards, sparklines, charts (line/bar/area/pie), dashboard layout, number formatting | dashboard, charts, metrics display, data visualization, sparklines
 design/components/email-templates.md | Email template patterns: responsive layout, dark mode, client quirks, components | email design, transactional email, email template, dark mode email
@@ -65,9 +66,12 @@ design/components/lists.md | List patterns: virtualization, pull-to-refresh, swi
 design/components/log-viewer.md | Log viewer patterns: terminal streaming, web table layout, filtering, JSON expand, multi-service | log viewer, terminal UI, log streaming, JSON viewer, devtools UI
 design/components/modals.md | Modals and dialogs: sheets, alerts, confirmation patterns | modal design, dialog, bottom sheet, alert, confirmation flow
 design/components/navigation.md | Navigation patterns: tabs, breadcrumbs, sidebars, menus, mobile bottom nav, command palette | navigation design, sidebar, tabs, breadcrumbs, mobile nav, command palette
+design/components/onboarding-design.md | Purposeful onboarding: first value, questions, permissions, resumability and activation | onboarding, activation, personalization, permissions
 design/components/payment-flows.md | Payment UX patterns: tip/donation, subscription, one-time, express checkout, error handling | payment UI, checkout flow, tip/donation UX, subscription billing UI
+design/components/paywall-design.md | Transparent paywalls: offers, trials, pricing disclosure, access reconciliation and recovery | paywall, upgrade, subscription, free trial
 design/components/realtime-streams-terminal.md | Real-time streaming patterns for terminal interfaces: ANSI cursor control, CLI buffering (extracted from realtime-streams.md) | terminal streaming, ANSI realtime, CLI live output, tail -f pattern, terminal buffering
 design/components/realtime-streams.md | Real-time streaming UI: WebSocket/SSE, reconnection, buffering, auto-scroll, optimistic updates, token streaming | real-time UI, WebSocket, SSE, live updates, chat UI, AI token streaming
+design/components/streak-design.md | Meaningful streaks: qualifying events, timezones, pauses, reminders and recovery | streak, habit, gamification, progress
 design/quality/accessibility.md | Accessibility patterns: WCAG 2.2 AA, ARIA, keyboard nav, focus management, screen readers
 design/quality/design-taste.md | Design taste QA: anti-default rules, AI tell ban, hero/nav/CTA/bento pre-flight checks
 design/quality/ui-rules.md | UI visual non-regression rules: alignment, spacing, overflow checks
@@ -78,9 +82,12 @@ design/references/component-blocks-catalog.md | UI blocks taxonomy and template 
 design/references/design-read-protocol.md | Design read protocol: infer page kind, audience, vibe, dials, and aesthetic/system direction before design work | design read, brief interpretation, landing page design, portfolio design, redesign
 design/references/design-references.md | Per-company design system references: Vercel, Linear, Stripe, Clerk, etc. | design inspiration, design system reference, company design benchmarks
 design/references/devtools.md | DevTools UI conventions: monitoring dashboards, log viewers, deployment pipelines | devtools UI, monitoring dashboard, deployment UI, container management
+design/references/homepage-evidence.md | Homepage evidence: truthful claims, testimonial provenance, bento composition and accessible motion | homepage, testimonial, bento, marketing proof
 design/references/landing-pages.md | Landing page conventions by product type: devtools, B2B SaaS, fintech, consumer, creators, health, AI, e-commerce | landing page design, marketing site, product page layout, hero section
+design/references/mobbin-blog-review.md | Article-by-article review of 14 Mobbin blog posts with source limits and reusable local recommendations | Mobbin, blog review, UX research
 design/references/mockup-specs.md | Mockup maquettage reference: explicit px values for component heights, paddings, icon sizes | mockup, maquettage, wireframe, pixel specs, component dimensions
 design/references/redesign-protocol.md | Redesign protocol: preserve vs evolve vs overhaul, audit before touching, preservation rules | redesign, site refresh, visual overhaul, preserve brand
+design/references/ui-reference-research.md | UI reference research: source provenance, benchmark selection, MCP limits and implementable contracts | UI benchmark, MCP design, reference research
 design/systems/apple-hig.md | Apple Human Interface Guidelines: iOS/macOS patterns, SF Symbols, navigation
 design/systems/cli-patterns.md | CLI design system: colors ANSI, typographie terminal, composants (spinner, progress, prompts, tables), TUI frameworks, layout, error handling
 design/systems/design-system-selection.md | Design system selection: official packages, honest aesthetic implementations, dependency checks

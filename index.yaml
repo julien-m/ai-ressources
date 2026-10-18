@@ -24,10 +24,10 @@ domains:
     last_reviewed: 2026-07-04
 
   design:
-    description: "Cross-platform design reference: tokens (spacing, typography, colors, motion), platform systems (HIG, Material, Web, CLI/TUI, system selection), UI components (forms, lists, modals, buttons, navigation, feedback, payments, log viewer, data viz, real-time streams, email templates), visual QA and taste rules, accessibility (WCAG), market design references (landing pages, app UI, app views incl. integrations/webhooks/audit log, design read, redesign protocol, per-company systems)."
+    description: "Cross-platform design reference: tokens (spacing, typography, colors, motion), platform systems (HIG, Material, Web, CLI/TUI, system selection), UI components (forms, lists, modals, buttons, navigation, feedback, payments, log viewer, data viz, real-time streams, email templates), visual QA and taste rules, accessibility (WCAG), Mobbin article review, actionable dashboard/onboarding/paywall/streak contracts, reference research and homepage evidence; market design references (landing pages, app UI, app views incl. integrations/webhooks/audit log, design read, redesign protocol, per-company systems)."
     status: complete
-    file_count: 36
-    last_reviewed: 2026-10-13
+    file_count: 43
+    last_reviewed: 2026-10-18
     subdirectories:
       - components
       - quality
