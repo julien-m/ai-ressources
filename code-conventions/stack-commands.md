@@ -18,6 +18,7 @@ Used by `/conventions-init` Phase 7 (pre-commit hook), Phase 8 (CI workflows), a
 | TypeScript + Biome | tsconfig.json + (biome.json \| biome.jsonc) | `npx tsc --noEmit`<br>`if ! git diff --cached --quiet --diff-filter=ACMR -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json'; then git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' '*.json' \| xargs -0 npx biome check; fi` | ci-node | javascript-typescript |
 | TypeScript + ESLint | tsconfig.json + (.eslintrc* \| eslint.config.*) | `npx tsc --noEmit`<br>`if ! git diff --cached --quiet --diff-filter=ACMR -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs'; then git diff --cached --name-only --diff-filter=ACMR -z -- '*.ts' '*.tsx' '*.js' '*.jsx' '*.mjs' '*.cjs' \| xargs -0 npx eslint; fi` | ci-node | javascript-typescript |
 | TypeScript | tsconfig.json | `npx tsc --noEmit` | ci-node | javascript-typescript |
+| Elixir / Phoenix | mix.exs (Phoenix/Ecto/Oban detected from dependencies) | `mix format --check-formatted`, `MIX_ENV=test mix compile --warnings-as-errors`, `mix test` | Application-specific; read [Elixir CI](elixir-testing.md) | — |
 | Rust | Cargo.toml | `cargo check`, `cargo clippy -- -D warnings` | ci-rust | rust |
 | Go | go.mod | `go build ./...`, `go vet ./...` | ci-go | go |
 | Python + pyright | pyproject.toml + [tool.pyright] | `if ! git diff --cached --quiet --diff-filter=ACMR -- '*.py'; then git diff --cached --name-only --diff-filter=ACMR -z -- '*.py' \| xargs -0 ruff check; fi`<br>`pyright` | ci-python | python |
@@ -45,9 +46,9 @@ DAST is app-context dependent, not language dependent. Do not add Nuclei/ZAP jus
 ### Within a stack family
 Table rows are ordered by specificity — most specific first. Within a family (e.g., TypeScript variants), first match wins for label assignment.
 ### Across stack families
-Each family (TypeScript, Rust, Go, Python, Delphi, C/C++, .NET) is detected independently. ALL matching families are included.
+Each family (TypeScript, Elixir, Rust, Go, Python, Delphi, C/C++, .NET) is detected independently. ALL matching families are included.
 ### Primary stack
-For CI file naming: the first family in table order whose markers are found. Table order defines priority: TypeScript > Rust > Go > Python > Delphi > C/C++ > .NET.
+For CI file naming: the first family in table order whose markers are found. Table order defines priority: TypeScript > Elixir > Rust > Go > Python > Delphi > C/C++ > .NET.
 ### Linter sub-detection (TypeScript)
 1. `biome.json` or `biome.jsonc` → Biome
 2. `.eslintrc`, `.eslintrc.js`, `.eslintrc.cjs`, `.eslintrc.json`, `eslint.config.js`, `eslint.config.mjs` → ESLint
@@ -60,3 +61,14 @@ For CI file naming: the first family in table order whose markers are found. Tab
 **Single-stack:** `command -v` check → `exit 1` if missing (fail-closed).
 
 **Multi-stack:** `command -v` check → skip block if missing (warn, continue to next stack). Add `_ran=0` counter incremented per executed block. At the end, if `_ran` is still 0, exit 1 with "No tools found" error.
+
+## Elixir detection and validation
+
+- `mix.exs` identifies a Mix family independently of a React/TypeScript frontend or Rust crate. Use `mix.lock` and dependency declarations to refine Phoenix, `phoenix_live_view`, `ecto_sql`, `postgrex` and `oban` routing; a Mix file alone does not imply every framework.
+- Read [Elixir tests and CI](elixir-testing.md) for dependency resolution, DB preparation, test groups, optional Credo/Dialyxir/ExDoc and isolated PostgreSQL service prerequisites. Commands require the pinned toolchain and a test DB where applicable.
+- No portable `ci-elixir` template or CodeQL Elixir language is supplied here. Adapt the documented CI example in the application; do not claim the portable generator implements a new template. Unsupported security tooling uses the existing profile fallback with an explicit gap.
+- Read [runtime configs](runtime-configs.md) for version files, formatter, secrets, sandbox and ignore patterns. Keep all matching frontend/native checks in multi-stack repositories.
+
+## OpenAPI and generated clients
+
+Detect `:open_api_spex` in Mix dependencies and `orval.config.*` / `orval` in client dependencies. Read [REST/OpenAPI coherence commands](openapi.md) for offline export, document lint, locked SDK generation, generated/untracked diff gates, strict consumer compilation and runtime contract tests; add these to the application CI alongside its Elixir/TypeScript families. No new portable CI template is implied.

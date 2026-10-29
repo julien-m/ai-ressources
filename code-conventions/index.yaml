@@ -5,11 +5,17 @@ coverage:
   Python: full
   REST: full
   Rust: partial
+  Elixir: full
   Swift: partial
   Kotlin: partial
   Delphi: legacy
 
 frameworks:
+  OpenAPI / Orval: full
+  Phoenix: full
+  Phoenix LiveView: full
+  Ecto: full
+  Oban: full
   React: full
   Next.js: full
   Astro: full
@@ -81,12 +87,12 @@ files:
     priority: 6
 
   - file: runtime-configs.md
-    description: "Expected config defaults per runtime/language: tsconfig, package.json, editorconfig, prettier, gitignore patterns. Used by /conventions-init Phase 6."
+    description: "Expected config defaults per runtime/language: TypeScript files, Elixir/Mix/OTP pins, runtime/test config, editorconfig and gitignore patterns. Used by /conventions-init Phase 6."
     applies_to: ["*"]
     priority: 6
 
   - file: stack-commands.md
-    description: "Stack detection → pre-commit commands, CI template mapping, and opt-in security profile matrix. Used by /conventions-init Phase 7-8."
+    description: "Stack detection → pre-commit commands, CI template mapping, Elixir application-specific CI and opt-in security profile matrix. Used by /conventions-init Phase 7-8."
     applies_to: ["*"]
     priority: 6
 
@@ -163,3 +169,78 @@ files:
 
   - file: ../conventions/diagrams.md
     description: "Diagram conventions (transversal — also loaded outside code context). See conventions/"
+
+  - file: elixir.md
+    description: "Elixir idioms, Mix/Hex toolchain, typespecs, documentation, module attributes, runtime configuration, i18n and HTTP adapters"
+    applies_to: ["Elixir", "Mix", "Hex"]
+    priority: 5
+    status: complete
+    use_when: ["writing Elixir modules", "documenting Elixir code", "module attributes and runtime config", "Gettext Localize money dates"]
+    questions_answered: ["How should Elixir code, specs and comments be written?", "Which configuration belongs at compile time or runtime?"]
+    see_also: ["elixir-otp.md", "elixir-testing.md"]
+
+  - file: elixir-otp.md
+    description: "BEAM/OTP supervision, bounded tasks, backpressure, ETS/Cachex memory, profiling and Rustler NIF versus isolated Rust services"
+    applies_to: ["Elixir", "Erlang/OTP", "BEAM", "Rustler"]
+    priority: 6
+    status: complete
+    use_when: ["choosing GenServer or Task.Supervisor", "bounding BEAM memory and concurrency", "isolating native Rust work"]
+    questions_answered: ["When does a GenServer help?", "How do NIF scheduling and VM crash risks differ from a service?"]
+    see_also: ["rust.md", "oban.md"]
+
+  - file: phoenix.md
+    description: "Phoenix contexts, Router/Plug, React/mobile API contracts, auth scopes and tenants, Channels/PubSub and public CDN boundaries"
+    applies_to: ["Phoenix"]
+    priority: 7
+    status: complete
+    use_when: ["building Phoenix APIs for React or mobile", "authorizing Phoenix tenant operations", "choosing Channels or durable jobs"]
+    questions_answered: ["How should Phoenix web code call contexts?", "Which state may a CDN or PubSub safely own?"]
+    see_also: ["phoenix-liveview.md", "ecto.md", "oban.md"]
+
+  - file: phoenix-liveview.md
+    description: "LiveView choice, lifecycle, mount and event security, bounded assigns/streams, async work, reconnect and browser test boundaries"
+    applies_to: ["Phoenix LiveView"]
+    priority: 8
+    status: complete
+    use_when: ["building interactive LiveView screens", "securing LiveView events", "testing reconnect and async assigns"]
+    questions_answered: ["When should LiveView be chosen over React or native UI?", "How should mount, streams and durable state behave?"]
+    see_also: ["phoenix.md", "elixir-testing.md"]
+
+  - file: ecto.md
+    description: "Ecto/Postgrex changesets, scoped queries, database constraints, booking concurrency, Multi transactions and safe PostgreSQL migrations"
+    applies_to: ["Ecto", "Postgrex"]
+    priority: 7
+    status: complete
+    use_when: ["validating and persisting Ecto data", "preventing double bookings in PostgreSQL", "deploying Ecto migrations safely"]
+    questions_answered: ["How do changesets map database constraint failures?", "How should real independent transaction contention be tested?"]
+    see_also: ["database.md", "oban.md", "elixir-testing.md"]
+
+  - file: oban.md
+    description: "Durable Oban jobs, atomic data and job insertion, retries and provider reconciliation, per-node limits and active Flycast execution"
+    applies_to: ["Oban"]
+    priority: 8
+    status: complete
+    use_when: ["scheduling durable Elixir jobs", "making provider side effects idempotent", "running Oban workers on Fly.io"]
+    questions_answered: ["Does inserting an Oban job wake a suspended worker?", "How do queue limits and external reconciliation work?"]
+    see_also: ["ecto.md", "elixir-otp.md", "elixir-testing.md"]
+
+  - file: elixir-testing.md
+    description: "ExUnit, doctests, ConnTest/LiveViewTest, SQL Sandbox and real concurrency, Oban.Testing, HTTP mocks, Mix/Cargo checks and isolated PostgreSQL CI"
+    applies_to: ["Elixir", "ExUnit", "Phoenix", "Oban", "Rustler"]
+    priority: 9
+    status: complete
+    use_when: ["running Elixir checks and CI", "testing sandbox process ownership", "testing retry crash and reconnect recovery"]
+    questions_answered: ["Which Mix commands are required and which tools are optional?", "How should PostgreSQL CI and actual concurrency tests be isolated?"]
+    see_also: ["testing.md", "runtime-configs.md", "stack-commands.md"]
+
+  - file: openapi.md
+    description: "REST/OpenAPI contract ownership, Phoenix/OpenApiSpex generation and validation, reproducible Orval TypeScript SDK, runtime/consumer coherence gates and mobile compatibility"
+    applies_to: ["REST", "OpenAPI", "OpenApiSpex", "Orval", "Phoenix", "TypeScript"]
+    priority: 8
+    status: complete
+    use_when: ["generating Phoenix REST APIs and TypeScript SDKs", "validating API and SDK coherence", "detecting breaking HTTP changes", "exporting OpenApiSpex contracts", "Orval codegen"]
+    questions_answered:
+      - "How do Phoenix routes, OpenApiSpex schemas and Orval clients stay consistent?"
+      - "Which plugs validate requests and how are real responses tested?"
+      - "How should API export, SDK regeneration and older mobile compatibility be checked in CI?"
+    see_also: ["phoenix.md", "elixir-testing.md", "javascript.md", "tanstack.md"]
