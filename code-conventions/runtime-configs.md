@@ -104,6 +104,23 @@ Create if missing (pnpm only): **auto**
 shamefully-hoist=true
 ```
 ---
+## Elixir
+
+Applies when `mix.exs` exists. Read [Elixir rules](elixir.md) and [test/CI commands](elixir-testing.md) before creating configuration; use Mix rather than a JavaScript package manager for BEAM dependencies.
+
+| File | Expected contract | If missing |
+|---|---|---|
+| `.tool-versions` or equivalent | Exact compatible Elixir and Erlang/OTP versions, reused by CI/release builds | Select/test a pair; do not write an unverified latest version |
+| `mix.exs` | OTP app identity, Elixir requirement, dependencies and reviewed aliases | Use project scaffolding; preserve existing application settings |
+| `mix.lock` | Committed application dependency resolution | Generate with `mix deps.get`, review diff |
+| `.formatter.exs` | Inputs covering `mix.exs`, config, lib and test; chosen dependency imports and HEEx plugin if LiveView | Use generated defaults then adapt |
+| `config/runtime.exs` | Validated deployment env, secrets, pool/concurrency/deadline limits | Add when runtime deployment settings are needed; never put secrets in module attributes |
+| `config/test.exs` | Isolated test database and SQL Sandbox when Ecto is used; Oban manual mode when installed | Keep test credentials separate; never fall back to production |
+| `test/test_helper.exs` | ExUnit startup and sandbox mode if applicable | Use the generated test setup |
+
+Credo configuration and Dialyxir/PLT settings apply only when selected by the project. A Rustler crate also needs its Rust toolchain/lock/build configuration and matching production target. Generated files still require review.
+
+---
 ## .gitignore Patterns
 Language-independent. Composed in layers — common first, then per detected language.
 ### Layer: common
@@ -169,6 +186,21 @@ bin/
 *.exe
 vendor/
 ```
+### Layer: elixir
+
+Commit `mix.lock`, migrations and non-secret runtime config; do not ignore `priv/` wholesale because it may contain required migrations, translations and release assets.
+
+```gitignore
+_build/
+deps/
+cover/
+doc/
+*.ez
+erl_crash.dump
+```
+
+For Rustler, also apply the Rust layer; retain the native crate source and application lockfile.
+
 ### Layer: rust
 ```gitignore
 target/

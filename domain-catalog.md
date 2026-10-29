@@ -30,11 +30,19 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `typescript`, `ts`, `.ts`, `.tsx`, `javascript`, `js`, `.js`, `.jsx`, `node`, `bun`, `deno` | `code-conventions/javascript.md` |
 | `go`, `golang` | `code-conventions/go.md` |
 | `rust`, `cargo` | `code-conventions/rust.md` |
+| `elixir`, `mix`, `mix.exs`, `.ex`, `.exs`, `hex`, `gettext`, `localize` | `code-conventions/elixir.md` |
+| `elixir`, `beam`, `otp`, `genserver`, `task.supervisor`, `ets`, `cachex`, `rustler`, `nif` | `code-conventions/elixir-otp.md` |
+| `phoenix`, `phoenix-api`, `phoenix-channel`, `phoenix-pubsub` | `code-conventions/phoenix.md` |
+| `liveview`, `phoenix-liveview`, `phoenix_live_view`, `heex` | `code-conventions/phoenix-liveview.md` |
+| `ecto`, `ecto_sql`, `postgrex`, `ecto.multi`, `ecto-changeset` | `code-conventions/ecto.md` |
+| `oban`, `oban-worker`, `oban-queue`, `oban-testing` | `code-conventions/oban.md` |
+| `elixir`, `exunit`, `elixir-ci`, `sql-sandbox`, `conntest`, `liveviewtest`, `oban-testing`, `rustler` | `code-conventions/elixir-testing.md` |
 | `swift`, `ios`, `macos`, `swiftui`, `uikit` | `code-conventions/swift-kotlin.md` |
 | `kotlin`, `android`, `jetpack` | `code-conventions/swift-kotlin.md` |
 | `delphi`, `pascal`, `.pas`, `.dfm`, `.dproj` | `code-conventions/delphi.md` |
 | `python`, `py`, `.py`, `pip`, `uv`, `poetry`, `fastapi`, `django`, `flask`, `pydantic`, `pytest`, `ruff`, `pyright`, `mypy` | `code-conventions/python.md` |
 | `sql`, `postgresql`, `mysql`, `sqlite`, `database`, `migration`, `schema` | `code-conventions/database.md` |
+| `openapi`, `open_api_spex`, `openapispex`, `orval`, `rest-sdk`, `api-codegen`, `api-contract`, `sdk-generation` | `code-conventions/openapi.md` |
 | `pre-commit` | `code-conventions/stack-commands.md` |
 | `githooks` | `code-conventions/stack-commands.md` |
 | `ci workflow` | `code-conventions/stack-commands.md` |

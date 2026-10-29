@@ -64,6 +64,16 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 - **Read** [`stack-ref/index.yaml`](stack-ref/index.yaml) to route vendor and platform questions.
 - **Read** [`.agent-sync/rules/conventions-preload.md`](.agent-sync/rules/conventions-preload.md) for the portable loading workflow.
 
+### Elixir and Phoenix
+
+- **Read** [Elixir conventions](code-conventions/elixir.md) for idioms, documentation, typespecs, module attributes, configuration, localization and adapters.
+- **Read** [OTP and native boundaries](code-conventions/elixir-otp.md) for supervision, bounded concurrency, memory, profiling and Rustler versus isolated services.
+- **Read** [Phoenix](code-conventions/phoenix.md) and [LiveView](code-conventions/phoenix-liveview.md) for API/UI choices, authorization, lifecycle and reconnect behavior.
+- **Read** [Ecto](code-conventions/ecto.md) and [Oban](code-conventions/oban.md) for SQL constraints, migrations, transactional jobs, retries and active workers.
+- **Read** [Elixir testing and CI](code-conventions/elixir-testing.md) for ExUnit, doctests, sandbox ownership, independent transaction races and isolated PostgreSQL CI.
+- **Read** [REST/OpenApiSpex and Orval](code-conventions/openapi.md) for Phoenix API generation, deterministic contract export, TypeScript clients and API/SDK coherence tests.
+- Discovery uses the existing [domain catalog](domain-catalog.md), [code index](code-conventions/index.yaml) and `extends` chains. Select only relevant deltas; for example `{"code":["phoenix-liveview","oban","elixir-testing"]}` is accepted by `scripts/build-conventions.ts <project-dir> <domains-json>`. This documentation does not select a product stack or certify an application's runtime tests.
+
 ### Reusable Architecture Patterns
 
 - **Read** [the guided navigation contract](architecture/guided-navigation.md) to define provider-neutral destination catalogs for natural-language help, route changes and scroll-to-anchor behavior. Applications supply their own routes, permissions and UI adapters; documentation adoption does not activate a runtime feature.
