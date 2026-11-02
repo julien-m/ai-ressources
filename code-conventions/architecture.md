@@ -220,3 +220,22 @@ Small projects may simplify folder depth but must preserve the same layer bounda
 ## 33. Forbidden Architectural Smells
 Fat controllers, god services, repositories with business rules, domain logic in triggers, infrastructure leaking everywhere, DTO/entity confusion, random cross-module imports, hidden mutable global state, unowned background jobs, framework objects in business code, generic helper dumping grounds.
 These are architecture defects, not style issues.
+
+## 34. Interface-Based Modularity and Polymorphism
+- Prefer small modules with explicit responsibilities and narrow contracts; callers depend on the contract, while each implementation owns its technical details.
+- Keep browser frame callbacks, UI events and other entry callbacks thin: translate inputs, delegate to an injected interface, and manage the callback lifecycle. Keep rendering algorithms and backend-specific code in their own implementations.
+- Select and construct implementations at the configuration/composition boundary; do not scatter backend switches or concrete dependency construction through callers.
+- Resolve option-dependent behavior when configuration changes, then reuse the configured implementation in frame/event loops. Reconfigure on relevant setting, source or capability changes; keep data-validity and safety checks dynamic.
+- Collect hardware, GPS and ambient-light readings at input adapters and pass only the data each consumer needs. Rendering must not query sensors or preference stores; prepare presentation state outside drawing callbacks so a redraw does not advance measurement history.
+- Example: a frame callback calls `renderer.draw(scene)` through a rendering contract; Canvas and OpenGL implementations each own their drawing code. Configuration selects the renderer, without changing the callback.
+- Use language-idiomatic abstractions: interfaces, protocols, behaviours, traits or explicit function contracts. This preference does not require classes or an inheritance hierarchy.
+- Give contracts meaningful responsibilities and names so a reader can locate the caller, contract, implementation and wiring without following unrelated code.
+- Keep abstractions proportional: use them to isolate a responsibility, external dependency or meaningful variation; do not add empty forwarding layers or speculative implementations.
+
+- Make polymorphism a default design consideration at meaningful boundaries: business callers depend on a capability contract, and implementations can change without rewriting the caller. Apply this to providers, persistence, rendering, hardware inputs and replaceable algorithms across all languages.
+- Define a narrow contract when isolating a real responsibility or dependency, even with one current implementation; do not wait for a second implementation to decouple an external system. A local pure calculation can remain a function.
+- Prefer polymorphic dispatch over repeated switches on provider names or concrete types for an open set of implementations. Keep exhaustive matching for closed domain variants and state transitions; select runtime strategies at the composition boundary.
+- Separate capability polymorphism (different implementations of one contract) from parametric polymorphism (generic algorithms preserving type relationships). Choose static or dynamic dispatch according to runtime substitution, heterogeneous storage and measured costs.
+- Contracts include semantics: inputs, results, errors, side effects, ownership and concurrency guarantees. Substitutes must preserve those guarantees, not merely expose matching method names. Keep provider-specific features in separate capabilities rather than fake no-op implementations.
+- Verify shared observable guarantees against each real implementation where feasible; reuse contract checks for fakes without treating fake-only tests as proof of a provider integration. Avoid downcasts or concrete-type checks in business callers to recover capabilities omitted from the contract.
+- Apply these project design preferences using each language's mechanisms. Read [TypeScript/JavaScript](javascript.md), [Elixir](elixir.md), [Go](go.md), [Python](python.md), [Rust](rust.md), [Swift/Kotlin](swift-kotlin.md) and [Delphi/Pascal](delphi.md) for the corresponding choices. Keep SQL and framework-specific details behind those application contracts rather than inventing a universal interface syntax.

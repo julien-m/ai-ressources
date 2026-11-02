@@ -23,6 +23,12 @@ extends: [general]
 - Files and folders: **kebab-case** (`user.service.ts`, `verify-otp.controller.ts`, `email-templates/`)
 - Local constants may use camelCase
 
+## Contracts and polymorphism
+- Prefer narrow structural `interface` contracts for replaceable services/adapters and typed function contracts for a single operation. Inject implementations through constructors or function parameters; callers must not construct providers or branch on their names.
+- Classes and plain objects can satisfy the same contract; `implements` is optional explicit checking for classes, not a requirement for substitution. Use generics to preserve relationships between input/output types; keep discriminated unions for closed domain variants.
+- TypeScript contracts are erased at runtime: validate external data separately. In existing JavaScript, express object/function contracts with JSDoc `@typedef` / `@callback` and enable `checkJs` or `@ts-check`; keep new application code in TypeScript.
+- Read [TypeScript compatibility](https://www.typescriptlang.org/docs/handbook/type-compatibility.html) and [JavaScript typing](https://www.typescriptlang.org/docs/handbook/jsdoc-supported-types.html) for the language mechanisms; apply the shared project design policy in [architecture conventions](architecture.md#34-interface-based-modularity-and-polymorphism).
+
 ## Functions & Classes
 - Prefer **arrow functions**
 - Prefer **classes for services and use cases** with constructor DI

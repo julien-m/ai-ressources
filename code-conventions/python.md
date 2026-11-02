@@ -44,6 +44,12 @@ pytest                    # tests
 - Files and folders: **snake_case** (`user_service.py`, `verify_otp.py`)
 - No dunder names outside protocol methods
 
+## Contracts and polymorphism
+- Prefer small `typing.Protocol` contracts for injected adapters and services: structural subtyping lets unrelated classes satisfy a capability without inheriting a common base. Use `Callable` for a simple function strategy and generics for input/output type relationships.
+- Use `abc.ABC` and `@abstractmethod` when explicit inheritance and abstract-class instantiation checks are required; avoid base classes whose only purpose is sharing unrelated utility code.
+- Type hints do not enforce runtime semantics. `@runtime_checkable` checks attribute presence, not method signatures or behavior; validate inputs separately and verify implementation guarantees through shared contract tests.
+- Inject at construction or function boundaries; avoid `isinstance` chains for an open provider set. Read [Python protocols](https://typing.python.org/en/latest/spec/protocol.html) and [abstract base classes](https://docs.python.org/3/library/abc.html); apply the shared policy in [architecture conventions](architecture.md#34-interface-based-modularity-and-polymorphism).
+
 ## Functions & Classes
 - Free functions for stateless logic, classes for services with state
 - DI via `__init__` constructor

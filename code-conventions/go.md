@@ -46,6 +46,12 @@ gofmt -l . && go vet ./... && golangci-lint run && go test ./...
 - Constants: `PascalCase` exported (`MaxRetryCount`), `camelCase` unexported
 - Files and folders: **snake_case** (`user_service.go`, `verify_otp.go`)
 
+## Polymorphism and composition
+- Prefer consumer-owned capability interfaces at external or replaceable boundaries, even with one implementation when the boundary itself is real. Implementations satisfy interfaces implicitly; avoid embedding a shared concrete service merely to reuse code.
+- Use interfaces for substitutable behavior and generics with constraints for algorithms preserving type relationships. Constraint interfaces with type sets are not ordinary runtime value types. A function parameter is enough for one stateless operation.
+- Wire concrete providers at startup/composition; avoid repeated type assertions or type switches in business callers. Document ownership and errors; an interface containing a typed nil pointer is not a nil interface.
+- Read [Effective Go on interfaces](https://go.dev/doc/effective_go#interfaces) and [the interface specification](https://go.dev/ref/spec#Interface_types); apply the shared policy in [architecture conventions](architecture.md#34-interface-based-modularity-and-polymorphism).
+
 ## Interfaces
 - Single-method interfaces use `-er` suffix: `Reader`, `Writer`, `Sender`
 - Define interfaces **at the consumer**, not the implementor
