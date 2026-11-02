@@ -7,6 +7,14 @@ extends: [general, architecture, logging, testing]
 
 Apply to Mix applications, libraries and BEAM backends. These are language-specific refinements of the shared conventions, not a decision to adopt Elixir. Read [OTP rules](elixir-otp.md) for processes and native code, [Phoenix rules](phoenix.md) for HTTP, and [Elixir testing](elixir-testing.md) before validation.
 
+## Project choice and initialization
+
+- Use Phoenix for Elixir web applications and HTTP APIs, including backends serving React or mobile clients. This is the usual project shape; a pure business service or library without a web layer may use Elixir/OTP alone.
+- State explicitly in the project brief/README whether Phoenix is used and why, based on the required web/API boundary. A business service exposing an HTTP API follows the Phoenix path; domain logic remains independent of the web layer.
+- Initialize new projects with the official generator, then adapt its output; do not hand-build the project skeleton. For a Phoenix project use `mix phx.new <project_path>` directly, rather than starting with `mix new` and assembling Phoenix by hand. For a non-web service/library use `mix new <project_path>`; add `--sup` when a running OTP application with an application callback and supervision tree is needed.
+- Generate into a new target directory using the actual project name. For existing repositories, preserve the application and inspect its structure instead of rerunning a generator over it. Review generated files, dependencies, configuration and tests; generation does not validate business behavior.
+- Read [Phoenix initialization](phoenix.md#project-initialization) for installer prerequisites and UI/API options. Consult the official [Mix project generator](https://hexdocs.pm/mix/Mix.Tasks.New.html) and [Phoenix project generator](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.New.html) for options supported by the pinned toolchain.
+
 ## Toolchain and dependencies
 
 - Use Mix and Hex; commit `mix.lock` for applications. Pin exact Elixir and Erlang/OTP versions in the project's version-manager file and CI; `elixir: "~> ..."` in `mix.exs` is a compatibility constraint, not a runtime lock.

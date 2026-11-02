@@ -172,12 +172,12 @@ files:
     description: "Diagram conventions (transversal — also loaded outside code context). See conventions/"
 
   - file: elixir.md
-    description: "Elixir behaviours versus protocols, module/type polymorphism, Mix/Hex toolchain, typespecs, documentation, module attributes, runtime configuration, i18n and HTTP adapters"
+    description: "Elixir project choice and mix new initialization, behaviours versus protocols, module/type polymorphism, Mix/Hex toolchain, typespecs, documentation, module attributes, runtime configuration, i18n and HTTP adapters"
     applies_to: ["Elixir", "Mix", "Hex"]
     priority: 5
     status: complete
-    use_when: ["Elixir polymorphism", "behaviours and protocols", "writing Elixir modules", "documenting Elixir code", "module attributes and runtime config", "Gettext Localize money dates"]
-    questions_answered: ["When should Elixir use behaviours, protocols or pattern matching?", "How should Elixir code, specs and comments be written?", "Which configuration belongs at compile time or runtime?"]
+    use_when: ["initializing an Elixir project", "choosing Phoenix or a non-web service", "mix new", "Elixir polymorphism", "behaviours and protocols", "writing Elixir modules", "documenting Elixir code", "module attributes and runtime config", "Gettext Localize money dates"]
+    questions_answered: ["When should a project use mix phx.new versus mix new or mix new --sup?", "When should Elixir use behaviours, protocols or pattern matching?", "How should Elixir code, specs and comments be written?", "Which configuration belongs at compile time or runtime?"]
     see_also: ["elixir-otp.md", "elixir-testing.md"]
 
   - file: elixir-otp.md
@@ -190,12 +190,12 @@ files:
     see_also: ["rust.md", "oban.md"]
 
   - file: phoenix.md
-    description: "Phoenix contexts, Router/Plug, React/mobile API contracts, auth scopes and tenants, Channels/PubSub and public CDN boundaries"
+    description: "Phoenix web/API project initialization with mix phx.new, contexts, Router/Plug, React/mobile API contracts, auth scopes and tenants, Channels/PubSub and public CDN boundaries"
     applies_to: ["Phoenix"]
     priority: 7
     status: complete
-    use_when: ["building Phoenix APIs for React or mobile", "authorizing Phoenix tenant operations", "choosing Channels or durable jobs"]
-    questions_answered: ["How should Phoenix web code call contexts?", "Which state may a CDN or PubSub safely own?"]
+    use_when: ["generating a Phoenix project", "mix phx.new", "building Phoenix APIs for React or mobile", "authorizing Phoenix tenant operations", "choosing Channels or durable jobs"]
+    questions_answered: ["How should a web UI or API-only Phoenix project be initialized?", "How should Phoenix web code call contexts?", "Which state may a CDN or PubSub safely own?"]
     see_also: ["phoenix-liveview.md", "ecto.md", "oban.md"]
 
   - file: phoenix-liveview.md

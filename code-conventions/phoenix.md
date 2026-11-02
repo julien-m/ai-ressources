@@ -7,6 +7,14 @@ extends: [elixir-otp, ecto]
 
 Apply to Phoenix serving a React frontend, mobile API or server-rendered application. Read [LiveView rules](phoenix-liveview.md) only when that UI model is used. Phoenix does not require LiveView or a React rewrite.
 
+## Project initialization
+
+- For new Elixir web applications and HTTP APIs, use `mix phx.new <project_path>` to generate the Phoenix skeleton, then adapt it to the product. Read [Elixir project choice](elixir.md#project-choice-and-initialization) for the non-web `mix new` alternative and the required explicit Phoenix decision.
+- Before generation, select compatible pinned Elixir/OTP and Phoenix versions; install the chosen installer with `mix archive.install hex phx_new <version>`. Replace placeholders with the actual project path/version; generate in a new directory and review the generated dependencies, aliases, configuration and tests.
+- Keep the generated HTML/assets/LiveView setup for a server-rendered web UI when needed. For an API-only backend (including separate React/mobile clients), use `mix phx.new <project_path> --no-html --no-assets --no-live`. Select persistence explicitly: add `--database postgres` when using PostgreSQL, or `--no-ecto` when persistence is outside Ecto; do not apply API-only flags to a UI requiring those facilities.
+- Use the generated setup aliases after reviewing their effects and configuring the isolated development database where applicable. Do not recreate generated application, endpoint, router or supervision boilerplate manually. Existing applications are adapted in place rather than regenerated.
+- Consult the official [Phoenix generator](https://hexdocs.pm/phoenix/Mix.Tasks.Phx.New.html) for version-specific flags. Read [API scaffolding](openapi.md#phoenix-api-scaffolding) for subsequent resource generation and REST contract validation.
+
 ## Boundaries and structure
 
 - Keep business capabilities in `MyApp` contexts and HTTP/socket presentation in `MyAppWeb`. A context is a public domain API, not one service class per database table. Controllers, LiveViews and Channels call contexts; they do not duplicate policy or persistence rules.

@@ -71,6 +71,7 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 
 ### Elixir and Phoenix
 
+- **Read** [project choice and initialization](code-conventions/elixir.md#project-choice-and-initialization) before scaffolding: use Phoenix and `mix phx.new` for web/HTTP API projects; use `mix new` for a non-web business service or library, adding `--sup` when supervision is needed. Record the Phoenix decision explicitly.
 - **Read** [Elixir conventions](code-conventions/elixir.md) for idioms, documentation, typespecs, module attributes, configuration, localization and adapters.
 - **Read** [OTP and native boundaries](code-conventions/elixir-otp.md) for supervision, bounded concurrency, memory, profiling and Rustler versus isolated services.
 - **Read** [Phoenix](code-conventions/phoenix.md) and [LiveView](code-conventions/phoenix-liveview.md) for API/UI choices, authorization, lifecycle and reconnect behavior.
