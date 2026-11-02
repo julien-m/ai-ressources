@@ -25,20 +25,20 @@ conventions/technical-writing.md | Technical writing conventions for developer d
 
 ## code-conventions
 conventions/diagrams.md | Diagram conventions (transversal — also loaded outside code context). See conventions/
-code-conventions/architecture.md | Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events
+code-conventions/architecture.md | Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events, interface-based modularity, polymorphism, substitutable contracts, interchangeable implementations and thin callbacks | polymorphism, capability contracts, modular architecture, interfaces and abstractions, dependency injection, interchangeable implementations, rendering backends, thin event callbacks
 code-conventions/astro.md | Astro islands, client directives, content collections, routing, rendering modes (delta on javascript.md)
 code-conventions/cli.md | TypeScript/Node.js CLI application conventions: entry point fast-path, Commander.js, module structure, esbuild build pipeline, feature gates, startup optimization, error handling, Ink/React TUI (delta on javascript.md) | building a CLI, Node.js CLI, TypeScript CLI, Commander.js, Ink TUI, terminal application, bun build --compile, stdin input, pipe input
 code-conventions/cloudflare.md | Cloudflare Workers, D1, R2, KV, Hono, scheduled jobs and durable execution patterns (delta on javascript.md)
 code-conventions/database.md | SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)
-code-conventions/delphi.md | Delphi/Pascal memory management and style (delta on general.md)
+code-conventions/delphi.md | Delphi/Pascal interfaces, polymorphism, reference-counted ownership and style (delta on general.md)
 code-conventions/drizzle.md | Drizzle ORM schema, migrations, queries, D1/PostgreSQL (delta on database.md)
 code-conventions/ecto.md | Ecto/Postgrex changesets, scoped queries, database constraints, booking concurrency, Multi transactions and safe PostgreSQL migrations | validating and persisting Ecto data, preventing double bookings in PostgreSQL, deploying Ecto migrations safely
 code-conventions/elixir-otp.md | BEAM/OTP supervision, bounded tasks, backpressure, ETS/Cachex memory, profiling and Rustler NIF versus isolated Rust services | choosing GenServer or Task.Supervisor, bounding BEAM memory and concurrency, isolating native Rust work
 code-conventions/elixir-testing.md | ExUnit, doctests, ConnTest/LiveViewTest, SQL Sandbox and real concurrency, Oban.Testing, HTTP mocks, Mix/Cargo checks and isolated PostgreSQL CI | running Elixir checks and CI, testing sandbox process ownership, testing retry crash and reconnect recovery
-code-conventions/elixir.md | Elixir idioms, Mix/Hex toolchain, typespecs, documentation, module attributes, runtime configuration, i18n and HTTP adapters | writing Elixir modules, documenting Elixir code, module attributes and runtime config, Gettext Localize money dates
+code-conventions/elixir.md | Elixir behaviours versus protocols, module/type polymorphism, Mix/Hex toolchain, typespecs, documentation, module attributes, runtime configuration, i18n and HTTP adapters | Elixir polymorphism, behaviours and protocols, writing Elixir modules, documenting Elixir code, module attributes and runtime config, Gettext Localize money dates
 code-conventions/general.md | Shared rules for all languages: types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste
-code-conventions/go.md | Go-specific patterns and tooling (delta on general.md)
-code-conventions/javascript.md | TypeScript/Node.js/React conventions (delta on general.md)
+code-conventions/go.md | Go consumer-owned interfaces, implicit implementation, generics, composition and tooling (delta on general.md)
+code-conventions/javascript.md | TypeScript/JavaScript structural interfaces, function contracts, generics, runtime validation and Node.js/React conventions (delta on general.md)
 code-conventions/logging.md | Structured logging, sensitive data redaction, compliance rules
 code-conventions/nextjs.md | Next.js App Router, RSC, Server Components, caching, client motion leaf isolation (delta on react.md)
 code-conventions/oban.md | Durable Oban jobs, atomic data and job insertion, retries and provider reconciliation, per-node limits and active Flycast execution | scheduling durable Elixir jobs, making provider side effects idempotent, running Oban workers on Fly.io
@@ -46,14 +46,14 @@ code-conventions/openapi.md | REST/OpenAPI contract ownership, Phoenix/OpenApiSp
 code-conventions/phoenix-liveview.md | LiveView choice, lifecycle, mount and event security, bounded assigns/streams, async work, reconnect and browser test boundaries | building interactive LiveView screens, securing LiveView events, testing reconnect and async assigns
 code-conventions/phoenix.md | Phoenix contexts, Router/Plug, React/mobile API contracts, auth scopes and tenants, Channels/PubSub and public CDN boundaries | building Phoenix APIs for React or mobile, authorizing Phoenix tenant operations, choosing Channels or durable jobs
 code-conventions/prisma.md | Prisma v7 schema, client, transactions, migrations (delta on database.md)
-code-conventions/python.md | Python conventions: typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)
+code-conventions/python.md | Python conventions: Protocol/ABC polymorphism, callable strategies, typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)
 code-conventions/react.md | React hooks, re-renders, composition, data fetching, motion value boundaries (delta on javascript.md)
 code-conventions/remotion.md | Remotion compositions, animations, sequencing, assets, rendering (delta on react.md)
 code-conventions/runtime-configs.md | Expected config defaults per runtime/language: TypeScript files, Elixir/Mix/OTP pins, runtime/test config, editorconfig and gitignore patterns. Used by /conventions-init Phase 6.
-code-conventions/rust.md | Rust idioms, ownership, error handling (delta on general.md)
+code-conventions/rust.md | Rust traits, static/dynamic dispatch, dyn-compatible async boundaries, ownership and errors (delta on general.md)
 code-conventions/shadcn.md | shadcn/ui composition, variants, semantic tokens, forms, no unchanged registry defaults (delta on react.md + tailwind.md)
 code-conventions/stack-commands.md | Stack detection → pre-commit commands, CI template mapping, Elixir application-specific CI and opt-in security profile matrix. Used by /conventions-init Phase 7-8.
-code-conventions/swift-kotlin.md | iOS/Android native conventions for Swift and Kotlin (delta on general.md)
+code-conventions/swift-kotlin.md | Swift protocols, generics and existentials; Kotlin interfaces, delegation and sealed variants; iOS/Android conventions (delta on general.md)
 code-conventions/tailwind.md | Tailwind CSS v4 configuration, theming, utilities, marketing layout guardrails (delta on javascript.md)
 code-conventions/tanstack.md | TanStack Query v5, Router, Start conventions (delta on react.md)
 code-conventions/testing.md | Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage, CLI output testing (ANSI/NO_COLOR)

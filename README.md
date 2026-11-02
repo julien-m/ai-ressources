@@ -64,6 +64,11 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 - **Read** [`stack-ref/index.yaml`](stack-ref/index.yaml) to route vendor and platform questions.
 - **Read** [`.agent-sync/rules/conventions-preload.md`](.agent-sync/rules/conventions-preload.md) for the portable loading workflow.
 
+### Contracts and polymorphism
+
+- **Read** [modularity and polymorphism conventions](code-conventions/architecture.md#34-interface-based-modularity-and-polymorphism) for the shared preference: narrow capability contracts, interchangeable implementations, composition-time selection and semantic substitutability, including boundaries with one current implementation.
+- **Read** [TypeScript/JavaScript](code-conventions/javascript.md), [Elixir](code-conventions/elixir.md), [Go](code-conventions/go.md), [Python](code-conventions/python.md), [Rust](code-conventions/rust.md), [Swift/Kotlin](code-conventions/swift-kotlin.md) and [Delphi/Pascal](code-conventions/delphi.md) for the language-specific mechanisms and official sources.
+
 ### Elixir and Phoenix
 
 - **Read** [Elixir conventions](code-conventions/elixir.md) for idioms, documentation, typespecs, module attributes, configuration, localization and adapters.

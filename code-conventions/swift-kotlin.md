@@ -36,6 +36,17 @@ extends: [general]
 ## Files
 - One primary type per file, file name matches type: `UserService.swift` / `UserService.kt`
 
+## Contracts and polymorphism
+### Swift
+- Prefer small `protocol` capabilities for adapters and replaceable services; structs, enums and classes can conform. Inject through initializers or function parameters and keep provider selection outside business callers.
+- Use generic constraints or `some P` to preserve a concrete conforming type; use `any P` for existential storage/runtime substitution when needed. An opaque result has one hidden underlying type for that declaration, not arbitrary branch-dependent types. Respect associated-type constraints rather than adding casts to escape them.
+- Declare operations that must dispatch through the protocol as requirements; an extension-only helper is not a customizable protocol requirement. Preserve actor isolation and `Sendable` guarantees in concurrent contracts.
+- Read [Swift protocols](https://docs.swift.org/latest/documentation/the-swift-programming-language/protocols/) and [opaque and boxed protocol types](https://docs.swift.org/latest/documentation/the-swift-programming-language/opaquetypes/).
+### Kotlin
+- Prefer small `interface` capabilities injected through constructors; use `fun interface` or function types for one operation and interface delegation (`by`) to compose implementations without an inheritance hierarchy.
+- Use generics for type relationships and sealed classes/interfaces for closed domain variants with exhaustive `when`; use ordinary interfaces for an extensible provider set. Extension functions resolve statically and do not replace virtual interface members.
+- Keep `suspend`, cancellation and ownership guarantees explicit in contracts. Read [Kotlin interfaces](https://kotlinlang.org/docs/interfaces.html) and [delegation](https://kotlinlang.org/docs/delegation.html); apply the shared policy for both languages in [architecture conventions](architecture.md#34-interface-based-modularity-and-polymorphism).
+
 ## Functions & Classes
 - Prefer structs (Swift) / data classes (Kotlin) for value types
 - Classes for services and stateful components

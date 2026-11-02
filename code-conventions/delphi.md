@@ -72,6 +72,12 @@ Returned objects must clearly transfer ownership or be documented as shared. Nev
 ### 17. Document ownership
 `// Caller owns the returned object` on every ownership-transferring function.
 
+## Interfaces and polymorphism
+- Prefer narrow `IInterface`-based capability contracts for replaceable services/adapters; inject them through constructors or parameters and implement them in separate classes. Keep concrete class construction and provider selection at composition boundaries.
+- Use virtual/abstract methods when an existing class hierarchy or framework requires subtype dispatch; prefer interface composition for independent capabilities rather than deepening inheritance for code reuse. Use generics for type relationships, not provider-name switches.
+- Make lifetime policy explicit: `TInterfacedObject` provides reference counting. Do not manually `Free` an object managed by live counted interface references; avoid mixing counted references and owning object references. Framework-owned non-counted implementations require their own documented lifetime contract.
+- Read [Embarcadero reference counting](https://docwiki.embarcadero.com/RADStudio/Florence/en/Using_Reference_Counting) and [TInterfacedObject](https://docwiki.embarcadero.com/Libraries/Alexandria/en/System.TInterfacedObject); apply the shared policy in [architecture conventions](architecture.md#34-interface-based-modularity-and-polymorphism).
+
 ## Design
 ### 18. Prefer immutable data
 `function CreateUpdatedConfig(const Config: TConfig): TConfig;` over `procedure UpdateConfig(var Config: TConfig);`

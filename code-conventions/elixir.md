@@ -39,7 +39,7 @@ end
 - Use two-space indentation and formatter defaults, not JS tabs/semicolons. Mirror module names in paths (`MyApp.Billing.Invoice` → `lib/my_app/billing/invoice.ex`).
 - Keyword lists suit a small set of optional parameters; validate supported keys, value types and defaults at the public boundary. A keyword list can contain duplicate keys; reject ambiguity when it matters. Use a named struct/embedded schema for a substantial validated request, and typed structs or tagged tuples for results.
 - Convert transport, domain and persistence representations in explicit functions. Keep absence (`nil`), expected error tuples and successful empty collections distinct; never use truthiness to conflate a valid value with failure.
-- Prefer composition through functions/behaviours. Use protocols only for genuine data-type polymorphism; avoid building a framework of abstractions before several implementations need it.
+- Prefer composition and explicit polymorphic contracts at meaningful boundaries. Use behaviours for interchangeable module implementations and protocols for extensible operations dispatched by data type; define the contract when a real boundary needs isolation, even with one current implementation.
 
 Small option example; a real boundary also rejects unknown/duplicate keys and enforces the configured maximum:
 
@@ -153,3 +153,10 @@ Official references checked 2026-10-28; unversioned links track upstream, so con
 - Consult [Elixir compatibility](https://hexdocs.pm/elixir/compatibility-and-deprecations.html), [library guidelines](https://hexdocs.pm/elixir/library-guidelines.html) and [Config](https://hexdocs.pm/elixir/Config.html) for toolchain and module contracts.
 - Consult [Gettext](https://hexdocs.pm/gettext/Gettext.html), [Localize](https://hexdocs.pm/localize/readme.html) and [ex_cldr support](https://hexdocs.pm/ex_cldr/readme.html) for localization choices.
 - Consult [Req](https://hexdocs.pm/req/readme.html) and [Logger](https://hexdocs.pm/logger/Logger.html) for adapter and logging APIs.
+
+## Behaviours, protocols and polymorphism
+- Prefer a behaviour (`@callback`, `@behaviour`, `@impl true`) for interchangeable modules such as persistence, payment, delivery or rendering adapters. Inject the implementing module and explicit state/options at composition; callers invoke the contract without provider-name switches. Behaviours declare callbacks; they do not select the module or enforce runtime semantics for you.
+- Prefer `defprotocol` / `defimpl` when an operation must extend across data types without editing a central dispatcher. Dispatch uses the first argument's type, including struct identity; it does not select a provider from configuration or dispatch on arbitrary field values.
+- Keep pattern matching and guards for closed domain variants and local transformations. A function argument is enough for a single operation; do not introduce a process, macro or inheritance-like framework merely to express a contract.
+- Document callback/protocol inputs, result/error shapes, side effects and state ownership; keep implementations substitutable. Provide an `Any` fallback only when it has valid semantics for every accepted type, not to conceal missing implementations.
+- Read [Elixir protocols](https://hexdocs.pm/elixir/protocols.html) and [behaviour attributes](https://hexdocs.pm/elixir/Module.html#module-behaviour) for the mechanisms; apply the project preference in [architecture conventions](architecture.md#34-interface-based-modularity-and-polymorphism). Use [Elixir testing conventions](elixir-testing.md) for fakes and Mox behind behaviour contracts.

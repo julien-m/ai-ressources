@@ -34,9 +34,10 @@ files:
     priority: 1
 
   - file: architecture.md
-    description: "Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events"
+    description: "Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events, interface-based modularity, polymorphism, substitutable contracts, interchangeable implementations and thin callbacks"
     applies_to: ["*"]
     priority: 2
+    use_when: ["polymorphism", "capability contracts", "modular architecture", "interfaces and abstractions", "dependency injection", "interchangeable implementations", "rendering backends", "thin event callbacks"]
 
   - file: logging.md
     description: "Structured logging, sensitive data redaction, compliance rules"
@@ -49,34 +50,34 @@ files:
     priority: 4
 
   - file: javascript.md
-    description: "TypeScript/Node.js/React conventions (delta on general.md)"
+    description: "TypeScript/JavaScript structural interfaces, function contracts, generics, runtime validation and Node.js/React conventions (delta on general.md)"
     applies_to: ["TypeScript", "JavaScript", "Node", "React", "Next.js"]
     priority: 5
 
   - file: go.md
-    description: "Go-specific patterns and tooling (delta on general.md)"
+    description: "Go consumer-owned interfaces, implicit implementation, generics, composition and tooling (delta on general.md)"
     applies_to: ["Go"]
     priority: 5
 
   - file: rust.md
-    description: "Rust idioms, ownership, error handling (delta on general.md)"
+    description: "Rust traits, static/dynamic dispatch, dyn-compatible async boundaries, ownership and errors (delta on general.md)"
     applies_to: ["Rust"]
     priority: 5
     status: partial
 
   - file: delphi.md
-    description: "Delphi/Pascal memory management and style (delta on general.md)"
+    description: "Delphi/Pascal interfaces, polymorphism, reference-counted ownership and style (delta on general.md)"
     applies_to: ["Delphi", "Pascal"]
     priority: 5
     status: legacy
 
   - file: python.md
-    description: "Python conventions: typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)"
+    description: "Python conventions: Protocol/ABC polymorphism, callable strategies, typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)"
     applies_to: ["Python"]
     priority: 5
 
   - file: swift-kotlin.md
-    description: "iOS/Android native conventions for Swift and Kotlin (delta on general.md)"
+    description: "Swift protocols, generics and existentials; Kotlin interfaces, delegation and sealed variants; iOS/Android conventions (delta on general.md)"
     applies_to: ["Swift", "Kotlin"]
     priority: 5
     status: partial
@@ -171,12 +172,12 @@ files:
     description: "Diagram conventions (transversal — also loaded outside code context). See conventions/"
 
   - file: elixir.md
-    description: "Elixir idioms, Mix/Hex toolchain, typespecs, documentation, module attributes, runtime configuration, i18n and HTTP adapters"
+    description: "Elixir behaviours versus protocols, module/type polymorphism, Mix/Hex toolchain, typespecs, documentation, module attributes, runtime configuration, i18n and HTTP adapters"
     applies_to: ["Elixir", "Mix", "Hex"]
     priority: 5
     status: complete
-    use_when: ["writing Elixir modules", "documenting Elixir code", "module attributes and runtime config", "Gettext Localize money dates"]
-    questions_answered: ["How should Elixir code, specs and comments be written?", "Which configuration belongs at compile time or runtime?"]
+    use_when: ["Elixir polymorphism", "behaviours and protocols", "writing Elixir modules", "documenting Elixir code", "module attributes and runtime config", "Gettext Localize money dates"]
+    questions_answered: ["When should Elixir use behaviours, protocols or pattern matching?", "How should Elixir code, specs and comments be written?", "Which configuration belongs at compile time or runtime?"]
     see_also: ["elixir-otp.md", "elixir-testing.md"]
 
   - file: elixir-otp.md

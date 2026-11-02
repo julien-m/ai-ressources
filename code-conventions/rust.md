@@ -53,25 +53,22 @@ cargo check && cargo clippy -- -D warnings && cargo fmt --check && cargo test
 - Booleans: `is_active`, `has_credits`, `can_send_email`
 - Files: `snake_case` (`user_service.rs`)
 
+## Traits and polymorphism
+- Prefer narrow traits for replaceable dependencies and capabilities. Use `T: Trait` / `impl Trait` for static dispatch when retaining the concrete type suits composition; use `&dyn Trait`, `Box<dyn Trait>` or `Arc<dyn Trait>` when runtime substitution or heterogeneous storage requires type erasure and the ownership model fits.
+- Dynamic dispatch requires a dyn-compatible trait. Native `async fn` trait methods are not directly dyn-compatible: choose static dispatch or an explicit boxed-future/justified adapter solution instead of assuming `Box<dyn Trait>` works for every async service.
+- Keep enums and exhaustive matching for closed variants; use trait implementations for extensible behavior. Respect coherence/orphan rules; wrap external types in a local newtype when needed. Constructors wire implementations; business logic calls the trait contract.
+- Read [Rust trait objects](https://doc.rust-lang.org/book/ch18-02-trait-objects.html) and [dyn compatibility](https://doc.rust-lang.org/reference/items/traits.html#dyn-compatibility); apply the shared policy in [architecture conventions](architecture.md#34-interface-based-modularity-and-polymorphism).
+
 ## Functions & Structs
 - Free functions for stateless logic, structs with `impl` for services
 - DI via `::new()` constructor
 - Composition via traits (no inheritance in Rust)
 
 ```rust
-pub struct UserService {
-	repo: Box<dyn UserRepository>,
-}
-
-impl UserService {
-	pub fn new(repo: Box<dyn UserRepository>) -> Self {
-		Self { repo }
-	}
-
-	pub async fn create_user(&self, input: CreateUserInput) -> Result<CreateUserResult, UserError> {
-		let user = self.repo.create(input).await?;
-		Ok(CreateUserResult { user_id: user.id })
-	}
+pub trait Renderer { fn draw(&self, scene: &Scene); }
+pub struct View<R: Renderer> { renderer: R }
+impl<R: Renderer> View<R> {
+    pub fn draw(&self, scene: &Scene) { self.renderer.draw(scene); }
 }
 ```
 
