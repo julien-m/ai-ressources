@@ -19,6 +19,18 @@ extends: [general]
 - Build: **Gradle** (Kotlin DSL)
 - Architecture: **MVVM** with **Clean Architecture** layers
 
+## Project choice and initialization
+
+- Record native app versus package/library/command-line service, target platforms and the selected UI/build stack before generation. Use the matching official project creator; a package generator is not an iOS/Android app generator.
+### Swift
+- For a Swift package, create and enter a new directory, then run `swift package init --type library` or `swift package init --type executable` according to its role. Review the generated manifest, source/test targets, supported platforms and toolchain requirements.
+- For an iOS/macOS app, use Xcode's **File > New > Project** and the matching platform **App** template, choosing Swift/SwiftUI when appropriate. Configure the actual product/bundle identifiers, deployment targets and signing settings. `swift package init` does not generate an Xcode app's lifecycle, bundle or signing setup; `xcodebuild` builds existing projects rather than creating them.
+- Read [SwiftPM package creation](https://github.com/swiftlang/swift-package-manager/blob/main/Sources/PackageManagerDocs/Documentation.docc/CreatingSwiftPackage.md) and [Apple app project creation](https://developer.apple.com/documentation/xcode/creating-an-xcode-project-for-an-app).
+### Kotlin
+- For Android, use Android Studio's **New Project** wizard and the appropriate template (for example **Empty Activity** for Compose), selecting Kotlin, package identifier and minimum SDK. Keep the generated Android Gradle plugin configuration and Gradle Wrapper; do not substitute a JVM console template for an Android application.
+- For a non-Android Kotlin/JVM command-line application/service, create and enter the new directory and run `gradle init --type kotlin-application --dsl kotlin`; use `--type kotlin-library` for a library. Bootstrap with the selected compatible Gradle installation, then use the generated wrapper (`./gradlew`) for subsequent builds. These templates do not generate an Android app or choose a server framework.
+- Review the selected JDK/toolchain, generated plugins, source sets, tests and wrapper files. Read [Android project creation](https://developer.android.com/studio/projects/create-project) and [Gradle Build Init](https://docs.gradle.org/current/userguide/build_init_plugin.html).
+
 ## Type System
 - Make illegal states unrepresentable
 - Enums for state machines and fixed value sets

@@ -12,6 +12,13 @@ extends: [general]
 - Prefer zero-cost abstractions — minimize runtime overhead
 - Must compile on Linux with stable Rust
 
+## Project choice and initialization
+
+- Record executable/service versus library and the selected async/web stack. Use `cargo new <project_path> --bin` for a new executable or service, and `cargo new <project_path> --lib` for a reusable library; do not hand-build the Cargo manifest and initial source skeleton.
+- Use `cargo init --bin` or `cargo init --lib` only when deliberately initializing an existing directory that is not already a Cargo package, after inspecting its contents. Preserve existing package/workspace identities; do not regenerate over them.
+- Cargo initializes a package, not an Axum/Actix server. Add the selected runtime/framework and minimal entry point following its documentation; do not require an unrelated third-party template. Review edition, toolchain, generated files and dependency/lockfile policy.
+- Read [cargo new](https://doc.rust-lang.org/cargo/commands/cargo-new.html) and [cargo init](https://doc.rust-lang.org/cargo/commands/cargo-init.html) for supported options.
+
 ## Type System
 - Make illegal states unrepresentable
 - No `unwrap()` / `expect()` in library/production code — use `Result<T, E>` and `Option<T>`

@@ -11,6 +11,13 @@ extends: [general]
 - Serialization/validation: **Pydantic** for external data
 - Prefer stdlib and minimal dependencies
 
+## Project choice and initialization
+
+- Record application/service versus distributable library and any web framework before generation. Use `uv init <project_path>` for an application; use `uv init --package <project_path>` to require an installable package/build backend explicitly rather than relying on version-dependent defaults and `uv init --lib <project_path>` for a library. Select and pin the supported Python version; do not recreate generated project metadata by hand.
+- For Django, use `uv init --no-package <project_path>` so the Django generator owns the application package; add the chosen Django version, then use `uv run django-admin startproject <python_package_name> .` from that project root. Use a valid Python package identifier that does not collide with an existing/importable module; inspect existing files first and preserve the uv project metadata. This generates Django settings/URLs/management files in addition to the package metadata.
+- For FastAPI or Flask, initialize with uv, add the selected framework dependencies, then create the minimal entry module using that framework's official setup. `fastapi dev` and `flask run` are development-server commands, not project generators; an application skeleton is still needed. Do not adopt a large optional full-stack starter for a pure API without an explicit stack choice.
+- Review generated metadata, entry points, test setup and lockfile before extending the application. Read [uv project creation](https://docs.astral.sh/uv/concepts/projects/init/), [Django startproject](https://docs.djangoproject.com/en/stable/ref/django-admin/#startproject), [FastAPI first steps](https://fastapi.tiangolo.com/tutorial/first-steps/) and [Flask quickstart](https://flask.palletsprojects.com/en/stable/quickstart/).
+
 ## Typing Strategy
 - Type hints on all public function signatures (parameters + return)
 - `strict` mode in pyright (`"typeCheckingMode": "strict"`)

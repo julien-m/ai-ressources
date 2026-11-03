@@ -20,6 +20,14 @@ extends: []
 - Avoid catch-all folders: `utils/`, `helpers/`, `misc/`, `common/`
 - One primary concept per file
 - Clear separation: entry points, business logic, data access, external integrations
+
+#### Project initialization
+- State the project role (application, service, library), runtime, framework and deployment targets in the brief/README before choosing a starter. Prefer the selected language/toolchain/framework's official generator or IDE template for new projects; do not hand-recreate the skeleton when that creator exists.
+- Distinguish package/module initialization from web/mobile scaffolding and from build/run commands. If the selected stack only initializes metadata, add the minimal documented source structure; do not invent a missing generator or silently select a third-party framework.
+- Replace command placeholders with actual names/paths and select compatible toolchain/generator versions before execution; record the invoked command or IDE template and resolved versions. Inspect supported options with the selected version's help/docs rather than blindly following moving defaults.
+- Use a new target directory by default; inspect existing contents before any supported in-place initialization. Never regenerate over an established project. Review dependencies, configuration, lockfiles and generated code/tests; adapt them to the conventions and verify the project locally. Initialization must not implicitly deploy or publish.
+- Read the initialization sections for [TypeScript/JavaScript](javascript.md#project-choice-and-initialization), [Elixir](elixir.md#project-choice-and-initialization), [Go](go.md#project-choice-and-initialization), [Python](python.md#project-choice-and-initialization), [Rust](rust.md#project-choice-and-initialization), [Swift/Kotlin](swift-kotlin.md#project-choice-and-initialization) and [Delphi/Pascal](delphi.md#project-choice-and-initialization).
+
 ### 4. Style
 - Automatic formatter — no manual formatting debates
 - Linter with strict rules
