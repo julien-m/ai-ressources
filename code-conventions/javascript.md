@@ -10,6 +10,16 @@ extends: [general]
 - TypeScript is mandatory, `strict` mode enabled
 - Runtime validation: **Zod** (or equivalent) for external data
 
+## Project choice and initialization
+
+- Record the runtime, package manager, application/library role and web framework in the brief/README before generation. Use the framework's maintained generator for a framework app; do not assemble its skeleton by hand or initialize several competing starters in the same directory.
+- For a plain Node.js package/service/CLI, create and enter the new project directory, then run `npm init` (or `npm init -y` after choosing metadata). This initializes `package.json`, not a TypeScript application. Install the selected local TypeScript version and run `npx tsc --init` when no framework generator supplies `tsconfig.json`; configure ESM, strict typing, build/test scripts and application versus library outputs explicitly.
+- For a Bun project, run `bun init` in the new directory and choose the appropriate project kind; do not select a full-stack template for a plain library/CLI. Review the generated scripts, TypeScript settings and Bun-specific dependencies against the runtime actually selected.
+- For Next.js, use `npx create-next-app@<generator_version> <project_path> --ts --app`; for Astro, use `npm create astro@<generator_version> -- <project_path>`. Choose the UI/rendering/deployment model first and review generated options. Read [Next.js rules](nextjs.md) and [Astro rules](astro.md) for the corresponding deltas.
+- For a React client-only app when Vite is selected, use `npm create vite@<generator_version> <project_path> -- --template react-ts`. Vite is the selected build-tool generator, not a universal React CLI; do not use it instead of a chosen full-stack framework's generator. Read [React rules](react.md).
+- For Cloudflare Workers, use C3: `npm create cloudflare@<generator_version> -- <project_path>`, select TypeScript and the required Worker/framework template, and skip deployment during initialization. Read [Cloudflare rules](cloudflare.md); package initialization or TypeScript configuration alone does not create a Worker project.
+- Commands above show npm invocation syntax; when another package manager is selected, use its documented equivalent and keep one lockfile policy. Replace placeholders with selected compatible versions and actual paths. Consult [npm init](https://docs.npmjs.com/cli/v11/commands/npm-init/), [tsc CLI](https://www.typescriptlang.org/docs/handbook/compiler-options.html), [bun init](https://bun.sh/docs/runtime/templating/init), [create-next-app](https://nextjs.org/docs/app/api-reference/cli/create-next-app), [Astro setup](https://docs.astro.build/en/install-and-setup/), [Vite scaffolding](https://vite.dev/guide/) and [Cloudflare C3](https://developers.cloudflare.com/workers/get-started/guide/).
+
 ## TypeScript Specifics
 - `any` is forbidden unless explicitly justified
 - Inference allowed only for trivial local variables

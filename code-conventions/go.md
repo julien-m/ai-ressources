@@ -11,6 +11,13 @@ extends: [general]
 - Config: **envconfig** or **viper**
 - Prefer stdlib and minimal dependencies
 
+## Project choice and initialization
+
+- State whether the project is a command/service or a reusable module and which HTTP stack, if any, is needed. In the new project directory run `go mod init <module_path>` using the actual canonical import path; do not hand-write `go.mod` or substitute an arbitrary repository URL for the import path.
+- `go mod init` initializes module metadata, not source files or a server skeleton. Add only the entry points/packages needed by the selected role, then resolve actual imports with `go mod tidy`. Keep generated module metadata and checksums under the project's dependency policy.
+- The selected stdlib `net/http`, Chi or Gin stack uses this module initialization plus its documented setup; do not invent a universal `go new` or require an unrelated starter framework. Existing modules retain their identity and are adapted rather than reinitialized.
+- Read the official [Go module creation tutorial](https://go.dev/doc/tutorial/create-module) and [module commands](https://go.dev/ref/mod#go-mod-init) before initialization.
+
 ## Type System
 - Structs for all business objects
 - Custom types to distinguish domain concepts: `type UserID string`, `type Email string`

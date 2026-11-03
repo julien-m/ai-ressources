@@ -64,6 +64,11 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 - **Read** [`stack-ref/index.yaml`](stack-ref/index.yaml) to route vendor and platform questions.
 - **Read** [`.agent-sync/rules/conventions-preload.md`](.agent-sync/rules/conventions-preload.md) for the portable loading workflow.
 
+### Project initialization
+
+- **Read** [shared initialization rules](code-conventions/general.md#project-initialization) before creating a project: record its role, stack, targets and creator/version, then use the corresponding official generator or IDE template. The language notes cover npm/Bun and web framework starters, Mix/Phoenix, Go modules, uv/Python frameworks, Cargo, SwiftPM/Xcode, Gradle/Android Studio and RAD Studio.
+- Package metadata, web/mobile scaffolding and build/run commands are distinct. Preserve existing applications, review generated output and initialize without implicitly deploying.
+
 ### Contracts and polymorphism
 
 - **Read** [modularity and polymorphism conventions](code-conventions/architecture.md#34-interface-based-modularity-and-polymorphism) for the shared preference: narrow capability contracts, interchangeable implementations, composition-time selection and semantic substitutability, including boundaries with one current implementation.

@@ -4,6 +4,13 @@ extends: [general]
 # Delphi Rules (Delta)
 
 > These rules complement [`general.md`](general.md). Documentation rules 23-30 from [`general.md`](general.md) apply; only Delphi-specific doc formats are listed here.
+## Project choice and initialization
+
+- Record Windows VCL UI, cross-platform FireMonkey UI, console/business service or library before creation, including the actual deployment targets. Use RAD Studio's **File > New** / **Other** project wizards for the selected Delphi project type rather than hand-building the `.dpr`/`.dproj` skeleton.
+- Choose **VCL Forms Application** for Windows VCL, **Multi-Device Application** for FireMonkey, or the relevant **Console Application**, service or library template from the installed Delphi edition. Review generated units, platform targets, ownership and project/build options before adding business code.
+- This is an IDE creation workflow, not a universal Delphi initialization command. `dcc32`/`dcc64` and MSBuild compile/build existing source/projects; they do not replace the project wizard. Preserve existing legacy projects rather than regenerating them, and verify template availability against the installed edition/version.
+- Read [RAD Studio project creators](https://docwiki.embarcadero.com/RADStudio/Athens/en/New_%28File_Menu%29), [FireMonkey creation](https://docwiki.embarcadero.com/RADStudio/Alexandria/en/Creating_a_FireMonkey_Application) and [MSBuild's role](https://docwiki.embarcadero.com/RADStudio/Sydney/en/MSBuild).
+
 ## Memory Management
 ### 1. Return objects via Result
 Allocate directly in `Result`, protect with `try/except`, free on error, then `raise`.

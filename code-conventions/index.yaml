@@ -29,7 +29,7 @@ frameworks:
 
 files:
   - file: general.md
-    description: "Shared rules for all languages: types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste"
+    description: "Shared rules for all languages: official project initialization and explicit stack choice, types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste"
     applies_to: ["*"]
     priority: 1
 
@@ -50,34 +50,34 @@ files:
     priority: 4
 
   - file: javascript.md
-    description: "TypeScript/JavaScript structural interfaces, function contracts, generics, runtime validation and Node.js/React conventions (delta on general.md)"
+    description: "TypeScript/JavaScript package and framework initialization (npm/Bun/tsc/Next.js/Astro/Vite/C3), structural interfaces, function contracts, generics, runtime validation and Node.js/React conventions (delta on general.md)"
     applies_to: ["TypeScript", "JavaScript", "Node", "React", "Next.js"]
     priority: 5
 
   - file: go.md
-    description: "Go consumer-owned interfaces, implicit implementation, generics, composition and tooling (delta on general.md)"
+    description: "Go module initialization with go mod init, consumer-owned interfaces, implicit implementation, generics, composition and tooling (delta on general.md)"
     applies_to: ["Go"]
     priority: 5
 
   - file: rust.md
-    description: "Rust traits, static/dynamic dispatch, dyn-compatible async boundaries, ownership and errors (delta on general.md)"
+    description: "Rust cargo new/init executable/library initialization, traits, static/dynamic dispatch, dyn-compatible async boundaries, ownership and errors (delta on general.md)"
     applies_to: ["Rust"]
     priority: 5
     status: partial
 
   - file: delphi.md
-    description: "Delphi/Pascal interfaces, polymorphism, reference-counted ownership and style (delta on general.md)"
+    description: "Delphi/Pascal RAD Studio project wizards, interfaces, polymorphism, reference-counted ownership and style (delta on general.md)"
     applies_to: ["Delphi", "Pascal"]
     priority: 5
     status: legacy
 
   - file: python.md
-    description: "Python conventions: Protocol/ABC polymorphism, callable strategies, typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)"
+    description: "Python conventions: uv application/library initialization and Django/FastAPI/Flask setup, Protocol/ABC polymorphism, callable strategies, typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)"
     applies_to: ["Python"]
     priority: 5
 
   - file: swift-kotlin.md
-    description: "Swift protocols, generics and existentials; Kotlin interfaces, delegation and sealed variants; iOS/Android conventions (delta on general.md)"
+    description: "SwiftPM/Xcode and Gradle/Android Studio project initialization; Swift protocols, generics and existentials; Kotlin interfaces, delegation and sealed variants; iOS/Android conventions (delta on general.md)"
     applies_to: ["Swift", "Kotlin"]
     priority: 5
     status: partial
