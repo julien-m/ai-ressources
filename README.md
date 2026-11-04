@@ -26,6 +26,8 @@ To move the clone, rerun `./setup.sh` from the new location after updating the e
 
 Canonical portable skills and rules live under [`.agent-sync/`](.agent-sync/). They are not required to browse or consume the knowledge base.
 
+When the global `conventions-preload` rule is installed, every website, web app and native UI task must load the layout/spacing rules, UI review rules and relevant platform guide directly from the resolved clone, even if the project has no conventions manifest or its index predates those sources. Read [the layout requirements](design/tokens/spacing.md#mandatory-layout-containers-in-product-code) and [the UI review rules](design/quality/ui-rules.md#layout--overlap). This is an agent instruction, not a runtime layout validator.
+
 If `cc-hub` is already installed, link every portable asset to its supported providers:
 
 ```bash

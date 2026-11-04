@@ -13,6 +13,9 @@ Rules to catch before every deploy. If any of these break, it's a bug.
 - Never ship generic placeholder names or fake-perfect metrics in visible UI examples
 
 ## Layout / Overlap
+- Apply the mandatory container hierarchy in product code for every website, web app and native app. Read [layout and spacing rules](../tokens/spacing.md#mandatory-layout-containers-in-product-code) before implementing or reviewing UI.
+- Each category, field group and action group must have an owning layout; equivalent siblings must use a consistent parent-controlled gap and sections must have distinct separation. A missing layout owner or manual placement of ordinary controls is a review failure.
+- Check nested padding, external separation and native insets for accidental double spacing. Verify narrow and wide windows, enlarged text and long translations; ordinary controls must remain in layout flow.
 - Never let two elements overlap unintentionally
 - Never make a button or link unreachable (hidden behind another element, broken z-index)
 - Never let an element escape the viewport horizontally

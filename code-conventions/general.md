@@ -33,6 +33,11 @@ extends: []
 - Linter with strict rules
 - Consistent across the entire codebase
 - No committed code that fails lint or format checks
+#### Mandatory UI layout structure
+- For every website, web application and native application, implement UI as nested layout containers: screen/page, sections, coherent groups, controls/content. Every element must have a layout owner; each category, field group and action group must have its own layout.
+- Layout parents must control alignment, child spacing, padding and external separation using product/platform tokens or deliberate native defaults. Ordinary controls must use layout flow or constraints, without manual coordinate placement or per-child spacing repairs.
+- Read [mandatory layout and spacing rules](../design/tokens/spacing.md#mandatory-layout-containers-in-product-code) before implementing UI; apply its platform adaptations and check [UI review rules](../design/quality/ui-rules.md#layout--overlap) before delivery.
+
 ### 5. Naming
 - **Variables**: descriptive names, no single-letter names outside tiny loops. Booleans read naturally: `isActive`, `hasCredits`, `canRetry`, `shouldNotify`
 - **Functions**: action verbs (`getUserById`, `createInvoice`). Avoid vague names: `handle`, `process`, `doStuff`
