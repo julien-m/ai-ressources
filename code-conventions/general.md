@@ -1,5 +1,5 @@
 ---
-extends: []
+extends: [internationalization]
 ---
 # General Rules (All Languages)
 
@@ -77,6 +77,11 @@ Always validate external data: HTTP requests, env vars, webhooks, file imports, 
 Never expose internal models directly. Separate: database entities, API DTOs, domain models. Transform between layers explicitly.
 ### 14. Magic Values
 No hardcoded strings or numbers in business logic. Centralize in constants, enums, or config objects.
+
+#### Product language and translation resources
+- All user-facing text must be multilingual: UI and accessibility text, validation/errors, API presentation messages, emails, notifications, documents and CLI output. Never render French, English or other natural-language literals directly from application logic or templates; use catalog IDs or extractable platform translation resources, including a complete base-language catalog.
+- Internal developer logs, traces and operational diagnostics are authored in English. Error codes, protocol fields and identifiers remain stable; user content retains its original language. Translate typed domain errors at presentation boundaries and never expose raw exception messages.
+- Read [internationalization conventions](internationalization.md) before implementing product text, locale negotiation, server delivery or framework localization. Apply its request/job locale isolation, fallback, pluralization, formatting and verification rules in every language.
 ### 15. Dependency Injection
 - Avoid implicit/global dependencies — pass via constructors or function parameters
 - Constructors should only assign dependencies — no side effects
@@ -92,6 +97,7 @@ Critical operations (payments, creation, status changes) must be idempotent.
 Never load unlimited datasets. Always apply limits.
 ### 19. Logging
 - Structured logging (key-value, JSON)
+- Author internal log messages in English regardless of the user's locale; user-facing errors use translation catalogs.
 - Log at system boundaries only: HTTP, errors, major events
 - Avoid excessive logging in business logic
 - Include context: IDs, operation names, durations

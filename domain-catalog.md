@@ -23,10 +23,12 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 - `code-conventions/general.md`
 - `code-conventions/architecture.md`
 - `code-conventions/logging.md`
+- `code-conventions/internationalization.md`
 - `code-conventions/testing.md`
 
 | Signal | Convention file |
 |---|---|
+| `i18n`, `l10n`, `internationalization`, `localization`, `multilingual`, `translation`, `gettext`, `localize`, `i18next`, `next-intl`, `go-i18n`, `fluent`, `resourcestring` | `code-conventions/internationalization.md` |
 | `typescript`, `ts`, `.ts`, `.tsx`, `javascript`, `js`, `.js`, `.jsx`, `node`, `bun`, `deno` | `code-conventions/javascript.md` |
 | `go`, `golang` | `code-conventions/go.md` |
 | `rust`, `cargo` | `code-conventions/rust.md` |

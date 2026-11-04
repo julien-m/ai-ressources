@@ -87,6 +87,12 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 - **Read** [REST/OpenApiSpex and Orval](code-conventions/openapi.md) for Phoenix API generation, deterministic contract export, TypeScript clients and API/SDK coherence tests.
 - Discovery uses the existing [domain catalog](domain-catalog.md), [code index](code-conventions/index.yaml) and `extends` chains. Select only relevant deltas; for example `{"code":["phoenix-liveview","oban","elixir-testing"]}` is accepted by `scripts/build-conventions.ts <project-dir> <domains-json>`. This documentation does not select a product stack or certify an application's runtime tests.
 
+### Multilingual Applications and Servers
+
+- **Read** [internationalization conventions](code-conventions/internationalization.md) before adding product text: all user-facing messages use translation catalogs or platform resources, including errors, emails, notifications, documents and CLI output. Internal developer logs stay English.
+- The guide covers locale isolation, API error ownership, fallback, plurals and formatting, with library choices for Delphi, JavaScript frameworks, Node.js, Elixir/Phoenix, Rust, Go, Python and native mobile. It defines reference policies; adopting it does not install dependencies or translate existing applications.
+- Language and framework selections automatically include the guide in generated manifests and reading indexes through the general conventions' inheritance. Existing project manifests need a conventions refresh to acquire this source; read [the conventions lifecycle](#conventions-lifecycle) for initialization and refresh commands.
+
 ### Reusable Architecture Patterns
 
 - **Read** [the guided navigation contract](architecture/guided-navigation.md) to define provider-neutral destination catalogs for natural-language help, route changes and scroll-to-anchor behavior. Applications supply their own routes, permissions and UI adapters; documentation adoption does not activate a runtime feature.
