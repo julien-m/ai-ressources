@@ -29,7 +29,7 @@ frameworks:
 
 files:
   - file: general.md
-    description: "Shared rules for all languages: official project initialization and explicit stack choice, types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste"
+    description: "Shared rules for all languages: official initialization, mandatory nested UI layouts for websites/web/native apps, types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste"
     applies_to: ["*"]
     priority: 1
 

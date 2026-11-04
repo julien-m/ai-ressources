@@ -3,7 +3,9 @@ sections:
     description: "Design token scales for spacing, typography, colors, motion, and cross-platform unit mapping"
     files:
       - file: tokens/spacing.md
-        description: "8px grid, semantic spacing scale, platform unit mapping"
+        description: "Mandatory nested layouts in product code, parent-owned gap/padding/margins, semantic spacing scale and platform adaptation"
+        use_when: ["UI implementation", "layout containers", "spacing", "padding", "margin", "gap", "settings categories", "native app", "website", "web application"]
+        questions_answered: ["How must UI elements be grouped in code?", "Who owns spacing between children?", "How do layouts adapt to iOS, Android and web?"]
       - file: tokens/typography.md
         description: "Type scale, font stacks, line-height/tracking per platform"
       - file: tokens/colors.md
@@ -176,7 +178,7 @@ sections:
     description: "Visual QA and non-regression rules"
     files:
       - file: quality/ui-rules.md
-        description: "UI visual non-regression rules: alignment, spacing, overflow checks"
+        description: "UI visual non-regression rules: mandatory layout ownership, grouped controls, alignment, spacing and overflow checks"
       - file: quality/accessibility.md
         description: "Accessibility patterns: WCAG 2.2 AA, ARIA, keyboard nav, focus management, screen readers"
       - file: quality/design-taste.md
@@ -197,6 +199,7 @@ sub_domains:
     label: "UI components — buttons, inputs, forms, modals, nav, toasts, lists"
     keywords: [button, input, form, toast, badge, modal, nav, sidebar, dropdown, avatar, list, feedback, alert, banner, skeleton, "empty state", navigation, breadcrumb, tabs, "icon button", "button group"]
     sources:
+      - tokens/spacing.md
       - references/app-ui.md
       - components/buttons.md
       - components/forms.md
@@ -209,6 +212,7 @@ sub_domains:
     label: "Pages & layouts — SaaS views, dashboard, settings, auth, mockup specs"
     keywords: [page, vue, layout, dashboard, settings, auth, SaaS, mockup, wireframe, "landing page", "app shell", "sidebar layout", "standard views", "view composition", "settings page", "activity log", "user management"]
     sources:
+      - tokens/spacing.md
       - references/app-views.md
       - references/app-views-catalog.md
       - references/design-read-protocol.md

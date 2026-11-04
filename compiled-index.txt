@@ -36,7 +36,7 @@ code-conventions/ecto.md | Ecto/Postgrex changesets, scoped queries, database co
 code-conventions/elixir-otp.md | BEAM/OTP supervision, bounded tasks, backpressure, ETS/Cachex memory, profiling and Rustler NIF versus isolated Rust services | choosing GenServer or Task.Supervisor, bounding BEAM memory and concurrency, isolating native Rust work
 code-conventions/elixir-testing.md | ExUnit, doctests, ConnTest/LiveViewTest, SQL Sandbox and real concurrency, Oban.Testing, HTTP mocks, Mix/Cargo checks and isolated PostgreSQL CI | running Elixir checks and CI, testing sandbox process ownership, testing retry crash and reconnect recovery
 code-conventions/elixir.md | Elixir project choice and mix new initialization, behaviours versus protocols, module/type polymorphism, Mix/Hex toolchain, typespecs, documentation, module attributes, runtime configuration, i18n and HTTP adapters | initializing an Elixir project, choosing Phoenix or a non-web service, mix new, Elixir polymorphism, behaviours and protocols, writing Elixir modules, documenting Elixir code, module attributes and runtime config, Gettext Localize money dates
-code-conventions/general.md | Shared rules for all languages: official project initialization and explicit stack choice, types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste
+code-conventions/general.md | Shared rules for all languages: official initialization, mandatory nested UI layouts for websites/web/native apps, types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste
 code-conventions/go.md | Go module initialization with go mod init, consumer-owned interfaces, implicit implementation, generics, composition and tooling (delta on general.md)
 code-conventions/javascript.md | TypeScript/JavaScript package and framework initialization (npm/Bun/tsc/Next.js/Astro/Vite/C3), structural interfaces, function contracts, generics, runtime validation and Node.js/React conventions (delta on general.md)
 code-conventions/logging.md | Structured logging, sensitive data redaction, compliance rules
@@ -83,7 +83,7 @@ design/components/realtime-streams.md | Real-time streaming UI: WebSocket/SSE, r
 design/components/streak-design.md | Meaningful streaks: qualifying events, timezones, pauses, reminders and recovery | streak, habit, gamification, progress
 design/quality/accessibility.md | Accessibility patterns: WCAG 2.2 AA, ARIA, keyboard nav, focus management, screen readers
 design/quality/design-taste.md | Design taste QA: anti-default rules, AI tell ban, hero/nav/CTA/bento pre-flight checks
-design/quality/ui-rules.md | UI visual non-regression rules: alignment, spacing, overflow checks
+design/quality/ui-rules.md | UI visual non-regression rules: mandatory layout ownership, grouped controls, alignment, spacing and overflow checks
 design/references/app-ui.md | App UI conventions: universal SaaS patterns, layout, components, views by category | SaaS app design, dashboard layout, app shell, sidebar layout
 design/references/app-views-catalog.md | App views catalog: view compositions from blocks, app template patterns (SaaS B2B, Creator, AI Chat, DevTool, CRM, E-commerce, Mobile, Project Tracker, Internal Tool/Admin Panel), composable traits (Auth, Billing, Team, API, Notifications, Integrations, Audit), views (Chat View, Billing Upgrade Flow, Board, Calendar, Notifications Inbox, Settings Integrations, Media Library) | app template, which views for an app, view composition, SaaS app structure, app pattern shorthand, composable traits, project tracker, kanban board, issue tracker, internal tool, admin panel, chat view, billing upgrade
 design/references/app-views.md | Standard SaaS views catalog: dashboard, settings, user management, auth, activity log | settings page, user management UI, activity log, auth pages, standard SaaS views
@@ -105,7 +105,7 @@ design/systems/web-standards.md | Web standards: responsive patterns, accessibil
 design/tokens/colors.md | Color tokens: semantic palette, dark mode, contrast rules
 design/tokens/cross-platform.md | Cross-platform design: unit mapping (px/pt/dp/sp), shared patterns
 design/tokens/motion.md | Motion tokens: duration scale, easing functions, transition types, reduced motion, cross-platform
-design/tokens/spacing.md | 8px grid, semantic spacing scale, platform unit mapping
+design/tokens/spacing.md | Mandatory nested layouts in product code, parent-owned gap/padding/margins, semantic spacing scale and platform adaptation | UI implementation, layout containers, spacing, padding, margin, gap, settings categories, native app, website, web application
 design/tokens/typography.md | Type scale, font stacks, line-height/tracking per platform
 
 ## legal
