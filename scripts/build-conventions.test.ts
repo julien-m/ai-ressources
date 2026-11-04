@@ -100,6 +100,24 @@ describe("build-conventions", () => {
     ]);
   });
 
+  // Read the real language catalog: fixture-only tests cannot prove automatic product policy loading.
+  const repositoryRoot = dirname(dirname(SCRIPT));
+  const codeIndex = parse(readFileSync(join(repositoryRoot, "code-conventions/index.yaml"), "utf-8"));
+  const languageRoots = codeIndex.files
+    .filter((entry: { priority?: number; applies_to?: string[] }) =>
+      entry.priority === 5 && entry.applies_to?.some((language) => language in codeIndex.coverage))
+    .map((entry: { file: string }) => entry.file.replace(/\.md$/, ""));
+
+  test.each(languageRoots)("real %s selection automatically includes internationalization", async (language) => {
+    const { exitCode, stderr } = await runScript(repositoryRoot, project, JSON.stringify({ code: [language] }));
+
+    expect(exitCode).toBe(0);
+    expect(stderr).toBe("");
+    const sources = sourceList(project, "code");
+    expect(sources.filter((source) => source === "code-conventions/internationalization.md")).toHaveLength(1);
+    expect(readFileSync(join(project, ".conventions/index.md"), "utf-8")).toContain("code-conventions/internationalization.md");
+  });
+
   test("deduplication: react + nextjs resolves shared ancestors once", async () => {
     aiRes = makeFakeAiRes(makeCodeConventionsFixture());
     const { exitCode } = await runScript(aiRes, project, JSON.stringify({ code: ["react", "nextjs"] }));

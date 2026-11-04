@@ -29,7 +29,7 @@ frameworks:
 
 files:
   - file: general.md
-    description: "Shared rules for all languages: official initialization, mandatory nested UI layouts for websites/web/native apps, types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste"
+    description: "Shared rules for all languages: automatically inherits internationalization, official initialization, mandatory nested UI layouts for websites/web/native apps, multilingual product text and English internal logs, types, naming, testing, errors, imports, security, mandatory comment triggers (§25), frontend sample-data taste"
     applies_to: ["*"]
     priority: 1
 
@@ -40,9 +40,17 @@ files:
     use_when: ["polymorphism", "capability contracts", "modular architecture", "interfaces and abstractions", "dependency injection", "interchangeable implementations", "rendering backends", "thin event callbacks"]
 
   - file: logging.md
-    description: "Structured logging, sensitive data redaction, compliance rules"
+    description: "English internal diagnostics, structured logging, separation from translated product errors, sensitive data redaction, compliance rules"
     applies_to: ["*"]
     priority: 3
+
+  - file: internationalization.md
+    description: "Mandatory multilingual product text and English internal logs; catalogs, API error ownership, locale negotiation and isolation, async delivery, pluralization, formatting, and implementation choices for Delphi, JavaScript frameworks, Node.js, Elixir/Phoenix, Rust, Go, Python and native mobile"
+    applies_to: ["*"]
+    priority: 3
+    use_when: ["user-facing text", "i18n", "l10n", "translation catalogs", "multilingual servers", "localized errors", "Gettext", "i18next", "go-i18n", "Fluent", "Delphi resourcestring"]
+    questions_answered: ["Which application strings must be translated and which logs stay English?", "How should client and server error translation ownership work?", "Which localization tools fit each language and framework?", "How can concurrent requests and jobs keep separate locales?"]
+    see_also: ["general.md", "logging.md", "elixir.md"]
 
   - file: testing.md
     description: "Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage, CLI output testing (ANSI/NO_COLOR)"

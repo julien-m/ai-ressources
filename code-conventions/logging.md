@@ -15,6 +15,8 @@ Passwords, tokens, API keys, secrets, OTP codes, session IDs, cookies, full PII 
 - When an identifier is needed for debugging, prefer redacted, truncated or hashed forms
 
 ## Structured Logging
+- Author internal log messages and diagnostic templates in English, independent of the user's locale. Keep event names and error codes stable; do not translate structured field names.
+- Never reuse an internal diagnostic as product copy. Read [internationalization conventions](internationalization.md) to map stable errors to localized user messages; admin UI and end-user CLI errors are product surfaces too.
 - Use structured logs with explicit fields: `event`, `level`, `requestId`, `traceId`, `jobId`, `errorCode`, `durationMs`
 - Never dump entire objects into logs
 
