@@ -16,7 +16,7 @@ The script exports `AIRESOURCES` (the absolute path of the clone) from the shell
 
 `AIRESOURCES` is the only location contract:
 
-- The portable skills read `$AIRESOURCES` and stop with a setup instruction when it is unset; the portable rules report the missing variable and continue without cross-cutting conventions.
+- The portable skills read `$AIRESOURCES` and stop with a setup instruction when it is unset; the portable rules also accept an existing path recorded in the project manifest or index, without warning when resolution succeeds. They report an unresolved path only when the task needs the conventions, and suggest initialization or format refresh only during conventions setup or audit requests.
 - `scripts/build-conventions.ts` honors `AIRESOURCES` and otherwise uses the clone that contains it. An empty value counts as unset. It records the resolved path in the generated `.conventions/manifest.yaml` (`ai_resources_path`) and `.conventions/index.md`; the skills read `$AIRESOURCES`, not that recorded path.
 - [LiveSpec](https://github.com/julien-m/livespec) locates this knowledge base through the same variable.
 
