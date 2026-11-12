@@ -93,6 +93,14 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 - The guide covers locale isolation, API error ownership, fallback, plurals and formatting, with library choices for Delphi, JavaScript frameworks, Node.js, Elixir/Phoenix, Rust, Go, Python and native mobile. It defines reference policies; adopting it does not install dependencies or translate existing applications.
 - Language and framework selections automatically include the guide in generated manifests and reading indexes through the general conventions' inheritance. Existing project manifests need a conventions refresh to acquire this source; read [the conventions lifecycle](#conventions-lifecycle) for initialization and refresh commands.
 
+### Evidence-Based Database and Code Audits
+
+Use `$ai-res-audit database postgresql` (or `/ai-res-audit` in Claude Code) to review a schema with shared conventions and engine-specific sources. Supported database profiles: PostgreSQL, MySQL, SQLite and CockroachDB. Select observed ORM/framework deltas with `--with ecto,prisma,drizzle` as appropriate; do not select unrelated adapters.
+
+Use `$ai-res-audit code elixir` for code, with Delphi, TypeScript, JavaScript and Rust profiles also available. The resolver follows convention inheritance and prints the exact reading sources; it does not scan or test a database by itself.
+
+Read [the audit skill](.agent-sync/skills/ai-res-audit/SKILL.md) for `review` (default), isolated `test`, and workload-based `performance` modes, evidence reporting and limitations. It preserves live data and project code, separates confirmed findings from unmeasured optimizations, and reports unavailable checks. Install with the existing portable-assets setup; there is no new database service or global runtime dependency beyond the existing Bun/YAML tooling.
+
 ### Data Model Planning and Review
 
 - Read [database conventions](code-conventions/database.md) before the first model plan or schema review: field usage, cardinalities, exhaustive closed sets, transitions, database constraints, query/index patterns, retention and verification are required plan inputs.

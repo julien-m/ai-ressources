@@ -1,0 +1,96 @@
+{
+  "common": [
+    "general",
+    "architecture",
+    "logging",
+    "testing"
+  ],
+  "database": {
+    "common": [
+      "database"
+    ],
+    "architecture": [
+      "database-migrations",
+      "multi-tenant"
+    ],
+    "targets": {
+      "postgresql": {
+        "aliases": [
+          "postgres",
+          "pg"
+        ],
+        "stack": "postgres"
+      },
+      "mysql": {
+        "aliases": [],
+        "stack": "mysql"
+      },
+      "sqlite": {
+        "aliases": [],
+        "stack": "sqlite"
+      },
+      "cockroachdb": {
+        "aliases": [
+          "cockroach",
+          "crdb"
+        ],
+        "stack": "cockroachdb"
+      }
+    }
+  },
+  "code": {
+    "targets": {
+      "typescript": {
+        "aliases": [
+          "ts"
+        ],
+        "code": [
+          "javascript"
+        ]
+      },
+      "delphi": {
+        "aliases": [
+          "pascal"
+        ],
+        "code": [
+          "delphi"
+        ]
+      },
+      "rust": {
+        "aliases": [],
+        "code": [
+          "rust"
+        ]
+      },
+      "elixir": {
+        "aliases": [],
+        "code": [
+          "elixir",
+          "elixir-otp",
+          "elixir-testing"
+        ]
+      },
+      "javascript": {
+        "aliases": [
+          "js"
+        ],
+        "code": [
+          "javascript"
+        ]
+      }
+    }
+  },
+  "deltas": [
+    "ecto",
+    "prisma",
+    "drizzle",
+    "phoenix",
+    "phoenix-liveview",
+    "oban",
+    "openapi",
+    "react",
+    "nextjs",
+    "cloudflare",
+    "tanstack"
+  ]
+}
