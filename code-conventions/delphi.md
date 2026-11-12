@@ -54,7 +54,7 @@ Skipping `inherited` in `Destroy` breaks the destruction chain.
 
 ## Parameters & Objects
 ### 9. Prefer const parameters
-Use `const` for unmodified parameters — avoids unnecessary copies: `procedure Process(const Value: string);`
+Use `const` for unmodified parameters, especially strings/structured values, to enable compiler optimizations: `procedure Process(const Value: string);`. Passing by value/reference depends on compiler/type; `const` on an object reference does not make its contents immutable.
 ### 10. Avoid unnecessary temporaries
 Don't create objects when the operation can be done directly.
 ### 11. Never leak objects in loops
@@ -127,3 +127,22 @@ TrDocInfo = record
   Filename: string;
 end;
 ```
+
+
+## Typed Algorithms, Constants and Early Results
+- Keep public inputs/results, records, collections and internal states explicitly modeled; prefer enums/sets and typed generics to Variant, untyped parameters, pointer casts or stringly typed state. Isolate unavoidable foreign/untyped data at checked boundaries.
+- Use scoped const values for stable protocol codes and algorithm sentinels; keep product data/configuration outside implementation literals. Document the not-found contract (named sentinel, nil, or Try-style Boolean/out result as appropriate); never assume zero is an invalid index or identifier.
+- Prefer Exit(Value) when the first valid search result is final, followed by the miss result only after the loop. Every normal path must define the return value; do not rely on an uninitialized Result. Preserve try/finally and managed-resource cleanup. Exit(Value) requires Delphi 2009 or later; respect the actual project's compiler.
+- Example function-body fragment: LIndex and the returned index are Integer, Values is a typed array, Wanted matches its element type, and NotFoundIndex is the declared API sentinel:
+
+```pascal
+for LIndex := 0 to High(Values) do
+  if Values[LIndex] = Wanted then
+    Exit(LIndex); // First match satisfies this lookup; stop scanning.
+Result := NotFoundIndex;
+```
+
+- Prefer case over a long equality chain on one enum/ordinal discriminant; keep range/compound conditions or strategy interfaces where they express the real contract. Do not claim case is always faster.
+- In hot paths, avoid repeated temporary objects, string concatenation, conversions and collection copies; choose capacity/data structures from actual inputs. Keep object/interface ownership and exception cleanup correct. Const parameters and named literals do not guarantee zero copies/allocations on every target.
+- Record target platform/compiler and optimization settings before claiming an early return or removed assignment is faster. The compiler may optimize equivalent source forms; distinguish a clearer implementation from measured speed/memory gains.
+- Read [Exit and finally behavior](https://docwiki.embarcadero.com/Libraries/Florence/en/System.Exit), [parameter semantics](https://docwiki.embarcadero.com/RADStudio/Florence/en/Parameters_%28Delphi%29) and [compiler optimizations](https://docwiki.embarcadero.com/RADStudio/Athens/en/Optimization_%28Delphi%29) for the actual toolchain; apply [shared algorithm rules](general.md#33-time-memory-and-control-flow).

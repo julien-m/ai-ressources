@@ -17,6 +17,8 @@ extends: [internationalization]
 - Use the type system to its fullest — avoid untyped containers (`any`, `object`, `void*`, `interface{}`)
 - All public functions must have explicit input and output types
 - Business objects must be explicitly typed
+- Keep values typed across inputs, domain operations and results: use named domain types, typed collections and closed enums/variants instead of loosely shaped objects, magic integers or string-based internal states. Static type inference is valid; it does not mean a value is untyped. In JavaScript, use checked JSDoc/contracts and runtime schemas where static guarantees are unavailable.
+- Convert external strings/numbers into validated domain variants at the boundary; map back explicitly for protocols/storage. Do not assume every language represents enums as integers or persist implicit enum ordinals without a stable versioned contract.
 - Validate external data at system boundaries
 ### 3. Project Structure
 - Organize by domain/feature, not by technical layer (e.g. `src/user/`, `src/billing/` — not `src/models/`, `src/controllers/`)
@@ -80,6 +82,9 @@ Always validate external data: HTTP requests, env vars, webhooks, file imports, 
 Never expose internal models directly. Separate: database entities, API DTOs, domain models. Transform between layers explicitly.
 ### 14. Magic Values
 No hardcoded strings or numbers in business logic. Centralize in constants, enums, or config objects.
+- Name stable semantic values and repeated protocol identifiers as constants owned by the responsible module; export only the shared contract. Keep deploy-/tenant-/user-dependent values in validated configuration or caller inputs, not newly hardcoded constants. User-facing prose still uses translation resources.
+- Prefer immutable bindings and reuse stable prepared values instead of rebuilding strings, parsing options or allocating objects inside hot loops. Reconfigure when inputs/options change and preserve dynamic safety/freshness checks.
+- A constant improves meaning and consistency; it does not by itself prove lower memory use, string interning or a speedup. Verify compiler/runtime behavior before making those claims; do not introduce a global constant registry coupling unrelated modules.
 
 #### Product language and translation resources
 - All user-facing text must be multilingual: UI and accessibility text, validation/errors, API presentation messages, emails, notifications, documents and CLI output. Never render French, English or other natural-language literals directly from application logic or templates; use catalog IDs or extractable platform translation resources, including a complete base-language catalog.
@@ -172,3 +177,14 @@ When source URLs are provided, **always scrape them first** to extract assets an
 - Visible UI examples must use domain-specific names, messy-but-plausible metrics, and concrete copy.
 - Do not commit `Jane Doe`, `John Smith`, `Acme`, `Lorem ipsum`, or fake-perfect metrics in user-facing examples.
 - If data is illustrative, mark it as sample data in code or docs and keep it plausible for the domain.
+
+
+## Algorithms and Resource Use
+### 33. Time, Memory and Control Flow
+- Review the algorithm and data structure against actual input size and access frequency before micro-optimizing syntax. Consider repeated scans, nested loops, unnecessary sorting, intermediate collections, string rebuilding, copies, allocations and retained data; account for both time and peak/retained memory.
+- Prefer an immediate typed return when a search result or terminal decision is known; place the not-found result on the actual miss path. Preserve required cleanup and every return-path contract. Do not remove initialization when another reachable path still needs it or equate an assignment with a function call.
+- For repeated lookups, compare a direct scan with an index/dictionary or sorted lookup using workload size, construction/invalidation cost, memory and required order. Do not add a cache or hash table for every small list, and do not keep processing once the contract's answer is determined.
+- Prefer exhaustive switch/case/match for closed variants with one discriminant; use guard clauses for invalid inputs and early returns to reduce nesting. Preserve branch priority and error behavior; unrelated predicates/ranges need not become an artificial enum. Use capability contracts/polymorphism for open implementation sets as defined in architecture §34.
+- Document intent and trade-offs under §§23–30, including early exits and non-trivial algorithms; avoid comments that merely restate obvious syntax. Keep ownership, allocation lifetime and error paths explicit.
+- Treat simpler control flow or fewer source assignments as design observations until measured. A performance claim needs representative inputs, target compiler/runtime/version and release settings, equivalent outputs, and elapsed-time/allocation or memory evidence appropriate to the claimed gain. Do not benchmark every trivial function or weaken correctness, typing, encapsulation or safety to win a microbenchmark.
+- Read [modular contracts and polymorphism](architecture.md#34-interface-based-modularity-and-polymorphism) and the selected language's implementation rules before proposing structural changes.
