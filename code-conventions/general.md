@@ -17,6 +17,8 @@ extends: [internationalization]
 - Use the type system to its fullest — avoid untyped containers (`any`, `object`, `void*`, `interface{}`)
 - All public functions must have explicit input and output types
 - Business objects must be explicitly typed
+- Establish domain invariants at a validated creation boundary (named factory, pure constructor where appropriate, or language equivalent); publish only a valid object/result. Preserve invariants through controlled updates, rather than exposing partially initialized mutable bags. Keep dependency-wiring constructors assignment-only (§15); validation must not hide I/O or external side effects.
+- Distinguish units and semantic roles when confusion would be dangerous (currency/amount, duration, distance, percentage, identifiers). Use domain types/validated records or equivalent contracts where useful; do not add a wrapper around every primitive without a real invariant.
 - Keep values typed across inputs, domain operations and results: use named domain types, typed collections and closed enums/variants instead of loosely shaped objects, magic integers or string-based internal states. Static type inference is valid; it does not mean a value is untyped. In JavaScript, use checked JSDoc/contracts and runtime schemas where static guarantees are unavailable.
 - Convert external strings/numbers into validated domain variants at the boundary; map back explicitly for protocols/storage. Do not assume every language represents enums as integers or persist implicit enum ordinals without a stable versioned contract.
 - Validate external data at system boundaries
@@ -55,8 +57,10 @@ extends: [internationalization]
 - Prefer pure functions when possible (no side effects, deterministic)
 - Explicit return types on public functions
 - Avoid deep nesting — return early
+- Define successful, absent and failed outcomes separately in public contracts. Use a documented typed result, Try-style API or named sentinel appropriate to the language/domain; absence is not automatically exceptional, and a valid zero/index must not double as an undocumented failure code.
 ### 7. Error Handling
 - Never silently swallow errors
+- Preserve the distinction between normal absence, expected business rejection, cancellation and unexpected failure. Do not catch a failure and return an empty collection/zero/success unless that behavior is an explicit contract; preserve diagnostic context without exposing secrets or internal exceptions to consumers.
 - Define domain-specific error types (not generic strings)
 - Handle errors at boundaries: HTTP handlers, CLI, job processors
 - Internal functions should propagate errors, not catch them
@@ -92,7 +96,7 @@ No hardcoded strings or numbers in business logic. Centralize in constants, enum
 - Read [internationalization conventions](internationalization.md) before implementing product text, locale negotiation, server delivery or framework localization. Apply its request/job locale isolation, fallback, pluralization, formatting and verification rules in every language.
 ### 15. Dependency Injection
 - Avoid implicit/global dependencies — pass via constructors or function parameters
-- Constructors should only assign dependencies — no side effects
+- Dependency-wiring constructors assign dependencies without hidden I/O or orchestration; domain creation validation follows §2.
 ### 16. Separation of Responsibilities
 - **Handlers/Controllers**: parse input, call services, return response
 - **Services**: business logic

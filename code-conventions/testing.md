@@ -176,6 +176,10 @@ Prioritize business logic and edge case coverage. Do not chase percentage metric
 - Cover: business rules, validation logic, error paths, boundary conditions
 - Skip: glue code, trivial getters/setters, framework boilerplate, generated code
 - No mandatory coverage threshold — a well-tested 60% is better than a poorly-tested 90%
+- For changed or critical contracts, select distinct tests from the actual invariants and failure modes: empty/missing/boundary inputs, normal absence versus errors, a failed intermediate step, cleanup/ownership and cancellation where applicable. Do not require every combination for every function or retest compiler/database guarantees without an integration risk.
+- Use property-based tests when an invariant spans many meaningful inputs (for example a lossless round trip or an ordering property); derive assertions from the contract, not a second copy of the implementation. Reuse adequate examples instead of mandating a new framework or a fixed case count.
+- For interchangeable implementations, reuse observable contract checks against the real adapters where feasible. Fakes remain useful for isolated business logic but do not certify real integration, lifetime or concurrency behavior; read [substitutability rules](architecture.md#34-interface-based-modularity-and-polymorphism).
+- For module boundaries, inspect/run the existing build/import/dependency checks appropriate to the project. Keep architecture-rule enforcement distinct from business tests; an unavailable check is unverified, not passing.
 ---
 ## 8. CLI Output Testing
 > Applies only when the project is a CLI tool with terminal output (ANSI colors, tables, formatted text).

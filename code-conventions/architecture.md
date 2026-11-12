@@ -96,6 +96,8 @@ Extends general §8. Concurrency must be intentional.
 - Parallelize only independent operations
 - Minimize shared mutable state, explicit ownership
 - Cancellation, timeout, and lifecycle must be controlled
+- Bound active work, pending queues, caches/retained collections and retry attempts where present. Assign each limit an owner, configuration/source and overload behavior (wait/backpressure, explicit rejection or an approved loss policy); limits must come from workload/product requirements, not invented universal constants. Do not introduce absent queues/caches merely to satisfy this rule.
+- Cancellation, timeout and partial initialization must release owned resources and leave state consistent. Stop or supervise spawned work; reconcile an uncertain external effect before retrying it. A caller timeout does not prove that remote work was cancelled.
 - Background work must be observable and managed
 - Forbidden: unmanaged fire-and-forget, hidden goroutines/threads/tasks, unsupervised long-running jobs from request handlers
 
@@ -131,7 +133,7 @@ Avoid: `utils/`, `helpers/`, `common/`, `misc/` (extends general §3).
 ## 20. Dependency Injection
 Dependencies must be explicit (extends general §15).
 - Inject repositories, gateways, services
-- Constructors assign only — no hidden logic
+- Dependency-wiring constructors assign only — no hidden I/O or orchestration; read [validated domain creation](general.md#2-type-safety) for construction of domain values.
 - No hidden singleton access in business code (unless intentionally centralized and justified)
 - Avoid service locators
 - Bad: business code instantiates dependencies — Good: startup/wiring layer constructs object graph
@@ -141,6 +143,8 @@ Complex construction must be isolated. Use factories, builders, dedicated initia
 
 ## 22. Circular Dependencies
 Forbidden. If two modules depend on each other, extract a shared contract or redesign boundaries.
+- Declare allowed module dependencies and public entry points from the actual architecture; enforce them with the language/build visibility mechanisms and an appropriate import/dependency check in CI where supported. Inspect the effective configuration and check result, not only a diagram or comment.
+- Detect circular dependencies and forbidden access to another module's internals or to infrastructure from the business core. Use existing tooling or a small justified repository check; keep approved exceptions explicit. Missing automated enforcement is a coverage gap to report, not a claim that the boundary is verified or a reason to invent a new tool stack.
 Examples: user ↔ billing internals, service A ↔ service B.
 
 ## 23. Framework Containment
@@ -236,6 +240,6 @@ These are architecture defects, not style issues.
 - Define a narrow contract when isolating a real responsibility or dependency, even with one current implementation; do not wait for a second implementation to decouple an external system. A local pure calculation can remain a function.
 - Prefer polymorphic dispatch over repeated switches on provider names or concrete types for an open set of implementations. Keep exhaustive matching for closed domain variants and state transitions; select runtime strategies at the composition boundary.
 - Separate capability polymorphism (different implementations of one contract) from parametric polymorphism (generic algorithms preserving type relationships). Choose static or dynamic dispatch according to runtime substitution, heterogeneous storage and measured costs.
-- Contracts include semantics: inputs, results, errors, side effects, ownership and concurrency guarantees. Substitutes must preserve those guarantees, not merely expose matching method names. Keep provider-specific features in separate capabilities rather than fake no-op implementations.
+- Contracts include semantics: inputs, results, errors, side effects, ownership and concurrency guarantees. Identify owned, borrowed and shared resources, who releases them, and which lifetime they require; specify cleanup on failure/cancellation and whether a returned value transfers ownership. Substitutes must preserve those guarantees, not merely expose matching method names. Keep provider-specific features in separate capabilities rather than fake no-op implementations.
 - Verify shared observable guarantees against each real implementation where feasible; reuse contract checks for fakes without treating fake-only tests as proof of a provider integration. Avoid downcasts or concrete-type checks in business callers to recover capabilities omitted from the contract.
 - Apply these project design preferences using each language's mechanisms. Read [TypeScript/JavaScript](javascript.md), [Elixir](elixir.md), [Go](go.md), [Python](python.md), [Rust](rust.md), [Swift/Kotlin](swift-kotlin.md) and [Delphi/Pascal](delphi.md) for the corresponding choices. Keep SQL and framework-specific details behind those application contracts rather than inventing a universal interface syntax.

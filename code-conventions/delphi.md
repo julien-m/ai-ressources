@@ -78,6 +78,7 @@ Functions should perform one clear task.
 Returned objects must clearly transfer ownership or be documented as shared. Never return internal fields directly.
 ### 17. Document ownership
 `// Caller owns the returned object` on every ownership-transferring function.
+- State whether each exposed resource is owned, borrowed or shared, including the required lifetime. Review failure during construction, early return and cancellation: release only acquired/owned resources, never free a borrowed or interface-counted object as though it were locally owned. Test a real failure/cleanup path when it is a distinct risk; documentation alone is not proof of cleanup.
 
 ## Interfaces and polymorphism
 - Prefer narrow `IInterface`-based capability contracts for replaceable services/adapters; inject them through constructors or parameters and implement them in separate classes. Keep concrete class construction and provider selection at composition boundaries.
