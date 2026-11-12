@@ -97,6 +97,7 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 
 - Read [database conventions](code-conventions/database.md) before the first model plan or schema review: field usage, cardinalities, exhaustive closed sets, transitions, database constraints, query/index patterns, retention and verification are required plan inputs.
 - Prefer normalized parent references, immutable versions and reusable SQL views; justify every copied identifier or snapshot. Preserve tenant isolation through enforced ownership paths and use bound parameters with prepared-query reuse where supported.
+- Apply the [evidence-based plan review gate](code-conventions/database.md#01-evidence-based-plan-review-gate): cite concrete design evidence for each applicable convention, justify exceptions and non-applicability, and block data-model approval on missing or contradictory decisions. A file-read acknowledgment cannot pass the review; implementation tests remain a later phase.
 - The installed global `conventions-preload` rule requires this reading before any data-model plan or review, including LiveSpec/APEX and existing projects with a missing, stale or design-only conventions index. The general conventions and catalog signals provide additional routes; refreshing generated indexes updates their routing metadata but is not a prerequisite for this global instruction. This is an agent reading requirement, not a runtime guarantee that every plan has applied it.
 
 ### Reusable Architecture Patterns

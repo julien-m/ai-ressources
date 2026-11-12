@@ -21,6 +21,21 @@ extends: []
 
 - Explain technical fields through concrete application scenarios; a paraphrase of the column name is insufficient. Read [diagram conventions](../conventions/diagrams.md) for state machines and behavioral acceptance scenarios.
 
+### 0.1. Evidence-Based Plan Review Gate
+- During the existing plan review, compare the actual proposed schema, dictionary, state transitions and queries with §0 and §§7–8, 10–12, 19, 23–27 and 31–35. Reading this file, listing its headings or declaring compliance is not evidence of application.
+- Inventory the plan's affected tables, relationships, enum-like fields, stored states, copies/snapshots and access paths. Review each applicable item; a representative example cannot certify the rest. For unchanged structures, inspect referenced current schema sources when the plan relies on them.
+- Include a compact compliance matrix in the existing review report; group items only when they share the same evidence and verdict:
+
+| Criterion and affected items | Exact plan/schema citation | Design evidence or justified exception | Verdict | Required correction |
+|---|---|---|---|---|
+| Applicable convention and table/field/query names | File plus section/lines; for a missing element cite the requirement and searched sections | Concrete proposed behavior, constraint or ownership mechanism | CONFORMING / JUSTIFIED_EXCEPTION / NOT_APPLICABLE / MISSING / CONTRADICTORY | Precise change, or none |
+
+- Check field purpose and lifecycle; cardinalities and parent ownership; redundant identifiers/snapshots and immutable history; exhaustive closed values with database enforcement; transitions and derived states; SQL views/prepared queries and bounded indexed access; concurrency/idempotency; retention and migration/verification plans.
+- A retained copy needs its concrete consumer, reason, consistency mechanism and cost. Verify that removing a copy preserves ownership enforcement. A rejected view/prepared-query option needs a relevant design or engine/driver reason, not a compulsory new mechanism.
+- Accept NOT_APPLICABLE only with a reason grounded in the actual scope. Accept JUSTIFIED_EXCEPTION only where the convention permits an exception; it cannot waive isolation, integrity or safe parameterization. Cite the approved project override for a permitted local policy difference.
+- MISSING, CONTRADICTORY or unsupported exceptions block approval of the affected data-model plan and progression to its implementation. Record corrections and recheck affected rows against the revised plan before approval; carry unresolved decisions as blockers, never as implicit passes. Follow the host review's existing retry/round limits.
+- Review proposed mechanisms and their planned verification at this stage; do not require migrations or runtime tests to have run before implementation. Planned verification does not certify implemented constraints. For a plan with no data-model impact, record one scoped NOT_APPLICABLE verdict instead of inventing schema work.
+
 ## 1. Core Principles
 - Model for **correctness first**, performance second
 - Schema must be explicit, predictable, and stable
