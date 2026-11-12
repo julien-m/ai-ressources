@@ -29,12 +29,12 @@ frameworks:
 
 files:
   - file: general.md
-    description: "Shared rules for all languages: automatically inherits internationalization, official initialization, mandatory nested UI layouts for websites/web/native apps, multilingual product text and English internal logs, types, naming, testing, errors, imports, security, mandatory comment triggers (§25), typed variants, scoped constants, early returns and workload-based time/memory review (§33), frontend sample-data taste"
+    description: "Shared rules for all languages: automatically inherits internationalization, official initialization, mandatory nested UI layouts for websites/web/native apps, multilingual product text and English internal logs, types, naming, testing, errors, imports, security, validated domain creation and explicit result/error contracts, mandatory comment triggers (§25), typed variants, scoped constants, early returns and workload-based time/memory review (§33), frontend sample-data taste"
     applies_to: ["*"]
     priority: 1
 
   - file: architecture.md
-    description: "Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events, interface-based modularity, polymorphism, substitutable contracts, interchangeable implementations and thin callbacks"
+    description: "Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events, interface-based modularity, polymorphism, substitutable contracts, interchangeable implementations, explicit resource lifetimes, bounded work and CI-enforced module dependencies, and thin callbacks"
     applies_to: ["*"]
     priority: 2
     use_when: ["polymorphism", "capability contracts", "modular architecture", "interfaces and abstractions", "dependency injection", "interchangeable implementations", "rendering backends", "thin event callbacks"]
@@ -53,7 +53,7 @@ files:
     see_also: ["general.md", "logging.md", "elixir.md"]
 
   - file: testing.md
-    description: "Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, coverage, CLI output testing (ANSI/NO_COLOR)"
+    description: "Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, risk-based invariants/failure cleanup and reusable implementation contracts, dependency-check evidence, coverage, CLI output testing (ANSI/NO_COLOR)"
     applies_to: ["*"]
     priority: 4
 
@@ -74,7 +74,7 @@ files:
     status: partial
 
   - file: delphi.md
-    description: "Delphi/Pascal RAD Studio initialization, interfaces/polymorphism, reference-counted ownership, typed enums/generics, scoped constants, const parameters, early-result search and measured memory/speed (delta on general.md)"
+    description: "Delphi/Pascal RAD Studio initialization, interfaces/polymorphism, reference-counted/borrowed/shared ownership and failure cleanup, typed enums/generics, scoped constants, const parameters, early-result search and measured memory/speed (delta on general.md)"
     applies_to: ["Delphi", "Pascal"]
     priority: 5
     status: legacy
