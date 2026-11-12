@@ -39,7 +39,7 @@ After any `.md` file is **created, renamed, or deleted** in a domain directory, 
 - Update `domain-catalog.md` in the **same pass** as the file operation and the `index.yaml` update
 - Choose signal keywords that a consumer would naturally extract from a stack file, dependency list, or project description
 - A new file should have at least 2-3 signal keywords
-- Do NOT add signals that are too generic (e.g., `app`, `code`) unless they map to a specific convention
+- Do NOT add signals that are too generic (e.g. `app`, `code`) unless they map to a specific convention
 
 ### sync-claude-assets
 
@@ -89,7 +89,7 @@ After every file creation, deletion, rename, or **modification** in this project
 The index is not always in the same directory as the changed file. Search in this order:
 
 1. **Same directory** as the changed file (`index.yaml`, `index.md`)
-2. **Parent directory** — the index may be centralized one level up (e.g., `design/index.yaml` indexes `design/references/`, `design/components/`, etc.)
+2. **Parent directory** — the index may be centralized one level up (e.g. `design/index.yaml` indexes `design/references/`, `design/components/`, etc.)
 3. **Ancestor directories** — keep going up until the project root
 
 Stop at the first index found that references files in the affected directory.

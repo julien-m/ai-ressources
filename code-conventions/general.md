@@ -47,6 +47,7 @@ extends: [internationalization]
 - Linter with strict rules
 - Consistent across the entire codebase
 - No committed code that fails lint or format checks
+
 #### Mandatory UI layout structure
 - For every website, web application and native application, implement UI as nested layout containers: screen/page, sections, coherent groups, controls/content. Every element must have a layout owner; each category, field group and action group must have its own layout.
 - Layout parents must control alignment, child spacing, padding and external separation using product/platform tokens or deliberate native defaults. Ordinary controls must use layout flow or constraints, without manual coordinate placement or per-child spacing repairs.
