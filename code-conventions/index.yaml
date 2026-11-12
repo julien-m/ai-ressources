@@ -29,7 +29,7 @@ frameworks:
 
 files:
   - file: general.md
-    description: "Shared rules for all languages: automatically inherits internationalization, official initialization, mandatory nested UI layouts for websites/web/native apps, multilingual product text and English internal logs, types, naming, testing, errors, imports, security, validated domain creation and explicit result/error contracts, mandatory comment triggers (§25), typed variants, scoped constants, early returns and workload-based time/memory review (§33), frontend sample-data taste"
+    description: "Shared rules for all languages: automatically inherits internationalization, official initialization, mandatory nested UI layouts for websites/web/native apps, multilingual product text and English internal logs, types, naming, testing, errors, imports, security, mandatory first code-plan loading and evidence-based plan review, validated domain creation and explicit result/error contracts, mandatory comment triggers (§25), typed variants, scoped constants, early returns and workload-based time/memory review (§33), frontend sample-data taste"
     applies_to: ["*"]
     priority: 1
 

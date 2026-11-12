@@ -101,6 +101,12 @@ Use `$ai-res-audit code elixir` for code, with Delphi, TypeScript, JavaScript an
 
 Read [the audit skill](.agent-sync/skills/ai-res-audit/SKILL.md) for `review` (default), isolated `test`, and workload-based `performance` modes, evidence reporting and limitations. It preserves live data and project code, separates confirmed findings from unmeasured optimizations, and reports unavailable checks. Install with the existing portable-assets setup; there is no new database service or global runtime dependency beyond the existing Bun/YAML tooling.
 
+### Code Planning and Review
+
+Code conventions load before the first code plan, including in existing projects with missing, stale or design-only convention indexes. Read [the code planning and review gate](code-conventions/general.md#code-planning-and-evidence-based-plan-review): reviewers require module/contract decisions and planned verification, not a declaration that the conventions were read. The global preload rule supplies these sources and the gate to LiveSpec/APEX and delegated reviewers.
+
+This is an agent loading and review requirement; it does not install a runtime checker or prove that future agents will always comply.
+
 ### Data Model Planning and Review
 
 - Read [database conventions](code-conventions/database.md) before the first model plan or schema review: field usage, cardinalities, exhaustive closed sets, transitions, database constraints, query/index patterns, retention and verification are required plan inputs.

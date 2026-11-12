@@ -7,6 +7,13 @@ extends: [internationalization]
 ## Data Model Planning and Review
 - Before planning, designing, modifying or reviewing any data model, read [database conventions](database.md), including the required first-plan contract in §0. Apply this even when no ORM, SQL file or database convention is listed in the project's reading index.
 
+## Code Planning and Evidence-Based Plan Review
+- Before the first code design/implementation plan, read this file, [architecture](architecture.md), [testing](testing.md), [logging](logging.md) and the language/framework deltas and inheritance selected from the observed stack via [the code index](index.yaml). Apply this to existing projects, LiveSpec/APEX and missing/stale/design-only project indexes; no manifest refresh is required.
+- Include a proportionate convention-to-plan mapping: requirement, affected module/API/type, exact planned decision/location, verification and justified exception or non-applicability. Reuse existing plan sections; do not create a parallel checklist or speculative infrastructure.
+- Cover applicable documentation/comments, modular boundaries and substitution, types/variants/units, constants/configuration, validated construction, result/error contracts, ownership/lifetimes/cleanup, bounded work/cancellation, control flow/data structures and risk-based tests. Use the owning sections below and linked files rather than copying their rules. Performance proposals require a representative measurement plan; do not claim gains before measuring.
+- Review actual decisions against the applicable rules, not a list of files read. Cite plan sections and module/contract evidence; distinguish planned checks from executed results. Missing runtime proof at planning time is a named verification step, never a claimed PASS. Missing decisions, contradictions or unreasoned exceptions block approval of the affected plan until resolved.
+- Give reviewers the applicable convention content, this gate and the plan mapping, including delegated LiveSpec/APEX review. Keep the separate [data-model gate](database.md#01-evidence-based-plan-review-gate) when persistence is involved; this code gate does not replace it.
+
 ## Architecture & Code Rules
 ### 1. General Principles
 - Explicit over implicit — always favor clarity
