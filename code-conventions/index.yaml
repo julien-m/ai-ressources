@@ -91,10 +91,10 @@ files:
     status: partial
 
   - file: database.md
-    description: "Mandatory first-plan data model contract and evidence-based blocking review gate: typed size/range/precision and rounding contracts, input bounds, exact default ownership, explicit nullability/uniqueness contracts, installed-constraint inspection and risk-based write tests, normalized ownership, immutable versions, exhaustive database-enforced enums, transitions, SQL views, prepared queries, scale, retention and schema verification (language-agnostic, ORM-agnostic)"
+    description: "Mandatory first-plan data model contract and evidence-based blocking review gate: engine/driver-specific integrity hazards, typed size/range/precision and rounding contracts, input bounds, exact default ownership, explicit nullability/uniqueness contracts, installed-constraint inspection and risk-based write tests, normalized ownership, immutable versions, exhaustive database-enforced enums, transitions, SQL views, prepared queries, scale, retention and schema verification (language-agnostic, ORM-agnostic)"
     applies_to: ["SQL", "PostgreSQL", "MySQL", "SQLite"]
     priority: 6
-    use_when: ["data model planning", "schema design", "data model review", "plan compliance evidence", "numeric precision and rounding", "varchar versus text", "input length limits", "correct default values", "NOT NULL constraints", "scoped uniqueness tests", "nullable unique keys", "database normalization", "redundant tenant keys", "immutable versions", "exhaustive enums", "SQL views", "prepared statements", "conception de modèle de données", "revue de schéma"]
+    use_when: ["data model planning", "schema design", "data model review", "plan compliance evidence", "database engine compatibility", "silent data conversion", "calculation integrity", "numeric precision and rounding", "varchar versus text", "input length limits", "correct default values", "NOT NULL constraints", "scoped uniqueness tests", "nullable unique keys", "database normalization", "redundant tenant keys", "immutable versions", "exhaustive enums", "SQL views", "prepared statements", "conception de modèle de données", "revue de schéma"]
     questions_answered: ["What must a data model plan specify before implementation?", "When is a duplicated parent or tenant identifier justified?", "How are closed sets and ownership enforced in the database?", "When should views, immutable references and prepared queries be preferred?"]
     see_also: ["architecture.md", "../architecture/multi-tenant.md", "../architecture/database-migrations.md"]
 
