@@ -4,6 +4,23 @@ extends: []
 # Database Rules
 
 > Language-agnostic and ORM-agnostic. Apply regardless of stack.
+## 0. Required Before Planning or Reviewing a Data Model
+- Apply these rules during discovery and the first plan, before proposing tables, fields, migrations or SQL; also apply them when reviewing an existing model, regardless of ORM or engine.
+- Start from approved business scenarios and cardinalities. Do not invent tables, multiple versions per purchase or optional fields for unspecified future workflows.
+- The plan must include the following contract; mark unresolved decisions explicitly instead of inventing values or declaring the model ready:
+
+| Plan deliverable | Required detail |
+|---|---|
+| Data dictionary | Table purpose; each field's meaning, type, nullability, default, source/writer, creation/update trigger, readers and concrete use; structured JSON shape and example where applicable |
+| Relationships | Cardinalities, ownership path, foreign keys, deletion behavior and version references |
+| Closed value sets | Every enum-like field, including states, kinds, actions, permissions and reason codes; exhaustive allowed values, meanings, defaults and database enforcement |
+| State transitions | Source/target states, actor or event, guards, values read/written, transaction boundary, retries and failure behavior |
+| Access and scale | Main filters, joins, ordering, bounded pagination, indexes, volume/growth assumptions and contention scope |
+| Exceptions and lifecycle | Each denormalization/snapshot/index exception, immutable history, retention/purge triggers, migration/backfill and regional evolution where required |
+| Verification | Schema/diagram/SQL consistency, rejected invalid values and relationships, isolation, concurrency and actual target-engine checks |
+
+- Explain technical fields through concrete application scenarios; a paraphrase of the column name is insufficient. Read [diagram conventions](../conventions/diagrams.md) for state machines and behavioral acceptance scenarios.
+
 ## 1. Core Principles
 - Model for **correctness first**, performance second
 - Schema must be explicit, predictable, and stable
@@ -36,24 +53,15 @@ extends: []
 - Never rely solely on application code for referential integrity
 
 ## 7. Multi-Tenant Data Isolation
-- Tenant isolation explicit in schema: `organization_id` on every tenant-scoped table
-- Queries must always include ownership scope:
-
-```sql
--- Bad
-SELECT * FROM notes WHERE id = ?
-
--- Good
-SELECT * FROM notes WHERE organization_id = ? AND id = ?
-
--- Or with user scope
-SELECT * FROM notes WHERE organization_id = ? AND user_id = ? AND id = ?
-```
-
-Prevents: cross-tenant data leaks, IDOR attacks, accidental access to other orgs' data.
+- Every tenant-scoped operation must enforce ownership, including direct child reads/writes, background jobs and view access. Derive trusted tenant context server-side.
+- Store tenant identity on ownership roots. A child with a mandatory, unambiguous ownership path may resolve it through a scoped join or equivalent database policy; a tenant column on every child is not mandatory.
+- Never remove ownership enforcement when removing a redundant identifier. Document the enforced path and test cross-tenant reads, inserts, updates and reparenting under the actual application role.
+- When several references must share a tenant or business parent, enforce their consistency with database constraints, such as composite foreign keys where supported. Independent foreign keys only prove existence.
+- Keep a duplicated ownership key only for a documented constraint, isolation mechanism or concrete access pattern; enforce its agreement with the parent. A generic claim of security or speed is insufficient.
 
 ## 8. Indexing
 - Indexes must reflect real query patterns (filters, joins, ordering, uniqueness)
+- Review exact duplicates and prefix coverage before adding an index; compare uniqueness, predicates, ordering and included columns before removing one.
 - Composite indexes follow query shape: `INDEX (organization_id, user_id, created_at DESC)`
 
 ## 9. Query Typing & Schema Safety
@@ -64,7 +72,7 @@ Prevents: cross-tenant data leaks, IDOR attacks, accidental access to other orgs
 
 ## 10. Query Rules
 - Never `SELECT *` — select only required columns
-- Avoid overfetching and repeated round-trips
+- Avoid overfetching and repeated round-trips; prefer a set-based query over separate lookups when it preserves semantics. A single statement does not replace required transaction or concurrency guarantees.
 
 ## 11. Pagination
 - Always bounded, never unbounded lists
@@ -130,6 +138,7 @@ INSERT INTO tags (id, name) VALUES (1,'a'), (2,'b'), (3,'c')
 ## 24. Concurrency
 - Never assume read-then-write is safe
 - Use: unique constraints, transactions, optimistic locking, version fields, idempotency keys
+- Choose the narrowest correct contention scope; avoid serializing an entire tenant or calendar when independent resources can proceed safely. State throughput assumptions and distinguish estimates from measured capacity.
 
 ## 25. Idempotent Operations
 - Retry-able operations must be idempotent (payment webhooks, job processors, callbacks)
@@ -181,3 +190,33 @@ Frameworks: JS/TS: Zod (preferred), Yup, Valibot — Python: Pydantic — Kotlin
 - Normalize search input (trim, case) for consistency
 - Wildcards added to **bound parameter value**, never to SQL string
 - Bad: `WHERE name LIKE '%${input}%'` — Good: `WHERE name LIKE ?` with value `%julien%`
+
+## 32. References, Immutable Versions and Minimal Stored State
+- Prefer normalized relationships and joins. Do not repeat a product, tenant, client or version ID when a mandatory parent already provides it unambiguously, unless §7 or a documented query/constraint requires it.
+- Prefer one shared immutable version referenced by transactions to repeated copies of its content. A content change creates a new version; enforce immutability and prevent deletion while historical references require it.
+- Keep transaction-specific facts that must survive later changes, such as applied currency, timezone, price or rate, either as immutable references or justified frozen values.
+- For each retained copy or snapshot, record its consumer, historical/query/constraint need, source of truth, consistency mechanism and storage/write cost. Do not justify copies with hypothetical speed gains.
+- Derive states from existing facts when sufficient; avoid a stored flag or scheduled state update merely to mirror a deadline. Preserve distinct facts such as provider reconciliation when expiry alone cannot safely release a resource.
+- Reject unused fingerprints, digests, request IDs, timestamps and speculative state machines; retain those with a concrete integrity, audit, idempotency or operational consumer.
+
+## 33. Closed Sets and Database Enforcement
+- Inventory all closed value sets in the first plan, including enum-like text columns and permission collections; no partial lists or unspecified future values.
+- Constrain them with engine-supported enums, CHECK constraints, reference tables or normalized permission relations. Generated application types alone do not constrain stored values.
+- Keep genuinely open text, provider payloads and user explanations open; distinguish a closed reason code from free-form detail. Define handling for unknown external values and version changes.
+- Keep allowed values, defaults, transition contracts, SQL constraints and generated types aligned; test rejection through actual database writes, not only application validation.
+- Document nullable composite keys and uniqueness semantics explicitly; test whether the intended invariant holds when one or more components are NULL.
+
+## 34. Database-Side Read Models and Prepared Queries
+- Prefer reusable SQL views for shared joins, projections, derived states and aggregates rather than repeating their definitions in application queries or copying their outputs into base tables.
+- A normal view centralizes a query; it does not cache results or guarantee a speedup. Justify materialized views separately with freshness, refresh/recovery ownership and storage/write costs.
+- Keep view access tenant-scoped and verify engine-specific privileges/RLS under the consuming role. Keep workflow orchestration and external side effects in application services; do not introduce business triggers.
+- Filter, aggregate and join in the database instead of loading rows for application-side processing. Keep queries behind the data access boundary.
+- Bind all values as required by §31. Prefer reusable prepared statements for repeated query shapes where the driver, connection pool and engine support them; document lifecycle or pooling limits. Parameterization is mandatory even when server-side preparation is unavailable.
+
+## 35. Growth, Retention and Verification
+- Create costly derived data only when needed, then reuse it. For translations, keep source content/version and locale in dedicated related tables; generate a requested translation once and define invalidation when its source changes.
+- Define retention, expiry, purge or anonymization triggers and responsible jobs for technical rows, logs, caches and personal data. Preserve required history and active operations; use bounded cleanup, not indefinite accumulation or arbitrary durations.
+- Plan supported future changes, such as guest-to-account identity continuity or regional relocation, without speculative duplicate entities or premature distributed infrastructure.
+- Use migrations as the executable schema source; synchronize dictionaries, plans, diagrams, generated types and SQL exports. Do not assume a visual editor exports every documented constraint.
+- Verify migrations and constraints on the intended engine in an isolated local/test database, including negative writes. A substitute engine can provide partial evidence but cannot certify target-specific behavior.
+- For each schema warning or ignored finding, record the exact target, reason, corrective action or accepted exception and verification. Never treat a hidden warning as a corrected invariant.

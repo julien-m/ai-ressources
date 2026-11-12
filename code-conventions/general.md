@@ -4,6 +4,9 @@ extends: [internationalization]
 # General Rules (All Languages)
 
 > These rules apply to **every language**. Language-specific files add deltas on top of these.
+## Data Model Planning and Review
+- Before planning, designing, modifying or reviewing any data model, read [database conventions](database.md), including the required first-plan contract in §0. Apply this even when no ORM, SQL file or database convention is listed in the project's reading index.
+
 ## Architecture & Code Rules
 ### 1. General Principles
 - Explicit over implicit — always favor clarity

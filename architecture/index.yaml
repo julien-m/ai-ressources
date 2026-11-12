@@ -21,7 +21,7 @@ files:
     see_also: ["../stack-ref/auth/", "../code-conventions/general.md"]
 
   - file: multi-tenant.md
-    description: "Multi-tenant architecture: DB-per-tenant, schema-per-tenant, row-level security"
+    description: "Multi-tenant architecture: DB-per-tenant, schema-per-tenant, row-level security and normalized parent ownership without mandatory duplicate tenant keys"
     status: complete
     use_when: ["multi-tenant", "B2B SaaS", "tenant isolation", "row-level security", "organization model"]
     questions_answered: ["Which tenant isolation strategy?", "DB-per-tenant vs RLS?", "How to handle tenant data?"]

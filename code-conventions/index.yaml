@@ -91,9 +91,12 @@ files:
     status: partial
 
   - file: database.md
-    description: "SQL, schema design, migrations, query safety (language-agnostic, ORM-agnostic)"
+    description: "Mandatory first-plan data model contract and review: normalized ownership, immutable versions, exhaustive database-enforced enums, transitions, SQL views, prepared queries, scale, retention and schema verification (language-agnostic, ORM-agnostic)"
     applies_to: ["SQL", "PostgreSQL", "MySQL", "SQLite"]
     priority: 6
+    use_when: ["data model planning", "schema design", "data model review", "database normalization", "redundant tenant keys", "immutable versions", "exhaustive enums", "SQL views", "prepared statements", "conception de modèle de données", "revue de schéma"]
+    questions_answered: ["What must a data model plan specify before implementation?", "When is a duplicated parent or tenant identifier justified?", "How are closed sets and ownership enforced in the database?", "When should views, immutable references and prepared queries be preferred?"]
+    see_also: ["architecture.md", "../architecture/multi-tenant.md", "../architecture/database-migrations.md"]
 
   - file: runtime-configs.md
     description: "Expected config defaults per runtime/language: TypeScript files, Elixir/Mix/OTP pins, runtime/test config, editorconfig and gitignore patterns. Used by /conventions-init Phase 6."

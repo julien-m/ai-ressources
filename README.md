@@ -93,6 +93,12 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 - The guide covers locale isolation, API error ownership, fallback, plurals and formatting, with library choices for Delphi, JavaScript frameworks, Node.js, Elixir/Phoenix, Rust, Go, Python and native mobile. It defines reference policies; adopting it does not install dependencies or translate existing applications.
 - Language and framework selections automatically include the guide in generated manifests and reading indexes through the general conventions' inheritance. Existing project manifests need a conventions refresh to acquire this source; read [the conventions lifecycle](#conventions-lifecycle) for initialization and refresh commands.
 
+### Data Model Planning and Review
+
+- Read [database conventions](code-conventions/database.md) before the first model plan or schema review: field usage, cardinalities, exhaustive closed sets, transitions, database constraints, query/index patterns, retention and verification are required plan inputs.
+- Prefer normalized parent references, immutable versions and reusable SQL views; justify every copied identifier or snapshot. Preserve tenant isolation through enforced ownership paths and use bound parameters with prepared-query reuse where supported.
+- The general conventions require this reading even when a project index does not list database rules. Catalog and index signals also route planning/review tasks without a selected database engine; existing generated project indexes need a conventions refresh to acquire the new routing metadata.
+
 ### Reusable Architecture Patterns
 
 - **Read** [the guided navigation contract](architecture/guided-navigation.md) to define provider-neutral destination catalogs for natural-language help, route changes and scroll-to-anchor behavior. Applications supply their own routes, permissions and UI adapters; documentation adoption does not activate a runtime feature.
