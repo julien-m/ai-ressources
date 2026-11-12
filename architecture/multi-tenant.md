@@ -70,7 +70,7 @@ flowchart LR
 
 ### Shared DB + Row-Level Security (RLS)
 
-Architecture: single database, all tenants in the same tables. Every table includes a `tenant_id` column. The database enforces isolation via RLS policies.
+Architecture: single database, all tenants in the same tables. Ownership roots include a `tenant_id` column. Children may inherit ownership through a mandatory parent; RLS or scoped access must enforce that path. A repeated tenant key requires a concrete justification and a consistency constraint. Read [database isolation rules](../code-conventions/database.md#7-multi-tenant-data-isolation) before choosing the physical schema.
 
 ```sql
 -- Enable RLS on the table
@@ -251,11 +251,11 @@ flowchart TD
 - **Integration test pattern:** Create 2 tenants, insert data for each, verify Tenant A cannot access Tenant B's data
 - Audit logging: log `tenant_id` on every data access for forensic analysis
 - Code review checklist: "Does this query respect tenant isolation?"
-- Static analysis: lint for raw queries missing `tenant_id` (custom rule)
+- Static analysis: check for missing enforced ownership scope, including scoped parent joins; do not require a literal `tenant_id` column on every child.
 
 ```mermaid
 flowchart TD
-    A[New Query Written] --> B{Includes tenant_id?}
+    A[New Query Written] --> B{Enforces ownership path?}
     B -->|Yes| C{RLS active on table?}
     B -->|No| D[REJECT: Missing tenant scope]
     C -->|Yes| E[OK: DB-enforced isolation]
