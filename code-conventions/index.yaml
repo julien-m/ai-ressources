@@ -68,10 +68,14 @@ files:
     priority: 5
 
   - file: rust.md
-    description: "Rust cargo new/init executable/library initialization, traits, static/dynamic dispatch, dyn-compatible async boundaries, ownership and errors (delta on general.md)"
+    description: "Rust Cargo initialization, application/library contracts and MSRV, standard trait consistency, checked conversions, public API/SemVer, contextual lint policy, ownership, mutex/async lifecycle, documentation checks and behavior-preserving port/review evidence (delta on general.md)"
     applies_to: ["Rust"]
     priority: 5
     status: partial
+
+    use_when: ["Rust API design", "MSRV", "Eq Hash Ord consistency", "From TryFrom conversions", "Rust ownership", "Tokio mutex", "mutex poisoning", "Rust lint policy", "Rust porting"]
+    questions_answered: ["How should Rust traits, conversions and public APIs preserve their contracts?", "Which lock, ownership and cleanup rules apply to async Rust?", "How should Rust lints, features, documentation and porting behavior be verified?"]
+    see_also: ["architecture.md", "testing.md", "logging.md"]
 
   - file: delphi.md
     description: "Delphi/Pascal RAD Studio initialization, interfaces/polymorphism, reference-counted/borrowed/shared ownership and failure cleanup, typed enums/generics, scoped constants, const parameters, early-result search and measured memory/speed (delta on general.md)"
