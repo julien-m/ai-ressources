@@ -55,14 +55,15 @@ extends: [general]
 - Declare operations that must dispatch through the protocol as requirements; an extension-only helper is not a customizable protocol requirement. Preserve actor isolation and `Sendable` guarantees in concurrent contracts.
 - Read [Swift protocols](https://docs.swift.org/latest/documentation/the-swift-programming-language/protocols/) and [opaque and boxed protocol types](https://docs.swift.org/latest/documentation/the-swift-programming-language/opaquetypes/).
 ### Kotlin
-- Prefer small `interface` capabilities injected through constructors; use `fun interface` or function types for one operation and interface delegation (`by`) to compose implementations without an inheritance hierarchy.
+- Prefer small `interface` capabilities injected through constructors; use `fun interface` or function types for one operation and interface delegation (`by`) for independent responsibilities. For a stable family workflow, use an abstract parent with final entry points and protected abstract hardware hooks under the shared workflow rule below; model descendants must not copy that workflow.
 - Use generics for type relationships and sealed classes/interfaces for closed domain variants with exhaustive `when`; use ordinary interfaces for an extensible provider set. Extension functions resolve statically and do not replace virtual interface members.
 - Keep `suspend`, cancellation and ownership guarantees explicit in contracts. Read [Kotlin interfaces](https://kotlinlang.org/docs/interfaces.html) and [delegation](https://kotlinlang.org/docs/delegation.html); apply the shared policy for both languages in [architecture conventions](architecture.md#34-interface-based-modularity-and-polymorphism).
 
 ## Functions & Classes
 - Prefer structs (Swift) / data classes (Kotlin) for value types
 - Classes for services and stateful components
-- Composition over inheritance, DI via constructor/init
+- Prefer composition for orthogonal dependencies, with DI via constructor/init. For devices sharing a stable family workflow, read [parent-owned workflows](architecture.md#35-stable-family-workflows-and-hardware-drivers): prefer an abstract parent where class inheritance fits, and keep model variation in typed capabilities/constraints and narrow hooks. An interface alone must not leave every driver to reimplement the same rules.
+- Kotlin: define/store the capability type and immutable capability/constraint data in the `abstract` family parent; each child initializes it through `super`, and all consumers use the parent's read-only view. Use public final behavior methods, `protected abstract` mandatory hardware hooks and documented defaults for optional hooks; concrete drivers use `override`, without duplicate `hasX` declarations or overridable calls during construction. Swift has no abstract-class keyword: preserve the shared workflow through idiomatic protocols and composition when appropriate; do not emulate abstract hooks with runtime traps or force value types into a class hierarchy.
 ### Swift
 ```swift
 final class UserService {

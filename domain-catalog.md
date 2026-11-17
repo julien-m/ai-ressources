@@ -28,6 +28,8 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 
 | Signal | Convention file |
 |---|---|
+| `template-method`, `abstract family parent`, `hardware-driver`, `peripheral`, `ble`, `lighting`, `radar`, `device-capabilities`, `composition versus inheritance` | `code-conventions/architecture.md` |
+| `driver-contract-tests`, `hardware-validation`, `optical-evidence` | `code-conventions/testing.md` |
 | `i18n`, `l10n`, `internationalization`, `localization`, `multilingual`, `translation`, `gettext`, `localize`, `i18next`, `next-intl`, `go-i18n`, `fluent`, `resourcestring` | `code-conventions/internationalization.md` |
 | `typescript`, `ts`, `.ts`, `.tsx`, `javascript`, `js`, `.js`, `.jsx`, `node`, `bun`, `deno` | `code-conventions/javascript.md` |
 | `go`, `golang` | `code-conventions/go.md` |
