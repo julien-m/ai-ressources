@@ -34,10 +34,11 @@ files:
     priority: 1
 
   - file: architecture.md
-    description: "Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events, interface-based modularity, polymorphism, substitutable contracts, interchangeable implementations, explicit resource lifetimes, bounded work and CI-enforced module dependencies, and thin callbacks"
+    description: "Cross-cutting architecture rules: layers, boundaries, dependency direction, DI, events, interface-based modularity, polymorphism, substitutable contracts, parent-owned business intelligence and temporal sequencing (Template Method), a single parent-defined/stored capability/constraint source initialized by children, public final behavior and protected abstract low-level hardware translators without functional logic, composition versus inheritance, explicit resource lifetimes, bounded work, CI-enforced dependencies and thin callbacks"
     applies_to: ["*"]
     priority: 2
-    use_when: ["polymorphism", "capability contracts", "modular architecture", "interfaces and abstractions", "dependency injection", "interchangeable implementations", "rendering backends", "thin event callbacks"]
+    use_when: ["polymorphism", "capability contracts", "modular architecture", "interfaces and abstractions", "dependency injection", "interchangeable implementations", "rendering backends", "thin event callbacks", "Template Method", "abstract family parent", "hardware drivers", "typed device capabilities", "composition versus inheritance", "lighting and radar workflows"]
+    questions_answered: ["When should an abstract parent execute a shared device-family workflow?", "Which behavior belongs in the parent versus a model driver?", "Where are capabilities defined/stored and how do children initialize them?", "How should the same capability data drive menus, rules and command validation?"]
 
   - file: logging.md
     description: "English internal diagnostics, structured logging, separation from translated product errors, sensitive data redaction, compliance rules"
@@ -53,7 +54,7 @@ files:
     see_also: ["general.md", "logging.md", "elixir.md"]
 
   - file: testing.md
-    description: "Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, risk-based invariants/failure cleanup and reusable implementation contracts, dependency-check evidence, coverage, CLI output testing (ANSI/NO_COLOR)"
+    description: "Cross-cutting testing conventions: UI test identifiers, naming, mocking, test data, async, boundaries, risk-based invariants/failure cleanup, parent business workflow/temporal sequencing and single-source capability checks, optional-feature fallbacks and reusable hardware driver contracts, compilation/ACK versus physical evidence, dependency-check evidence, coverage, CLI output testing (ANSI/NO_COLOR)"
     applies_to: ["*"]
     priority: 4
 
@@ -89,7 +90,7 @@ files:
     priority: 5
 
   - file: swift-kotlin.md
-    description: "SwiftPM/Xcode and Gradle/Android Studio project initialization; Swift protocols, generics and existentials; Kotlin interfaces, delegation and sealed variants; iOS/Android conventions (delta on general.md)"
+    description: "SwiftPM/Xcode and Gradle/Android Studio project initialization; Swift protocols, generics and existentials; Kotlin interfaces, delegation, sealed variants and abstract family workflows; composition/inheritance scope and iOS/Android conventions (delta on general.md)"
     applies_to: ["Swift", "Kotlin"]
     priority: 5
     status: partial

@@ -74,6 +74,7 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 ### Contracts and polymorphism
 
 - **Read** [modularity and polymorphism conventions](code-conventions/architecture.md#34-interface-based-modularity-and-polymorphism) for the shared preference: narrow capability contracts, interchangeable implementations, composition-time selection and semantic substitutability, including boundaries with one current implementation.
+- **Read** [stable family workflows and hardware drivers](code-conventions/architecture.md#35-stable-family-workflows-and-hardware-drivers) when devices share a real workflow: the abstract family parent defines/stores the single typed capability/constraint source and executes all business intelligence and temporal sequencing through public final methods. Model descendants initialize that data and implement required protected abstract hooks as low-level hardware translators without functional logic; orthogonal dependencies remain composed. Use a shared composed workflow where inheritance is unsuitable; keep driver contract tests and physical hardware evidence distinct.
 - **Read** [TypeScript/JavaScript](code-conventions/javascript.md), [Elixir](code-conventions/elixir.md), [Go](code-conventions/go.md), [Python](code-conventions/python.md), [Rust](code-conventions/rust.md), [Swift/Kotlin](code-conventions/swift-kotlin.md) and [Delphi/Pascal](code-conventions/delphi.md) for the language-specific mechanisms and official sources.
 
 ### Elixir and Phoenix
