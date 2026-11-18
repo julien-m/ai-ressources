@@ -102,6 +102,110 @@ Extends general §8. Concurrency must be intentional.
 - Background work must be observable and managed
 - Forbidden: unmanaged fire-and-forget, hidden goroutines/threads/tasks, unsupervised long-running jobs from request handlers
 
+### 15.1. Priority Work and Cooperative Cancellation
+
+- Separate interactive demand from deferrable work when they compete for the same CPU, device, or service. Reserve capacity or schedule interactive work first at bounded checkpoints. Keep expensive computation off the UI executor. Define when background work resumes and how it progresses under sustained interactive load.
+- Bound active work, pending work, and the batches that discover or produce work. Apply the admission limit before materializing a large backlog. For bounded queues, make full-queue behavior explicit and clear consumed or removed entries so they release their references.
+- Use a latest-wins slot only for replaceable work with a single current consumer, such as the preview for a selection. Give each request its own identity and cancellation state. Finish displaced pending requests as cancelled, signal running ones, and retain their occupied slots until they actually stop. Required jobs and irreversible effects need their own delivery contract.
+- Make checkpoints and waits cancellation-aware. Check again before starting a durable write and distinguish a result that completed from one that is partial, cancelled, or failed. Once a write starts, follow its transaction and reconciliation contract. Before publishing to the UI, check that the consumer still wants that generation. Close job admission and drain or cancel active and queued work during shutdown.
+
+#### Worked TypeScript example with two successive priority requests
+
+A media preview needs priority over background indexing. This coordinator holds one running priority task and one replaceable pending request. The task delegates CPU work to a worker, forwards cancellation to it, and settles after its work and cleanup finish. When cancelled, it rejects with the signal's abort reason. The background coordinator calls `yieldToPriority` between bounded worker requests. At shutdown the owner cancels background work and awaits `close` to stop priority admission and wait for active cleanup. Sustained interactive demand can postpone deferrable work under this strict-priority policy. If no priority request is pending, its executor still yields or handles scheduler messages at those checkpoints so new requests can be observed.
+
+```ts
+export type PriorityResult<Value> =
+	| { status: "completed"; value: Value }
+	| { status: "cancelled" }
+	| { status: "closed" }
+	| { status: "failed"; error: unknown };
+
+interface PriorityRequest<Value> {
+	readonly controller: AbortController;
+	readonly task: (signal: AbortSignal) => Promise<Value>;
+	readonly result: Promise<PriorityResult<Value>>;
+	readonly finish: (result: PriorityResult<Value>) => void;
+}
+
+export class LatestPriority<Value> {
+	private active: PriorityRequest<Value> | undefined;
+	private pending: PriorityRequest<Value> | undefined;
+	private closed = false;
+
+	/** Replaces pending work and resolves to the task's final outcome. */
+	submit = (task: PriorityRequest<Value>["task"]): Promise<PriorityResult<Value>> => {
+		if (this.closed) return Promise.resolve({ status: "closed" });
+		const { promise, resolve } = Promise.withResolvers<PriorityResult<Value>>();
+		const displaced = this.pending;
+		this.pending = { task, controller: new AbortController(), result: promise, finish: resolve };
+		displaced?.finish({ status: "cancelled" });
+		// Install the new request before abort handlers can synchronously submit again.
+		this.active?.controller.abort();
+		this.startNext();
+		return promise;
+	};
+
+	/** Waits for priority work at a background checkpoint.
+	 * @throws The background signal's abort reason.
+	 */
+	yieldToPriority = async (signal: AbortSignal): Promise<void> => {
+		signal.throwIfAborted();
+		let current = this.active ?? this.pending;
+		while (current !== undefined) {
+			const { promise: cancelled, resolve } = Promise.withResolvers<void>();
+			const onAbort = (): void => resolve();
+			signal.addEventListener("abort", onAbort, { once: true });
+			try {
+				await Promise.race([current.result, cancelled]);
+			} finally {
+				signal.removeEventListener("abort", onAbort);
+			}
+			signal.throwIfAborted();
+			current = this.active ?? this.pending;
+		}
+	};
+
+	/** Stops admission, cancels queued and active work, and awaits active cleanup. */
+	close = async (): Promise<void> => {
+		this.closed = true;
+		const pending = this.pending;
+		this.pending = undefined;
+		pending?.finish({ status: "cancelled" });
+
+		const active = this.active;
+		active?.controller.abort();
+		await active?.result;
+	};
+
+	private startNext = (): void => {
+		const request = this.pending;
+		if (this.active !== undefined || request === undefined) return;
+		this.pending = undefined;
+		this.active = request;
+		queueMicrotask(() => { void this.run(request); });
+	};
+
+	private run = async (request: PriorityRequest<Value>): Promise<void> => {
+		const { signal } = request.controller;
+		let result: PriorityResult<Value>;
+		try {
+			signal.throwIfAborted();
+			const value = await request.task(signal);
+			result = signal.aborted ? { status: "cancelled" } : { status: "completed", value };
+		} catch (error) {
+			result = signal.aborted && error === signal.reason
+				? { status: "cancelled" }
+				: { status: "failed", error };
+		}
+		this.active = undefined;
+		request.finish(result);
+		this.startNext();
+	};
+}
+```
+
+When request A is running and B arrives, A receives cancellation and B occupies the pending slot. B starts after A settles, the background checkpoint waits for both, and only B can publish a new preview in this sequence. A selected view must still compare its current request identity before displaying any completed result. Use controlled signals to test the order, cancellation before execution, cancellation while waiting, and a late completion from a worker that ignored an abort. Measure the longest checkpoint interval and the interactive wait separately.
+
 ## 16. Configuration Boundary
 Extends general §12. Config loaded once at startup and injected.
 - No raw env access deep in business code
