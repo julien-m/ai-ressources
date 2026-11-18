@@ -11,6 +11,7 @@ import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync
 import { tmpdir } from "node:os";
 import { dirname, join } from "node:path";
 import { parse } from "yaml";
+import { resolveAudit } from "../.agent-sync/skills/ai-res-audit/scripts/resolve";
 
 const SCRIPT = join(dirname(import.meta.dir), "scripts", "build-conventions.ts");
 
@@ -108,14 +109,20 @@ describe("build-conventions", () => {
       entry.priority === 5 && entry.applies_to?.some((language) => language in codeIndex.coverage))
     .map((entry: { file: string }) => entry.file.replace(/\.md$/, ""));
 
-  test.each(languageRoots)("real %s selection automatically includes internationalization", async (language) => {
+  test.each(languageRoots)("real %s selection includes the shared audit conventions", async (language) => {
     const { exitCode, stderr } = await runScript(repositoryRoot, project, JSON.stringify({ code: [language] }));
 
     expect(exitCode).toBe(0);
     expect(stderr).toBe("");
     const sources = sourceList(project, "code");
+    const selector = Object.keys(codeIndex.files.find((entry: { file: string }) =>
+      entry.file === `${language}.md`).audit_targets)[0];
+    const auditSources = resolveAudit(["code", selector], repositoryRoot).sources.code;
+    expect(sources.map((source) => join(repositoryRoot, source))).toEqual(auditSources);
     expect(sources.filter((source) => source === "code-conventions/internationalization.md")).toHaveLength(1);
-    expect(readFileSync(join(project, ".conventions/index.md"), "utf-8")).toContain("code-conventions/internationalization.md");
+    const index = readFileSync(join(project, ".conventions/index.md"), "utf-8");
+    expect(index).toContain("code-conventions/internationalization.md");
+    expect(index).toContain("Plan and implementation");
   });
 
   test("deduplication: react + nextjs resolves shared ancestors once", async () => {
@@ -126,6 +133,15 @@ describe("build-conventions", () => {
     const sources = sourceList(project, "code");
     expect(sources.filter((source) => source === "code-conventions/general.md")).toHaveLength(1);
     expect(sources.filter((source) => source === "code-conventions/javascript.md")).toHaveLength(1);
+  });
+
+  test.each(["phoenix", "ecto"])("framework-only %s selection includes the inherited audit profile", async (framework) => {
+    const { exitCode, stderr } = await runScript(repositoryRoot, project, JSON.stringify({ code: [framework] }));
+
+    expect(exitCode).toBe(0);
+    expect(stderr).toBe("");
+    const expected = resolveAudit(["code", "elixir", "--with", framework], repositoryRoot).sources.code;
+    expect(sourceList(project, "code").map((source) => join(repositoryRoot, source))).toEqual(expected);
   });
 
   test("diamond dependency: shared ancestor appears exactly once", async () => {
