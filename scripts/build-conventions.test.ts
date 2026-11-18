@@ -125,6 +125,14 @@ describe("build-conventions", () => {
     expect(index).toContain("Plan and implementation");
   });
 
+  test("an explicit database convention selection matches the SQL code audit", async () => {
+    const { exitCode, stderr } = await runScript(repositoryRoot, project, JSON.stringify({ code: ["database"] }));
+    expect(exitCode).toBe(0);
+    expect(stderr).toBe("");
+    const expected = resolveAudit(["code", "sql"], repositoryRoot).sources.code;
+    expect(sourceList(project, "code").map((source) => join(repositoryRoot, source))).toEqual(expected);
+  });
+
   test("deduplication: react + nextjs resolves shared ancestors once", async () => {
     aiRes = makeFakeAiRes(makeCodeConventionsFixture());
     const { exitCode } = await runScript(aiRes, project, JSON.stringify({ code: ["react", "nextjs"] }));

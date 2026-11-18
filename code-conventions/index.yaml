@@ -1,6 +1,6 @@
 coverage:
   TypeScript: full
-  JavaScript: full
+  JavaScript: partial
   Go: full
   Python: full
   REST: full
@@ -9,6 +9,18 @@ coverage:
   Swift: partial
   Kotlin: partial
   Delphi: legacy
+  SQL: partial
+  Java: shared-only
+  C: shared-only
+  C++: shared-only
+  C#: shared-only
+  Objective-C: shared-only
+  Shell: shared-only
+  Sh: shared-only
+  Bash: shared-only
+  Zsh: shared-only
+  HTML: shared-only
+  CSS: shared-only
 
 frameworks:
   OpenAPI / Orval: full
@@ -29,8 +41,20 @@ frameworks:
 
 files:
   - file: general.md
-    description: "Shared rules for all languages: automatically inherits internationalization, official initialization, mandatory nested UI layouts for websites/web/native apps, multilingual product text and English internal logs, types, naming, testing, errors, imports, security, mandatory first code-plan loading and evidence-based plan review, validated domain creation and explicit result/error contracts, mandatory comment triggers (§25), typed variants, scoped constants, early returns, bounded batch loading, capacity reservation, buffer reuse, incremental updates, allocator fragmentation evidence and worked FeedBk examples in Rust and TypeScript (§33), frontend sample-data taste"
+    description: "Shared rules for all languages: automatically inherits internationalization, official initialization, mandatory nested UI layouts for websites/web/native apps, multilingual product text and English internal logs, types, naming, testing, errors, imports, security, mandatory first code-plan loading and evidence-based plan review, validated domain creation and explicit result/error contracts, mandatory comment triggers (§25), typed variants, scoped constants, early returns, bounded batch loading, capacity reservation, buffer reuse, incremental updates, allocator fragmentation evidence and worked FeedBk examples in Rust and TypeScript (§33), frontend sample-data taste. Shared-only audit routing for Java, C, C++, C#, Objective-C, shell scripts, HTML and CSS"
     applies_to: ["*"]
+    audit_targets:
+      java: []
+      c: []
+      cpp: ["c++", cxx]
+      csharp: ["c#"]
+      objective-c: [objc]
+      shell: []
+      sh: [posix-sh]
+      bash: []
+      zsh: []
+      html: []
+      css: []
     priority: 1
 
   - file: architecture.md
@@ -103,7 +127,7 @@ files:
 
   - file: database.md
     description: "Mandatory first-plan data model contract and evidence-based blocking review gate: engine/driver-specific integrity hazards, typed size/range/precision and rounding contracts, input bounds, exact default ownership, explicit nullability/uniqueness contracts, installed-constraint inspection and risk-based write tests, normalized ownership, immutable versions, exhaustive database-enforced enums, transitions, SQL views, prepared queries, driver-managed connection pools, short leases, concurrency budgets, scale, retention, schema verification and evidence-based modeler warning/Ignore disposition (language-agnostic, ORM-agnostic)"
-    audit_targets: {database: []}
+    audit_targets: {database: [], sql: []}
     applies_to: ["SQL", "PostgreSQL", "MySQL", "SQLite"]
     priority: 6
     use_when: ["data model planning", "schema design", "data model review", "plan compliance evidence", "database engine compatibility", "silent data conversion", "calculation integrity", "numeric precision and rounding", "varchar versus text", "input length limits", "correct default values", "NOT NULL constraints", "scoped uniqueness tests", "nullable unique keys", "database normalization", "redundant tenant keys", "immutable versions", "exhaustive enums", "SQL views", "prepared statements", "connection pooling", "connection leases", "pool saturation", "conception de modèle de données", "revue de schéma", "Schemity warnings", "ignored schema findings", "nullable boolean", "NULL versus empty string"]
