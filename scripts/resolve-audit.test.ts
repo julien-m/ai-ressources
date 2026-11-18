@@ -19,7 +19,7 @@ describe("audit source routing", () => {
   });
   test("all supported engines/languages resolve existing sources without guessing frameworks", () => {
     for (const domain of ["database", "code"]) {
-      const targets = domain === "database" ? ["postgresql", "mysql", "sqlite", "cockroachdb"] : ["delphi", "typescript", "javascript", "rust", "elixir"];
+      const targets = domain === "database" ? ["postgresql", "mysql", "sqlite", "cockroachdb"] : ["delphi", "typescript", "javascript", "rust", "elixir", "swift"];
       for (const target of targets) {
         const result = resolveAudit([domain, target], root);
         for (const source of Object.values(result.sources).flat()) expect(existsSync(source)).toBe(true);
@@ -27,6 +27,19 @@ describe("audit source routing", () => {
         expect(result.deltas).toEqual([]);
       }
     }
+  });
+  test("Swift selects its language delta and the inherited localization rules", () => {
+    const result = resolveAudit(["code", "swift"], root);
+    const names = result.sources.code.map((path) => path.split("/").pop());
+    expect(names).toEqual([
+      "internationalization.md",
+      "general.md",
+      "architecture.md",
+      "logging.md",
+      "testing.md",
+      "swift-kotlin.md",
+    ]);
+    expect(result.deltas).toEqual([]);
   });
   test("unsupported profiles, path traversal and unintended runtime flags fail closed", () => {
     for (const args of [["database", "oracle"], ["database", "pg", "--with", "../secret"], ["code", "ts", "--execute"], ["database"], ["code", "ts", "--with"]]) {

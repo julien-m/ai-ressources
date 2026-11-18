@@ -1,7 +1,7 @@
 ---
 name: ai-res-audit
 description: Audit database schemas or source code for correctness, security weaknesses and justified optimizations using common AI-RESSOURCES conventions plus engine/language/framework deltas. Use for “teste le schéma”, database integrity reviews or language-specific code audits; report evidence and coverage without automatic repairs or production certification.
-argument-hint: "database <postgresql|mysql|sqlite|cockroachdb> | code <delphi|typescript|javascript|rust|elixir> [--mode review|test|performance] [--path project] [--with deltas]"
+argument-hint: "database <postgresql|mysql|sqlite|cockroachdb> | code <delphi|typescript|javascript|rust|elixir|swift> [--mode review|test|performance] [--path project] [--with deltas]"
 ---
 
 # AI-RESSOURCES Audit
