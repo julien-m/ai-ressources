@@ -63,6 +63,13 @@ files:
     questions_answered: ["Which job queue?", "How to handle retries and DLQ?", "Job observability?", "Cron vs event-triggered?"]
     see_also: ["event-driven.md", "cloudflare-job-scheduling.md", "../stack-ref/jobs/", "../code-conventions/logging.md"]
 
+  - file: stripe-account-migration.md
+    description: "Stripe account migration without cutover DDL, example tables and saved fields, account-scoped billing bindings, subscription and invoice history, staged renewal handoff and idempotent fulfillment"
+    status: complete
+    use_when: ["Stripe account migration", "Stripe Billing migration", "Stripe customer copy", "subscription cutover", "Stripe Price mapping"]
+    questions_answered: ["How do I prepare the schema for a Stripe account migration?", "How do source invoices remain linked after recreating subscriptions?", "How should new checkout, renewals and webhook retries be handled during cutover?"]
+    see_also: ["../stack-ref/payments/stripe.md", "database-migrations.md", "webhook-patterns.md", "../code-conventions/database.md"]
+
   - file: database-migrations.md
     description: "Database migration patterns: versioning, zero-downtime, expand/contract, rollback"
     audit_targets: {database: []}

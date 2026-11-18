@@ -131,7 +131,7 @@ sections:
       - file: payments/paddle.md
         description: "Paddle: MoR for growing SaaS, international sales"
       - file: payments/stripe.md
-        description: "Stripe: full control, flexible API, B2B focus"
+        description: "Stripe: flexible payments and Billing API, plus guidance on preparing a Stripe account migration"
 
   platforms:
     description: "Hosting and cloud platforms"

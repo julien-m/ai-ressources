@@ -172,6 +172,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | Signal | Convention file |
 |---|---|
 | `stripe`, `@stripe` | `stack-ref/payments/stripe.md` |
+| `Stripe account migration`, `Stripe Billing migration`, `migration de compte Stripe`, `Stripe Price mapping`, `Stripe customer copy` | `architecture/stripe-account-migration.md` |
 | `lemon-squeezy`, `lemonsqueezy` | `stack-ref/payments/lemon-squeezy.md` |
 | `mollie`, `@mollie` | `stack-ref/payments/mollie.md` |
 | `paddle`, `@paddle` | `stack-ref/payments/paddle.md` |
