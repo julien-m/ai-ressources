@@ -50,10 +50,10 @@ files:
     see_also: ["webhook-patterns.md", "background-jobs.md", "../stack-ref/jobs/"]
 
   - file: caching-strategies.md
-    description: "Multi-layer caching: application, Redis/KV, CDN/edge, invalidation strategies"
+    description: "Multi-layer caching: application, Redis/KV, CDN/edge, invalidation, Europe–US latency and regional read replicas"
     status: complete
-    use_when: ["caching", "Redis", "CDN", "edge caching", "cache invalidation", "performance"]
-    questions_answered: ["Which caching layer?", "Cache invalidation strategy?", "Redis vs KV vs CDN?", "Stale-while-revalidate?"]
+    use_when: ["caching", "Redis", "CDN", "edge caching", "cache invalidation", "performance", "transatlantic latency", "read replicas"]
+    questions_answered: ["Which caching layer?", "Cache invalidation strategy?", "Redis vs KV vs CDN?", "Stale-while-revalidate?", "Where should the backend and database run for Europe–US traffic?"]
     see_also: ["../stack-ref/databases/upstash-redis.md", "../stack-ref/platforms/cloudflare.md"]
 
   - file: background-jobs.md

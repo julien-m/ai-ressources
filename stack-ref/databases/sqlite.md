@@ -54,6 +54,7 @@ Totalement gratuit, sans restriction. Licence domaine public.
 | Neon | PostgreSQL serverless, plus de features SQL |
 | PostgreSQL | Plus de features, multi-writer, production scale |
 ## Ressources
+- Lire [la convention sur les identifiants publics](../../code-conventions/database.md#51-public-identifiers) pour exposer un identifiant opaque réversible en conservant la représentation de la clé SQLite.
 - [Documentation officielle](https://sqlite.org/docs.html)
 - [WAL mode (performances writes)](https://sqlite.org/wal.html)
 - [better-sqlite3 (Node.js sync)](https://github.com/WiseLibs/better-sqlite3)

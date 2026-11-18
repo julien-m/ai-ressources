@@ -47,6 +47,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `python`, `py`, `.py`, `pip`, `uv`, `poetry`, `fastapi`, `django`, `flask`, `pydantic`, `pytest`, `ruff`, `pyright`, `mypy` | `code-conventions/python.md` |
 | `data model planning`, `schema design`, `data model review`, `normalization`, `denormalization`, `immutable versions`, `enum`, `SQL views`, `prepared statements`, `modèle de données`, `revue de schéma` | `code-conventions/database.md` |
 | `sql`, `postgresql`, `mysql`, `sqlite`, `database`, `migration`, `schema` | `code-conventions/database.md` |
+| `public ID`, `opaque ID`, `reversible identifier encoding`, `identifiant public`, `identifiant opaque`, `encodage réversible` | `code-conventions/database.md` |
 | `openapi`, `open_api_spex`, `openapispex`, `orval`, `rest-sdk`, `api-codegen`, `api-contract`, `sdk-generation` | `code-conventions/openapi.md` |
 | `pre-commit` | `code-conventions/stack-commands.md` |
 | `githooks` | `code-conventions/stack-commands.md` |

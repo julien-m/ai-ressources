@@ -6,6 +6,7 @@ extends: [internationalization]
 > These rules apply to **every language**. Language-specific files add deltas on top of these.
 ## Data Model Planning and Review
 - Before planning, designing, modifying or reviewing any data model, read [database conventions](database.md), including the required first-plan contract in §0. Apply this even when no ORM, SQL file or database convention is listed in the project's reading index.
+- When exposing resource IDs in an API or user-facing link, read [the public identifier rules](database.md#51-public-identifiers) for portable encoding, stable links and object-level authorization.
 
 ## Code Planning and Evidence-Based Plan Review
 - Before the first code design/implementation plan, read this file, [architecture](architecture.md), [testing](testing.md), [logging](logging.md) and the language/framework deltas and inheritance selected from the observed stack via [the code index](index.yaml). Apply this to existing projects, LiveSpec/APEX and missing/stale/design-only project indexes; no manifest refresh is required.
