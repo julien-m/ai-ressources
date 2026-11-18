@@ -227,6 +227,17 @@ These are architecture defects, not style issues.
 
 ## 34. Interface-Based Modularity and Polymorphism
 - Prefer small modules with explicit responsibilities and narrow contracts; callers depend on the contract, while each implementation owns its technical details.
+
+### Design from the operation and its variation
+
+- Start with a real call site. Identify what the caller needs to do, what must be true for every implementation, what actually varies, who selects the variation, and who owns state, side effects and cleanup. Use those answers to place the boundary before choosing a class, interface or callback.
+- Apply interface segregation by caller role. One object can implement several independent contracts. Expose the smallest useful view to each caller. A reading contract must not inherit mutation or expose a mutable collection or concrete back-reference that bypasses it. Say whether a read-only view reflects live changes or represents a snapshot.
+- Use a function or callable as a Strategy for a single interchangeable operation, such as comparison or filtering. Use a named contract when several operations must share state, semantics or a lifecycle. Use generics to preserve relationships between the input and output types; expose a smaller non-generic view when a caller only needs a capability independent of those types.
+- Keep a stable shared sequence in one workflow owner (Template Method when implemented through inheritance). Make mandatory steps explicit protected hooks where the language supports them, or inject them into the workflow when using composition. The owner enforces ordering, validation, result publication and cleanup. A hook performs its designated step. Independent variants such as filtering, scheduling and storage should compose without a subclass for every combination.
+- Distinguish a policy from an event. A policy or strategy supplies a decision or performs a requested step. An event reports an occurrence to observers. Define when callbacks run, how failures propagate, and who unregisters or stops them when their owner ends.
+
+### Composition and substitution
+
 - Keep browser frame callbacks, UI events and other entry callbacks thin: translate inputs, delegate to an injected interface, and manage the callback lifecycle. Keep rendering algorithms and backend-specific code in their own implementations.
 - Select and construct implementations at the configuration/composition boundary; do not scatter backend switches or concrete dependency construction through callers.
 - Resolve option-dependent behavior when configuration changes, then reuse the configured implementation in frame/event loops. Reconfigure on relevant setting, source or capability changes; keep data-validity and safety checks dynamic.
@@ -242,7 +253,108 @@ These are architecture defects, not style issues.
 - Separate capability polymorphism (different implementations of one contract) from parametric polymorphism (generic algorithms preserving type relationships). Choose static or dynamic dispatch according to runtime substitution, heterogeneous storage and measured costs.
 - Contracts include semantics: inputs, results, errors, side effects, ownership and concurrency guarantees. Identify owned, borrowed and shared resources, who releases them, and which lifetime they require; specify cleanup on failure/cancellation and whether a returned value transfers ownership. Substitutes must preserve those guarantees, not merely expose matching method names. Keep provider-specific features in separate capabilities rather than fake no-op implementations.
 - Verify shared observable guarantees against each real implementation where feasible; reuse contract checks for fakes without treating fake-only tests as proof of a provider integration. Avoid downcasts or concrete-type checks in business callers to recover capabilities omitted from the contract.
+- Review the extension by tracing one real call from the caller through wiring, workflow and variation to its result. For a new implementation of the same capability, the expected diff is its implementation, wiring and contract checks. If callers or the shared workflow also change, identify the new semantic requirement or the dependency that leaked through the contract.
 - Apply these project design preferences using each language's mechanisms. Read [TypeScript/JavaScript](javascript.md), [Elixir](elixir.md), [Go](go.md), [Python](python.md), [Rust](rust.md), [Swift/Kotlin](swift-kotlin.md) and [Delphi/Pascal](delphi.md) for the corresponding choices. Keep SQL and framework-specific details behind those application contracts rather than inventing a universal interface syntax.
+
+### Worked examples from FeedBk
+
+These TypeScript examples adapt FeedBk's design to structural interfaces and explicit dependencies. The same responsibilities apply in other languages.
+
+**One workflow, replaceable persistence.** FeedBk's library adds tracks through a storage hook, then updates the views after success. Here the library owns that sequence and the store owns the write.
+
+```ts
+export interface Track {
+	readonly id: string;
+	readonly title: string;
+}
+
+export interface TrackStore {
+	add(tracks: readonly Track[]): Promise<readonly Track[]>;
+}
+
+export interface LibraryViews {
+	applyAdded(tracks: readonly Track[]): void | Promise<void>;
+}
+
+export class Library {
+	constructor(
+		private readonly store: TrackStore,
+		private readonly views: LibraryViews,
+	) {}
+
+	addTracks = async (tracks: readonly Track[]): Promise<readonly Track[]> => {
+		const saved = await this.store.add(tracks);
+		await this.views.applyAdded(saved);
+		return saved;
+	};
+}
+```
+
+The store returns the committed tracks or rejects. The library waits for the view update before returning success. If publication fails after the write, reconcile the views from storage without repeating the write. Wire the store outside the library and reuse the contract tests for each backend.
+
+**Give each caller the view it needs.** FeedBk has plain and alphabetically grouped album views. Both expose captions. Only the grouped view supplies alphabet navigation.
+
+```ts
+export interface AlbumCaptions {
+	readonly count: number;
+	captionAt(index: number): string | undefined;
+}
+
+export interface LetterGrouping {
+	readonly letters: readonly string[];
+	firstIndexFor(letter: string): number | undefined;
+}
+
+export const visibleAlbumLabels = (
+	albums: AlbumCaptions,
+	visibleIndices: readonly number[],
+): readonly string[] =>
+	visibleIndices.flatMap((index): string[] => {
+		const caption = albums.captionAt(index);
+		return caption === undefined ? [] : [caption];
+	});
+```
+
+The label renderer works with either implementation. Give alphabet navigation the separate grouping contract during composition. An editor gets its own write contract when it needs to change a track.
+
+**Keep task execution and policy independent.** FeedBk's workers run typed tasks, handle cancellation and route outcomes. Its collections take typed filter predicates. A media import can use both: the runner schedules the job and the task applies the configured selection rule.
+
+```ts
+export interface MediaFile {
+	readonly path: string;
+}
+
+export interface ImportResult {
+	readonly imported: number;
+}
+
+export interface MediaImporter {
+	run(
+		files: readonly MediaFile[],
+		accept: (file: MediaFile) => boolean,
+		signal: AbortSignal,
+	): Promise<ImportResult>;
+}
+
+export interface Job<Result> {
+	readonly result: Promise<Result>;
+	cancel(): void;
+}
+
+export interface JobRunner {
+	submit<Result>(task: (signal: AbortSignal) => Promise<Result>): Job<Result>;
+}
+
+export const submitImport = (
+	runner: JobRunner,
+	importer: MediaImporter,
+	files: readonly MediaFile[],
+	accept: (file: MediaFile) => boolean,
+): Job<ImportResult> =>
+	runner.submit((signal): Promise<ImportResult> => importer.run(files, accept, signal));
+```
+
+Changing the predicate changes the selection policy. The runner still owns queueing and cancellation, and the importer observes the abort signal. A progress observer, when present, reports completed work and is detached when its view closes.
 
 ## 35. Stable Family Workflows and Hardware Drivers
 

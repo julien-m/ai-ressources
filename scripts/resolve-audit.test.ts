@@ -58,6 +58,16 @@ describe("audit source routing", () => {
     expect(withCli.sources.code.map((path) => basename(path))).toEqual([...names, "cli.md"]);
   });
 
+  test("code audits can read the shared FeedBk architecture and allocation examples", () => {
+    for (const language of ["typescript", "rust", "go"]) {
+      const result = resolveAudit(["code", language], root);
+      const sources = new Map(result.sources.code.map((path) => [basename(path), readFileSync(path, "utf8")]));
+
+      expect(sources.get("architecture.md")).toContain("### Worked examples from FeedBk");
+      expect(sources.get("general.md")).toContain("#### Worked example from FeedBk on reserving and reusing capacity");
+    }
+  });
+
   test("database audits can include consumer conventions with the engine and schema sources", () => {
     const result = resolveAudit(["database", "sqlite", "--with", "swift-kotlin"], root);
     expect(result.sources.code.map((path) => basename(path))).toContain("swift-kotlin.md");
