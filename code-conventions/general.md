@@ -204,9 +204,9 @@ When source URLs are provided, **always scrape them first** to extract assets an
 - Treat simpler control flow or fewer source assignments as design observations until measured. A performance claim needs representative inputs, target compiler/runtime/version and release settings, equivalent outputs, and elapsed-time/allocation or memory evidence appropriate to the claimed gain. Do not benchmark every trivial function or weaken correctness, typing, encapsulation or safety to win a microbenchmark.
 - Read [modular contracts and polymorphism](architecture.md#34-interface-based-modularity-and-polymorphism) and the selected language's implementation rules before proposing structural changes.
 
-#### Worked example from FeedBk on reserving and reusing capacity
+#### Worked example on reserving and reusing capacity
 
-FeedBk reserves a track-list buffer using the batch size. It appends each track, delivers the batch, then clears the logical count while retaining the backing array. Its generic list grows geometrically when the count exceeds capacity. The album views also reserve space from the number of incoming groups before inserting them and reuse the existing group order on the initial load.
+A library loader can reserve a track-list buffer using the batch size, publish each batch, and clear its logical count while retaining storage. An album view can reserve space for incoming groups and reuse their order on the initial load.
 
 The examples use track IDs to isolate the allocation behavior. Each consumer reads the occupied part synchronously and finishes using it before the next batch; copy at the boundary if a consumer must retain a batch. A zero or invalid batch size is rejected. Callers supply a capacity bounded by their workload and memory budget.
 
@@ -270,3 +270,78 @@ export const publishTrackBatches = (
 ```
 
 The buffer bounds temporary storage. The view separately owns the tracks it retains and its incremental merge must preserve the same grouping keys, order and duplicate handling as its bulk load. Measure first visible result, total load time, allocation activity and peak memory. Use an allocator or heap profiler to evaluate fragmentation on the target runtime.
+
+#### Shared Resource Caches and Object Reuse
+
+- Cache expensive resources by the complete key that defines their value, including variant and version when they affect the result. Share a resource through a lease or an equivalent lifetime guarantee. An active consumer keeps the resource valid; dispose of it only after the last consumer releases it.
+- Recycle expensive holders such as offscreen view components separately from their cached contents. Before returning a holder, detach its data and subscriptions, invalidate pending requests and release owned resources. On reuse, start a fresh binding. Apply an asynchronous completion only if it belongs to the current binding, even when two successive bindings use the same key. Request cancellation when useful and handle results that arrive after cancellation.
+- Give the cache a budget based on resource cost such as decoded bytes. Limit idle retained instances in the object pool separately from active demand. Define what happens at saturation when all resources are in use. Coalesce concurrent loads for the same key where it prevents meaningful duplicate work, with cancellation scoped to the consumer when others still need the result.
+- Compare reuse with ordinary allocation using representative interaction and memory pressure. Measure allocation rate, peak and retained memory, cache hit rate and latency where relevant. Verify that a stale result is released and never displayed, including after rebinding to the same key.
+
+A recycled album thumbnail borrows a decoded image from a shared cache. Each binding has its own request identity. The cache can reject a cancelled request or return a lease if completion races cancellation. The caller either holds the returned lease or releases it. The renderer synchronously detaches the previous image when passed `null`, and the cache's lease release is synchronous. Both callbacks complete without throwing or re-entering the thumbnail.
+
+```ts
+export interface ImageLease<Image> {
+	readonly image: Image;
+	release(): undefined;
+}
+
+export interface ImageCache<Image> {
+	acquire(key: string, signal: AbortSignal): Promise<ImageLease<Image>>;
+}
+
+interface ThumbnailBinding<Image> {
+	readonly controller: AbortController;
+	lease?: ImageLease<Image>;
+}
+
+export class RecycledThumbnail<Image> {
+	private binding: ThumbnailBinding<Image> | undefined;
+
+	constructor(
+		private readonly cache: ImageCache<Image>,
+		private readonly show: (image: Image | null) => undefined,
+	) {}
+
+	bind = async (key: string): Promise<void> => {
+		const previous = this.binding;
+		const binding: ThumbnailBinding<Image> = { controller: new AbortController() };
+		this.binding = binding;
+		this.retire(previous);
+
+		// Aborting the previous request can synchronously trigger another binding.
+		if (this.binding !== binding) return;
+
+		let lease: ImageLease<Image>;
+		try {
+			lease = await this.cache.acquire(key, binding.controller.signal);
+		} catch (error) {
+			// A superseded request can no longer affect this thumbnail.
+			if (this.binding !== binding) return;
+			throw error;
+		}
+
+		if (this.binding !== binding) {
+			lease.release();
+			return;
+		}
+
+		binding.lease = lease;
+		this.show(lease.image);
+	};
+
+	reset = (): void => {
+		const previous = this.binding;
+		this.binding = undefined;
+		this.retire(previous);
+	};
+
+	private retire = (previous: ThumbnailBinding<Image> | undefined): void => {
+		this.show(null);
+		previous?.lease?.release();
+		previous?.controller.abort();
+	};
+}
+```
+
+Call `reset` when returning the thumbnail to its pool, even if it has no replacement yet. If the previous album loads after rebinding, the identity check releases its lease and the current image stays visible. The cache owns admission, eviction and any shared download. Resetting one thumbnail relinquishes only that consumer's interest.

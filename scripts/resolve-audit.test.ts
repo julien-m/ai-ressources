@@ -122,13 +122,14 @@ describe("audit source routing", () => {
     expect(withCli.sources.code.map((path) => basename(path))).toEqual([...names, "cli.md"]);
   });
 
-  test("code audits can read the shared FeedBk architecture and allocation examples", () => {
+  test("code audits can read the shared architecture, allocation and object reuse guidance", () => {
     for (const language of ["typescript", "rust", "go"]) {
       const result = resolveAudit(["code", language], root);
       const sources = new Map(result.sources.code.map((path) => [basename(path), readFileSync(path, "utf8")]));
 
-      expect(sources.get("architecture.md")).toContain("### Worked examples from FeedBk");
-      expect(sources.get("general.md")).toContain("#### Worked example from FeedBk on reserving and reusing capacity");
+      expect(sources.get("architecture.md")).toContain("### Worked TypeScript architecture examples");
+      expect(sources.get("general.md")).toContain("#### Worked example on reserving and reusing capacity");
+      expect(sources.get("general.md")).toContain("#### Shared Resource Caches and Object Reuse");
     }
   });
 
