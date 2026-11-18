@@ -257,11 +257,11 @@ These are architecture defects, not style issues.
 - Review the extension by tracing one real call from the caller through wiring, workflow and variation to its result. For a new implementation of the same capability, the expected diff is its implementation, wiring and contract checks. If callers or the shared workflow also change, identify the new semantic requirement or the dependency that leaked through the contract.
 - Apply these project design preferences using each language's mechanisms. Read [TypeScript/JavaScript](javascript.md), [Elixir](elixir.md), [Go](go.md), [Python](python.md), [Rust](rust.md), [Swift/Kotlin](swift-kotlin.md) and [Delphi/Pascal](delphi.md) for the corresponding choices. Keep SQL and framework-specific details behind those application contracts rather than inventing a universal interface syntax.
 
-### Worked examples from FeedBk
+### Worked TypeScript architecture examples
 
-These TypeScript examples adapt FeedBk's design to structural interfaces and explicit dependencies. The same responsibilities apply in other languages.
+These examples use structural interfaces and explicit dependencies. The same responsibilities apply in other languages.
 
-**One workflow, replaceable persistence.** FeedBk's library adds tracks through a storage hook, then updates the views after success. Here the library owns that sequence and the store owns the write.
+**One workflow, replaceable persistence.** A media library adds tracks through its store, then updates its views after the write succeeds. The library owns that sequence and the store owns the write.
 
 ```ts
 export interface Track {
@@ -293,7 +293,7 @@ export class Library {
 
 The store returns the committed tracks or rejects. The library waits for the view update before returning success. If publication fails after the write, reconcile the views from storage without repeating the write. Wire the store outside the library and reuse the contract tests for each backend.
 
-**Give each caller the view it needs.** FeedBk has plain and alphabetically grouped album views. Both expose captions. Only the grouped view supplies alphabet navigation.
+**Give each caller the view it needs.** A music library can offer plain and alphabetically grouped album views. Both expose captions. Only the grouped view supplies alphabet navigation.
 
 ```ts
 export interface AlbumCaptions {
@@ -318,7 +318,7 @@ export const visibleAlbumLabels = (
 
 The label renderer works with either implementation. Give alphabet navigation the separate grouping contract during composition. An editor gets its own write contract when it needs to change a track.
 
-**Keep task execution and policy independent.** FeedBk's workers run typed tasks, handle cancellation and route outcomes. Its collections take typed filter predicates. A media import can use both: the runner schedules the job and the task applies the configured selection rule.
+**Keep task execution and policy independent.** A media import can use a typed worker and a filter predicate. The runner schedules the job, handles cancellation and routes outcomes. The task applies the configured selection rule.
 
 ```ts
 export interface MediaFile {

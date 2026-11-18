@@ -197,9 +197,9 @@ INSERT INTO tags (id, name) VALUES (1,'a'), (2,'b'), (3,'c')
 - Size worker concurrency, pending work and pool limits together. Budget the sum of per-pool maxima across replicas and background processes against the database connection limit, leaving room for maintenance and other clients. Account for operations that can hold several connections at once. Bound acquisition waits and pending work, and define what callers observe when capacity is exhausted.
 - In code or database review, trace acquisition, cursor and transaction completion, and return or discard on success, failure and cancellation. Inspect the effective driver or proxy configuration. Where saturation or leakage is a real risk, check acquisition wait, in-use and idle connections, queue depth and timeouts under representative load. Static inspection alone cannot establish pool behavior under load.
 
-#### Worked example from FeedBk on releasing a connection before HTTP
+#### Worked example on releasing a connection before HTTP
 
-FeedBk's cover worker reads the image bytes, returns the database connection in a cleanup block, then downloads the cover only if the local lookup missed. The TypeScript example uses a driver-backed pool supplied by the application. The adapter propagates errors and returns owned bytes or `undefined` for a miss.
+A cover worker reads the image bytes, returns the database connection, then downloads the cover only if the local lookup missed. The TypeScript example uses a driver-backed pool supplied by the application. The adapter propagates errors and returns owned bytes or `undefined` for a miss.
 
 ```ts
 export interface CoverLease extends AsyncDisposable {
