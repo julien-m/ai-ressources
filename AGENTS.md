@@ -156,6 +156,12 @@ check-jsonschema --schemafile schemas/root-index.schema.yaml index.yaml
 check-jsonschema --schemafile schemas/domain-index.schema.yaml <domain>/index.yaml
 ```
 
+## Audit routing
+
+- When changing an index used by `ai-res-audit`, review the effect on audit coverage and run `bun test scripts/resolve-audit.test.ts` before committing. The same tests run in CI.
+- Register shared conventions with `applies_to: ["*"]`, language selectors in code `audit_targets`, and engine selectors in stack `sections.databases`. Map each canonical selector to its list of aliases in `audit_targets`. Tag database-specific code and architecture entries with `audit_targets: {database: []}`. Use indexed code file stems for optional deltas and maintain `extends`.
+- Update the skill, resolver and affected tests in the same change if the index format, selector contract or reading procedure changes. Keep additions to the existing contract in the indexes and source conventions. Synchronize modified portable assets using the project sync rule.
+
 ## Rules
 
 - Never wait for the user to notice a stale index — sync it in the same pass as the file operation.

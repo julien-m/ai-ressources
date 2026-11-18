@@ -96,9 +96,7 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 
 ### Evidence-Based Database and Code Audits
 
-Use `$ai-res-audit database postgresql` (or `/ai-res-audit` in Claude Code) to review a schema with shared conventions and engine-specific sources. Supported database profiles: PostgreSQL, MySQL, SQLite and CockroachDB. Select observed ORM/framework deltas with `--with ecto,prisma,drizzle` as appropriate; do not select unrelated adapters.
-
-Use `$ai-res-audit code swift` or `$ai-res-audit code elixir` for code. Delphi, TypeScript, JavaScript and Rust profiles are also available. The resolver follows convention inheritance and prints the exact reading sources; it does not scan or test a database by itself.
+Use `$ai-res-audit database postgresql` or `$ai-res-audit code swift` (in Claude Code, use `/ai-res-audit`). Discover current engine selectors in the [stack index](stack-ref/index.yaml) and languages in the [code conventions index](code-conventions/index.yaml). For a relevant framework, ORM or consumer-language convention, pass the indexed file stem via `--with`. The resolver follows inheritance and returns the sources to read and apply to the audited code or schema.
 
 Read [the audit skill](.agent-sync/skills/ai-res-audit/SKILL.md) for `review` (default), isolated `test`, and workload-based `performance` modes, evidence reporting and limitations. It preserves live data and project code, separates confirmed findings from unmeasured optimizations, and reports unavailable checks. Install with the existing portable-assets setup; there is no new database service or global runtime dependency beyond the existing Bun/YAML tooling.
 

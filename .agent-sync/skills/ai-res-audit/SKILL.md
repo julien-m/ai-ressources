@@ -1,7 +1,7 @@
 ---
 name: ai-res-audit
-description: Audit database schemas or source code for correctness, security weaknesses and justified optimizations using common AI-RESSOURCES conventions plus engine/language/framework deltas. Use for “teste le schéma”, database integrity reviews or language-specific code audits; report evidence and coverage without automatic repairs or production certification.
-argument-hint: "database <postgresql|mysql|sqlite|cockroachdb> | code <delphi|typescript|javascript|rust|elixir|swift> [--mode review|test|performance] [--path project] [--with deltas]"
+description: Audit database schemas or source code for correctness, security, modular design and justified optimizations against indexed AI-RESSOURCES conventions. Use for “teste le schéma”, database integrity reviews or language-specific code audits; report evidence and coverage without automatic repairs or production certification.
+argument-hint: "database <indexed-engine> | code <indexed-language> [--mode review|test|performance] [--path project] [--with deltas]"
 ---
 
 # AI-RESSOURCES Audit
@@ -11,7 +11,7 @@ Produce the evidence-backed audit defined below without changing its authorized 
 
 ## Goal and context
 - Produce an evidence-backed audit; default mode is `review`, project is the actual target cwd, and no framework delta is selected without project evidence. Execution month: determine at invocation.
-- Read [profiles.json](profiles.json) for supported targets/aliases and [database procedure](references/database.md) or [code procedure](references/code.md) for the selected domain. Parse `--mode review|test|performance`, `--path` and `--with` from the user's arguments; reject unknown options or targets rather than silently changing scope.
+- Read [the database procedure](references/database.md) or [the code procedure](references/code.md) for the selected domain. Discover supported selectors and aliases in the current AI-RESSOURCES indexes. Parse `--mode review|test|performance`, `--path` and `--with` from the user's arguments; reject unknown options or targets rather than silently changing scope.
 - `test` adds justified isolated verification; `performance` adds workload/query analysis and measurements only with a representative isolated setup. These modes do not authorize production writes, load tests, schema changes or repairs. Existing explicit authorization for a precisely identified action remains valid; do not ask for it again.
 
 ## Execution context
@@ -33,7 +33,7 @@ Complete each phase and record its evidence before the next. A refusal stops the
 **Action**:
 - Inspect project instructions, schema/migrations, build manifests and available connection metadata without secrets. Record scope/revision, actual engine/runtime/version and relevant settings, mode and target identity. The requested profile is a reading choice, not proof of the deployed engine.
 - For LiveSpec projects, read spec-system and local spec-check instructions and integrate this audit into their verification flow; do not bypass gates or alter approval status. Fixes are a separate authorized task.
-- Resolve conflicting target evidence before dependent execution. Missing access/version/artifacts limits the audit to independent static checks; ask only for information essential to proceed.
+- For each in-scope module, identify languages, runtime, frameworks and database consumers from manifests, lockfiles, source and configuration. Map the observed technologies to the current indexes, including distinct stacks in a monorepo. Resolve conflicting target evidence before dependent execution. Missing access/version/artifacts limits the audit to independent static checks; ask only for information essential to proceed.
 
 **Execution evidence**: Record target/revision/mode, observed version/settings and conflicts or missing artifacts.
 **Success criteria**: Target scope is identified; unknowns/conflicts are explicitly bounded before dependent work.
@@ -43,13 +43,15 @@ Complete each phase and record its evidence before the next. A refusal stops the
 **Prerequisite**: Step 1 scope and permitted work are established.
 **Required inputs/resources**: Readable AIRESOURCES clone, resolver and parsed routing arguments.
 **Action**:
-- Require a readable `AIRESOURCES` clone; run its resolver with parsed routing arguments as separate process arguments, never shell-interpolate user input. Run from the clone so its dependencies are available:
+- Resolve the AI-RESSOURCES clone from `AIRESOURCES`, then the target project's conventions manifest or index. Start at the clone's root `index.yaml`. Use `code-conventions/index.yaml` for shared entries (`applies_to: ["*"]`), language selectors (`audit_targets`) and matching deltas (`applies_to`, `use_when`, `questions_answered`). For database work, also use `stack-ref/index.yaml` → `sections.databases` for the observed engine and `architecture/index.yaml` for database architecture.
+- Run the clone's resolver from its root with `AIRESOURCES` pointing to that clone. Pass parsed arguments separately. Example:
 
 ```bash
 bun .agent-sync/skills/ai-res-audit/scripts/resolve.ts database postgresql --with ecto
 ```
 
-- Substitute the selected domain/target/deltas; the example does not choose the product stack. Only domain, target and `--with` go to this resolver. Read every returned source and relevant exclusions. It follows `extends` and deduplicates files; the JSON is a reading manifest, not an audit result.
+- Run for each identified language or engine in scope. Pass relevant indexed convention file stems via `--with` for observed framework, ORM or integration deltas. In database audits, include applicable consumer-language files where driver or application code participates in the invariant. Record why each optional source applies. Read only the applicable sections within multi-language sources and honor project exclusions.
+- Read the resolved sources, their inherited conventions and any normative references needed for the audited behavior. The manifest orders inherited sources before dependants and deduplicates reads. Record uncovered technologies or missing sources in the coverage report.
 - Use provider sheets for orientation only, not old pricing/throughput/capability claims as evidence. Verify consequential engine/version behavior against current primary documentation. Missing clone/source or invalid routing ends routing with `ERROR ai-res-audit routing`; do not silently fall back to memory.
 
 **Execution evidence**: Record resolver invocation, exit/result, selected sources and the sources actually read.
@@ -60,7 +62,7 @@ bun .agent-sync/skills/ai-res-audit/scripts/resolve.ts database postgresql --wit
 **Prerequisite**: Step 2 source resolution and reading succeeded for convention-dependent work; unrelated permitted static checks may proceed within the recorded scope, with unavailable convention-dependent coverage marked NOT_VERIFIED.
 **Required inputs/resources**: Target artifacts, requirements and applicable conventions.
 **Action**:
-- Derive schema/code elements and approved invariants from actual artifacts; record applicable convention, item, evidence location, intended verification and justified non-applicability. Cover all relevant items; sampling does not certify unchecked tables/modules.
+- Derive checks from the current sources, then map each applicable rule or section and approved invariant to the actual modules, contracts, drivers, tables or queries under audit. Record source section, target location, intended verification and justified non-applicability. Cover all relevant items; sampling does not certify unchecked tables/modules.
 - Prioritize security, integrity and calculation correctness, then maintainability and access costs. Apply the database plan-review gate when reviewing a data-model plan. Do not invent requirements or add duplicate fields/mechanisms to satisfy a checklist.
 
 **Execution evidence**: Record the element/invariant inventory and check-to-evidence mapping.
@@ -100,7 +102,7 @@ bun .agent-sync/skills/ai-res-audit/scripts/resolve.ts database postgresql --wit
 - REQUIRED identity: target/revision, engine/runtime/version evidence, mode, environment, common/specific sources read and scope.
 - REQUIRED findings: severity, item/location, violated contract, reproduction or inspected evidence, impact, counterevidence and proposed correction. Separate confirmed defects, unproven hypotheses and optimization proposals.
 - REQUIRED optimization evidence: actual workload/path, proposed change, semantic and write/storage trade-offs, measurement or explicit unmeasured status.
-- REQUIRED coverage: each applicable item is VERIFIED, STATIC_ONLY, NOT_APPLICABLE with reason, or NOT_VERIFIED with cause; include commands/results, unresolved gates and cleanup. “File read” is never application evidence.
+- REQUIRED coverage: cite the convention source and section, target location and inspected or executed evidence for each applicable item. Each item is VERIFIED, STATIC_ONLY, NOT_APPLICABLE with reason, or NOT_VERIFIED with cause; include commands/results, unresolved gates and cleanup. “File read” is never application evidence.
 - COMPLETE means every applicable requested check has sufficient evidence; PARTIAL means missing access/artifacts/engine verification; BLOCKED means no meaningful audit can proceed. Completeness is separate from defect count; no findings never certifies security or production performance.
 
 **Execution evidence**: Record the report with every REQUIRED field and the justified COMPLETE/PARTIAL/BLOCKED disposition.
