@@ -191,12 +191,14 @@ function resolveCodeDomain(
     .filter((entry) => entry.applies_to?.includes("*"))
     .sort((a, b) => (a.priority ?? Infinity) - (b.priority ?? Infinity))
     .map((entry) => basename(entry.file, ".md"));
-  // Framework-only selections can identify their language through inheritance.
+  // Framework inheritance can identify a language. Shared and database rules do
+  // not identify one, even when they serve as routing sources for Java, SQL, etc.
   const selected = new Set(resolveCodeChain(names, dir).order);
   const selectors = new Set(entries
-    .filter((entry) => selected.has(basename(entry.file, ".md")))
-    .flatMap((entry) => Object.keys(entry.audit_targets ?? {}))
-    .filter((selector) => selector !== "database"));
+    .filter((entry) => selected.has(basename(entry.file, ".md"))
+      && !entry.applies_to?.includes("*")
+      && !Object.hasOwn(entry.audit_targets ?? {}, "database"))
+    .flatMap((entry) => Object.keys(entry.audit_targets ?? {})));
   const languageRules = entries
     .filter((entry) => Object.keys(entry.audit_targets ?? {}).some((selector) => selectors.has(selector)))
     .sort((a, b) => (a.priority ?? Infinity) - (b.priority ?? Infinity))

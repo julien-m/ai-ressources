@@ -9,7 +9,11 @@ type Entry = {
   priority?: number;
 };
 
-type DomainIndex = { files?: Entry[]; sections?: Record<string, { files: Entry[] }> };
+type DomainIndex = {
+  files?: Entry[];
+  coverage?: Record<string, string>;
+  sections?: Record<string, { files: Entry[] }>;
+};
 
 function parseDeltas(options: string[]) {
   const deltas = new Set<string>();
@@ -47,24 +51,22 @@ export function resolveAudit(args: string[], root = process.env.AIRESOURCES) {
     return parse(readFileSync(source(`${name}/index.yaml`), "utf8"));
   }
 
-  const entries = readIndex("code-conventions").files ?? [];
+  const codeIndex = readIndex("code-conventions");
+  const entries = codeIndex.files ?? [];
   const shared = entries.filter((entry) => entry.applies_to?.includes("*"));
   const databaseRules = entries.filter((entry) => Object.hasOwn(entry.audit_targets ?? {}, "database"));
-  const languageEntries = entries.filter((entry) => entry.audit_targets && !databaseRules.includes(entry));
-  const engineEntries = domain === "database"
-    ? (readIndex("stack-ref").sections?.databases?.files ?? []).filter((entry) => entry.audit_targets)
-    : [];
-  const targetEntries = domain === "database" ? engineEntries : languageEntries;
-  const name = (requested ?? "").trim().toLowerCase();
-  const matches = targetEntries.flatMap((entry) =>
+  const targetEntries = domain === "database"
+    ? readIndex("stack-ref").sections?.databases?.files ?? []
+    : entries;
+  const selectors = targetEntries.flatMap((entry) =>
     Object.entries(entry.audit_targets ?? {})
-      .filter(([target, aliases]) => target === name || aliases.includes(name))
-      .map(([target]) => ({ target, entry })),
+      .filter(([target]) => domain === "database" || target !== "database")
+      .map(([target, aliases]) => ({ target, aliases, entry })),
   );
+  const name = (requested ?? "").trim().toLowerCase();
+  const matches = selectors.filter(({ target, aliases }) => target === name || aliases.includes(name));
   if (!matches.length) {
-    const indexedSelectors = targetEntries.flatMap((entry) =>
-      Object.entries(entry.audit_targets ?? {}).flatMap(([target, aliases]) => [target, ...aliases]),
-    );
+    const indexedSelectors = selectors.flatMap(({ target, aliases }) => [target, ...aliases]);
     throw new Error(`Unsupported ${domain} target; indexed selectors: ${[...new Set(indexedSelectors)].join(", ")}`);
   }
   const target = matches[0].target;
@@ -109,7 +111,9 @@ export function resolveAudit(args: string[], root = process.env.AIRESOURCES) {
   }
 
   const byPriority = (a: Entry, b: Entry) => (a.priority ?? Infinity) - (b.priority ?? Infinity);
-  const specific = domain === "database" ? databaseRules : matches.map(({ entry }) => entry);
+  const specific = domain === "database"
+    ? databaseRules
+    : matches.map(({ entry }) => entry).filter((entry) => !shared.includes(entry));
   for (const entry of [...shared.sort(byPriority), ...specific.sort(byPriority), ...explicit]) inherit(entry);
 
   const architecture = domain === "database"
@@ -118,9 +122,13 @@ export function resolveAudit(args: string[], root = process.env.AIRESOURCES) {
       .map((entry) => source(`architecture/${entry.file}`))
     : [];
 
+  const catalogCoverage = Object.entries(codeIndex.coverage ?? {})
+    .find(([language]) => language.toLowerCase() === target)?.[1];
+
   return {
     domain,
     target,
+    ...(domain === "code" && { languageCoverage: specific.length ? catalogCoverage ?? "unrated" : "shared-only" }),
     deltas,
     sources: {
       code,

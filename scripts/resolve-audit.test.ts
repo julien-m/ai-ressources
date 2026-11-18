@@ -46,6 +46,70 @@ describe("audit source routing", () => {
     }
   });
 
+  const sharedOnlySelectors = {
+    java: ["java"],
+    c: ["c"],
+    cpp: ["cpp", "c++", "cxx"],
+    csharp: ["csharp", "c#"],
+    "objective-c": ["objective-c", "objc"],
+    shell: ["shell"],
+    sh: ["sh", "posix-sh"],
+    bash: ["bash"],
+    zsh: ["zsh"],
+    html: ["html"],
+    css: ["css"],
+  };
+  test.each(Object.entries(sharedOnlySelectors))("%s only resolves shared code conventions", (target, selectors) => {
+    const index = parse(readFileSync(join(root, "code-conventions/index.yaml"), "utf8"));
+    const shared = index.files
+      .filter((entry: { applies_to?: string[] }) => entry.applies_to?.includes("*"))
+      .map((entry: { file: string }) => entry.file)
+      .sort();
+
+    for (const selector of selectors) {
+      const result = resolveAudit(["code", selector], root);
+      expect(result.target).toBe(target);
+      expect(result.languageCoverage).toBe("shared-only");
+      expect(result.sources.code.map((path) => basename(path)).sort()).toEqual(shared);
+    }
+  });
+
+  test.each([
+    ["pascal", "delphi", "legacy", "delphi.md"],
+    ["swift", "swift", "partial", "swift-kotlin.md"],
+    ["kotlin", "kotlin", "partial", "swift-kotlin.md"],
+    ["python", "python", "full", "python.md"],
+    ["rust", "rust", "partial", "rust.md"],
+    ["go", "go", "full", "go.md"],
+    ["js", "javascript", "partial", "javascript.md"],
+    ["ts", "typescript", "full", "javascript.md"],
+    ["elixir", "elixir", "full", "elixir.md"],
+    ["sql", "sql", "partial", "database.md"],
+  ])("%s reports language-specific catalog coverage", (selector, target, coverage, file) => {
+    const result = resolveAudit(["code", selector], root);
+    expect(result.target).toBe(target);
+    expect(result.languageCoverage).toBe(coverage);
+    expect(result.sources.code.map((path) => basename(path))).toContain(file);
+    expect(result.sources.stack).toEqual([]);
+  });
+
+  test("Phoenix is an explicit Elixir framework delta with indexed inheritance", () => {
+    expect(() => resolveAudit(["code", "phoenix"], root)).toThrow("Unsupported code target");
+    const elixir = resolveAudit(["code", "elixir"], root);
+    const phoenix = resolveAudit(["code", "elixir", "--with", "phoenix"], root);
+    expect(phoenix.target).toBe("elixir");
+    expect(phoenix.deltas).toEqual(["phoenix"]);
+    expect(phoenix.languageCoverage).toBe(elixir.languageCoverage);
+    expect(phoenix.sources.code.map((path) => basename(path))).toEqual([
+      ...elixir.sources.code.map((path) => basename(path)),
+      "database.md",
+      "ecto.md",
+      "phoenix.md",
+    ]);
+    expect(() => resolveAudit(["code", "android"], root)).toThrow("Unsupported code target");
+    expect(() => resolveAudit(["database", "sql"], root)).toThrow("Unsupported database target");
+  });
+
   test("TypeScript excludes unrelated integration files and can opt into an indexed delta", () => {
     const result = resolveAudit(["code", "ts"], root);
     const names = result.sources.code.map((path) => basename(path));
@@ -99,6 +163,7 @@ describe("audit source routing", () => {
       writeFileSync(language, "---\nextends: [supporting-policy]\n---\n");
       const result = resolveAudit(["code", "synthetic-alias"], base);
       expect(result.target).toBe("synthetic-language");
+      expect(result.languageCoverage).toBe("unrated");
       expect(result.sources.code.map((path) => basename(path))).toEqual([
         "shared-policy.md",
         "supporting-policy.md",

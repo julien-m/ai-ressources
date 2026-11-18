@@ -100,6 +100,10 @@ Each domain has an `index.yaml`; the root [`index.yaml`](index.yaml) describes e
 
 Use `$ai-res-audit database postgresql` or `$ai-res-audit code swift` (in Claude Code, use `/ai-res-audit`). Discover current engine selectors in the [stack index](stack-ref/index.yaml) and languages in the [code conventions index](code-conventions/index.yaml). For a relevant framework, ORM or consumer-language convention, pass the indexed file stem via `--with`. The resolver follows inheritance and returns the sources to read and apply to the audited code or schema.
 
+- Use `code java` for an Android Java module and `code c` for native C. Both report `languageCoverage: "shared-only"`. Java can use the Android XML testing and platform localization sections of the shared sources. C++, C#, Objective-C, shell scripts, HTML and CSS also route to shared guidance.
+- `languageCoverage` describes the catalog. `full`, `partial` and `legacy` are catalog ratings. `unrated` identifies indexed language guidance without a rating. Follow the applicable sections within a shared file such as the JavaScript/TypeScript or Swift/Kotlin source.
+- Language aliases resolve to the same canonical target, such as `js` → `javascript`, `ts` → `typescript`, and `pascal` → `delphi` for the Delphi dialect. Use `code elixir --with phoenix` for Phoenix. Use `code sql` for shared SQL and data-model guidance, and `database <engine>` for engine-specific auditing.
+
 Read [the audit skill](.agent-sync/skills/ai-res-audit/SKILL.md) for `review` (default), isolated `test`, and workload-based `performance` modes, evidence reporting and limitations. It preserves live data and project code, separates confirmed findings from unmeasured optimizations, and reports unavailable checks. Install with the existing portable-assets setup; there is no new database service or global runtime dependency beyond the existing Bun/YAML tooling.
 
 ### Code Planning and Review

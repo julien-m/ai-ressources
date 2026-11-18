@@ -51,6 +51,7 @@ bun .agent-sync/skills/ai-res-audit/scripts/resolve.ts database postgresql --wit
 ```
 
 - Run for each identified language or engine in scope. Pass relevant indexed convention file stems via `--with` for observed framework, ORM or integration deltas. In database audits, include applicable consumer-language files where driver or application code participates in the invariant. Record why each optional source applies. Read only the applicable sections within multi-language sources and honor project exclusions.
+- Record the code manifest's `languageCoverage`. `shared-only` means the catalog has no dedicated convention for the selected language. Read applicable platform guidance within shared sources, such as Android XML testing and resource localization for Java. Other values describe catalog depth, with `unrated` for indexed language guidance without a coverage rating. Frameworks use `--with` (for example, `code elixir --with phoenix`).
 - Read the resolved sources, their inherited conventions and any normative references needed for the audited behavior. The manifest orders inherited sources before dependants and deduplicates reads. Record uncovered technologies or missing sources in the coverage report.
 - Use provider sheets for orientation only, not old pricing/throughput/capability claims as evidence. Verify consequential engine/version behavior against current primary documentation. Missing clone/source or invalid routing ends routing with `ERROR ai-res-audit routing`; do not silently fall back to memory.
 
