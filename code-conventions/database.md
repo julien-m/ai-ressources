@@ -189,6 +189,51 @@ INSERT INTO tags (id, name) VALUES (1,'a'), (2,'b'), (3,'c')
 - Transactions must be minimal — no HTTP calls, long loops, or slow processing inside
 - Pattern: prepare data → start transaction → perform writes → commit
 
+### 19.1. Connection Pools and Short Leases
+
+- Own each pool at the application composition boundary. Reuse the driver or framework pool for a stable connection configuration; create separate pools only for real database, credential, or workload isolation requirements. Close owned pools during shutdown after stopping new work and draining or cancelling active work.
+- Acquire only the connection an operation needs, as late as possible. Keep a transaction and its queries on the same leased connection. Close cursors and finish commit, rollback, or cancellation before returning it. Release reusable connections on every exit path and discard unusable ones through the driver's API. Preserve both causes if the operation and cleanup fail. Avoid sharing one borrowed connection across independent concurrent operations.
+- Return the lease before unrelated HTTP, media processing, rendering, retry delays, or waiting on a queue. Copy or fully materialize results that must outlive a cursor or lease. For a genuine streaming result, the stream owns the lease through completion, error, or cancellation.
+- Size worker concurrency, pending work and pool limits together. Budget the sum of per-pool maxima across replicas and background processes against the database connection limit, leaving room for maintenance and other clients. Account for operations that can hold several connections at once. Bound acquisition waits and pending work, and define what callers observe when capacity is exhausted.
+- In code or database review, trace acquisition, cursor and transaction completion, and return or discard on success, failure and cancellation. Inspect the effective driver or proxy configuration. Where saturation or leakage is a real risk, check acquisition wait, in-use and idle connections, queue depth and timeouts under representative load. Static inspection alone cannot establish pool behavior under load.
+
+#### Worked example from FeedBk on releasing a connection before HTTP
+
+FeedBk's cover worker reads the image bytes, returns the database connection in a cleanup block, then downloads the cover only if the local lookup missed. The TypeScript example uses a driver-backed pool supplied by the application. The adapter propagates errors and returns owned bytes or `undefined` for a miss.
+
+```ts
+export interface CoverLease extends AsyncDisposable {
+	findCover(trackId: string, signal: AbortSignal): Promise<Uint8Array | undefined>;
+}
+
+export interface CoverPool {
+	acquire(signal: AbortSignal): Promise<CoverLease>;
+}
+
+export type DownloadCover = (
+	trackId: string,
+	signal: AbortSignal,
+) => Promise<Uint8Array | undefined>;
+
+export const loadCover = async (
+	pool: CoverPool,
+	downloadCover: DownloadCover,
+	trackId: string,
+	signal: AbortSignal,
+): Promise<Uint8Array | undefined> => {
+	{
+		await using lease = await pool.acquire(signal);
+		const cover = await lease.findCover(trackId, signal);
+		if (cover !== undefined) return cover;
+	}
+
+	signal.throwIfAborted();
+	return downloadCover(trackId, signal);
+};
+```
+
+The acquire operation uses the pool's configured wait bound. The adapter settles `findCover` only after closing its cursor and finishing any database work started by the lookup. Its async disposal returns or discards the connection and completes before the fallback starts. A database error propagates without starting HTTP. If lookup and disposal both fail, `SuppressedError` preserves both failures. Read [TypeScript explicit resource management](https://www.typescriptlang.org/docs/handbook/release-notes/typescript-5-2.html#using-declarations-and-explicit-resource-management) for the compiler and runtime requirements of `await using`.
+
 ## 20. Batch Large Deletes
 - Never delete millions of rows at once — delete in batches
 
