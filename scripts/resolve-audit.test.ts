@@ -128,6 +128,7 @@ describe("audit source routing", () => {
       const sources = new Map(result.sources.code.map((path) => [basename(path), readFileSync(path, "utf8")]));
 
       expect(sources.get("architecture.md")).toContain("### Worked TypeScript architecture examples");
+      expect(sources.get("architecture.md")).toContain("### 15.1. Priority Work and Cooperative Cancellation");
       expect(sources.get("general.md")).toContain("#### Worked example on reserving and reusing capacity");
       expect(sources.get("general.md")).toContain("#### Shared Resource Caches and Object Reuse");
     }
