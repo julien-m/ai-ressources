@@ -63,6 +63,13 @@ interface Manifest {
   domains: Record<string, ManifestDomain>;
 }
 
+interface CodeIndexEntry {
+  file: string;
+  applies_to?: string[];
+  audit_targets?: Record<string, string[]>;
+  priority?: number;
+}
+
 // ── Utilities ─────────────────────────────────────────────────────────────────
 
 /** Parse extends list from YAML frontmatter */
@@ -174,10 +181,27 @@ function resolveCodeDomain(
   aiResPath: string
 ): { domain: ManifestDomain; warnings: string[] } {
   const dir = join(aiResPath, "code-conventions");
-  const { order, warnings } = resolveCodeChain(names, dir);
+  const indexPath = join(dir, "index.yaml");
+  // Use the same indexed shared scope as ai-res-audit, before stack-specific deltas.
+  const index = existsSync(indexPath)
+    ? (parseYaml(readFileSync(indexPath, "utf-8")) as { files?: CodeIndexEntry[] } | null)
+    : null;
+  const entries = index?.files ?? [];
+  const shared = entries
+    .filter((entry) => entry.applies_to?.includes("*"))
+    .sort((a, b) => (a.priority ?? Infinity) - (b.priority ?? Infinity))
+    .map((entry) => basename(entry.file, ".md"));
+  const selectors = new Set(entries
+    .filter((entry) => names.includes(basename(entry.file, ".md")))
+    .flatMap((entry) => Object.keys(entry.audit_targets ?? {})));
+  const languageRules = entries
+    .filter((entry) => Object.keys(entry.audit_targets ?? {}).some((selector) => selectors.has(selector)))
+    .sort((a, b) => (a.priority ?? Infinity) - (b.priority ?? Infinity))
+    .map((entry) => basename(entry.file, ".md"));
+  const { order, warnings } = resolveCodeChain([...shared, ...languageRules, ...names], dir);
   return {
     domain: {
-      label: `Code conventions — ${names.join(", ")}`,
+      label: "Code conventions — shared rules and stack-specific guidance",
       keywords: ["code", "tests", "logging", "naming", "TypeScript", "imports", "architecture"],
       sources: order
         .filter((n) => existsSync(join(dir, `${n}.md`)))
@@ -230,7 +254,15 @@ function buildIndexEntry(domainKey: string, domain: ManifestDomain): string {
   if (domain.exclude_columns?.length) exclusions.push(`⊘ colonnes: ${domain.exclude_columns.join(", ")}`);
   if (domain.exclude_sections?.length) exclusions.push(`⊘ sections: ${domain.exclude_sections.map((s) => `"${s}"`).join(", ")}`);
 
-  return [kwLine, sourceLines, ...exclusions].join("\n");
+  const lines = [kwLine, sourceLines, ...exclusions];
+  if (domainKey === "code") {
+    lines.push(
+      "",
+      "**Plan and implementation.** Read the shared rules and the deltas relevant to the affected modules before planning or editing. In the plan, link each applicable rule to the module or contract, the intended decision, and the evidence you will use.",
+      "Apply those decisions while coding. Check module boundaries, types and validation, error and retry behavior, resource limits, required comments, logging and relevant tests where applicable. At review, cite the rule and the plan or code location, and report any exception or missing evidence.",
+    );
+  }
+  return lines.join("\n");
 }
 
 // ── Main ──────────────────────────────────────────────────────────────────────
