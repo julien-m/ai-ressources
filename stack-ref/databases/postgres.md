@@ -37,10 +37,18 @@ Auto-hébergeable partout : Docker, Linux, macOS, Infomaniak Jelastic, Fly.io, A
 ## Performances
 | Métrique | Valeur |
 |---|---|
-| Throughput | Dépend du hardware (10K–100K+ req/s) |
-| Latence | < 1ms (local), 1–5ms (même datacenter) |
+| Débit | Mesurer avec les volumes, transactions et accès concurrents attendus |
+| Latence | Mesurer séparément les requêtes SQL et le trajet réseau entre l'application et la base |
 | Concurrence | MVCC, bonne concurrence lectures/écritures |
 | Extensions | pgvector, PostGIS, TimescaleDB, etc. |
+
+## Clés et index
+
+- Stocker les UUID en `uuid` natif (16 octets) et utiliser le même type pour les clés étrangères. UUIDv7 est le choix par défaut pour les nouvelles clés techniques des entités. PostgreSQL 18 propose `DEFAULT uuidv7()` pour une génération en base. Générer côté application lorsque l'ID doit être disponible avant l'écriture ou que la version déployée ne fournit pas cette fonction. Choisir `bigint GENERATED … AS IDENTITY` (8 octets) lorsqu'un générateur en base suffit et que la compacité des clés compte. Consulter [les fonctions UUID](https://www.postgresql.org/docs/18/functions-uuid.html) et [les colonnes d'identité](https://www.postgresql.org/docs/18/ddl-identity-columns.html).
+- Le préfixe temporel d'UUIDv7 favorise la localité des insertions dans les B-tree qui indexent l'UUID. UUIDv4 distribue les insertions dans l'arbre. PostgreSQL référence les tuples dans ses index secondaires sans recopier systématiquement la clé primaire. Mesurer les tailles, les lectures et les écritures sur la charge cible avant de chiffrer l'écart. Lire [la structure des index PostgreSQL](https://www.postgresql.org/docs/18/indexam.html).
+- PostgreSQL crée l'index d'une PK ou d'une contrainte `UNIQUE` et laisse le choix de l'index sur les colonnes référençantes d'une FK. Utiliser un B-tree pour les recherches ponctuelles et les plages sélectives. Envisager un index partiel pour un sous-ensemble souvent consulté si le planificateur peut déduire son prédicat de la requête, ou un BRIN pour des plages temporelles sur une grande table dont l'ordre physique suit la date. Lire [les contraintes](https://www.postgresql.org/docs/18/ddl-constraints.html), [les index partiels](https://www.postgresql.org/docs/18/indexes-partial.html) et [les index BRIN](https://www.postgresql.org/docs/18/brin.html).
+- Comparer les plans et les blocs lus avec `EXPLAIN (ANALYZE, BUFFERS)` sur des requêtes représentatives. `ANALYZE` exécute la requête, donc mesurer les écritures dans un environnement de test. La taille seule d'une table ne justifie ni un index ni son retrait. Lire [la documentation d'EXPLAIN](https://www.postgresql.org/docs/18/sql-explain.html).
+
 ## ✅ Quand utiliser
 - Contrôle total des données (souveraineté, RGPD strict)
 - Workloads SQL complexes nécessitant des extensions spécifiques

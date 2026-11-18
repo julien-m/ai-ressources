@@ -126,12 +126,12 @@ files:
     status: partial
 
   - file: database.md
-    description: "Mandatory first-plan data model contract and evidence-based blocking review gate: engine/driver-specific integrity hazards, typed size/range/precision and rounding contracts, input bounds, exact default ownership, explicit nullability/uniqueness contracts, installed-constraint inspection and risk-based write tests, normalized ownership, immutable versions, exhaustive database-enforced enums, transitions, SQL views, prepared queries, driver-managed connection pools, short leases, concurrency budgets, scale, retention, schema verification and evidence-based modeler warning/Ignore disposition (language-agnostic, ORM-agnostic)"
+    description: "Mandatory first-plan data model contract and evidence-based blocking review gate: engine/driver-specific integrity hazards, typed size/range/precision and rounding contracts, input bounds, exact default ownership, explicit nullability/uniqueness contracts, installed-constraint inspection and risk-based write tests, primary-key choice, reversible public identifiers and query-driven indexing, normalized ownership, immutable versions, exhaustive database-enforced enums, transitions, SQL views, prepared queries, driver-managed connection pools, short leases, concurrency budgets, scale, retention, schema verification and evidence-based modeler warning/Ignore disposition (language-agnostic, ORM-agnostic)"
     audit_targets: {database: [], sql: []}
     applies_to: ["SQL", "PostgreSQL", "MySQL", "SQLite"]
     priority: 6
-    use_when: ["data model planning", "schema design", "data model review", "plan compliance evidence", "database engine compatibility", "silent data conversion", "calculation integrity", "numeric precision and rounding", "varchar versus text", "input length limits", "correct default values", "NOT NULL constraints", "scoped uniqueness tests", "nullable unique keys", "database normalization", "redundant tenant keys", "immutable versions", "exhaustive enums", "SQL views", "prepared statements", "connection pooling", "connection leases", "pool saturation", "conception de modèle de données", "revue de schéma", "Schemity warnings", "ignored schema findings", "nullable boolean", "NULL versus empty string"]
-    questions_answered: ["What must a data model plan specify before implementation?", "When is a duplicated parent or tenant identifier justified?", "How are closed sets and ownership enforced in the database?", "When should views, immutable references and prepared queries be preferred?"]
+    use_when: ["data model planning", "schema design", "data model review", "plan compliance evidence", "database engine compatibility", "silent data conversion", "calculation integrity", "numeric precision and rounding", "varchar versus text", "input length limits", "correct default values", "NOT NULL constraints", "scoped uniqueness tests", "nullable unique keys", "database normalization", "redundant tenant keys", "immutable versions", "exhaustive enums", "SQL views", "prepared statements", "connection pooling", "connection leases", "pool saturation", "conception de modèle de données", "revue de schéma", "Schemity warnings", "ignored schema findings", "nullable boolean", "NULL versus empty string", "primary keys", "UUIDv7", "composite indexes", "public ID", "opaque ID", "reversible identifier encoding"]
+    questions_answered: ["What must a data model plan specify before implementation?", "When is a duplicated parent or tenant identifier justified?", "How are closed sets and ownership enforced in the database?", "When should views, immutable references and prepared queries be preferred?", "How should primary keys and indexes be chosen across engines?", "How can a public ID be reversible and opaque across languages and database engines?"]
     see_also: ["architecture.md", "../architecture/multi-tenant.md", "../architecture/database-migrations.md"]
 
   - file: runtime-configs.md
@@ -257,12 +257,12 @@ files:
     see_also: ["phoenix.md", "elixir-testing.md"]
 
   - file: ecto.md
-    description: "Ecto/Postgrex changesets, scoped queries, database constraints, booking concurrency, Multi transactions and safe PostgreSQL migrations"
+    description: "Ecto/Postgrex changesets, scoped queries, UUIDv7 keys and compact public IDs, database constraints, booking concurrency, Multi transactions and safe PostgreSQL migrations"
     applies_to: ["Ecto", "Postgrex"]
     priority: 7
     status: complete
-    use_when: ["validating and persisting Ecto data", "preventing double bookings in PostgreSQL", "deploying Ecto migrations safely"]
-    questions_answered: ["How do changesets map database constraint failures?", "How should real independent transaction contention be tested?"]
+    use_when: ["validating and persisting Ecto data", "implementing the shared public ID rules in Phoenix", "preventing double bookings in PostgreSQL", "deploying Ecto migrations safely"]
+    questions_answered: ["How do changesets map database constraint failures?", "How do Ecto schemas use compact public IDs with native PostgreSQL UUIDs?", "How should real independent transaction contention be tested?"]
     see_also: ["database.md", "oban.md", "elixir-testing.md"]
 
   - file: oban.md

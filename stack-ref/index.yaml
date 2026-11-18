@@ -50,19 +50,19 @@ sections:
       - file: databases/convex.md
         description: "Convex: realtime TypeScript-first database with auto subscriptions"
       - file: databases/mysql.md
-        description: "MySQL: legacy/migration scenarios"
+        description: "MySQL: legacy/migration scenarios and a link to shared public identifier rules"
         audit_targets: {mysql: []}
       - file: databases/neon.md
         description: "Neon: serverless Postgres with branching and scale-to-zero"
       - file: databases/planetscale.md
         description: "PlanetScale: MySQL-compatible with branching, high throughput"
       - file: databases/postgres.md
-        description: "Postgres: self-hosted, full control"
+        description: "Postgres: self-hosted, native UUIDv7 and bigint identity, B-tree, partial and BRIN indexes, EXPLAIN"
         audit_targets: {postgresql: [postgres, pg]}
       - file: databases/redis-self-hosted.md
         description: "Redis self-hosted: ultra-low latency cache"
       - file: databases/sqlite.md
-        description: "SQLite: local/embedded, CLI tools, bun:sqlite"
+        description: "SQLite: local/embedded, CLI tools, bun:sqlite and a link to shared public identifier rules"
         audit_targets: {sqlite: []}
       - file: databases/supabase-db.md
         description: "Supabase DB: managed Postgres with auth, storage, realtime"

@@ -113,7 +113,20 @@ extends: []
 
 ## 5. Primary Keys
 - Every table must have a primary key
-- One consistent ID strategy per project. IDs must be stable and immutable
+- Choose one default strategy for new surrogate keys per project. Prefer UUIDv7 for entity keys when the target engine and driver can preserve its 128 bits and time ordering efficiently. Prefer a database-generated 64-bit integer when a single write authority suffices and compact keys are a priority. Read [the PostgreSQL implementation notes](../stack-ref/databases/postgres.md#clés-et-index) for native types and generation options.
+- Keep existing IDs stable and immutable. Use a composite key for a pure association when its columns identify exactly one row, or a natural key when its domain guarantees an immutable code. Document exceptions to the project default.
+- Define one owner for key generation, including imports and bulk writes. Use the engine's native UUID type when available and match the referenced key's type in every foreign key. For engines without a native type, verify the driver mapping, validation and comparison order of the chosen representation. Avoid text conversion on indexed comparisons.
+- UUIDv7 lets independent writers allocate IDs without a shared sequence, including clients that create records offline. Enforce uniqueness in storage. Use a business timestamp and a stable tie-breaker where chronological ordering matters.
+- Estimate growth per table from actions, rows written per action and retention. Compare key formats on representative queries, writes and indexes before attributing latency or capacity to key width.
+
+### 5.1. Public Identifiers
+
+- Define the internal key and its public representation independently. Public ID rules apply across database engines, languages and ORMs. Keep PK and FK values in their chosen database representation for indexed lookups and joins.
+- For a compact, reversible opaque ID, encode the key at the API boundary or in a shared adapter. Decode and validate the inbound ID before binding the native key to a scoped query. This mapping needs no extra column or index. Reuse one format per resource across routes, responses and references.
+- Base64URL encodes bytes for transport. For example, 16 bytes yield 22 characters without padding, plus any type or version prefix. The encoding alone leaves the original value readable. When using reversible encryption for opacity, define the algorithm, input bytes, canonical output, resource scope, and key and version lifecycle. Preserve valid links through rotation and keep keys in runtime secret storage. Use a maintained cryptographic implementation. Read [the Base64URL specification](https://www.rfc-editor.org/rfc/rfc4648.html#section-5).
+- Use a stored random public ID with a unique constraint when public IDs must stay independent of internal keys or encryption keys. Account for the extra index and use it for public lookups.
+- Authorize access to the referenced object on every request. Reversible formats without authentication can accept altered values, even when format validation passes. Use a separate authenticated token with explicit scope for links that grant access. Read [the object-level authorization guidance](https://cheatsheetseries.owasp.org/cheatsheets/Insecure_Direct_Object_Reference_Prevention_Cheat_Sheet.html).
+- Verify round trips, malformed inputs, wrong resource types, access scope and compatibility with existing links. Read [the Phoenix/Ecto UUID example](ecto.md#compact-public-ids-for-uuid-primary-keys) for one adapter implementation.
 
 ## 6. Foreign Keys
 - Mandatory unless strong reason exists. Referential integrity enforced by database
@@ -128,9 +141,11 @@ extends: []
 - Keep a duplicated ownership key only for a documented constraint, isolation mechanism or concrete access pattern; enforce its agreement with the parent. A generic claim of security or speed is insufficient.
 
 ## 8. Indexing
-- Indexes must reflect real query patterns (filters, joins, ordering, uniqueness)
-- Review exact duplicates and prefix coverage before adding an index; compare uniqueness, predicates, ordering and included columns before removing one.
-- Composite indexes follow query shape: `INDEX (organization_id, user_id, created_at DESC)`
+- Tie each performance index to a representative query or referential check. Index selective filters, joins and bounded ordered reads when the expected benefit justifies the index. Preserve indexes that enforce constraints even when query usage is low.
+- Check what the engine already creates for primary, unique and foreign keys. Evaluate an index on a referencing key when joins or parent updates and deletes would otherwise scan many child rows. Check whether an existing composite index covers the required access before adding a separate index.
+- Match composite key order to the query and the engine. An index on `(account_id, created_at DESC, id DESC)` can support a paginated list filtered by account and ordered by timestamp and ID. A join table keyed by `(left_id, right_id)` may need an index starting with `right_id` for reverse lookups.
+- Review exact duplicates and prefix coverage. Compare uniqueness, predicates, ordering and included columns before removing an index.
+- Skip speculative indexes and check queries that read a large share of a table or sort a small result. A scan or an in-memory sort can be cheaper. Use the engine's execution plan and representative data to decide. Read [the PostgreSQL examples](../stack-ref/databases/postgres.md#clés-et-index) for B-tree, partial and BRIN indexes.
 
 ## 9. Query Typing & Schema Safety
 - Query results must have explicit expected shape with declared columns
@@ -169,9 +184,8 @@ INSERT INTO tags (id, name) VALUES (1,'a'), (2,'b'), (3,'c')
 - Never load a large dataset then filter in application code
 - Apply `WHERE` clauses in SQL
 
-## 15. Sorting Requires Index
-- If a query sorts frequently (`ORDER BY created_at DESC`), an index must support it
-- Without index: scan → sort → discard (expensive)
+## 15. Sorting and Indexes
+- For frequent bounded sorts, evaluate an index matching the filters and ordering, especially when it lets the engine stop at the requested limit. Follow [the index selection rules](#8-indexing) when deciding whether to add it.
 
 ## 16. COUNT on Large Tables
 - `SELECT COUNT(*)` may be expensive on huge tables
@@ -245,8 +259,7 @@ The acquire operation uses the pool's configured wait bound. The adapter settles
 - Queries must include: time limits, tenant filters, pagination (these tables grow indefinitely)
 
 ## 23. Avoid Over-Indexing
-- Indexes improve reads but slow writes (insert, update, delete cost)
-- Add only when justified by real queries
+- Account for index storage and write maintenance when applying [the index selection rules](#8-indexing). Compare representative read plans and write throughput before retaining an index whose benefit is uncertain.
 
 ## 24. Concurrency
 - Never assume read-then-write is safe

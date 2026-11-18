@@ -179,6 +179,8 @@ Supported by: Fastly (native), Cloudflare (Cache Tags), Varnish (xkey), Akamai (
 
 ### Edge Compute Caching
 
+Apply these patterns to responses explicitly eligible for shared caching. Bypass cache lookup and insertion for personalized or tenant-specific responses.
+
 **Cloudflare Workers Cache API:**
 
 ```typescript
@@ -196,6 +198,13 @@ return response;
 ```
 
 **Vercel ISR (Incremental Static Regeneration):** Serve pre-rendered pages from edge, revalidate in background after TTL. Combines static performance with dynamic freshness.
+
+### Europe–US latency
+
+- With a single write region, place the application backend and the writable database in the same region. SQL calls between them stay local. A remote browser still pays for dependent requests to the origin. A remote backend running several sequential queries against the primary can pay a cross-region round trip for each query.
+- Use the CDN for explicitly cacheable public pages and assets, with freshness and invalidation rules. Cache misses and writes still reach the origin. Bypass the shared cache for personalized data and responses that must reflect current database state. Check [Cloudflare's default cache behavior](https://developers.cloudflare.com/cache/concepts/default-cache-behavior/) before assuming public HTML is cached.
+- Measure end-to-end p50 and p95 on actual user routes, separating cache hits, misses and writes. Record the geography of the request, the network path and the backend and database timings. For a European origin, benchmark the US East Coast first if an American node is needed. In Azure's 30-day snapshot ending 2026-07-30, the two Virginia regions measured 84–88 ms median RTT to Paris and 94 ms to Frankfurt, while Azure's California region measured 145 ms to Paris. These are inter-region backbone measurements. Verify the candidates with the target provider and the users' networks. Compare [Azure's RTT measurements](https://learn.microsoft.com/en-us/azure/networking/azure-network-latency?tabs=Europe%2CWesternEurope) and [physical region locations](https://learn.microsoft.com/en-us/azure/reliability/regions-list).
+- Add a regional backend and read replica if uncached remote reads miss the latency objective and tolerate measured replication lag. Route writes to the primary and keep single-region transactions for invariants that require it. Read from the primary for workflows that must immediately see their own writes, unless the read path explicitly guarantees that the replica has replayed the commit. If commits must wait for an overseas replica, include that wait in the write latency budget. Read [PostgreSQL standby and replication semantics](https://www.postgresql.org/docs/18/warm-standby.html).
 
 ---
 

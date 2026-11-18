@@ -34,5 +34,6 @@ Identique à PostgreSQL, voir ci-dessus. Coût = hébergement.
 - Nouveaux projets : **préférer PostgreSQL** (plus de features, extensions, JSON natif)
 - Besoin de pgvector / PostGIS / etc.
 ## Ressources
+- Lire [la convention sur les identifiants publics](../../code-conventions/database.md#51-public-identifiers) pour exposer un identifiant opaque réversible en conservant le type de la clé MySQL.
 - [MySQL Documentation](https://dev.mysql.com/doc/)
 - [MariaDB Documentation](https://mariadb.com/kb/en/)
