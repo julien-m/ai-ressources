@@ -135,6 +135,15 @@ describe("build-conventions", () => {
     expect(sources.filter((source) => source === "code-conventions/javascript.md")).toHaveLength(1);
   });
 
+  test.each(["phoenix", "ecto"])("framework-only %s selection includes the inherited audit profile", async (framework) => {
+    const { exitCode, stderr } = await runScript(repositoryRoot, project, JSON.stringify({ code: [framework] }));
+
+    expect(exitCode).toBe(0);
+    expect(stderr).toBe("");
+    const expected = resolveAudit(["code", "elixir", "--with", framework], repositoryRoot).sources.code;
+    expect(sourceList(project, "code").map((source) => join(repositoryRoot, source))).toEqual(expected);
+  });
+
   test("diamond dependency: shared ancestor appears exactly once", async () => {
     aiRes = makeFakeAiRes({
       "code-conventions/root.md": "---\nextends: []\n---\n# Root\n\nRoot content.",

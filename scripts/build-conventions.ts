@@ -191,9 +191,12 @@ function resolveCodeDomain(
     .filter((entry) => entry.applies_to?.includes("*"))
     .sort((a, b) => (a.priority ?? Infinity) - (b.priority ?? Infinity))
     .map((entry) => basename(entry.file, ".md"));
+  // Framework-only selections can identify their language through inheritance.
+  const selected = new Set(resolveCodeChain(names, dir).order);
   const selectors = new Set(entries
-    .filter((entry) => names.includes(basename(entry.file, ".md")))
-    .flatMap((entry) => Object.keys(entry.audit_targets ?? {})));
+    .filter((entry) => selected.has(basename(entry.file, ".md")))
+    .flatMap((entry) => Object.keys(entry.audit_targets ?? {}))
+    .filter((selector) => selector !== "database"));
   const languageRules = entries
     .filter((entry) => Object.keys(entry.audit_targets ?? {}).some((selector) => selectors.has(selector)))
     .sort((a, b) => (a.priority ?? Infinity) - (b.priority ?? Infinity))
