@@ -194,9 +194,79 @@ When source URLs are provided, **always scrape them first** to extract assets an
 ## Algorithms and Resource Use
 ### 33. Time, Memory and Control Flow
 - Review the algorithm and data structure against actual input size and access frequency before micro-optimizing syntax. Consider repeated scans, nested loops, unnecessary sorting, intermediate collections, string rebuilding, copies, allocations and retained data; account for both time and peak/retained memory.
+- For large interactive workloads, process input in bounded batches when partial progress is useful. Reserve capacity from a known batch size, publish coherent batches or deltas, and check cancellation between units of work. Specify ordering, partial-failure behavior and whether consumers can retain the batch. Bound total retained state separately from the working batch.
+- For a resizable collection with a reliable input count, reserve capacity before appending. For a reusable batch, reset the logical length and keep the backing storage. With an uncertain count, use the collection's growth policy and avoid shrinking while appends are active. Keep estimates bounded by workload and memory budgets. Reserving can reduce backing-store reallocations and copies; measure allocator fragmentation separately and account for unused reserved capacity and per-item allocations.
+- When inputs are already ordered or grouped, let the consumer reuse that work if the ordering, equality and duplicate rules match. Keep bulk loading and incremental updates semantically equivalent where they serve the same operation. Compare first-result latency, total time, peak memory and update cost for representative loads.
 - Prefer an immediate typed return when a search result or terminal decision is known; place the not-found result on the actual miss path. Preserve required cleanup and every return-path contract. Do not remove initialization when another reachable path still needs it or equate an assignment with a function call.
 - For repeated lookups, compare a direct scan with an index/dictionary or sorted lookup using workload size, construction/invalidation cost, memory and required order. Do not add a cache or hash table for every small list, and do not keep processing once the contract's answer is determined.
 - Prefer exhaustive switch/case/match for closed variants with one discriminant; use guard clauses for invalid inputs and early returns to reduce nesting. Preserve branch priority and error behavior; unrelated predicates/ranges need not become an artificial enum. Use capability contracts/polymorphism for open implementation sets as defined in architecture §34.
 - Document intent and trade-offs under §§23–30, including early exits and non-trivial algorithms; avoid comments that merely restate obvious syntax. Keep ownership, allocation lifetime and error paths explicit.
 - Treat simpler control flow or fewer source assignments as design observations until measured. A performance claim needs representative inputs, target compiler/runtime/version and release settings, equivalent outputs, and elapsed-time/allocation or memory evidence appropriate to the claimed gain. Do not benchmark every trivial function or weaken correctness, typing, encapsulation or safety to win a microbenchmark.
 - Read [modular contracts and polymorphism](architecture.md#34-interface-based-modularity-and-polymorphism) and the selected language's implementation rules before proposing structural changes.
+
+#### Worked example from FeedBk on reserving and reusing capacity
+
+FeedBk reserves a track-list buffer using the batch size. It appends each track, delivers the batch, then clears the logical count while retaining the backing array. Its generic list grows geometrically when the count exceeds capacity. The album views also reserve space from the number of incoming groups before inserting them and reuse the existing group order on the initial load.
+
+The examples use track IDs to isolate the allocation behavior. Each consumer reads the occupied part synchronously and finishes using it before the next batch; copy at the boundary if a consumer must retain a batch. A zero or invalid batch size is rejected. Callers supply a capacity bounded by their workload and memory budget.
+
+**Rust** reserves capacity with a fallible operation. Clearing the vector removes the items and retains the allocation.
+
+```rust
+use std::{collections::TryReserveError, num::NonZeroUsize};
+
+pub fn publish_track_batches(
+    track_ids: impl IntoIterator<Item = u32>,
+    batch_size: NonZeroUsize,
+    mut publish: impl FnMut(&[u32]),
+) -> Result<(), TryReserveError> {
+    let limit = batch_size.get();
+    let mut batch = Vec::new();
+    batch.try_reserve_exact(limit)?;
+
+    for id in track_ids {
+        batch.push(id);
+        if batch.len() == limit {
+            publish(&batch);
+            batch.clear();
+        }
+    }
+
+    if !batch.is_empty() {
+        publish(&batch);
+    }
+    Ok(())
+}
+```
+
+**TypeScript** uses a fixed-size typed array for validated unsigned 32-bit IDs and a separate count. Ordinary JavaScript arrays expose no capacity reservation API. Use a typed array only when its element representation fits the data. The callback returns `undefined`, so an asynchronous callback cannot satisfy its type.
+
+```ts
+export const publishTrackBatches = (
+	trackIds: Iterable<number>,
+	batchSize: number,
+	publish: (batch: Readonly<ArrayLike<number>>) => undefined,
+): void => {
+	if (!Number.isSafeInteger(batchSize) || batchSize < 1) {
+		throw new RangeError("Batch size must be a positive safe integer");
+	}
+
+	const buffer = new Uint32Array(batchSize);
+	let used = 0;
+
+	for (const id of trackIds) {
+		buffer[used] = id;
+		used += 1;
+		if (used === buffer.length) {
+			publish(buffer);
+			used = 0;
+		}
+	}
+
+	if (used > 0) {
+		publish(buffer.subarray(0, used));
+	}
+};
+```
+
+The buffer bounds temporary storage. The view separately owns the tracks it retains and its incremental merge must preserve the same grouping keys, order and duplicate handling as its bulk load. Measure first visible result, total load time, allocation activity and peak memory. Use an allocator or heap profiler to evaluate fragmentation on the target runtime.
