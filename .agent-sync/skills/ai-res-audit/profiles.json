@@ -70,6 +70,12 @@
           "elixir-testing"
         ]
       },
+      "swift": {
+        "aliases": [],
+        "code": [
+          "swift-kotlin"
+        ]
+      },
       "javascript": {
         "aliases": [
           "js"
