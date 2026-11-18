@@ -69,6 +69,7 @@ Extends database §19. Transactions belong at the service/use-case level.
 - Never perform external calls or slow computation inside transactions
 - Repositories participate but don't decide business transaction scope
 - Pattern: prepare → start transaction → write → commit → trigger side effects after commit
+- For pooled database access, apply [connection pool and lease rules](database.md#191-connection-pools-and-short-leases), including short leases, release on failure or cancellation, and concurrency limits.
 
 ## 12. Side Effects
 Side effects: DB writes, emails, SMS, webhooks, queue pushes, file writes, external API calls, analytics events.
