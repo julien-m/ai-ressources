@@ -46,20 +46,24 @@ sections:
         description: "Cloudflare KV: edge key-value store with TTL"
       - file: databases/cockroachdb.md
         description: "CockroachDB: distributed SQL, multi-region strong consistency"
+        audit_targets: {cockroachdb: [cockroach, crdb]}
       - file: databases/convex.md
         description: "Convex: realtime TypeScript-first database with auto subscriptions"
       - file: databases/mysql.md
         description: "MySQL: legacy/migration scenarios"
+        audit_targets: {mysql: []}
       - file: databases/neon.md
         description: "Neon: serverless Postgres with branching and scale-to-zero"
       - file: databases/planetscale.md
         description: "PlanetScale: MySQL-compatible with branching, high throughput"
       - file: databases/postgres.md
         description: "Postgres: self-hosted, full control"
+        audit_targets: {postgresql: [postgres, pg]}
       - file: databases/redis-self-hosted.md
         description: "Redis self-hosted: ultra-low latency cache"
       - file: databases/sqlite.md
         description: "SQLite: local/embedded, CLI tools, bun:sqlite"
+        audit_targets: {sqlite: []}
       - file: databases/supabase-db.md
         description: "Supabase DB: managed Postgres with auth, storage, realtime"
       - file: databases/turso.md

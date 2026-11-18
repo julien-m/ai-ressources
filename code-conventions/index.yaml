@@ -60,16 +60,19 @@ files:
 
   - file: javascript.md
     description: "TypeScript/JavaScript package and framework initialization (npm/Bun/tsc/Next.js/Astro/Vite/C3), structural interfaces, function contracts, generics, runtime validation and Node.js/React conventions (delta on general.md)"
+    audit_targets: {javascript: [js], typescript: [ts]}
     applies_to: ["TypeScript", "JavaScript", "Node", "React", "Next.js"]
     priority: 5
 
   - file: go.md
     description: "Go module initialization with go mod init, consumer-owned interfaces, implicit implementation, generics, composition and tooling (delta on general.md)"
+    audit_targets: {go: []}
     applies_to: ["Go"]
     priority: 5
 
   - file: rust.md
     description: "Rust Cargo initialization, application/library contracts and MSRV, standard trait consistency, checked conversions, public API/SemVer, contextual lint policy, ownership, mutex/async lifecycle, documentation checks and behavior-preserving port/review evidence (delta on general.md)"
+    audit_targets: {rust: []}
     applies_to: ["Rust"]
     priority: 5
     status: partial
@@ -80,23 +83,27 @@ files:
 
   - file: delphi.md
     description: "Delphi/Pascal RAD Studio initialization, interfaces/polymorphism, reference-counted/borrowed/shared ownership and failure cleanup, typed enums/generics, scoped constants, const parameters, early-result search and measured memory/speed (delta on general.md)"
+    audit_targets: {delphi: [pascal]}
     applies_to: ["Delphi", "Pascal"]
     priority: 5
     status: legacy
 
   - file: python.md
     description: "Python conventions: uv application/library initialization and Django/FastAPI/Flask setup, Protocol/ABC polymorphism, callable strategies, typing strategy, ruff/pyright tooling, Google-style docstrings, dangerous patterns (delta on general.md)"
+    audit_targets: {python: []}
     applies_to: ["Python"]
     priority: 5
 
   - file: swift-kotlin.md
     description: "SwiftPM/Xcode and Gradle/Android Studio project initialization; Swift protocols, generics and existentials; Kotlin interfaces, delegation, sealed variants and abstract family workflows; composition/inheritance scope and iOS/Android conventions (delta on general.md)"
+    audit_targets: {swift: [], kotlin: []}
     applies_to: ["Swift", "Kotlin"]
     priority: 5
     status: partial
 
   - file: database.md
     description: "Mandatory first-plan data model contract and evidence-based blocking review gate: engine/driver-specific integrity hazards, typed size/range/precision and rounding contracts, input bounds, exact default ownership, explicit nullability/uniqueness contracts, installed-constraint inspection and risk-based write tests, normalized ownership, immutable versions, exhaustive database-enforced enums, transitions, SQL views, prepared queries, scale, retention, schema verification and evidence-based modeler warning/Ignore disposition (language-agnostic, ORM-agnostic)"
+    audit_targets: {database: []}
     applies_to: ["SQL", "PostgreSQL", "MySQL", "SQLite"]
     priority: 6
     use_when: ["data model planning", "schema design", "data model review", "plan compliance evidence", "database engine compatibility", "silent data conversion", "calculation integrity", "numeric precision and rounding", "varchar versus text", "input length limits", "correct default values", "NOT NULL constraints", "scoped uniqueness tests", "nullable unique keys", "database normalization", "redundant tenant keys", "immutable versions", "exhaustive enums", "SQL views", "prepared statements", "conception de modèle de données", "revue de schéma", "Schemity warnings", "ignored schema findings", "nullable boolean", "NULL versus empty string"]
@@ -189,6 +196,7 @@ files:
 
   - file: elixir.md
     description: "Elixir project choice and mix new initialization, behaviours versus protocols, module/type polymorphism, Mix/Hex toolchain, typespecs, documentation, module attributes, runtime configuration, i18n and HTTP adapters"
+    audit_targets: {elixir: []}
     applies_to: ["Elixir", "Mix", "Hex"]
     priority: 5
     status: complete
@@ -198,6 +206,7 @@ files:
 
   - file: elixir-otp.md
     description: "BEAM/OTP supervision, bounded tasks, backpressure, ETS/Cachex memory, profiling and Rustler NIF versus isolated Rust services"
+    audit_targets: {elixir: []}
     applies_to: ["Elixir", "Erlang/OTP", "BEAM", "Rustler"]
     priority: 6
     status: complete
@@ -243,6 +252,7 @@ files:
 
   - file: elixir-testing.md
     description: "ExUnit, doctests, ConnTest/LiveViewTest, SQL Sandbox and real concurrency, Oban.Testing, HTTP mocks, Mix/Cargo checks and isolated PostgreSQL CI"
+    audit_targets: {elixir: []}
     applies_to: ["Elixir", "ExUnit", "Phoenix", "Oban", "Rustler"]
     priority: 9
     status: complete

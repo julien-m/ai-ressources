@@ -22,6 +22,7 @@ files:
 
   - file: multi-tenant.md
     description: "Multi-tenant architecture: DB-per-tenant, schema-per-tenant, row-level security and normalized parent ownership without mandatory duplicate tenant keys"
+    audit_targets: {database: []}
     status: complete
     use_when: ["multi-tenant", "B2B SaaS", "tenant isolation", "row-level security", "organization model"]
     questions_answered: ["Which tenant isolation strategy?", "DB-per-tenant vs RLS?", "How to handle tenant data?"]
@@ -64,6 +65,7 @@ files:
 
   - file: database-migrations.md
     description: "Database migration patterns: versioning, zero-downtime, expand/contract, rollback"
+    audit_targets: {database: []}
     status: complete
     use_when: ["database migration", "schema change", "zero-downtime deploy", "rollback strategy"]
     questions_answered: ["How to do zero-downtime migrations?", "Expand/contract pattern?", "Rollback strategy?", "Migration versioning?"]
