@@ -91,6 +91,7 @@ Andorre n'est pas dans l'UE ni dans l'espace TVA EU. Si vous vendez à un client
 - **Marketplace** → `Stripe Connect`
 - **Abonnements avec facturation** → `Stripe Billing + Stripe Invoicing`
 ## Ressources
+- Lire [la migration entre comptes Stripe](../../architecture/stripe-account-migration.md) pour préparer le schéma, conserver les anciennes factures et basculer les nouveaux achats et renouvellements.
 - [Documentation](https://stripe.com/docs)
 - [Pricing officiel](https://stripe.com/pricing)
 - [Stripe EU pricing](https://stripe.com/fr/pricing)
