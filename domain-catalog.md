@@ -257,6 +257,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `design-read`, `brief interpretation`, `vibe`, `aesthetic`, `audience` | `design/references/design-read-protocol.md` |
 | `redesign`, `site refresh`, `visual overhaul`, `preserve brand` | `design/references/redesign-protocol.md` |
 | `mockup`, `wireframe`, `pencil`, `figma` | `design/references/mockup-specs.md` |
+| `device frames`, `screen frame radius`, `mockup content padding`, `Apple Watch mockups` | `design/references/device-frames.md` |
 | `devtools`, `developer-tools` | `design/references/devtools.md` |
 
 ---
