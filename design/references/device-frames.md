@@ -1,6 +1,6 @@
 # Device Frames
 
-Canonical frame dimensions and mandatory system overlays for mockups (Watch, iPhone, Web). Used by `/mockup-factory` and any Pencil-based mockup generation. All sizes are **logical points** (what the simulator reports), not pixel exports.
+Reference canvas dimensions and system overlays for Apple Watch, iPhone and web mockups. Use the canvas dimensions below for the matching preset. Before comparing with a capture, resolve the mapping between the mockup canvas, native layout points or CSS pixels, and image pixels.
 
 > **Ratio base convention.** Watch overlay ratios are relative to **frame height**. iPhone overlay ratios use the basis explicitly stated per column (× frame width or × frame height). Resolve every ratio against its declared basis — do not assume.
 
@@ -78,7 +78,7 @@ Every iPhone screen (except SE legacy) MUST include a status bar as the first ch
 
 ### Bottom
 
-**No reserved space.** Content fills to the bottom edge of the frame — no home-indicator zone is rendered or reserved.
+The mockup omits a separate home-indicator overlay. Backgrounds can extend to the canvas edge. Keep text and controls within the target device’s bottom safe area.
 
 ### SE legacy
 
@@ -96,29 +96,47 @@ Frame nue — **no browser chrome** is rendered. The mockup is the viewport inte
 | Tablet portrait | 768 × 1024 |
 | Mobile web | 390 × 844 |
 
+## Screen frame border radius
+
+Set the outer Screen Frame radius to `0` for raw screen and viewport comparisons on Watch, iPhone and web. This keeps the canvas rectangular. Apply a device mask to a separate presentation frame when required. Use the normal component radii for inner elements such as cards and the Dynamic Island.
+
+## Content layout margins
+
+Place app content in the **App Content Frame**. Use it as the last child of the Screen Frame, following the system overlay when present. On the web it is the only child. Nest sections, groups and components inside the content frame. Apply screen padding to this parent and section spacing to each owning layout.
+
+| Target | Inline padding | Top padding | Bottom padding |
+|---|---|---|---|
+| iPhone | `base` (16) | `base` (16) | `base` (16) |
+| Apple Watch | `base` (16) | `lg` (24) | `base` (16) |
+| Web | Responsive layout tokens | Responsive layout tokens | Responsive layout tokens |
+
+These values are mockup spacing defaults in the target layout’s logical units. Native safe areas are separate from design padding. Resolve the effective insets for the target and apply each system inset once, including any top space already occupied by the overlay. Backgrounds may extend edge to edge. Read [spacing rules](../tokens/spacing.md), [Apple safe-area guidance](../systems/apple-hig.md#safe-areas) and [web margin guidance](../systems/web-standards.md#margins--content-width) when adapting the layout. Consult [Apple’s layout guidance](https://developer.apple.com/design/human-interface-guidelines/layout) for platform and device-specific constraints.
+
 ## Pencil structure rule
 
 System overlays (Watch heure, iPhone status bar) MUST be the **first child frame** of the screen frame, integrated into the vertical layout flow. **Never use absolute positioning.** This conforms to the project rule `pencil-frames.md`.
 
+The examples show design padding. Resolve the target’s native safe-area insets separately.
+
 ### Example — iPhone 17 Pro (402 × 874)
 
 ```
-Screen Frame (402 × 874, layout=vertical, gap=0, alignItems=stretch)
+Screen Frame (402 × 874, layout=vertical, gap=0, alignItems=stretch, borderRadius=0)
 ├── status-bar Frame (height=59, layout=horizontal, justifyContent=space-between, alignItems=center, paddingX=29)
 │   ├── Text "10:15" (left)
 │   ├── Frame dynamic-island (width=125, height=37, borderRadius=full, fill=#000000)
 │   └── Frame status-cluster (layout=horizontal, gap=5)  // cellular + wifi + battery
-└── App content Frame (width=fill_container, layout=vertical)
+└── App Content Frame (width=fill_container, layout=vertical, paddingX=16, paddingTop=16, paddingBottom=16)
     └── … screen content …
 ```
 
 ### Example — Apple Watch 46mm (416 × 496)
 
 ```
-Screen Frame (416 × 496, layout=vertical, gap=0, alignItems=stretch)
+Screen Frame (416 × 496, layout=vertical, gap=0, alignItems=stretch, borderRadius=0)
 ├── status-bar Frame (height=60, layout=horizontal, justifyContent=flex-end, paddingRight=30, paddingTop=30)
 │   └── Text "08:52" (fontSize=42, color=#FFFFFF, weight=700)
-└── App content Frame (width=fill_container, layout=vertical)
+└── App Content Frame (width=fill_container, layout=vertical, paddingX=16, paddingTop=24, paddingBottom=16)
     └── … screen content …
 ```
 
@@ -129,6 +147,8 @@ For every generated mockup, the audit checklist MUST verify:
 1. Frame dimensions match a canonical size from the tables above.
 2. Watch screens contain `"08:52"` text at top-right per ratios.
 3. iPhone screens (non-SE) contain a status-bar frame as first child with heure (left) + Dynamic Island (center) + status cluster (right).
-4. iPhone screens have no reserved bottom zone.
+4. iPhone screens omit a separate home-indicator overlay and keep controls inside the bottom safe area.
 5. Web mockups have no browser chrome.
 6. System overlays use layout-flow positioning, never absolute.
+7. Outer Screen Frames for raw screen and viewport comparisons use `borderRadius = 0`.
+8. The App Content Frame owns the content padding and follows the system overlay when present. Native insets are applied once and web padding adapts to the layout.

@@ -114,6 +114,9 @@ sections:
     description: "Market design references: per-company design systems, landing page conventions, app UI patterns (based on 2026 market analysis)"
     last_reviewed: "2026-10-18"
     files:
+      - file: references/device-frames.md
+        description: "Apple Watch, iPhone and web mockup canvas presets, system overlays, rectangular screen frames, content padding and safe areas"
+        use_when: ["device frames", "Pencil mockups", "screen frame radius", "mockup content padding", "Apple Watch mockups"]
       - file: references/mobbin-blog-review.md
         description: "Article-by-article review of 14 Mobbin blog posts with source limits and reusable local recommendations"
         use_when: ["Mobbin", "blog review", "UX research"]
