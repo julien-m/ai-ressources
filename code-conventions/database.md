@@ -14,8 +14,8 @@ extends: []
 | Data dictionary | Table purpose; each field's meaning, type, nullability, default, source/writer, exact default value/expression and its owner/trigger where required, creation/update trigger, readers and concrete use; structured JSON shape and example where applicable |
 | Relationships | Cardinalities, ownership path, foreign keys, deletion behavior and version references |
 | Engine and consumer contract | Actual engine/version, relevant modes/connection settings, driver and language mappings; documented guarantees and differences for each supported target, including development versus production |
-| Types, bounds and arithmetic | Per-field SQL and application types, units, text/payload limits, integer range, exact/approximate arithmetic, decimal precision/scale, rounding and conversion policy; reasons and targeted verification |
-| Nullability and uniqueness | Required/optional/conditionally required fields with reasons; unique columns or column sets, business scope, predicates, NULL semantics and database constraints; schema inspection and risk-based positive/negative test cases |
+| Types, bounds and arithmetic | Per-field SQL and application types, units, accepted and stored text formats, normalization or preservation rules, input/stored length limits and their units, structured payload limits, integer range, exact/approximate arithmetic, decimal precision/scale, rounding and conversion policy; reasons and targeted verification |
+| Nullability and uniqueness | Required/optional/conditionally required fields with reasons; unique columns or column sets, business scope, predicates, NULL semantics and database constraints; per-field storage normalization and case sensitivity for lookups and uniqueness where relevant; schema inspection and risk-based positive/negative test cases |
 | Closed value sets | Every enum-like field, including states, kinds, actions, permissions and reason codes; exhaustive allowed values, meanings, defaults and database enforcement |
 | State transitions | Source/target states, actor or event, guards, values read/written, transaction boundary, retries and failure behavior |
 | Access and scale | Main filters, joins, ordering, bounded pagination, indexes, volume/growth assumptions and contention scope |
@@ -33,7 +33,7 @@ extends: []
 |---|---|---|---|---|
 | Applicable convention and table/field/query names | File plus section/lines; for a missing element cite the requirement and searched sections | Concrete proposed behavior, constraint or ownership mechanism | CONFORMING / JUSTIFIED_EXCEPTION / NOT_APPLICABLE / MISSING / CONTRADICTORY | Precise change, or none |
 
-- Check field purpose and lifecycle; engine-specific failure modes (§3.3), type/size/range/precision choices and input limits (§3.2); mandatory/conditional values, exact defaults and their owner, installed constraints and justified non-NULL uniqueness test cases (§3.1); cardinalities and parent ownership; redundant identifiers/snapshots and immutable history; exhaustive closed values with database enforcement; transitions and derived states; SQL views/prepared queries and bounded indexed access; concurrency/idempotency; retention and migration/verification plans.
+- Check field purpose and lifecycle; engine-specific failure modes (§3.3), type/size/range/precision choices and input limits (§3.2); mandatory/conditional values, exact defaults and their owner, case and normalization policies, installed constraints and justified non-NULL uniqueness test cases (§3.1); cardinalities and parent ownership; redundant identifiers/snapshots and immutable history; exhaustive closed values with database enforcement; transitions and derived states; SQL views/prepared queries and bounded indexed access; concurrency/idempotency; retention and migration/verification plans.
 - Apply the [schema-warning gate](#351-schema-warning-triage-and-intentional-exceptions) to reported and previously ignored warnings. Unresolved design decisions or unproved exceptions block approval of the affected plan; a screenshot or clean warning counter alone cannot prove complete coverage.
 - A retained copy needs its concrete consumer, reason, consistency mechanism and cost. Verify that removing a copy preserves ownership enforcement. A rejected view/prepared-query option needs a relevant design or engine/driver reason, not a compulsory new mechanism.
 - Accept NOT_APPLICABLE only with a reason grounded in the actual scope. Accept JUSTIFIED_EXCEPTION only where the convention permits an exception; it cannot waive isolation, integrity or safe parameterization. Cite the approved project override for a permitted local policy difference.
@@ -74,10 +74,19 @@ extends: []
 - Report the constraint, concrete input, expected outcome and observed database result; do not change business rules or weaken a constraint to make a faulty fixture pass. Reuse sufficient tests and add only distinct cases needed by the invariant; real concurrent tests remain necessary when correctness depends on transaction/locking behavior beyond the constraint.
 - Read [PostgreSQL constraint semantics](https://www.postgresql.org/docs/current/ddl-constraints.html) for NOT NULL, CHECK and nullable unique keys; read [SQLite primary-key semantics](https://www.sqlite.org/lang_createtable.html#the_primary_key) when targeting SQLite. Verify the chosen engine's semantics rather than assuming every engine treats NULL alike.
 
+#### Case Sensitivity and Canonical Identifiers
+
+- For each text field whose representation affects lookup or uniqueness, specify which variants compare equal (case, accents, Unicode forms and whitespace as applicable) and which database collation or expression implements that equality. Align lookups and unique constraints with the same contract. Keep search-specific equivalences separate from identity.
+- Before backfilling a new canonical representation or changing equality on an existing key, find collisions using the target normalization, collation and uniqueness scope. Resolve collisions explicitly before enforcing the new constraints. Account merges require an approved identity resolution process.
+- **Store authentication email identifiers entirely in lowercase.** Apply the same deterministic normalization on every write path (including account creation, email changes and imports) and before identity lookups such as sign-in and account recovery. Enforce lowercase storage in the database with a mechanism that detects mixed case under the chosen collation. Enforce uniqueness on the canonical email in the account's declared scope with a UNIQUE constraint or index. For example, `Alex@Example.com` and `alex@example.com` identify the same account within that scope.
+- Keep the authentication identity policy separate from delivery. If the address is also used for sending mail, preserve the verified delivery address separately when needed. Read [RFC 5321 §2.4](https://www.rfc-editor.org/rfc/rfc5321.html#section-2.4) for SMTP local-part case semantics. Treat provider-specific alias rules such as dot removal or stripping plus tags as separate policies.
+- On the migrated schema, verify that a mixed-case input is stored in lowercase through the normal write path, that bypassing application normalization cannot leave mixed-case data in storage, and that a second account using a case variant is rejected by the intended unique key in the same scope. Verify that lookup with either spelling resolves to the same account.
+
 ### 3.2. Types, Size Limits, Numeric Precision and Input Safety
 - Choose each field's type from its meaning and actual operations, not an ORM default: SQL type, application/driver/API representation, unit, valid range, required precision and expected growth. A numeric-looking identifier or phone number is text when arithmetic is meaningless or leading zeroes matter.
 - Define justified length/size limits for bounded business text, external identifiers, tokens and structured payloads; use upstream contracts or approved product rules, not an arbitrary universal length. For legitimately unbounded document content, document that choice and bound ingestion/processing separately.
-- Distinguish characters, encoded bytes and user-perceived characters; align normalization, validation and index/collation behavior with the chosen engine and provider contract. Reject invalid/overlong input at the boundary and enforce essential persisted invariants in the schema; never silently truncate an identifier, token or business value to fit.
+- Specify the unit of each text limit (encoded bytes, Unicode code points or grapheme clusters). Use grapheme clusters where a product limit refers to user-perceived characters and a byte limit where needed to bound data size. Read [Unicode text segmentation](https://www.unicode.org/reports/tr29/#Grapheme_Cluster_Boundaries) for grapheme behavior.
+- Bound raw input before costly processing. Then validate the normalized value's format and length against the field contract and applicable column, index and downstream limits. Account for normalization that changes length and characters that take multiple bytes. Reject invalid or overlong values with a field-level error. Enforce essential persisted invariants in the schema and prohibit silent truncation.
 - In PostgreSQL, TEXT and VARCHAR have no general performance advantage over each other; VARCHAR(n) adds a character-length check, while CHAR(n) pads values. Use length restrictions for the domain contract, not a presumed fixed allocation or automatic speedup. Storage/index width and real query patterns still matter; verify other engines separately.
 - Use integer types for whole-number quantities within a justified lifetime range; include aggregate/intermediate ranges, signedness where supported and overflow behavior. Do not choose the smallest integer merely to save bytes, or a floating point type to sidestep overflow.
 - For money, prices, taxes, commissions and other exact quantities, choose exact decimals or scaled integers with an explicit unit/scale. PostgreSQL NUMERIC and DECIMAL are equivalent exact numeric types; REAL/DOUBLE PRECISION are approximate. Do not assume every currency has two decimal places. Exact storage does not remove the need for rounding rules for division, allocation or excess scale.
@@ -288,17 +297,29 @@ Before shipping: tenant scope enforced? filter indexed? pagination applied? colu
 Efficient query = index seek → read small subset → return. Avoid: scan large table → filter → sort → discard.
 
 ## 31. Input Normalization, Validation & Parameter Safety
-External inputs must **never** reach the database layer without normalization, validation, authorization checks and safe parameterization.
+Before external input reaches the database layer, validate it, apply the field's normalization policy, check authorization and use safe parameterization.
 ### Processing Pipeline
 ```
-input → schema validate/normalize → authz/tenant scope check → whitelist-map query params → parameterized query
+input → schema check raw type and size → apply field policy and validate result → authz/tenant scope check → whitelist-map query params → parameterized query
 ```
 ### Schema-Based Validation
 All external inputs through a **schema-based validation framework** before DB layer. `schema.parse(input)` → ready-to-use object (validated + normalized). No scattered post-validation sanitization.
 Frameworks: JS/TS: Zod (preferred), Yup, Valibot — Python: Pydantic — Kotlin/JVM: Jakarta Bean Validation — Swift: Vapor Validations — Go: go-playground/validator — Delphi: DelphiMVCFramework validation.
 ### Normalization (Inside Schema)
-- Operations: trim whitespace, collapse spaces, case normalize, parse numbers/dates, format slugs, remove invisible chars. Example: `" Julien "` / `"julien"` → `julien`
-- Align validation rules with DB constraints: max lengths match column limits, enums match allowed values, identifier formats enforced early
+- Define accepted input and stored representation per text field. Eliminate ambiguity about leading/trailing spaces, internal whitespace, control characters and line breaks. Define the treatment of omitted input, NULL, empty strings and whitespace-only strings. Reject blank required values when the field requires meaningful text, and canonicalize blank optional input to NULL when both represent the same absence.
+- Apply only transformations specified by the field contract. Reject disallowed characters unless the contract explicitly permits transforming them. Preserve meaningful whitespace, accents and format characters. When Unicode normalization is needed, specify the form and, for stable keys, define case conversion independently of the request locale. Read [Unicode normalization forms](https://www.unicode.org/reports/tr15/#Norm_Forms) before choosing a form.
+- Reuse the same deterministic, idempotent policy across create/update, imports, jobs and other writers. Apply it to lookup keys where required by §3.1. Align final validation with database constraints and enforce essential invariants even when a writer bypasses the application schema.
+
+| Field | Storage policy to specify |
+|---|---|
+| Login email or username | Use lowercase for login email (§3.1). For usernames, define case and Unicode equivalence, allowed characters and uniqueness scope explicitly. Preserve a display spelling separately where the product needs it. |
+| Business code or generated slug | Convert to uppercase or lowercase when the business or protocol defines that canonical case. Validate permitted characters and length after conversion, and check uniqueness in the intended scope. |
+| Personal name, address or free text | Preserve meaningful spelling, accents, case and formatting. Trim surrounding whitespace only when the field treats it as incidental. |
+| External ID, postal code or reference number | Follow the issuing format. Preserve significant case, separators and leading zeroes. Use text for identifiers that happen to contain digits. |
+| Phone number | Store as text. Parse with explicit country or region context when required, specify the canonical format and handle extensions explicitly. Reject ambiguous input instead of guessing. |
+| Token, signature or password input | Follow its protocol or authentication policy. Keep it out of generic trimming, case conversion and character removal. |
+
+- Verify distinct risks on the actual write and lookup paths. Select cases that exercise normalization idempotence, meaningful spaces or leading zeroes, forbidden or blank input, multibyte length boundaries after normalization, and equal versus distinct keys under the chosen collation.
 ### Parameterized Queries (Mandatory)
 - All external values via **bind parameters** — never string interpolation
 - Bad: `WHERE username = '${input}'` — Good: `WHERE username = ?` (bound value)
@@ -313,7 +334,7 @@ Frameworks: JS/TS: Zod (preferred), Yup, Valibot — Python: Pydantic — Kotlin
 - Example: `limit` between 1–100, `status` one of `active|disabled|archived`
 - Pagination/batch params (`limit`, `offset`, `batchSize`, `pageSize`): always clamped — `clamp(limit, 1, 100)`
 ### Text Search Safety
-- Normalize search input (trim, case) for consistency
+- Apply the search field's documented normalization policy to search input.
 - Wildcards added to **bound parameter value**, never to SQL string
 - Bad: `WHERE name LIKE '%${input}%'` — Good: `WHERE name LIKE ?` with value `%julien%`
 
