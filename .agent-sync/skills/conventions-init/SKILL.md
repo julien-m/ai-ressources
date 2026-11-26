@@ -68,6 +68,7 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 **Action**:
 1. **Spec stack** — if `.specs/stacks/_default.md` exists, parse first table with `Layer` or `Technology` header; extract layer→choice pairs as `spec_signals`.
 2. **Dependencies** — read each dependency file present; extract package/module names into `deps`.
+   - Discover Cargo manifests throughout the target project, applying the exclusions above. Record their paths for the config audit.
 3. **File extensions** — glob (excluding the paths above) into `extensions`.
 4. **Project context** — read `CLAUDE.md` if present; extract declared stack, conventions, description into `claudeMd`.
 5. **Project type** — deduce from the four signals above into `projectType`.
@@ -103,7 +104,7 @@ Generate a `.conventions/` directory in the target project containing exactly `m
    |---|---|
    | `.ts/.tsx/.js/.jsx` | `general + architecture + logging + testing + javascript` |
    | `.go` | `general + architecture + logging + testing + go` |
-   | `.rs` | `general + architecture + logging + testing + rust` |
+   | `.rs` or a detected `Cargo.toml` | `general + architecture + logging + testing + rust` |
    | `.swift/.kt` | `general + architecture + logging + testing + swift-kotlin` |
    | `.pas/.dfm/.dproj` | `general + architecture + logging + testing + delphi` |
    | `.sql`, `migration|schema` in path | `database` |
@@ -250,13 +251,14 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 - Project lockfiles + config files
 
 **Action**:
-1. Detect runtime via lockfile/config table; detect languages via step 2 extensions.
-2. If no supported language → skip Phase 7 entry section ("Config audit: not applicable").
+1. Detect runtimes from lockfiles and configs. Use the extensions and Cargo manifests collected in step 2 to detect languages.
+2. If no supported language → skip the config audit ("Config audit: not applicable").
 3. Audit `.gitignore` against language layers; append only missing patterns. Auto-apply, no confirmation.
 4. Audit config files (TypeScript first):
    - Classify each item as `ok | fix | create | signal`.
-5. Print grouped summary (`.gitignore`, `tsconfig.json`, `package.json`, Files to create, ℹ signals) and end with `Apply? (y/n, or list items to skip)`.
-6. Wait for confirmation. Apply via JSON merge for `.json`. Auto-create files marked `auto`. Skip per user list. Display `Config audit: all checks passed ✓` if everything was `ok` (no prompt).
+   - For detected Cargo manifests, follow the Rust section of the runtime config reference. Audit each owning `Cargo.toml` once.
+5. Print grouped summary (`.gitignore`, `tsconfig.json`, `package.json`, `Cargo.toml`, Files to create, ℹ signals) and end with `Apply? (y/n, or list items to skip)`.
+6. Wait for confirmation. Merge approved JSON keys or edit the approved Cargo TOML keys in place. Auto-create files marked `auto`. Skip per user list. Display `Config audit: all checks passed ✓` if everything was `ok` (no prompt).
 
 **Execution evidence**:
 - Verbatim summary printed; user reply captured; per-item action log (`fixed`, `created`, `skipped`).
@@ -264,6 +266,7 @@ Generate a `.conventions/` directory in the target project containing exactly `m
 **Success criteria**:
 - No file modified that the user explicitly skipped.
 - All `fix`/`create` items either applied or recorded as skipped.
+- Cargo metadata validates every Cargo manifest changed by this audit.
 
 **If this step fails**:
 - Retry once for filesystem writes.

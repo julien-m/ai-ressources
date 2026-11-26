@@ -19,6 +19,19 @@ extends: [general]
 - Cargo initializes a package, not an Axum/Actix server. Add the selected runtime/framework and minimal entry point following its documentation; do not require an unrelated third-party template. Review edition, toolchain, generated files and dependency/lockfile policy.
 - Read [cargo new](https://doc.rust-lang.org/cargo/commands/cargo-new.html) and [cargo init](https://doc.rust-lang.org/cargo/commands/cargo-init.html) for supported options.
 
+### Development debug information
+
+Set this default in the workspace-root `Cargo.toml` or the standalone package manifest during initialization:
+
+```toml
+[profile.dev.package."*"]
+debug = "line-tables-only"
+```
+
+This keeps source locations in dependency backtraces and preserves the debug settings for workspace members and release builds. Use it with Cargo 1.71 or later. If CI already disables debug info through profile-wide settings, preserve that policy with `--config 'profile.dev.package."*".debug=0'` on the affected development and test commands.
+
+When you need to inspect dependency variables or parameters, rebuild with `cargo build --config 'profile.dev.package."*".debug="full"'` from the directory containing the manifest. The next build without that option uses the manifest default. Read [Cargo's debug settings and package overrides](https://doc.rust-lang.org/cargo/reference/profiles.html#debug) for the supported values and precedence.
+
 ## Application and library contracts
 - Identify who consumes each API: application-internal code, another workspace crate, or external users. A `lib.rs` alone does not make an API a published compatibility promise.
 - Keep application code concrete and direct; add generics, builders and custom iterator types for actual contract needs, not speculative reuse. Preserve the capability boundaries required by the architecture rules.

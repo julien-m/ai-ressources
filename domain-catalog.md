@@ -33,7 +33,7 @@ When any `.md` file is created, renamed, or deleted in a domain directory (archi
 | `i18n`, `l10n`, `internationalization`, `localization`, `multilingual`, `translation`, `gettext`, `localize`, `i18next`, `next-intl`, `go-i18n`, `fluent`, `resourcestring` | `code-conventions/internationalization.md` |
 | `typescript`, `ts`, `.ts`, `.tsx`, `javascript`, `js`, `.js`, `.jsx`, `node`, `bun`, `deno` | `code-conventions/javascript.md` |
 | `go`, `golang` | `code-conventions/go.md` |
-| `rust`, `cargo` | `code-conventions/rust.md` |
+| `rust`, `cargo`, `cargo build disk usage`, `cargo debug symbols` | `code-conventions/rust.md` |
 | `elixir`, `mix`, `mix.exs`, `.ex`, `.exs`, `hex`, `gettext`, `localize` | `code-conventions/elixir.md` |
 | `elixir`, `beam`, `otp`, `genserver`, `task.supervisor`, `ets`, `cachex`, `rustler`, `nif` | `code-conventions/elixir-otp.md` |
 | `phoenix`, `phoenix-api`, `phoenix-channel`, `phoenix-pubsub` | `code-conventions/phoenix.md` |

@@ -141,6 +141,8 @@ Each pattern explains a concrete use case, component selection, state ownership,
 
 `$conventions-init` in Codex or `/conventions-init` in Claude Code detects a target project's stack and can generate its `.conventions/` manifest/index, hooks, CI, and opt-in security workflows. `$conventions-refresh` or `/conventions-refresh` updates that materialized state when this knowledge base changes.
 
+For a Rust project or a Rust component in a mixed stack, the config audit checks the development debug profile in the owning Cargo manifest. Read [the Cargo configuration defaults](code-conventions/runtime-configs.md#config-cargotoml) before applying the audit.
+
 Security profiles are explicit: `none`, `baseline`, `production`, `public`, or `web-staging`. **Read** [the security profile reference](.agent-sync/skills/conventions-init/references/security-profiles.md) before selecting one.
 
 ## Public Maintenance
