@@ -95,14 +95,14 @@ files:
     priority: 5
 
   - file: rust.md
-    description: "Rust Cargo initialization, application/library contracts and MSRV, standard trait consistency, checked conversions, public API/SemVer, contextual lint policy, ownership, mutex/async lifecycle, documentation checks and behavior-preserving port/review evidence (delta on general.md)"
+    description: "Rust Cargo initialization and dependency debug symbols, application/library contracts and MSRV, standard trait consistency, checked conversions, public API/SemVer, contextual lint policy, ownership, mutex/async lifecycle, documentation checks and behavior-preserving port/review evidence (delta on general.md)"
     audit_targets: {rust: []}
     applies_to: ["Rust"]
     priority: 5
     status: partial
 
-    use_when: ["Rust API design", "MSRV", "Eq Hash Ord consistency", "From TryFrom conversions", "Rust ownership", "Tokio mutex", "mutex poisoning", "Rust lint policy", "Rust porting"]
-    questions_answered: ["How should Rust traits, conversions and public APIs preserve their contracts?", "Which lock, ownership and cleanup rules apply to async Rust?", "How should Rust lints, features, documentation and porting behavior be verified?"]
+    use_when: ["Cargo project initialization", "Cargo build disk usage", "Rust dependency debug symbols", "Rust API design", "MSRV", "Eq Hash Ord consistency", "From TryFrom conversions", "Rust ownership", "Tokio mutex", "mutex poisoning", "Rust lint policy", "Rust porting"]
+    questions_answered: ["How should Cargo configure dependency debug symbols in development?", "How should Rust traits, conversions and public APIs preserve their contracts?", "Which lock, ownership and cleanup rules apply to async Rust?", "How should Rust lints, features, documentation and porting behavior be verified?"]
     see_also: ["architecture.md", "testing.md", "logging.md"]
 
   - file: delphi.md
@@ -135,7 +135,7 @@ files:
     see_also: ["architecture.md", "../architecture/multi-tenant.md", "../architecture/database-migrations.md"]
 
   - file: runtime-configs.md
-    description: "Expected config defaults per runtime/language: TypeScript files, Elixir/Mix/OTP pins, runtime/test config, editorconfig and gitignore patterns. Used by /conventions-init Phase 6."
+    description: "Expected config defaults per runtime/language: TypeScript files, Elixir/Mix/OTP pins, runtime/test config, Rust Cargo profiles, editorconfig and gitignore patterns. Used by /conventions-init Phase 6."
     applies_to: ["*"]
     priority: 6
 

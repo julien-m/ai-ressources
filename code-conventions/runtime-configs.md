@@ -121,6 +121,15 @@ Applies when `mix.exs` exists. Read [Elixir rules](elixir.md) and [test/CI comma
 Credo configuration and Dialyxir/PLT settings apply only when selected by the project. A Rustler crate also needs its Rust toolchain/lock/build configuration and matching production target. Generated files still require review.
 
 ---
+## Rust
+
+### Config: Cargo.toml
+
+- For each detected Cargo project, run `cargo locate-project --workspace --message-format plain --manifest-path <manifest>` to find the manifest that owns its profiles. Audit each resolved manifest once, including standalone crates in mixed-language repos. Classify a manifest outside the target project after resolving symlinks as `signal` and leave it untouched.
+- Read [the Rust development debug convention](rust.md#development-debug-information). Classify a matching profile as `ok`, a missing default as `fix`, and an intentional override (including in Cargo config), incompatible toolchain, or missing manifest as `signal`. Keep explicit project policy and verify any affected CI debug settings.
+- Apply an approved fix to the existing TOML and verify with `cargo metadata --no-deps --format-version 1 --manifest-path <manifest>`. Initialize a new crate or workspace separately using [Cargo's project initialization workflow](rust.md#project-choice-and-initialization).
+
+---
 ## .gitignore Patterns
 Language-independent. Composed in layers — common first, then per detected language.
 ### Layer: common
